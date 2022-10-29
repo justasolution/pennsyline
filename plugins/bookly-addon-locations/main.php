@@ -3,7 +3,7 @@
 Plugin Name: Bookly Locations (Add-on)
 Plugin URI: https://www.booking-wp-plugin.com/?utm_source=bookly_admin&utm_medium=plugins_page&utm_campaign=plugins_page
 Description: Bookly Locations add-on introduces staff locations in Bookly.
-Version: 4.7
+Version: 5.2
 Author: Bookly
 Author URI: https://www.booking-wp-plugin.com/?utm_source=bookly_admin&utm_medium=plugins_page&utm_campaign=plugins_page
 Text Domain: bookly

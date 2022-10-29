@@ -59,7 +59,7 @@ class Controller extends BooklyLib\Base\Component
             if ( $response == null ) {
                 $error_message = $PayPal->getError();
             } elseif ( ( strtoupper( $response['ACK'] ) == 'SUCCESS' )
-                    && ( $response['CURRENCYCODE'] == get_option( 'bookly_pmt_currency' ) ) )
+                    && ( $response['CURRENCYCODE'] == BooklyLib\Config::getCurrency() ) )
             {
                 $data['PAYERID'] = self::parameter( 'PayerID' );
                 $data['PAYMENTREQUEST_0_PAYMENTACTION'] = 'Sale';
@@ -130,7 +130,7 @@ class Controller extends BooklyLib\Base\Component
 
         if ( ! empty( $error_message ) ) {
             header( 'Location: ' . wp_sanitize_redirect( add_query_arg( array(
-                    'bookly_action' => 'paypal-ec-error',
+                    'bookly_action' => 'paypal-express-checkout-error',
                     'bookly_fid' => $form_id,
                     'error_msg'  => urlencode( $error_message ),
                 ), Common::getCurrentPageURL()

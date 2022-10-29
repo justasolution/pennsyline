@@ -103,8 +103,10 @@ jQuery(function ($) {
                 intlTelInput: BooklyStaffEditDialogL10n.intlTelInput,
                 l10n: BooklyStaffEditDialogL10n
             });
-
-            $('.bookly-js-staff-tabs').booklyNavScrollable();
+            
+            if (staff_id) {
+                $('.bookly-js-staff-tabs').booklyNavScrollable();
+            }
 
             $archiveBtn.toggle(staff_id ? response.data.staff.visibility !== 'archive' : false);
             if (currentTab) {

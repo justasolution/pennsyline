@@ -1,4 +1,4 @@
-jQuery(function ($) {
+jQuery(function($) {
     let steps = {
             $service: $('#bookly-step-1'),
             $extras: $('#bookly-step-2'),
@@ -31,6 +31,8 @@ jQuery(function ($) {
         $staff_select = $('.bookly-js-select-employee'),
         $duration_select = $('.bookly-js-select-duration'),
         $location_select = $('.bookly-js-select-location'),
+        $show_category_info = $('#bookly-show-category-info'),
+        $category_info = $('#bookly-category-info'),
         $show_service_info = $('#bookly-show-service-info'),
         $service_info = $('#bookly-service-info'),
         $show_staff_info = $('#bookly-show-staff-info'),
@@ -61,11 +63,12 @@ jQuery(function ($) {
         $repeat_weekly_week_day = $('.bookly-js-week-day'),
         $repeat_monthly_specific_day = $('.bookly-js-monthly-specific-day'),
         $repeat_monthly_week_day = $('.bookly-js-monthly-week-day'),
+        $hide_times_input = $('#bookly-js-app-hide-times-input'),
         // Step Cart.
         $show_cart_extras = $('#bookly-show-cart-extras'),
         $book_more_place = $('#bookly-js-app-button-book-more-near-next'),
         $book_more_in_body = $('.bookly-js-app-button-book-more-near-next-related:eq(0)', steps.$cart),
-        $book_more_in_footer =  $('.bookly-js-app-button-book-more-near-next-related:eq(1)', steps.$cart),
+        $book_more_in_footer = $('.bookly-js-app-button-book-more-near-next-related:eq(1)', steps.$cart),
         // Step details.
         $required_details = $('#bookly-cst-required-details'),
         $show_login_button = $('#bookly-show-login-button'),
@@ -101,14 +104,14 @@ jQuery(function ($) {
         $selects = $appearance.find('select[data-default]')
     ;
 
-    $checkboxes.each(function () {
+    $checkboxes.each(function() {
         $(this).data('default', $(this).prop('checked'));
     });
     // Menu fix for WP 3.8.1
     $('#toplevel_page_ab-system > ul').css('margin-left', '0px');
 
     // Apply color from color picker.
-    var applyColor = function () {
+    var applyColor = function() {
         var color = $color_picker.wpColorPicker('color'),
             color_important = color + '!important;';
         $('.bookly-progress-tracker').find('.active').css('color', color).find('.step').css('background', color);
@@ -119,9 +122,9 @@ jQuery(function ($) {
         $('.bookly-js-week-days label').css('background-color', color);
         $('.picker__frame').attr('style', 'background: ' + color_important);
         $('.picker__header').attr('style', 'border-bottom: ' + '1px solid ' + color_important);
-        $('.picker__day').off().mouseenter(function () {
+        $('.picker__day').off().mouseenter(function() {
             $(this).attr('style', 'color: ' + color_important);
-        }).mouseleave(function () {
+        }).mouseleave(function() {
             $(this).attr('style', $(this).hasClass('picker__day--selected') ? 'color: ' + color_important : '')
         });
         $('.picker__day--selected').attr('style', 'color: ' + color_important);
@@ -133,7 +136,7 @@ jQuery(function ($) {
             'border-color': color
         });
         $('.bookly-columnizer .bookly-hour').off().hover(
-            function () { // mouse-on
+            function() { // mouse-on
                 $(this).css({
                     'color': color,
                     'border': '2px solid ' + color
@@ -146,7 +149,7 @@ jQuery(function ($) {
                     'background': color
                 });
             },
-            function () { // mouse-out
+            function() { // mouse-out
                 $(this).css({
                     'color': '#333333',
                     'border': '1px solid #cccccc'
@@ -176,12 +179,12 @@ jQuery(function ($) {
     $editableElements.booklyEditable();
 
     // Show progress tracker.
-    $show_progress_tracker.on('change', function () {
+    $show_progress_tracker.on('change', function() {
         $('.bookly-progress-tracker').toggle(this.checked);
     }).trigger('change');
 
     // Align buttons to the left
-    $align_buttons_left.on('change', function () {
+    $align_buttons_left.on('change', function() {
         if (this.checked) {
             $('.bookly-nav-steps > div.bookly-right').removeClass('bookly-right ml-2').addClass('bookly-left mr-2');
         } else {
@@ -189,12 +192,12 @@ jQuery(function ($) {
         }
     });
 
-    $extras_show.on('change', function () {
+    $extras_show.on('change', function() {
         $('.bookly-js-extras-' + this.value, $extras_step).toggle(this.checked);
     }).trigger('change');
 
     // Show steps.
-    $('[data-type="bookly-show-step-checkbox"]').on('change', function () {
+    $('[data-type="bookly-show-step-checkbox"]').on('change', function() {
         var target = $(this).data('target'),
             $button = $('.bookly-js-appearance-steps li a[href="#' + target + '"]'),
             $step = $('div[data-step="' + target + '"]');
@@ -213,16 +216,16 @@ jQuery(function ($) {
             $('.bookly-js-go-to-cart').toggle($(this).prop('checked'));
         }
 
-        $('.bookly-progress-tracker > div:visible').each(function (num) {
+        $('.bookly-progress-tracker > div:visible').each(function(num) {
             $(this).find('.bookly-js-step-number').html(num + 1);
         });
-        $('.bookly-js-appearance-steps > li:visible').each(function (num) {
+        $('.bookly-js-appearance-steps > li:visible').each(function(num) {
             $(this).find('.bookly-js-step-number').html(num + 1);
         });
     }).trigger('change');
 
     // Show step specific settings.
-    $('.bookly-js-appearance-steps li.nav-item').on('shown.bs.tab', function (e) {
+    $('.bookly-js-appearance-steps li.nav-item').on('shown.bs.tab', function(e) {
         $step_settings.children().hide();
         switch ($(e.target).attr('href')) {
             case '#bookly-step-1':
@@ -233,6 +236,9 @@ jQuery(function ($) {
                 break;
             case '#bookly-step-3':
                 $step_settings.find('.bookly-js-time-settings').show();
+                break;
+            case '#bookly-step-4':
+                $step_settings.find('.bookly-js-repeat-settings').show();
                 break;
             case '#bookly-step-5':
                 $step_settings.find('.bookly-js-cart-settings').show();
@@ -250,7 +256,7 @@ jQuery(function ($) {
     });
 
     // Dismiss help notice.
-    $('#bookly-js-hint-alert').on('closed.bs.alert', function () {
+    $('#bookly-js-hint-alert').on('closed.bs.alert', function() {
         $.ajax({
             url: ajaxurl,
             data: {action: 'bookly_dismiss_appearance_notice', csrf_token: BooklyL10n.csrf_token}
@@ -279,7 +285,7 @@ jQuery(function ($) {
     });
 
     // Show price next to staff member name.
-    $staff_name_with_price.on('change', function () {
+    $staff_name_with_price.on('change', function() {
         var staff = $staff_select.val();
         if (staff) {
             $('.bookly-js-select-employee').val(staff * -1);
@@ -292,18 +298,23 @@ jQuery(function ($) {
         $duration_select.val(-1);
     }
 
+    // Category info.
+    $show_category_info.on('change', function() {
+        $category_info.toggle($(this).prop('checked'));
+    }).trigger('change');
+
     // Service info.
-    $show_service_info.on('change', function () {
+    $show_service_info.on('change', function() {
         $service_info.toggle($(this).prop('checked'));
     }).trigger('change');
 
     // Staff info.
-    $show_staff_info.on('change', function () {
+    $show_staff_info.on('change', function() {
         $staff_info.toggle($(this).prop('checked'));
     }).trigger('change');
 
     // Show price next to service duration.
-    $service_duration_with_price.on('change', function () {
+    $service_duration_with_price.on('change', function() {
         var duration = $duration_select.val();
         if (duration) {
             $duration_select.val(duration * -1);
@@ -312,9 +323,9 @@ jQuery(function ($) {
         $('.bookly-js-duration').toggle(!$service_duration_with_price.prop('checked'));
     }).trigger('change');
 
-    $show_ratings.on('change', function () {
+    $show_ratings.on('change', function() {
         var state = $(this).prop('checked');
-        $('.bookly-js-select-employee option').each(function () {
+        $('.bookly-js-select-employee option').each(function() {
             if ($(this).val() != '0') {
                 if (!state) {
                     if ($(this).text().charAt(0) == '★') {
@@ -331,12 +342,12 @@ jQuery(function ($) {
     }).trigger('change');
 
     // Show chain appointments
-    $show_chain_appointments.on('change', function () {
+    $show_chain_appointments.on('change', function() {
         $('.bookly-js-chain-appointments').toggle(this.checked);
     });
 
     // Show duration next to service name.
-    $service_name_with_duration.on('change', function () {
+    $service_name_with_duration.on('change', function() {
         var service = $service_select.val();
         if (service) {
             $service_select.val(service * -1);
@@ -346,43 +357,43 @@ jQuery(function ($) {
     }).trigger('change');
 
     // Show price next to service duration.
-    $service_duration_with_price.on('change', function () {
+    $service_duration_with_price.on('change', function() {
         if ($(this).prop('checked')) {
-            $('option[value="1"]', $duration_select).each(function () {
+            $('option[value="1"]', $duration_select).each(function() {
                 $(this).text($(this).attr('data-text-1'));
             });
         } else {
-            $('option[value="1"]', $duration_select).each(function () {
+            $('option[value="1"]', $duration_select).each(function() {
                 $(this).text($(this).attr('data-text-0'));
             });
         }
     }).trigger('change');
 
     // Clickable week-days.
-    $repeat_weekly_week_day.on('change', function () {
+    $repeat_weekly_week_day.on('change', function() {
         $(this).parent().toggleClass('active', this.checked);
     });
 
     // Highlight affected inputs.
-    $required_employee.on('click', function () {
+    $required_employee.on('click', function() {
         bookly_highlight($staff_select);
     });
-    $staff_name_with_price.on('click', function () {
+    $staff_name_with_price.on('click', function() {
         bookly_highlight($staff_select);
     });
-    $show_ratings.on('click', function () {
+    $show_ratings.on('click', function() {
         bookly_highlight($staff_select);
     });
-    $service_name_with_duration.on('click', function () {
+    $service_name_with_duration.on('click', function() {
         bookly_highlight($service_select);
     });
-    $service_duration_with_price.on('click', function () {
+    $service_duration_with_price.on('click', function() {
         bookly_highlight($duration_select);
     });
-    $required_location.on('click', function () {
+    $required_location.on('click', function() {
         bookly_highlight($location_select);
     });
-    $required_details.on('change', function () {
+    $required_details.on('change', function() {
         if (this.value == 'phone' || this.value == 'both') {
             bookly_highlight($('.bookly-js-details-phone input'));
         }
@@ -414,14 +425,14 @@ jQuery(function ($) {
         klass: {
             picker: 'picker picker--opened picker--focused'
         },
-        onClose: function () {
+        onClose: function() {
             this.open(false);
         }
     });
     $time_step_calendar_wrap.find('.picker__holder').css({top: '0px', left: '0px'});
 
     // Show calendar.
-    $show_calendar.on('change', function () {
+    $show_calendar.on('change', function() {
         if (this.checked) {
             $time_step_calendar_wrap.show();
             $day_multi_columns.find('.col3,.col4,.col5,.col6,.col7').hide();
@@ -438,14 +449,14 @@ jQuery(function ($) {
     }).trigger('change');
 
     // Show blocked time slots.
-    $show_blocked_timeslots.on('change', function () {
+    $show_blocked_timeslots.on('change', function() {
         if (this.checked) {
             $('.bookly-hour.no-booked').removeClass('no-booked').addClass('booked');
             $('.bookly-column .bookly-hour.booked .bookly-time-additional', $columnizer).text('');
         } else {
             $('.bookly-hour.booked').removeClass('booked').addClass('no-booked');
             if ($time_step_nop.prop('checked')) {
-                $('.bookly-column .bookly-hour:not(.booked):not(.bookly-slot-in-waiting-list) .bookly-time-additional', $columnizer).each(function () {
+                $('.bookly-column .bookly-hour:not(.booked):not(.bookly-slot-in-waiting-list) .bookly-time-additional', $columnizer).each(function() {
                     var nop = Math.ceil(Math.random() * 9);
                     if (BooklyL10n.nop_format == 'busy') {
                         $(this).text('[' + nop + '/10]');
@@ -459,7 +470,7 @@ jQuery(function ($) {
     });
 
     // Show day as one column.
-    $show_day_one_column.change(function () {
+    $show_day_one_column.change(function() {
         if (this.checked) {
             $day_one_column.show();
             $day_multi_columns.hide();
@@ -470,19 +481,19 @@ jQuery(function ($) {
     });
 
     // Show only nearest slot.
-    $show_single_slot.change(function () {
+    $show_single_slot.change(function() {
         if (this.checked) {
-            $day_multi_columns.find('.bookly-day').each(function (index) {
+            $day_multi_columns.find('.bookly-day').each(function(index) {
                 if (index !== 0) {
                     $(this).removeClass('d-block').addClass('d-none');
                 }
             });
-            $day_one_column.find('.bookly-day').each(function (index) {
+            $day_one_column.find('.bookly-day').each(function(index) {
                 if (index !== 0) {
                     $(this).removeClass('d-block').addClass('d-none');
                 }
             });
-            $day_multi_columns.find('.bookly-hour').each(function (index) {
+            $day_multi_columns.find('.bookly-hour').each(function(index) {
                 if (index !== 0) {
                     $(this).removeClass('d-block').addClass('d-none');
                 } else {
@@ -493,7 +504,7 @@ jQuery(function ($) {
                     $('#bookly-day-one-column .bookly-column.col1 .bookly-hour:not(:first)').removeClass('d-none').addClass('d-block booked');
                 }
             });
-            $day_one_column.find('.bookly-hour').each(function (index) {
+            $day_one_column.find('.bookly-hour').each(function(index) {
                 if (index !== 0) {
                     $(this).removeClass('d-block').addClass('d-none');
                 } else {
@@ -507,19 +518,19 @@ jQuery(function ($) {
             $('.bookly-column .bookly-hour.bookly-slot-in-waiting-list').removeClass('bookly-slot-in-waiting-list').addClass('no-waiting-list').find('.bookly-time-additional').text('');
             $time_step_nop.trigger('change');
             $single_slot_popover.booklyPopover('show');
-            setTimeout(function () {
+            setTimeout(function() {
                 $single_slot_popover.booklyPopover('hide');
             }, 4500);
         } else {
             $day_multi_columns.find('.bookly-day').removeClass('d-none').addClass('d-block');
             $day_one_column.find('.bookly-day').removeClass('d-none').addClass('d-block');
-            $day_multi_columns.find('.bookly-hour').each(function () {
+            $day_multi_columns.find('.bookly-hour').each(function() {
                 if ($(this).hasClass('no-waiting-list')) {
                     $(this).removeClass('booked');
                 }
                 $(this).removeClass('d-none').addClass('d-block');
             });
-            $day_one_column.find('.bookly-hour').each(function () {
+            $day_one_column.find('.bookly-hour').each(function() {
                 if ($(this).hasClass('no-waiting-list')) {
                     $(this).removeClass('booked');
                 }
@@ -536,15 +547,15 @@ jQuery(function ($) {
     }).trigger('change');
 
     // Show time zone switcher
-    $show_time_zone_switcher.on('change', function () {
+    $show_time_zone_switcher.on('change', function() {
         $('.bookly-js-time-zone-switcher').toggle(this.checked);
     }).trigger('change');
 
     // Show nop/capacity
-    $time_step_nop.on('change', function () {
+    $time_step_nop.on('change', function() {
         if (this.checked) {
             $('.bookly-column', $columnizer).addClass('bookly-column-wide');
-            $('.bookly-column .bookly-hour:not(.booked):not(.bookly-slot-in-waiting-list) .bookly-time-additional', $columnizer).each(function () {
+            $('.bookly-column .bookly-hour:not(.booked):not(.bookly-slot-in-waiting-list) .bookly-time-additional', $columnizer).each(function() {
                 var nop = Math.ceil(Math.random() * 9);
                 if (BooklyL10n.nop_format == 'busy') {
                     $(this).text('[' + nop + '/10]');
@@ -564,9 +575,9 @@ jQuery(function ($) {
         }
     }).trigger('change');
 
-    $show_waiting_list.on('change', function () {
+    $show_waiting_list.on('change', function() {
         if (this.checked) {
-            $('.bookly-column .bookly-hour.no-waiting-list, .bookly-column .bookly-hour.bookly-slot-in-waiting-list').each(function () {
+            $('.bookly-column .bookly-hour.no-waiting-list, .bookly-column .bookly-hour.bookly-slot-in-waiting-list').each(function() {
                 $(this).removeClass('no-waiting-list').addClass('bookly-slot-in-waiting-list').find('.bookly-time-additional').text('(' + Math.floor(Math.random() * 10) + ')');
             })
         } else {
@@ -575,9 +586,9 @@ jQuery(function ($) {
         }
     }).trigger('change');
 
-    $highlight_special_hours.on('change', function () {
+    $highlight_special_hours.on('change', function() {
         if (this.checked) {
-            $('.bookly-column .bookly-hour span:first-child').each(function () {
+            $('.bookly-column .bookly-hour span:first-child').each(function() {
                 if (Math.random() < 0.2) {
                     $(this).addClass('font-weight-bold');
                 }
@@ -607,17 +618,17 @@ jQuery(function ($) {
         onRender: applyColor,
         firstDay: BooklyL10n.startOfWeek == 1
     });
-    $repeat_variant.on('change', function () {
+    $repeat_variant.on('change', function() {
         $repeat_variants.hide();
         $('.bookly-js-variant-' + this.value).show()
     }).trigger('change');
 
-    $repeat_variant_monthly.on('change', function () {
+    $repeat_variant_monthly.on('change', function() {
         $repeat_monthly_week_day.toggle(this.value != 'specific');
         $repeat_monthly_specific_day.toggle(this.value == 'specific');
     }).trigger('change');
 
-    $repeat_weekly_week_day.on('change', function () {
+    $repeat_weekly_week_day.on('change', function() {
         var $this = $(this);
         if ($this.is(':checked')) {
             $this.parent().not("[class*='active']").addClass('active');
@@ -626,23 +637,23 @@ jQuery(function ($) {
         }
     });
 
-    /**
-     * Step Repeat.
-     */
-
-    $bookly_show_step_repeat.change(function () {
+    $bookly_show_step_repeat.change(function() {
         $('.bookly-js-repeat-enabled').toggle(this.checked);
+    }).trigger('change');
+
+    $hide_times_input.change(function() {
+        $('.bookly-js-until').toggle(!this.checked);
     }).trigger('change');
 
     /**
      * Step Cart
      */
 
-    $show_cart_extras.change(function () {
+    $show_cart_extras.change(function() {
         $('.bookly-js-extras-cart').toggle(this.checked);
     }).trigger('change');
 
-    $book_more_place.change(function () {
+    $book_more_place.change(function() {
         $book_more_in_body.toggle(!this.checked);
         $book_more_in_footer.toggle(this.checked);
     }).trigger('change');
@@ -656,8 +667,8 @@ jQuery(function ($) {
         $('.bookly-user-phone').intlTelInput({
             preferredCountries: [BooklyL10n.intlTelInput.country],
             initialCountry: BooklyL10n.intlTelInput.country,
-            geoIpLookup: function (callback) {
-                $.get('https://ipinfo.io', function () {}, 'jsonp').always(function (resp) {
+            geoIpLookup: function(callback) {
+                $.get('https://ipinfo.io', function() {}, 'jsonp').always(function(resp) {
                     var countryCode = (resp && resp.country) ? resp.country : '';
                     callback(countryCode);
                 });
@@ -667,12 +678,12 @@ jQuery(function ($) {
     }
 
     // Show login button.
-    $show_login_button.change(function () {
+    $show_login_button.change(function() {
         $('#bookly-login-button').toggle(this.checked);
     }).trigger('change');
 
     // Show Facebook login button.
-    $show_facebook_login_button.change(function () {
+    $show_facebook_login_button.change(function() {
         if ($(this).data('appid') == undefined || $(this).data('appid') == '') {
             if (this.checked) {
                 $('#bookly-facebook-warning').booklyModal('show');
@@ -684,72 +695,72 @@ jQuery(function ($) {
     });
 
     // Show first and last name.
-    $first_last_name.on('change', function () {
+    $first_last_name.on('change', function() {
         $first_last_name.closest('[data-toggle="bookly-popover"]').booklyPopover('toggle');
         if (this.checked) {
-            $('.bookly-js-details-full-name').addClass('collapse');
-            $('.bookly-js-details-first-last-name').removeClass('collapse');
+            $('.bookly-js-details-full-name').addClass('bookly-collapse');
+            $('.bookly-js-details-first-last-name').removeClass('bookly-collapse');
             if ($confirm_email.is(':checked')) {
-                $('.bookly-js-details-email').removeClass('collapse');
-                $('.bookly-js-details-confirm').removeClass('collapse');
-                $('.bookly-js-details-email-confirm').addClass('collapse');
+                $('.bookly-js-details-email').removeClass('bookly-collapse');
+                $('.bookly-js-details-confirm').removeClass('bookly-collapse');
+                $('.bookly-js-details-email-confirm').addClass('bookly-collapse');
             } else {
-                $('.bookly-js-details-email').removeClass('collapse');
-                $('.bookly-js-details-confirm').addClass('collapse');
-                $('.bookly-js-details-email-confirm').addClass('collapse');
+                $('.bookly-js-details-email').removeClass('bookly-collapse');
+                $('.bookly-js-details-confirm').addClass('bookly-collapse');
+                $('.bookly-js-details-email-confirm').addClass('bookly-collapse');
             }
         } else {
-            $('.bookly-js-details-full-name').removeClass('collapse');
-            $('.bookly-js-details-first-last-name').addClass('collapse');
+            $('.bookly-js-details-full-name').removeClass('bookly-collapse');
+            $('.bookly-js-details-first-last-name').addClass('bookly-collapse');
             if ($confirm_email.is(':checked')) {
-                $('.bookly-js-details-email').addClass('collapse');
-                $('.bookly-js-details-confirm').addClass('collapse');
-                $('.bookly-js-details-email-confirm').removeClass('collapse');
+                $('.bookly-js-details-email').addClass('bookly-collapse');
+                $('.bookly-js-details-confirm').addClass('bookly-collapse');
+                $('.bookly-js-details-email-confirm').removeClass('bookly-collapse');
             } else {
-                $('.bookly-js-details-email').removeClass('collapse');
-                $('.bookly-js-details-confirm').addClass('collapse');
-                $('.bookly-js-details-email-confirm').addClass('collapse');
+                $('.bookly-js-details-email').removeClass('bookly-collapse');
+                $('.bookly-js-details-confirm').addClass('bookly-collapse');
+                $('.bookly-js-details-email-confirm').addClass('bookly-collapse');
             }
         }
     });
 
     // Show first and last name.
-    $confirm_email.on('change', function () {
+    $confirm_email.on('change', function() {
         if (this.checked) {
             if ($first_last_name.is(':checked')) {
-                $('.bookly-js-details-email').removeClass('collapse');
-                $('.bookly-js-details-confirm').removeClass('collapse');
-                $('.bookly-js-details-email-confirm').addClass('collapse');
+                $('.bookly-js-details-email').removeClass('bookly-collapse');
+                $('.bookly-js-details-confirm').removeClass('bookly-collapse');
+                $('.bookly-js-details-email-confirm').addClass('bookly-collapse');
             } else {
-                $('.bookly-js-details-email').addClass('collapse');
-                $('.bookly-js-details-confirm').addClass('collapse');
-                $('.bookly-js-details-email-confirm').removeClass('collapse');
+                $('.bookly-js-details-email').addClass('bookly-collapse');
+                $('.bookly-js-details-confirm').addClass('bookly-collapse');
+                $('.bookly-js-details-email-confirm').removeClass('bookly-collapse');
             }
         } else {
             if ($first_last_name.is(':checked')) {
-                $('.bookly-js-details-email').removeClass('collapse');
-                $('.bookly-js-details-confirm').addClass('collapse');
-                $('.bookly-js-details-email-confirm').addClass('collapse');
+                $('.bookly-js-details-email').removeClass('bookly-collapse');
+                $('.bookly-js-details-confirm').addClass('bookly-collapse');
+                $('.bookly-js-details-email-confirm').addClass('bookly-collapse');
             } else {
-                $('.bookly-js-details-email').removeClass('collapse');
-                $('.bookly-js-details-confirm').addClass('collapse');
-                $('.bookly-js-details-email-confirm').addClass('collapse');
+                $('.bookly-js-details-email').removeClass('bookly-collapse');
+                $('.bookly-js-details-confirm').addClass('bookly-collapse');
+                $('.bookly-js-details-email-confirm').addClass('bookly-collapse');
             }
         }
     });
 
     // Show notes field.
-    $show_notes_field.change(function () {
+    $show_notes_field.change(function() {
         $('#bookly-js-notes').toggle(this.checked);
     }).trigger('change');
 
     // Show birthday fields
-    $show_birthday_fields.change(function () {
+    $show_birthday_fields.change(function() {
         $('#bookly-js-birthday').toggle(this.checked);
     }).trigger('change');
 
     // Show address fields
-    $show_address_fields.change(function () {
+    $show_address_fields.change(function() {
         $('#bookly-js-address').toggle(this.checked);
         if (this.checked) {
             $show_google_maps.closest('[data-toggle="bookly-popover"]').booklyPopover('disable');
@@ -761,11 +772,11 @@ jQuery(function ($) {
     }).trigger('change');
 
     // Show address fields
-    $show_google_maps.change(function () {
+    $show_google_maps.change(function() {
         $('.bookly-js-google-maps').toggle(this.checked);
     }).trigger('change');
 
-    $show_custom_fields.change(function () {
+    $show_custom_fields.change(function() {
         $('.bookly-js-custom-fields').toggle(this.checked);
         if (this.checked) {
             $show_files.closest('[data-toggle="bookly-popover"]').booklyPopover('disable');
@@ -776,15 +787,15 @@ jQuery(function ($) {
         }
     }).trigger('change');
 
-    $show_files.change(function () {
+    $show_files.change(function() {
         $('.bookly-js-files').toggle(this.checked);
     }).trigger('change');
 
-    $show_terms.change(function () {
+    $show_terms.change(function() {
         $('.bookly-js-terms').toggle(this.checked);
     }).trigger('change');
 
-    $show_customer_information.change(function () {
+    $show_customer_information.change(function() {
         $('.bookly-js-customer-information').toggle(this.checked);
     }).trigger('change');
 
@@ -793,29 +804,29 @@ jQuery(function ($) {
      */
 
     // Switch payment step view (single/several services).
-    $('#bookly-payment-step-view').on('change', function () {
-        $('.bookly-js-payment-single-app',steps.$payment).toggle(this.value == 'single-app');
-        $('.bookly-js-payment-several-apps',steps.$payment).toggle(this.value == 'several-apps');
-        $('.bookly-js-payment-100percents-off-price',steps.$payment).toggle(this.value == '100percents-off-price');
-        $('.bookly-js-payment-gateways',steps.$payment).toggle(this.value !== '100percents-off-price');
-        $('.bookly-js-payment-gateways-intersected',steps.$payment).toggle(this.value != 'without-intersected-gateways');
-        $('.bookly-js-payment-impossible',steps.$payment).toggle(this.value == 'without-intersected-gateways');
+    $('#bookly-payment-step-view').on('change', function() {
+        $('.bookly-js-payment-single-app', steps.$payment).toggle(this.value == 'single-app');
+        $('.bookly-js-payment-several-apps', steps.$payment).toggle(this.value == 'several-apps');
+        $('.bookly-js-payment-100percents-off-price', steps.$payment).toggle(this.value == '100percents-off-price');
+        $('.bookly-js-payment-gateways', steps.$payment).toggle(this.value !== '100percents-off-price');
+        $('.bookly-js-payment-gateways-intersected', steps.$payment).toggle(this.value != 'without-intersected-gateways');
+        $('.bookly-js-payment-impossible', steps.$payment).toggle(this.value == 'without-intersected-gateways');
         $()
     }).trigger('change');
 
     // Show credit card form.
-    $('.bookly-payment-nav :radio').on('change', function () {
+    $('.bookly-payment-nav :radio').on('change', function() {
         $('form.bookly-card-form').hide();
         if (this.id == 'bookly-card-payment') {
             $('form.bookly-card-form', $(this).closest('.bookly-box')).show();
         }
     });
 
-    $show_coupons.on('change', function () {
+    $show_coupons.on('change', function() {
         $('.bookly-js-payment-coupons').toggle(this.checked);
     });
 
-    $show_tips.on('change', function () {
+    $show_tips.on('change', function() {
         $('.bookly-js-payment-tips').toggle(this.checked);
     }).trigger('change');
 
@@ -824,7 +835,7 @@ jQuery(function ($) {
      */
 
     // Switch done step view (success/error).
-    $done_step_view.on('change', function () {
+    $done_step_view.on('change', function() {
         $('.bookly-js-done-success').toggle(this.value == 'booking-success');
         $('.bookly-js-done-limit-error').toggle(this.value == 'booking-limit-error');
         $('.bookly-js-done-processing').toggle(this.value == 'booking-processing');
@@ -836,7 +847,7 @@ jQuery(function ($) {
         $('.bookly-js-qr').toggle(this.checked);
         if (this.checked) {
             $qr_info_popover.booklyPopover('show');
-            setTimeout(function () {
+            setTimeout(function() {
                 $qr_info_popover.booklyPopover('hide');
             }, 2500);
         } else {
@@ -844,15 +855,15 @@ jQuery(function ($) {
         }
     }).trigger('change');
 
-    $show_start_over.change(function () {
+    $show_start_over.change(function() {
         doneNavContainerToggle();
     }).trigger('change');
 
-    $show_download_invoice.change(function () {
+    $show_download_invoice.change(function() {
         doneNavContainerToggle();
     });
 
-    $show_download_ics.change(function () {
+    $show_download_ics.change(function() {
         doneNavContainerToggle();
     });
 
@@ -887,7 +898,7 @@ jQuery(function ($) {
     });
 
     // Custom CSS.
-    $('#bookly-custom-css-save').on('click', function (e) {
+    $('#bookly-custom-css-save').on('click', function(e) {
         let $custom_css = $('#bookly-custom-css'),
             $modal = $('#bookly-custom-css-dialog');
 
@@ -905,19 +916,19 @@ jQuery(function ($) {
                 custom_css: $custom_css.val()
             },
             dataType: 'json',
-            success: function (response) {
+            success: function(response) {
                 if (response.success) {
                     $modal.booklyModal('hide');
                     booklyAlert({success: [response.data.message]});
                 }
             },
-            complete: function () {
+            complete: function() {
                 ladda.stop();
             }
         });
     });
 
-    $('#bookly-custom-css-dialog button[data-dismiss="bookly-modal"]').on('click', function (e) {
+    $('#bookly-custom-css-dialog button[data-dismiss="bookly-modal"]').on('click', function(e) {
         var $custom_css = $('#bookly-custom-css'),
             $modal = $('#bookly-custom-css-dialog');
 
@@ -926,7 +937,7 @@ jQuery(function ($) {
         $custom_css.val(saved_css);
     });
 
-    $('#bookly-custom-css').keydown(function (e) {
+    $('#bookly-custom-css').keydown(function(e) {
         if (e.keyCode === 9) { //tab button
             var start = this.selectionStart;
             var end = this.selectionEnd;
@@ -945,10 +956,10 @@ jQuery(function ($) {
     });
 
     // Save options.
-    $save_button.on('click', function (e) {
+    $save_button.on('click', function(e) {
         e.preventDefault();
         let bookly_service_extras_show = [];
-        $extras_show.filter(':checked').each(function () {
+        $extras_show.filter(':checked').each(function() {
             bookly_service_extras_show.push(this.value);
         });
         // Prepare data.
@@ -981,8 +992,9 @@ jQuery(function ($) {
                 'bookly_group_booking_app_show_nop': Number($time_step_nop.prop('checked')),
                 'bookly_ratings_app_show_on_frontend': Number($show_ratings.prop('checked')),
                 'bookly_app_show_service_info': Number($show_service_info.prop('checked')),
+                'bookly_app_show_category_info': Number($show_category_info.prop('checked')),
                 'bookly_app_show_staff_info': Number($show_staff_info.prop('checked')),
-                'bookly_cst_required_details': $required_details.val() == 'both' ? ['phone', 'email'] : [$required_details.val()],
+                'bookly_cst_required_details': $required_details.val() === 'both' ? ['phone', 'email'] : [$required_details.val()],
                 'bookly_cst_first_last_name': Number($first_last_name.prop('checked')),
                 'bookly_app_show_email_confirm': Number($confirm_email.prop('checked')),
                 'bookly_service_extras_enabled': Number($bookly_show_step_extras.prop('checked')),
@@ -1003,39 +1015,40 @@ jQuery(function ($) {
                 'bookly_invoices_show_download_invoice': Number($show_download_invoice.prop('checked')),
                 'bookly_app_show_download_ics': Number($show_download_ics.prop('checked')),
                 'bookly_app_show_appointment_qr': Number($show_appointment_qr.prop('checked')),
-                'bookly_app_button_book_more_near_next': Number($book_more_place.prop('checked'))
+                'bookly_app_button_book_more_near_next': Number($book_more_place.prop('checked')),
+                'bookly_recurring_appointments_hide_times_input': Number($hide_times_input.prop('checked'))
             }
         };
         // Add data from editable elements.
-        $editableElements.each(function () {
+        $editableElements.each(function() {
             $.extend(data.options, $(this).booklyEditable('getValue'));
         });
 
         // Update data and show spinner while updating.
         var ladda = Ladda.create(this);
         ladda.start();
-        $.post(ajaxurl, data, function (response) {
+        $.post(ajaxurl, data, function(response) {
             ladda.stop();
             booklyAlert({success: [BooklyL10n.saved]});
         });
     });
 
     // Reset options to defaults.
-    $reset_button.on('click', function () {
+    $reset_button.on('click', function() {
         // Reset color.
         $color_picker.wpColorPicker('color', $color_picker.data('selected'));
 
         // Reset editable texts.
-        $editableElements.each(function () {
+        $editableElements.each(function() {
             $(this).booklyEditable('reset');
         });
 
-        $checkboxes.each(function () {
+        $checkboxes.each(function() {
             if ($(this).prop('checked') != $(this).data('default')) {
                 $(this).prop('checked', $(this).data('default')).trigger('change');
             }
         });
-        $selects.each(function () {
+        $selects.each(function() {
             if ($(this).val() != $(this).data('default')) {
                 $(this).val($(this).data('default')).trigger('change');
             }
@@ -1046,7 +1059,7 @@ jQuery(function ($) {
     function bookly_highlight($element) {
         var color = $color_picker.wpColorPicker('color');
         $element.css('background-color', color);
-        setTimeout(function () {
+        setTimeout(function() {
             $element.css('background-color', '#fff')
         }, 500);
     }

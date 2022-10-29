@@ -144,12 +144,12 @@ abstract class Local extends BooklyLib\Proxy\Files
         $random = '';
         do {
             $target = $dir . DIRECTORY_SEPARATOR . strtr( $mask, array(
-                '{a_id}' => sprintf( '%04d', $ca->getAppointmentId() ),
-                '{ca_id}' => sprintf( '%04d', $ca->getId() ),
-                '{cf_id}' => sprintf( '%05d', $file->getCustomFieldId() ),
-                '{random}' => $random,
-                '{extension}' => $extension,
-            ) );
+                    '{a_id}' => sprintf( '%04d', $ca->getAppointmentId() ),
+                    '{ca_id}' => sprintf( '%04d', $ca->getId() ),
+                    '{cf_id}' => sprintf( '%05d', $file->getCustomFieldId() ),
+                    '{random}' => $random,
+                    '{extension}' => $extension,
+                ) );
 
             $random = '-' . wp_generate_password( 4, false );
         } while ( $fs->exists( $target ) );
@@ -158,5 +158,16 @@ abstract class Local extends BooklyLib\Proxy\Files
         $file->setPath( $target )->save();
 
         return $file;
+    }
+
+    /**
+     * @return array
+     */
+    public static function getAllowedExtensions()
+    {
+        $extensions = strtolower( get_option( 'bookly_files_extensions', '' ) );
+        $extensions = preg_replace( '/[^a-z\d,]/', '', $extensions );
+
+        return $extensions === '' ? array() : explode( ',', $extensions );
     }
 }

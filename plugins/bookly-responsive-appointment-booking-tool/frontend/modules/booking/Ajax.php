@@ -5,10 +5,10 @@ use Bookly\Lib;
 use Bookly\Frontend\Components\Booking\InfoText;
 use Bookly\Frontend\Modules\Booking\Lib\Steps;
 use Bookly\Frontend\Modules\Booking\Lib\Errors;
-use Bookly\Lib\Utils\Common;
 
 /**
  * Class Ajax
+ *
  * @package Bookly\Frontend\Modules\Booking
  */
 class Ajax extends Lib\Base\Ajax
@@ -23,12 +23,11 @@ class Ajax extends Lib\Base\Ajax
 
     /**
      * 1. Step service.
-     *
      * response JSON
      */
     public static function renderService()
     {
-        $form_id  = self::parameter( 'form_id' );
+        $form_id = self::parameter( 'form_id' );
 
         if ( $form_id ) {
             $userData = new Lib\UserBookingData( $form_id );
@@ -88,10 +87,12 @@ class Ajax extends Lib\Base\Ajax
                 'locations' => $locasest,
                 'services' => $casest['services'],
                 'staff' => $casest['staff'],
+                'show_category_info' => (bool) get_option( 'bookly_app_show_category_info' ),
                 'show_service_info' => (bool) get_option( 'bookly_app_show_service_info' ),
                 'show_staff_info' => (bool) get_option( 'bookly_app_show_staff_info' ),
                 'show_ratings' => (bool) get_option( 'bookly_ratings_app_show_on_frontend' ),
                 'service_name_with_duration' => (bool) get_option( 'bookly_app_service_name_with_duration' ),
+                'staff_name_with_price' => (bool) get_option( 'bookly_app_staff_name_with_price' ),
                 'collaborative_hide_staff' => (bool) get_option( 'bookly_collaborative_hide_staff' ),
                 'required' => array(
                     'staff' => (int) get_option( 'bookly_app_required_employee' ),
@@ -105,7 +106,7 @@ class Ajax extends Lib\Base\Ajax
                     'staff_label' => Lib\Utils\Common::getTranslatedOption( 'bookly_l10n_label_employee' ),
                     'staff_option' => Lib\Utils\Common::getTranslatedOption( 'bookly_l10n_option_employee' ),
                     'staff_error' => Lib\Utils\Common::getTranslatedOption( 'bookly_l10n_required_employee' ),
-                )
+                ),
             ), 'service', $userData );
             $userData->sessionSave();
         } else {
@@ -118,7 +119,6 @@ class Ajax extends Lib\Base\Ajax
 
     /**
      * 2. Step Extras.
-     *
      * response JSON
      */
     public static function renderExtras()
@@ -172,7 +172,6 @@ class Ajax extends Lib\Base\Ajax
 
     /**
      * 3. Step time.
-     *
      * response JSON
      */
     public static function renderTime()
@@ -278,7 +277,7 @@ class Ajax extends Lib\Base\Ajax
 
             $slots_data = Proxy\Shared::prepareSlotsData( $slots_data );
 
-            $slots_data = array_map( function ( $slot_data ) {
+            $slots_data = array_map( function( $slot_data ) {
                 unset ( $slot_data['slot'] );
 
                 return $slot_data;
@@ -312,7 +311,7 @@ class Ajax extends Lib\Base\Ajax
                     if ( ! empty ( $slots_data ) ) {
                         $last_slot = end( $slots_data );
                         if ( ! empty( $last_slot ) && isset( $last_slot['slots'][0] ) ) {
-                            $last_slot_date = date_create( $last_slot['slots'][0]['data'][0][2] );
+                            $last_slot_date = Lib\Slots\DatePoint::fromStr( $last_slot['slots'][0]['data'][0][2] )->toClientTz()->value();
                             $date_with_slot = array(
                                 $last_slot_date->format( 'Y' ) + 0,
                                 $last_slot_date->format( 'n' ) - 1,
@@ -340,7 +339,6 @@ class Ajax extends Lib\Base\Ajax
 
     /**
      * Render next time for step Time.
-     *
      * response JSON
      */
     public static function renderNextTime()
@@ -375,7 +373,7 @@ class Ajax extends Lib\Base\Ajax
 
             $slots_data = Proxy\Shared::prepareSlotsData( $slots_data );
 
-            $slots_data = array_map( function ( $slot_data ) {
+            $slots_data = array_map( function( $slot_data ) {
                 unset ( $slot_data['slot'] );
 
                 return $slot_data;
@@ -400,12 +398,11 @@ class Ajax extends Lib\Base\Ajax
 
     /**
      * 4. Step repeat.
-     *
      * response JSON
      */
     public static function renderRepeat()
     {
-        $form_id  = self::parameter( 'form_id' );
+        $form_id = self::parameter( 'form_id' );
         $userData = new Lib\UserBookingData( $form_id );
 
         if ( $userData->load() ) {
@@ -428,7 +425,6 @@ class Ajax extends Lib\Base\Ajax
 
     /**
      * 5. Step cart.
-     *
      * response JSON
      */
     public static function renderCart()
@@ -448,7 +444,7 @@ class Ajax extends Lib\Base\Ajax
                 $userData->addChainToCart();
             }
             $progress_tracker = self::_prepareProgressTracker( Steps::CART, $userData );
-            $info_text        = InfoText::prepare( Steps::CART, Lib\Utils\Common::getTranslatedOption( 'bookly_l10n_info_cart_step' ), $userData );
+            $info_text = InfoText::prepare( Steps::CART, Lib\Utils\Common::getTranslatedOption( 'bookly_l10n_info_cart_step' ), $userData );
 
             $response = Proxy\Shared::stepOptions( array(
                 'success' => true,
@@ -485,7 +481,7 @@ class Ajax extends Lib\Base\Ajax
                 $userData->addChainToCart();
             }
 
-            $info_text       = Lib\Utils\Common::getTranslatedOption( 'bookly_l10n_info_details_step' );
+            $info_text = Lib\Utils\Common::getTranslatedOption( 'bookly_l10n_info_details_step' );
             $info_text_guest = ! get_current_user_id() && ! $userData->getFacebookId()
                 ? Lib\Utils\Common::getTranslatedOption( 'bookly_l10n_info_details_step_guest' )
                 : '';
@@ -493,10 +489,10 @@ class Ajax extends Lib\Base\Ajax
             // Render main template.
             $html = self::renderTemplate( '6_details', array(
                 'progress_tracker' => self::_prepareProgressTracker( Steps::DETAILS, $userData ),
-                'info_text'        => InfoText::prepare( Steps::DETAILS, $info_text, $userData ),
-                'info_text_guest'  => InfoText::prepare( Steps::DETAILS, $info_text_guest, $userData ),
-                'userData'         => $userData,
-                'show_back_btn'    => $userData->getFirstStep() != Steps::DETAILS,
+                'info_text' => InfoText::prepare( Steps::DETAILS, $info_text, $userData ),
+                'info_text_guest' => InfoText::prepare( Steps::DETAILS, $info_text_guest, $userData ),
+                'userData' => $userData,
+                'show_back_btn' => $userData->getFirstStep() != Steps::DETAILS,
             ), false );
 
             // Render additional templates.
@@ -504,6 +500,7 @@ class Ajax extends Lib\Base\Ajax
             if ( get_option( 'bookly_cst_verify_customer_details', false ) ) {
                 $html .= self::renderTemplate( '_customer_verification_code', array(), false );
             }
+            // Mady Logic below
             if ( true ||
                 ! get_current_user_id() &&
                 ! $userData->getFacebookId() && (
@@ -543,7 +540,6 @@ class Ajax extends Lib\Base\Ajax
 
     /**
      * 7. Step payment.
-     *
      * response JSON
      */
     public static function renderPayment()
@@ -551,9 +547,9 @@ class Ajax extends Lib\Base\Ajax
         $userData = new Lib\UserBookingData( self::parameter( 'form_id' ) );
 
         if ( $userData->load() ) {
-            /** @var string $payment_step   'skip' | 'show' | 'show-100%-discount' */
+            /** @var string $payment_step 'skip' | 'show' | 'show-100%-discount' */
             $payment_step = Lib\Config::paymentStepDisabled() ? 'skip' : 'show';
-            $show_cart    = Lib\Config::showStepCart();
+            $show_cart = Lib\Config::showStepCart();
             if ( ! $show_cart ) {
                 $userData->addChainToCart();
             }
@@ -576,7 +572,7 @@ class Ajax extends Lib\Base\Ajax
 
             if ( $payment_step !== 'skip' ) {
                 $progress_tracker = self::_prepareProgressTracker( Steps::PAYMENT, $userData );
-                $payment_options  = array();
+                $payment_options = array();
 
                 // Prepare info texts.
                 if ( $payment_step === 'show' ) {
@@ -639,7 +635,7 @@ class Ajax extends Lib\Base\Ajax
                 ), 'payment', $userData );
             } else {
                 $response = array(
-                    'success'  => true,
+                    'success' => true,
                     'disabled' => true,
                 );
             }
@@ -654,7 +650,6 @@ class Ajax extends Lib\Base\Ajax
 
     /**
      * 8. Step done ( complete ).
-     *
      * response JSON
      */
     public static function renderComplete()
@@ -663,24 +658,28 @@ class Ajax extends Lib\Base\Ajax
         if ( $userData->load() ) {
             $progress_tracker = self::_prepareProgressTracker( Steps::DONE, $userData );
             $state = self::parameter( 'error' );
-            if ( $state == 'appointments_limit_reached' ) {
-                $info_text = InfoText::prepare( Steps::DONE, Lib\Utils\Common::getTranslatedOption( 'bookly_l10n_info_complete_step_limit_error' ), $userData );
-            } elseif ( $state == 'group_skip_payment' && Lib\Config::customerGroupsActive() ) {
-                $info_text = InfoText::prepare( Steps::DONE, Lib\Utils\Common::getTranslatedOption( 'bookly_l10n_info_complete_step_group_skip_payment' ), $userData );
+            $codes = InfoText::getCodes( Steps::DONE, $userData );
+            if ( $state === 'appointments_limit_reached' ) {
+                $info_text = InfoText::replace( Lib\Utils\Common::getTranslatedOption( 'bookly_l10n_info_complete_step_limit_error' ), $codes );
             } else {
-                $payment = $userData->extractPaymentStatus();
-                do {
-                    if ( $payment ) {
-                        switch ( $payment['status'] ) {
-                            case 'processing':
-                                $state = 'processing';
-                                $info_text = InfoText::prepare( Steps::DONE, Lib\Utils\Common::getTranslatedOption( 'bookly_l10n_info_complete_step_processing' ), $userData );
-                                break ( 2 );
+                if ( $state === 'group_skip_payment' && Lib\Config::customerGroupsActive() ) {
+                    $info_text = InfoText::replace( Lib\Utils\Common::getTranslatedOption( 'bookly_l10n_info_complete_step_group_skip_payment' ), $codes );
+                } else {
+                    $payment = $userData->extractPaymentStatus( null );
+                    do {
+                        if ( $payment ) {
+                            switch ( $payment['status'] ) {
+                                case 'processing':
+                                    $state = 'processing';
+                                    $info_text = Lib\Utils\Common::getTranslatedOption( 'bookly_l10n_info_complete_step_processing' );
+                                    break ( 2 );
+                            }
                         }
-                    }
-                    $state = 'completed';
-                    $info_text = InfoText::prepare( Steps::DONE, Lib\Utils\Common::getTranslatedOption( 'bookly_l10n_info_complete_step' ), $userData );
-                } while ( 0 );
+                        $state = 'completed';
+                        $info_text = Lib\Utils\Common::getTranslatedOption( 'bookly_l10n_info_complete_step' );
+                    } while ( 0 );
+                }
+                $info_text = ( Lib\Config::proActive() ? Proxy\Pro::prepareHtmlContentDoneStep( $userData, $codes ) : '' ) . InfoText::replace( $info_text, $codes, true, true, array( 'online_meeting_url', 'online_meeting_join_url' ) );
             }
             $response = Proxy\Shared::stepOptions( array(
                 'success' => true,
@@ -701,7 +700,7 @@ class Ajax extends Lib\Base\Ajax
     public static function sessionSave()
     {
         $form_id = self::parameter( 'form_id' );
-        $errors  = array();
+        $errors = array();
         if ( $form_id ) {
             $userData = new Lib\UserBookingData( $form_id );
             $userData->load();
@@ -725,16 +724,16 @@ class Ajax extends Lib\Base\Ajax
                     $parameters['captcha_ids'] = json_decode( $parameters['captcha_ids'], true );
                     foreach ( $parameters['cart'] as &$service ) {
                         // Remove captcha from custom fields.
-                        $custom_fields = array_filter( json_decode( $service['custom_fields'], true ), function ( $field ) use ( $parameters ) {
+                        $custom_fields = array_filter( json_decode( $service['custom_fields'], true ), function( $field ) use ( $parameters ) {
                             return ! in_array( $field['id'], $parameters['captcha_ids'] );
                         } );
                         // Index the array numerically.
                         $service['custom_fields'] = array_values( $custom_fields );
                     }
                     // Copy custom fields to all cart items.
-                    $cart           = array();
+                    $cart = array();
                     $cf_per_service = Lib\Config::customFieldsPerService();
-                    $merge_cf       = Lib\Config::customFieldsMergeRepeating();
+                    $merge_cf = Lib\Config::customFieldsMergeRepeating();
                     foreach ( $userData->cart->getItems() as $cart_key => $_cart_item ) {
                         $cart[ $cart_key ] = $cf_per_service
                             ? $parameters['cart'][ $merge_cf ? $_cart_item->getService()->getId() : $cart_key ]
@@ -762,7 +761,7 @@ class Ajax extends Lib\Base\Ajax
             $failed_cart_key = $userData->cart->getFailedKey();
             if ( $failed_cart_key === null ) {
                 $cart_info = $userData->cart->getInfo();
-                $is_payment_disabled    = Lib\Config::paymentStepDisabled();
+                $is_payment_disabled = Lib\Config::paymentStepDisabled();
                 $skip_payment = Lib\Proxy\CustomerGroups::getSkipPayment( $userData->getCustomer() );
                 $gateways = self::getGateways( $userData, clone $cart_info );
 
@@ -789,14 +788,29 @@ class Ajax extends Lib\Base\Ajax
                         } else {
                             $payment = new Lib\Entities\Payment();
                             $status = Lib\Entities\Payment::STATUS_PENDING;
-                            $type   = Lib\Entities\Payment::TYPE_LOCAL;
+                            $type = Lib\Entities\Payment::TYPE_LOCAL;
+                            $paid = 0;
                             foreach ( $gateways as $gateway => $data ) {
                                 if ( $data['pay'] == 0 ) {
                                     $status = Lib\Entities\Payment::STATUS_COMPLETED;
-                                    $type   = Lib\Entities\Payment::TYPE_FREE;
+                                    $type = Lib\Entities\Payment::TYPE_FREE;
                                     $cart_info->setGateway( $gateway );
                                     $payment->setGatewayPriceCorrection( $cart_info->getPriceCorrection() );
                                     break;
+                                }
+                            }
+
+                            if ( $status !== Lib\Entities\Payment::STATUS_COMPLETED ) {
+                                $gift_card = $userData->getGiftCard();
+                                if ( $gift_card ) {
+                                    $type = Lib\Entities\Payment::TYPE_GIFT_CARD;
+                                    $cart_info->setGateway( $type );
+                                    if ( $gift_card->getBalance() >= $cart_info->getPayNow() ) {
+                                        $status = Lib\Entities\Payment::STATUS_COMPLETED;
+                                        $paid = $cart_info->getPayNow();
+                                        $gift_card->charge( $paid )->save();
+                                        $payment->setGatewayPriceCorrection( $cart_info->getPriceCorrection() );
+                                    }
                                 }
                             }
 
@@ -806,7 +820,7 @@ class Ajax extends Lib\Base\Ajax
                                 ->setPaidType( Lib\Entities\Payment::PAY_IN_FULL )
                                 ->setTotal( $cart_info->getTotal() )
                                 ->setTax( $cart_info->getTotalTax() )
-                                ->setPaid( 0 )
+                                ->setPaid( $paid )
                                 ->save();
                         }
                     }
@@ -823,14 +837,14 @@ class Ajax extends Lib\Base\Ajax
                 } else {
                     $response = array(
                         'success' => false,
-                        'error'   => Errors::PAY_LOCALLY_NOT_AVAILABLE,
+                        'error' => Errors::PAY_LOCALLY_NOT_AVAILABLE,
                     );
                 }
             } else {
                 $response = array(
-                    'success'         => false,
+                    'success' => false,
                     'failed_cart_key' => $failed_cart_key,
-                    'error'           => Errors::CART_ITEM_NOT_AVAILABLE,
+                    'error' => Errors::CART_ITEM_NOT_AVAILABLE,
                 );
             }
         } else {
@@ -854,9 +868,9 @@ class Ajax extends Lib\Base\Ajax
                 $response = array( 'success' => true );
             } else {
                 $response = array(
-                    'success'         => false,
+                    'success' => false,
                     'failed_cart_key' => $failed_cart_key,
-                    'error'           => Errors::CART_ITEM_NOT_AVAILABLE,
+                    'error' => Errors::CART_ITEM_NOT_AVAILABLE,
                 );
             }
         } else {
@@ -887,7 +901,7 @@ class Ajax extends Lib\Base\Ajax
      * Approve appointment using token.
      */
     public static function approveAppointment()
-    {   echo "<pre>".print_r('Approve section',true)."</pre>";
+    {   echo "<pre>".print_r('Approve section',true)."</pre>"; // Mady M logic
         $url = get_option( 'bookly_url_approve_denied_page_url' );
         echo "<pre>".print_r('Approve section',true)."</pre>";
         // Decode token.
@@ -950,6 +964,99 @@ class Ajax extends Lib\Base\Ajax
 
         wp_redirect( $url );
         Lib\Utils\Common::redirect( $url );
+        exit ( 0 );
+    }
+
+    /**
+     * Approve appointment using token.
+     */
+    public static function approveAppointment1() {   // Mady Logic
+        echo "<pre>".print_r('Approve section',true)."</pre>";
+        $url = get_option( 'bookly_url_approve_denied_page_url' );
+        echo "<pre>".print_r(self::parameter( 'appt_id' ),true)."</pre>";
+
+        // Decode token.
+        //$token = Lib\Utils\Common::xorDecrypt( self::parameter( 'token' ), 'approve' );
+        $customer_appointment_id = self::parameter( 'appt_id' );
+
+
+        $appointment = new Lib\Entities\Appointment();
+        $appointment->load( $customer_appointment_id );
+        echo "<pre>".print_r($appointment,true)."</pre>"; // it works
+
+        $ca_to_approve = Lib\Entities\CustomerAppointment::find( $appointment['ca_id'] );
+        echo "<pre>".print_r($ca_to_approve,true)."</pre>";
+        //$ca_to_approve = new Lib\Entities\CustomerAppointment();
+        $appointment->load( $customer_appointment_id );
+        //$ca_to_approve->load( $customer_appointment_id );
+
+
+
+        echo "<pre>".print_r($ca_to_approve,true)."</pre>";
+
+        $pdf_url = self::parameter( 'pdfUrl' );
+        //echo "<pre>".print_r($pdf_url,true)."</pre>";
+        $ca_to_approve = new Lib\Entities\CustomerAppointment();
+        $ca_to_approve->loadBy( array('customer_appointment_id' => $customer_appointment_id));
+        echo "<pre>".print_r($ca_to_approve,true)."</pre>";
+        $token = $ca_to_approve -> getToken();
+        echo "<token>".print_r($token,true)."</token>";
+        echo "<pre>".print_r($ca_to_approve,true)."</pre>";
+        if ( $ca_to_approve->loadBy( array( 'token' => $token ) ) ) {
+            //echo "<pre>".print_r('token valid',true)."</pre>";
+            //echo "<pre>".print_r($ca_to_approve,true)."</pre>";
+            $item = Lib\DataHolders\Booking\Item::collect( $ca_to_approve, Lib\Proxy\CustomStatuses::prepareFreeStatuses( array(
+                Lib\Entities\CustomerAppointment::STATUS_APPROVED,
+                Lib\Entities\CustomerAppointment::STATUS_REJECTED,
+                Lib\Entities\CustomerAppointment::STATUS_CANCELLED,
+                Lib\Entities\CustomerAppointment::STATUS_DONE,
+            ) ) );
+            //echo "<pre>".print_r($item,true)."</pre>";
+            if ( $item ) {
+                //echo "<pre>".print_r('valid',true)."</pre>";
+                $success = true;
+                foreach ( $item->getItems() as $simple ) {
+                    $ca = $simple->getCA();
+                    $oldNotes = $simple->getCA()->getNotes();
+                    $ca->setNotes( $oldNotes . $pdf_url );
+                    //$customer = Lib\Entities\Customer::find( $ca->getCustomerId() );
+                    //echo "<pre>".print_r('Section 1',true)."</pre>";
+                    //echo "<pre>".print_r($customer->getInfoFields(),true)."</pre>";
+                    //$customer ->setInfoFields( json_decode( $customer->getInfoFields(), true ) );
+                    if ( $ca->getStatus() == Lib\Entities\CustomerAppointment::STATUS_WAITLISTED ) {
+                        $info = $simple->getAppointment()->getNopInfo();
+                        if ( $info['total_nop'] + $ca->getNumberOfPersons() > $info['capacity_max'] ) {
+                            $success = false;
+                            break;
+                        }
+                    }
+                }
+                echo "<pre>".print_r($item,true)."</pre>";
+                if ( $success ) {
+                    $item->setStatus( 'Signature Received' );
+                    foreach ( $item->getItems() as $simple ) {
+                        if ( $simple->getCA()->save() ) {
+                            $customer = Lib\Entities\Customer::find( $simple->getCA()->getCustomerId() );
+                            $oldNotes = $simple->getCA()->getNotes();
+                            $simple->getCA()->setNotes($oldNotes . $pdf_url );
+                            //echo "<pre>".print_r($customer,true)."</pre>";
+                            $appointment = $simple->getAppointment();
+                            // Google Calendar.
+                            Lib\Proxy\Pro::syncGoogleCalendarEvent( $appointment );
+                            // Outlook Calendar.
+                            Lib\Proxy\OutlookCalendar::syncEvent( $appointment );
+                            // Waiting list.
+                            Lib\Proxy\WaitingList::handleParticipantsChange( false, $appointment );
+                        }
+                    }
+                    Lib\Notifications\Booking\Sender::send( $item );
+                    $url = get_option( 'bookly_url_approve_page_url' );
+                }
+            }
+        }
+
+        //wp_redirect( $url );
+        //Lib\Utils\Common::redirect( $url );
         exit ( 0 );
     }
 
@@ -1092,37 +1199,37 @@ class Ajax extends Lib\Base\Ajax
                 $customer = new Lib\Entities\Customer();
                 if ( $customer->loadBy( array( 'wp_user_id' => $user->ID ) ) ) {
                     $user_info = array(
-                        'email'              => $customer->getEmail(),
-                        'full_name'          => $customer->getFullName(),
-                        'first_name'         => $customer->getFirstName(),
-                        'last_name'          => $customer->getLastName(),
-                        'phone'              => $customer->getPhone(),
-                        'country'            => $customer->getCountry(),
-                        'state'              => $customer->getState(),
-                        'postcode'           => $customer->getPostcode(),
-                        'city'               => $customer->getCity(),
-                        'street'             => $customer->getStreet(),
-                        'street_number'      => $customer->getStreetNumber(),
+                        'email' => $customer->getEmail(),
+                        'full_name' => $customer->getFullName(),
+                        'first_name' => $customer->getFirstName(),
+                        'last_name' => $customer->getLastName(),
+                        'phone' => $customer->getPhone(),
+                        'country' => $customer->getCountry(),
+                        'state' => $customer->getState(),
+                        'postcode' => $customer->getPostcode(),
+                        'city' => $customer->getCity(),
+                        'street' => $customer->getStreet(),
+                        'street_number' => $customer->getStreetNumber(),
                         'additional_address' => $customer->getAdditionalAddress(),
-                        'birthday'           => $customer->getBirthday(),
-                        'info_fields'        => json_decode( $customer->getInfoFields() ),
+                        'birthday' => $customer->getBirthday(),
+                        'info_fields' => json_decode( $customer->getInfoFields() ),
                     );
                 } else if ( !$customer->loadBy( array( 'wp_user_id' => $user->ID ) ) ) {
                    $response = array( 'success' => false, 'error' => Errors::INCORRECT_USERNAME_PASSWORD );
                    wp_send_json( $response );
                    return;
-                }else{
-                    $user_info  = array(
-                        'email'      => $user->user_email,
-                        'full_name'  => $user->display_name,
+                } else {
+                    $user_info = array(
+                        'email' => $user->user_email,
+                        'full_name' => $user->display_name,
                         'first_name' => $user->user_firstname,
-                        'last_name'  => $user->user_lastname,
+                        'last_name' => $user->user_lastname,
                     );
                 }
                 $userData->fillData( $user_info );
                 $response = array(
                     'success' => true,
-                    'data'    => $user_info + array( 'csrf_token' => Lib\Utils\Common::getCsrfToken() ),
+                    'data' => $user_info + array( 'csrf_token' => Lib\Utils\Common::getCsrfToken() ),
                 );
             }
         } else {
@@ -1142,6 +1249,7 @@ class Ajax extends Lib\Base\Ajax
         $userData = new Lib\UserBookingData( self::parameter( 'form_id' ) );
 
         if ( $userData->load() && $userData->getOrderId() ) {
+
             $ics = Lib\Utils\Ics\Feed::createFromBookingData( $userData );
 
             header( 'Content-Type: text/calendar' );
@@ -1181,14 +1289,14 @@ class Ajax extends Lib\Base\Ajax
                         } else {
                             if ( $item->getService()->getType() == Lib\Entities\Service::TYPE_SIMPLE ) {
                                 $staff_ids = $item->getStaffIds();
-                                $staff     = null;
+                                $staff = null;
                                 if ( count( $staff_ids ) === 1 ) {
                                     $staff = Lib\Entities\Staff::find( $staff_ids[0] );
                                 }
                                 if ( $staff ) {
                                     $staff_service = new Lib\Entities\StaffService();
                                     $staff_service->loadBy( array(
-                                        'staff_id'   => $staff->getId(),
+                                        'staff_id' => $staff->getId(),
                                         'service_id' => $item->getService()->getId(),
                                         'location_id' => Lib\Proxy\Locations::prepareStaffLocationId( $item->getLocationId(), $staff->getId() ) ?: null,
                                     ) );
@@ -1212,7 +1320,7 @@ class Ajax extends Lib\Base\Ajax
                 } else {
                     $cart_info = $userData->cart->getInfo();
                     if ( $cart_info->getTotal() == 0 || $cart_info->getDeposit() == 0 ) {
-                        $skip_payment_step = !$cart_info->withDiscount();
+                        $skip_payment_step = ! $cart_info->withDiscount();
                     }
                 }
             }
@@ -1236,7 +1344,7 @@ class Ajax extends Lib\Base\Ajax
             }
 
             $result = self::renderTemplate( '_progress_tracker', array(
-                'step'       => $step,
+                'step' => $step,
                 'skip_steps' => array(
                     'service' => Lib\Session::hasFormVar( self::parameter( 'form_id' ), 'skip_service_step' ),
                     'extras' => ! ( Lib\Config::serviceExtrasActive() && get_option( 'bookly_service_extras_enabled' ) ),
@@ -1272,15 +1380,15 @@ class Ajax extends Lib\Base\Ajax
     private static function _setDataForSkippedServiceStep( Lib\UserBookingData $userData )
     {
         // Staff ids.
-        $defaults   = Lib\Session::getFormVar( self::parameter( 'form_id' ), 'defaults' );
+        $defaults = Lib\Session::getFormVar( self::parameter( 'form_id' ), 'defaults' );
         $service_id = $defaults['service_id'];
         if ( $defaults['staff_id'] == 0 ) {
             $service = Lib\Entities\Service::find( $defaults['service_id'] );
             if ( $service && $service->withSubServices() ) {
                 $sub_services = $service->getSubServices();
-                $service_id   = reset( $sub_services )->getId();
+                $service_id = reset( $sub_services )->getId();
             }
-            $staff_ids  = Lib\Entities\StaffService::query( 'ss' )
+            $staff_ids = Lib\Entities\StaffService::query( 'ss' )
                 ->leftJoin( 'Staff', 's', 's.id = ss.staff_id' )
                 ->where( 'ss.service_id', $service_id )
                 ->where( 's.visibility', 'public' )
@@ -1289,10 +1397,11 @@ class Ajax extends Lib\Base\Ajax
             $staff_ids = array( $defaults['staff_id'] );
         }
         // Date.
-        $date_from  = Lib\Slots\DatePoint::now()->modify( Lib\Proxy\Pro::getMinimumTimePriorBooking( $service_id ) );
+        $date_from = isset( $defaults['date_from'] ) && $defaults['date_from'] ? Lib\Slots\DatePoint::fromStr( $defaults['date_from'] ) : Lib\Slots\DatePoint::now()->modify( Lib\Proxy\Pro::getMinimumTimePriorBooking( $service_id ) );
         // Days and times.
         $days_times = Lib\Config::getDaysAndTimes();
-        $time_from  = key( $days_times['times'] );
+
+        $time_from = isset( $defaults['time_from'] ) && $defaults['time_from'] ? $defaults['time_from'] : key( $days_times['times'] );
         end( $days_times['times'] );
 
         $userData->chain->clear();
@@ -1300,19 +1409,19 @@ class Ajax extends Lib\Base\Ajax
         $chain_item
             ->setNumberOfPersons( 1 )
             ->setQuantity( 1 )
-            ->setUnits( 1 )
+            ->setUnits( isset( $defaults['units'] ) && $defaults['units'] ? $defaults['units'] : 1 )
             ->setServiceId( $defaults['service_id'] )
             ->setStaffIds( $staff_ids )
             ->setLocationId( $defaults['location_id'] ?: null );
         $userData->chain->add( $chain_item );
 
         $userData->fillData( array(
-            'date_from'      => $date_from->toClientTz()->format( 'Y-m-d' ),
-            'days'           => array_keys( $days_times['days'] ),
+            'date_from' => $date_from->toClientTz()->format( 'Y-m-d' ),
+            'days' => array_keys( $days_times['days'] ),
             'edit_cart_keys' => array(),
-            'slots'          => array(),
-            'time_from'      => $time_from,
-            'time_to'        => key( $days_times['times'] ),
+            'slots' => array(),
+            'time_from' => $time_from,
+            'time_to' => isset( $defaults['time_to'] ) && $defaults['time_to'] ? $defaults['time_to'] : key( $days_times['times'] ),
         ) );
     }
 
@@ -1323,22 +1432,22 @@ class Ajax extends Lib\Base\Ajax
      */
     private static function _handleTimeZone( Lib\UserBookingData $userData )
     {
-        $time_zone        = null;
+        $time_zone = null;
         $time_zone_offset = null;  // in minutes
 
         if ( self::hasParameter( 'time_zone_offset' ) ) {
             // Browser values.
-            $time_zone        = self::parameter( 'time_zone' );
+            $time_zone = self::parameter( 'time_zone' );
             $time_zone_offset = self::parameter( 'time_zone_offset' );
-        } else if ( self::hasParameter( 'time_zone' ) ) {
+        } elseif ( self::hasParameter( 'time_zone' ) ) {
             // WordPress value.
             $time_zone = self::parameter( 'time_zone' );
             if ( preg_match( '/^UTC[+-]/', $time_zone ) ) {
-                $offset           = preg_replace( '/UTC\+?/', '', $time_zone );
-                $time_zone        = null;
-                $time_zone_offset = - $offset * 60;
+                $offset = preg_replace( '/UTC\+?/', '', $time_zone );
+                $time_zone = null;
+                $time_zone_offset = -$offset * 60;
             } else {
-                $time_zone_offset = - timezone_offset_get( timezone_open( $time_zone ), new \DateTime() ) / 60;
+                $time_zone_offset = -timezone_offset_get( timezone_open( $time_zone ), new \DateTime() ) / 60;
             }
         }
 
@@ -1379,7 +1488,7 @@ class Ajax extends Lib\Base\Ajax
                             'url_cards_image' => plugins_url( 'frontend/resources/images/cards.png', Lib\Plugin::getMainFile() ),
                             'show_price' => Lib\Proxy\Shared::showPaymentSpecificPrices( false ),
                             'cart_info' => $cart_info,
-                            'payment_status' => $userData->extractPaymentStatus(),
+                            'payment_status' => $userData->extractPaymentStatus( $cart_info->getGateway() ),
                         ),
                         false
                     ),

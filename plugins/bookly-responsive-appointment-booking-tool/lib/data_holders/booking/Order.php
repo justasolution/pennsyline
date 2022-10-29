@@ -164,6 +164,17 @@ class Order
     }
 
     /**
+     * Create Order from order_id.
+     *
+     * @param int $order_id
+     * @return Order|null
+     */
+    public static function createFromOrderId( $order_id )
+    {
+        return self::createOrderByCaList( Lib\Entities\CustomerAppointment::query()->where( 'order_id', $order_id )->find() );
+    }
+
+    /**
      * Create Order from payment.
      *
      * @param Lib\Entities\Payment $payment
@@ -171,10 +182,18 @@ class Order
      */
     public static function createFromPayment( Lib\Entities\Payment $payment )
     {
-        /** @var Lib\Entities\CustomerAppointment[] $ca_list */
-        $ca_list = Lib\Entities\CustomerAppointment::query()->where( 'payment_id', $payment->getId() )->find();
+        return self::createOrderByCaList( Lib\Entities\CustomerAppointment::query()->where( 'payment_id', $payment->getId() )->find() );
+    }
+
+    /**
+     * @param Lib\Entities\CustomerAppointment[] $ca_list
+     * @return static|null
+     */
+    private static function createOrderByCaList( $ca_list )
+    {
         if ( $ca_list ) {
             $series_id = $ca_list[0]->getSeriesId();
+            $payment_id = $ca_list[0]->getPaymentId();
             if ( $series_id ) {
                 // Make a list of customer appointments from series.
                 // Possibly customer paid only for first appointment in series of recurring appointments.
@@ -183,21 +202,23 @@ class Order
 
             $item_key = 0;
             $customer = Lib\Entities\Customer::find( $ca_list[0]->getCustomerId() );
-            $order    = static::create( $customer );
-            $order->setPayment( $payment );
+            $order = static::create( $customer );
+            if ( $payment_id ) {
+                $order->setPayment( Lib\Entities\Payment::find( $payment_id ) );
+            }
             /**
-             * @var Lib\DataHolders\Booking\Compound[] $componds
+             * @var Lib\DataHolders\Booking\Compound[] $compounds
              * @var Lib\DataHolders\Booking\Collaborative[] $collaboratives
              */
-            $componds = $collaboratives = array();
-            $series   = null;
+            $compounds = $collaboratives = array();
+            $series = null;
             foreach ( $ca_list as $ca ) {
                 $type   = Lib\Entities\Service::TYPE_SIMPLE;
 
                 if ( $ca->getCompoundServiceId() !== null ) {
                     $type = Lib\Entities\Service::TYPE_COMPOUND;
-                    if ( ! array_key_exists( $ca->getCompoundToken(), $componds ) ) {
-                        $componds[ $ca->getCompoundToken() ] = Lib\DataHolders\Booking\Compound::create( Lib\Entities\Service::find( $ca->getCompoundServiceId() ) )
+                    if ( ! array_key_exists( $ca->getCompoundToken(), $compounds ) ) {
+                        $compounds[ $ca->getCompoundToken() ] = Lib\DataHolders\Booking\Compound::create( Lib\Entities\Service::find( $ca->getCompoundServiceId() ) )
                             ->setToken( $ca->getCompoundToken() );
                     }
                 } elseif ( $ca->getCollaborativeServiceId() !== null ) {
@@ -229,7 +250,7 @@ class Order
                 $item = Lib\DataHolders\Booking\Simple::create( $ca );
 
                 if ( $type === Lib\Entities\Service::TYPE_COMPOUND ) {
-                    $item = $componds[ $ca->getCompoundToken() ]->addItem( $item );
+                    $item = $compounds[ $ca->getCompoundToken() ]->addItem( $item );
                 } elseif ( $type === Lib\Entities\Service::TYPE_COLLABORATIVE ) {
                     $item = $collaboratives[ $ca->getCollaborativeToken() ]->addItem( $item );
                 }

@@ -17,9 +17,10 @@ abstract class Attachments
      * Create attachment files.
      *
      * @param Notification $notification
+     * @param string $recipient
      * @return array
      */
-    abstract public function createFor( Notification $notification );
+    abstract public function createFor( Notification $notification, $recipient );
 
     /**
      * Remove attachment files.

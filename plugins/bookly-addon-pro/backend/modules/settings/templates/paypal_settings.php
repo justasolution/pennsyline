@@ -7,15 +7,15 @@ use Bookly\Backend\Components;
 use Bookly\Lib\Utils\DateTime;
 use BooklyPro\Lib;
 ?>
-<div class="card bookly-collapse" data-slug="paypal">
+<div class="card bookly-collapse-with-arrow" data-slug="paypal">
     <div class="card-header d-flex align-items-center">
         <?php Elements::renderReorder() ?>
-        <a href="#bookly_pmt_paypal" class="ml-2" role="button" data-toggle="collapse">
+        <a href="#bookly_pmt_paypal" class="ml-2" role="button" data-toggle="bookly-collapse">
             PayPal
         </a>
         <img class="ml-auto" src="<?php echo plugins_url( 'frontend/resources/images/paypal.png', Lib\Plugin::getMainFile() ) ?>" />
     </div>
-    <div id="bookly_pmt_paypal" class="collapse show">
+    <div id="bookly_pmt_paypal" class="bookly-collapse bookly-show">
         <div class="card-body">
             <div class="form-group">
                 <?php Selects::renderSingle( 'bookly_paypal_enabled', null, null,
@@ -26,7 +26,7 @@ use BooklyPro\Lib;
                 ) ?>
             </div>
             <div class="bookly-paypal">
-                <div class="bookly-paypal-ec">
+                <div class="bookly-paypal-express-checkout">
                     <?php Inputs::renderText( 'bookly_paypal_api_username', __( 'API Username', 'bookly' ) ) ?>
                     <?php Inputs::renderText( 'bookly_paypal_api_password', __( 'API Password', 'bookly' ) ) ?>
                     <?php Inputs::renderText( 'bookly_paypal_api_signature', __( 'API Signature', 'bookly' ) ) ?>

@@ -165,7 +165,7 @@ class Page extends Lib\Base\Ajax
         );
         $query
             ->select(
-                'a.id, ca.id as ca_id, ca.series_id, a.staff_any, a.location_id, a.internal_note, a.start_date, DATE_ADD(a.end_date, INTERVAL IF(ca.extras_consider_duration, a.extras_duration, 0) SECOND) AS end_date,
+                'a.id, ca.id as ca_id, ca.series_id, a.staff_any, a.location_id, a.internal_note, a.start_date, DATE_ADD(a.end_date, INTERVAL a.extras_duration SECOND) AS end_date,
                 COALESCE(s.title,a.custom_service_name) AS service_name, COALESCE(s.color,"silver") AS service_color, s.info AS service_info,
                 COALESCE(ss.price,s.price,a.custom_service_price) AS service_price,
                 st.id AS staff_id,
@@ -192,7 +192,11 @@ class Page extends Lib\Base\Ajax
             ->leftJoin( 'Payment', 'p', 'p.id = ca.payment_id' )
             ->leftJoin( 'Service', 's', 's.id = a.service_id' )
             ->leftJoin( 'Category', 'ct', 'ct.id = s.category_id' )
-            ->leftJoin( 'Staff', 'st', 'st.id = a.staff_id' );
+            ->leftJoin( 'Staff', 'st', 'st.id = a.staff_id' )
+            ->whereNot( 'a.start_date', null )
+            // Custom service without customers have not ca.id
+            ->groupBy( 'COALESCE(ca.id,CONCAT(\'appointment-\',a.id))' )
+        ;
         if ( Lib\Proxy\Locations::servicesPerLocationAllowed() ) {
             $query = Proxy\Locations::prepareCalendarQuery( $query );
         } else {
@@ -224,6 +228,7 @@ class Page extends Lib\Base\Ajax
                 $appointments[ $appointment['id'] ] = $appointment;
             }
             $appointments[ $appointment['id'] ]['customers'][] = array(
+                'appointment_id' => $appointment['id'],
                 'appointment_notes' => $appointment['appointment_notes'],
                 'booking_number' => Config::groupBookingActive() ? $appointment['id'] . '-' . $appointment['ca_id'] : $appointment['id'],
                 'client_birthday' => $appointment['client_birthday'],
@@ -238,6 +243,7 @@ class Page extends Lib\Base\Ajax
                 'payment_type' => Lib\Entities\Payment::typeToString( $appointment['payment_gateway'] ),
                 'status' => $appointment['status'],
                 '_info_fields' => json_decode( $appointment['info_fields'], true ),
+                '_custom_fields' => json_decode( $appointment['custom_fields'], true ),
             );
         }
 
@@ -265,17 +271,31 @@ class Page extends Lib\Base\Ajax
             ) );
             $colors['mixed'] = get_option( 'bookly_appointment_status_mixed_color' );
         }
+        //echo "<pre>".print_r(count($appointments),true)."</pre>";
         foreach ( $appointments as $key => $appointment ) {
+            //$customer_appointment = $appointment->getCustomerAppointments( true );
+            //echo "<pre>".print_r($appointment,true)."</pre>";
+            $ca = CustomerAppointment::find( $appointment['ca_id'] );
+
+            //echo "<pre>".print_r($ca->getToken(),true)."</pre>";
             $codes = $default_codes;
+            $codes['appointment_id'] = $appointment['id'];
             $codes['appointment_date'] = DateTime::formatDate( $appointment['start_date'] );
             $codes['appointment_time'] = $appointment['duration'] >= DAY_IN_SECONDS && $appointment['start_time_info'] ? $appointment['start_time_info'] : Lib\Utils\DateTime::formatTime( $appointment['start_date'] );
             $codes['booking_number'] = $appointment['id'];
+            if($ca){
+                $codes['appointment_token'] = $ca->getToken() ? $ca->getToken() : ''; // Mady M calendar signature url
+                $codes['approve_appointment_url'] = $ca->getToken() ? admin_url( 'admin-ajax.php?action=bookly_approve_appointment&token=' . urlencode( Lib\Utils\Common::xorEncrypt( $ca->getToken(), 'approve' ) ) ) : '' ; // Mady M calendar signature url
+                //echo "<pre>".print_r($codes,true)."</pre>";
+            }
+
             $codes['internal_note'] = esc_html( $appointment['internal_note'] );
             $codes['on_waiting_list'] = $appointment['on_waiting_list'];
             $codes['service_name'] = $appointment['service_name'] ? esc_html( $appointment['service_name'] ) : __( 'Untitled', 'bookly' );
             $codes['service_price'] = Price::format( $appointment['service_price'] * $appointment['units'] );
             $codes['service_duration'] = DateTime::secondsToInterval( $appointment['duration'] * $appointment['units'] );
             $codes['signed_up'] = $appointment['total_number_of_persons'];
+            //echo "<pre>".print_r($codes,true)."</pre>";
             foreach ( array( 'staff_name', 'staff_phone', 'staff_info', 'staff_email', 'service_info', 'service_capacity', 'category_name', 'client_note' ) as $field ) {
                 $codes[ $field ] = esc_html( $appointment[ $field ] );
             }
@@ -314,6 +334,7 @@ class Page extends Lib\Base\Ajax
                 }
                 $customer['status_color'] = $status_color;
                 $customer['nop'] = $number_of_persons;
+                $customer['status'] = CustomerAppointment::statusToString( $customer['status'] );
                 $codes['participants'][] = $customer;
             }
 
@@ -347,7 +368,7 @@ class Page extends Lib\Base\Ajax
 
             switch ( $coloring_mode ) {
                 case 'status';
-                    $color = $colors[ $event_status ];
+                    $color = $colors[ $event_status ?: 'mixed' ];
                     break;
                 case 'staff':
                     $color = $appointment['staff_color'];
@@ -356,7 +377,7 @@ class Page extends Lib\Base\Ajax
                 default:
                     $color = $appointment['service_color'];
             }
-
+            //echo "<pre>".print_r($appointments,true)."</pre>";
             $appointments[ $key ] = array(
                 'id' => $appointment['id'],
                 'start' => $appointment['start_date'],

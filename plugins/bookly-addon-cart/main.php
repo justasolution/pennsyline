@@ -3,7 +3,7 @@
 Plugin Name: Bookly Cart (Add-on)
 Plugin URI: https://www.booking-wp-plugin.com/?utm_source=bookly_admin&utm_medium=plugins_page&utm_campaign=plugins_page
 Description: Bookly Cart add-on allows your clients to book several appointments per session by placing them in a cart.
-Version: 2.7
+Version: 2.8
 Author: Bookly
 Author URI: https://www.booking-wp-plugin.com/?utm_source=bookly_admin&utm_medium=plugins_page&utm_campaign=plugins_page
 Text Domain: bookly

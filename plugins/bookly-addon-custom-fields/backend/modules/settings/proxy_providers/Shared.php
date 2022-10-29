@@ -38,6 +38,7 @@ class Shared extends Proxy\Shared
                 break;
             case 'google_calendar' :
             case 'outlook_calendar' :
+            case 'calendar_many_participants' :
                 $cf_codes = array(
                     'custom_fields' => array( 'description' => __( 'Combined values of all custom fields', 'bookly' ) ),
                 );

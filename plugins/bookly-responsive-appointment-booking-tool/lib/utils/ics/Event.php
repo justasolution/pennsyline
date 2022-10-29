@@ -26,6 +26,11 @@ class Event
      */
     public function render()
     {
+        if ( $this->start_date === null ) {
+            // Do not render VEVENT for tasks
+            return '';
+        }
+
         $template = "BEGIN:VEVENT\r\n"
             . "UID:%s\r\n"
             . "DTSTAMP:%s\r\n"
@@ -151,8 +156,7 @@ class Event
     public function escape( $input )
     {
         $input = preg_replace( '/([\,;])/', '\\\$1', $input );
-        $input = str_replace( "\n", "\\n", $input );
-        $input = str_replace( "\r", "\\r", $input );
+        $input = str_replace( array( "\r\n", "\n" ), "\\n", $input );
 
         return implode( "\r\n ", $this->_strSplitUnicode( $input, 60 ) );
     }
@@ -165,7 +169,7 @@ class Event
      */
     protected function _formatDateTime( $datetime )
     {
-        return date_create( $datetime )->format( 'Ymd\THis' );
+        return date_create( Lib\Utils\DateTime::convertTimeZone( $datetime, Lib\Config::getWPTimeZone(), 'UTC' ) )->format( 'Ymd\THis\Z' );
     }
 
     /**
@@ -177,10 +181,11 @@ class Event
      */
     protected function _strSplitUnicode( $str, $l = 0 )
     {
-        $mb_str = preg_split( '//u', $str, - 1, PREG_SPLIT_NO_EMPTY );
+        $mb_str = preg_split( '//u', $str, -1, PREG_SPLIT_NO_EMPTY );
         if ( $l > 0 ) {
             $ret = array();
-            for ( $i = 0; $i < count( $mb_str ); $i += $l ) {
+            $cnt = count( $mb_str );
+            for ( $i = 0; $i < $cnt; $i += $l ) {
                 $ret[] = implode( '', array_slice( $mb_str, $i, $l ) );
             }
 

@@ -13,7 +13,7 @@ use Bookly\Backend\Components\Controls\Buttons;
                         <?php for ( $i = 1; $i <= 10; ++ $i ): ?><i class="bookly-js-star bookly-cursor-pointer far fa-star fa-lg text-muted"></i><?php endfor ?>
                     </div>
                 </div>
-                <div id="bookly-nps-form" class="mt-4 collapse" style="max-width:400px;">
+                <div id="bookly-nps-form" class="mt-4 bookly-collapse" style="max-width:400px;">
                     <div class="form-group">
                         <label for="bookly-nps-msg" class="control-label"><?php esc_html_e( 'What do you think should be improved?', 'bookly' ) ?></label>
                         <textarea id="bookly-nps-msg" class="form-control"></textarea>

@@ -101,7 +101,9 @@ global $wp_locale;
                 <?php Proxy\GroupBooking::renderNOP() ?>
                 <?php Proxy\MultiplyAppointments::renderQuantity() ?>
                 <?php Proxy\ChainAppointments::renderChainTip() ?>
-
+            </div>
+            <div id="bookly-category-info" class="bookly-box bookly-category-info">
+                <?php Elements::renderText( 'bookly_l10n_step_service_category_info', Codes::getCategoryCodes() ) ?>
             </div>
             <div id="bookly-service-info" class="bookly-box bookly-service-info">
                 <?php Elements::renderText( 'bookly_l10n_step_service_service_info', Codes::getServiceCodes() ) ?>

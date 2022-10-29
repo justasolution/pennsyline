@@ -110,7 +110,8 @@ class ShortCode extends BooklyLib\Base\Component
                     'staff_id' => $staff['id'],
                     'custom_fields' => $custom_fields,
                     'refresh_rate' => get_user_meta( get_current_user_id(), 'bookly_calendar_refresh_rate', true ),
-                    'hide' => array_key_exists( 'hide', (array) $attributes ) ? (array)$attributes['hide'] : array()
+                    'hide' => array_key_exists( 'hide', (array) $attributes ) ? (array) $attributes['hide'] : array(),
+                    'read_only' => (bool) ( array_key_exists( 'read-only', (array) $attributes ) ? $attributes['read-only'] : false ),
                 ), false );
         }
 

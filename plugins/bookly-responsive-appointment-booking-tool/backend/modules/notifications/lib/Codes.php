@@ -27,6 +27,7 @@ class Codes
         $this->type = $type;
         $this->codes = array(
             'appointment' => array(
+                'appointment_id' => array( 'description' => __( 'Appointment ID', 'bookly' ) ),
                 'appointment_date' => array( 'description' => __( 'Date of appointment', 'bookly' ), 'if' => true ),
                 'appointment_end_date' => array( 'description' => __( 'End date of appointment', 'bookly' ), 'if' => true ),
                 'appointment_end_time' => array( 'description' => __( 'End time of appointment', 'bookly' ), 'if' => true ),
@@ -44,6 +45,7 @@ class Codes
             ),
             'category' => array(
                 'category_name' => array( 'description' => __( 'Name of category', 'bookly' ), 'if' => true ),
+                'category_info' => array( 'description' => __( 'Info of category', 'bookly' ), 'if' => true ),
             ),
             'company' => array(
                 'company_address' => array( 'description' => __( 'Address of company', 'bookly' ), 'if' => true ),
@@ -88,6 +90,8 @@ class Codes
                 'staff_info' => array( 'description' => __( 'Info of staff', 'bookly' ), 'if' => true ),
                 'staff_name' => array( 'description' => __( 'Name of staff', 'bookly' ) ),
                 'staff_phone' => array( 'description' => __( 'Phone of staff', 'bookly' ), 'if' => true ),
+                'staff_category_name' => array( 'description' => __( 'Name of staff category', 'bookly' ), 'if' => true ),
+                'staff_category_info' => array( 'description' => __( 'Info of staff category', 'bookly' ), 'if' => true ),
             ),
             'staff_agenda' => array(
                 'agenda_date' => array( 'description' => __( 'Agenda date', 'bookly' ) ),
@@ -124,10 +128,11 @@ class Codes
 
         if ( $type == 'email' ) {
             // Only email.
+            $this->codes['category']['category_image'] = array( 'description' => __( 'Image of category', 'bookly' ), 'if' => true );
             $this->codes['company']['company_logo'] = array( 'description' => __( 'Company logo', 'bookly' ), 'if' => true );
             $this->codes['customer_appointment']['cancel_appointment'] = array( 'description' => __( 'Cancel appointment link', 'bookly' ) );
-            $this->codes['staff']['staff_photo'] = array( 'description' => __( 'Photo of staff', 'bookly' ), 'if' => true );
             $this->codes['service']['service_image'] = array( 'description' => __( 'Image of service', 'bookly' ), 'if' => true );
+            $this->codes['staff']['staff_photo'] = array( 'description' => __( 'Photo of staff', 'bookly' ), 'if' => true );
         }
 
         // Add codes from add-ons.

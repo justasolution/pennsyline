@@ -6,6 +6,7 @@ use Bookly\Lib\Proxy\Pro as ProProxy;
 
 /**
  * Class Generator
+ *
  * @package Bookly\Lib\Slots
  */
 class Generator implements \Iterator
@@ -57,7 +58,7 @@ class Generator implements \Iterator
     /**
      * Constructor.
      *
-     * @param Staff[] $staff_members  Array of Staff objects indexed by staff ID
+     * @param Staff[] $staff_members Array of Staff objects indexed by staff ID
      * @param Schedule|null $service_schedule
      * @param int $slot_length
      * @param int $location_id
@@ -65,12 +66,12 @@ class Generator implements \Iterator
      * @param int $service_duration
      * @param int $service_padding_left
      * @param int $service_padding_right
-     * @param int $nop  Number of persons
+     * @param int $nop Number of persons
      * @param int $extras_duration
      * @param DatePoint $start_dp
-     * @param string|null $time_from  Limit results by start time (null - no limit)
-     * @param string|null $time_to  Limit results by end time (null - no limit)
-     * @param int $spare_time  Spare time next to service
+     * @param string|null $time_from Limit results by start time (null - no limit)
+     * @param string|null $time_to Limit results by end time (null - no limit)
+     * @param int $spare_time Spare time next to service
      * @param bool $waiting_list_enabled
      * @param self|null $next_generator
      * @param int $next_connection
@@ -93,26 +94,25 @@ class Generator implements \Iterator
         $waiting_list_enabled,
         $next_generator,
         $next_connection
-    )
-    {
-        $this->staff_members        = array();
-        $this->staff_schedule       = array();
-        $this->dp                   = $start_dp->modify( 'today' );
-        $this->location_id          = (int) $location_id;
-        $this->srv_id               = (int) $service_id ?: null;
-        $this->srv_duration         = (int) min( $service_duration, DAY_IN_SECONDS );
-        $this->srv_duration_days    = (int) ( $service_duration / DAY_IN_SECONDS );
-        $this->srv_padding_left     = (int) $service_padding_left;
-        $this->srv_padding_right    = (int) $service_padding_right;
-        $this->slot_length          = (int) ( $this->srv_duration_days ? DAY_IN_SECONDS : min( $slot_length, DAY_IN_SECONDS ) );
-        $this->nop                  = (int) $nop;
-        $this->extras_duration      = (int) ( $this->srv_duration_days < 1 ? $extras_duration : 0 );
-        $this->full_duration        = $this->srv_duration + $this->extras_duration;
-        $this->time_limit           = $time_from && $time_to ? Range::fromTimes( $time_from, $time_to ) : null;
-        $this->spare_time           = (int) $spare_time;
+    ) {
+        $this->staff_members = array();
+        $this->staff_schedule = array();
+        $this->dp = $start_dp->modify( 'midnight' );
+        $this->location_id = (int) $location_id;
+        $this->srv_id = (int) $service_id ?: null;
+        $this->srv_duration = (int) min( $service_duration, DAY_IN_SECONDS );
+        $this->srv_duration_days = (int) ( $service_duration / DAY_IN_SECONDS );
+        $this->srv_padding_left = (int) $service_padding_left;
+        $this->srv_padding_right = (int) $service_padding_right;
+        $this->slot_length = (int) ( $this->srv_duration_days ? DAY_IN_SECONDS : min( $slot_length, DAY_IN_SECONDS ) );
+        $this->nop = (int) $nop;
+        $this->extras_duration = (int) ( $this->srv_duration_days < 1 ? $extras_duration : 0 );
+        $this->full_duration = $this->srv_duration + $this->extras_duration;
+        $this->time_limit = $time_from && $time_to ? Range::fromTimes( $time_from, $time_to ) : null;
+        $this->spare_time = (int) $spare_time;
         $this->waiting_list_enabled = (bool) $waiting_list_enabled;
-        $this->next_generator       = $next_generator;
-        $this->next_connection      = $next_connection;
+        $this->next_generator = $next_generator;
+        $this->next_connection = $next_connection;
 
         // Pick only those staff members who provides the service
         // and who can serve the requested number of persons.
@@ -145,6 +145,7 @@ class Generator implements \Iterator
      * @inheritDoc
      * @return RangeCollection
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         $result = new RangeCollection();
@@ -172,7 +173,7 @@ class Generator implements \Iterator
                     // With available ranges we need to adjust their length.
                     if ( $range->state() == Range::AVAILABLE ) {
                         // Shorten range by service and extras duration.
-                        $range = $range->transform( null, - $this->full_duration );
+                        $range = $range->transform( null, -$this->full_duration );
                         if ( ! $range->valid() ) {
                             // If range is not valid skip it.
                             continue;
@@ -199,7 +200,7 @@ class Generator implements \Iterator
                         $timestamp = $this->srv_duration_days > 1 ?
                             $slot->start()->modify( '-' . ( $this->srv_duration_days - 1 ) . ' day' )->value()->getTimestamp() :
                             $slot->start()->value()->getTimestamp();
-                        $ex_slot   = null;
+                        $ex_slot = null;
                         // Decide whether to add slot or skip it.
                         if ( $result->has( $timestamp ) ) {
                             // If result already has this timestamp...
@@ -263,14 +264,14 @@ class Generator implements \Iterator
             $max_capacity = $staff->getService( $this->srv_id, $this->location_id )->capacityMax();
             foreach ( $staff->getBookings() as $booking ) {
                 // Take in account booking and service padding.
-                $range_to_remove = $booking->rangeWithPadding()->transform( - $this->srv_padding_right, $this->srv_padding_left );
+                $range_to_remove = $booking->rangeWithPadding()->transform( -$this->srv_padding_right, $this->srv_padding_left );
                 // Remove booking from ranges.
                 $new_ranges = new RangeCollection();
-                $removed    = new RangeCollection();
+                $removed = new RangeCollection();
                 foreach ( $ranges->all() as $r ) {
                     if ( $r->available() && $r->overlaps( $range_to_remove ) ) {
                         $new_ranges = $new_ranges->merge( $r->subtract(
-                            // Make sure that removed range will have length of a multiple of slot length.
+                        // Make sure that removed range will have length of a multiple of slot length.
                             $range_to_remove->align( $r, $this->slot_length, $this->full_duration ),
                             $removed_range
                         ) );
@@ -278,13 +279,13 @@ class Generator implements \Iterator
                         if ( $removed_range ) {
                             $removed->push( $removed_range );
                             // Find range that should be marked as fully booked and add it to results.
-                            $r = $r->transform( null, - $this->full_duration );
+                            $r = $r->transform( null, -$this->full_duration );
                             if ( $r->valid() ) {
                                 $r = $r->transform( null, $this->slot_length );
                                 $new_ranges->push(
                                     $r->intersect(
                                         $removed_range->transform(
-                                            - $this->full_duration + $this->slot_length,
+                                            -$this->full_duration + $this->slot_length,
                                             null
                                         // Align without considering precursor here.
                                         )->align( $r, $this->slot_length, $this->slot_length )
@@ -317,9 +318,8 @@ class Generator implements \Iterator
                                 break;
                             }
                         }
-                    }
-                    // Handle waiting list.
-                    else if ( $this->waiting_list_enabled ) {
+                    } // Handle waiting list.
+                    elseif ( $this->waiting_list_enabled ) {
                         $booking_range = $booking->range();
                         foreach ( $removed->all() as $range ) {
                             // Find range which contains booking start point.
@@ -363,9 +363,9 @@ class Generator implements \Iterator
             ) {
                 $next_slot = $this->_findNextSlot( $next_start->modify( $padding ) );
                 if ( $next_slot && (
-                    $next_slot->fullyBooked() ||
-                    $next_slot->staffId() != $slot->staffId()
-                ) ) {
+                        $next_slot->fullyBooked() ||
+                        $next_slot->staffId() != $slot->staffId()
+                    ) ) {
                     $next_slot = false;
                 }
             }
@@ -430,7 +430,7 @@ class Generator implements \Iterator
         if ( $past_slot->notPartiallyBooked() ) {
             // Check if there are enough valid days for service duration in the past.
             $day = $slot->start();
-            for ( $d = 0; $d < $this->srv_duration_days; ++ $d ) {
+            for ( $d = 0; $d < $this->srv_duration_days; ++$d ) {
                 $timestamp = $day->value()->getTimestamp();
                 $intermediate_slot = $this->past_slots[ $slot->staffId() ]->get( $timestamp );
                 if ( ! $intermediate_slot || $intermediate_slot->notAvailable() && $intermediate_slot->notIntermediate() ) {
@@ -480,7 +480,7 @@ class Generator implements \Iterator
     private function _findPreferableSlot( $slot, $ex_slot )
     {
         // Find which staff is more preferable.
-        $staff    = $this->staff_members[ $slot->staffId() ];
+        $staff = $this->staff_members[ $slot->staffId() ];
         $ex_staff = $this->staff_members[ $ex_slot->staffId() ];
         if ( $staff->morePreferableThan( $ex_staff, $slot ) ) {
             $slot = $slot->replaceAltSlot( $ex_slot );
@@ -507,16 +507,18 @@ class Generator implements \Iterator
     /**
      * @inheritDoc
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         // Start one day earlier to cover night shifts.
-        $this->dp = $this->dp->modify( '-1 day' );
+        $this->dp = $this->dp->modify( '-1 day midnight' );
     }
 
     /**
      * @inheritDoc
      * @return DatePoint
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return $this->dp;
@@ -525,9 +527,10 @@ class Generator implements \Iterator
     /**
      * @inheritDoc
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
-        $this->dp = $this->dp->modify( '+1 day' );
+        $this->dp = $this->dp->modify( '+1 day midnight' );
     }
 
     /**
@@ -535,6 +538,7 @@ class Generator implements \Iterator
      *
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function valid()
     {
         return true;

@@ -40,9 +40,12 @@ class Dialog extends Lib\Base\Component
                 'start_sending_at' => __( 'Start sending messages at', 'bookly' ),
                 'start_sending_help' => __( 'Set the time when the mailing will start', 'bookly' ),
                 'start_time' => __( 'Start time', 'bookly' ),
+                'start' => __( 'Start', 'bookly' ),
                 'recipients' => __( 'Recipients', 'bookly' ),
                 'sms_text' => __( 'Sms text', 'bookly' ),
                 'campaign' => __( 'Campaign', 'bookly' ),
+                'cancel_campaign' => __( 'Cancel campaign', 'bookly' ) . '…',
+                'are_you_sure' => __( 'Are you sure?', 'bookly' ),
             ),
         ) );
 

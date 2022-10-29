@@ -15,9 +15,11 @@ class Installer extends Base\Installer
     public function __construct()
     {
         $this->options = array(
-            'bookly_files_enabled'   => get_option( 'bookly_custom_fields_enabled' ) ? '1' : '0',
+            'bookly_files_enabled' => get_option( 'bookly_custom_fields_enabled' ) ? '1' : '0',
             'bookly_files_directory' => '',
-            'bookly_l10n_browse'     => __( 'Browse', 'bookly' ),
+            'bookly_files_extensions' => '',
+            'bookly_l10n_browse' => __( 'Browse', 'bookly' ),
+            'bookly_l10n_incorrect_file_type' => __( 'File\'s extension is not allowed', 'bookly' ),
         );
     }
 

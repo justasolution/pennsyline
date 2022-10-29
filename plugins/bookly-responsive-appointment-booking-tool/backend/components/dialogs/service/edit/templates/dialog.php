@@ -79,5 +79,5 @@ use Bookly\Lib;
             </form>
         </div>
     </div>
-    <div class="collapse" id="bookly-service-additional-html"></div>
+    <div class="bookly-collapse" id="bookly-service-additional-html"></div>
 </div>

@@ -43,8 +43,6 @@ class Ajax extends Lib\Base\Ajax
             'end_time' => array(),
             'week_days' => array(),
             'time_interval' => Lib\Config::getTimeSlotLength(),
-            'extras_consider_duration' => (int) Lib\Proxy\ServiceExtras::considerDuration( true ),
-            'extras_multiply_nop' => (int) get_option( 'bookly_service_extras_multiply_nop', 1 ),
             'customer_gr_def_app_status' => Lib\Proxy\CustomerGroups::prepareDefaultAppointmentStatuses( array( 0 => Lib\Config::getDefaultAppointmentStatus() ) ),
         );
 
@@ -89,7 +87,7 @@ class Ajax extends Lib\Base\Ajax
                                 'duration' => (int) $service->getDuration(),
                                 'units_min' => (int) $service->getUnitsMin(),
                                 'units_max' => (int) $service->getUnitsMax(),
-                                'price' => $staff_service->getPrice(),// Mady To Look (int) $service->getPrice(), // Mady M
+                                'price' => $staff_service->getPrice(),
                                 'locations' => array(
                                     ( $staff_service->getLocationId() ?: 0 ) => array(
                                         'capacity_min' => Lib\Config::groupBookingActive() ? (int) $staff_service->getCapacityMin() : 1,
@@ -222,64 +220,39 @@ class Ajax extends Lib\Base\Ajax
         if ( $appointment->load( self::parameter( 'id' ) ) ) {
             $response['success'] = true;
 
-            $query = Appointment::query( 'a' )
-                ->select( 'SUM(ca.number_of_persons) AS total_number_of_persons,
-                    a.staff_id,
-                    a.staff_any,
-                    a.service_id,
-                    a.custom_service_name,
-                    a.custom_service_price,
-                    a.start_date,
-                    a.end_date,
-                    a.internal_note,
-                    a.location_id,
-                    a.online_meeting_provider,
-                    a.online_meeting_id' )
-                ->leftJoin( 'CustomerAppointment', 'ca', 'ca.appointment_id = a.id' )
-                ->leftJoin( 'StaffService', 'ss', 'ss.staff_id = a.staff_id AND ss.service_id = a.service_id AND ss.location_id = a.location_id' )
-                ->where( 'a.id', $appointment->getId() );
-            if ( Lib\Config::groupBookingActive() ) {
-                $query->addSelect( 'ss.capacity_min AS min_capacity, ss.capacity_max AS max_capacity' );
-            } else {
-                $query->addSelect( '1 AS min_capacity, 1 AS max_capacity' );
-            }
-
             // Determine display time zone
             $display_tz = Common::getCurrentUserTimeZone();
             $wp_tz = Lib\Config::getWPTimeZone();
 
-            // Fetch appointment,
-            // and shift the dates to appropriate time zone if needed
-            $info = $query->fetchRow();
+            $start_date = $appointment->getStartDate();
+            $end_date = $appointment->getEndDate();
             if ( $display_tz !== $wp_tz ) {
-                $info['start_date'] = DateTime::convertTimeZone( $info['start_date'], $wp_tz, $display_tz );
-                $info['end_date']   = DateTime::convertTimeZone( $info['end_date'], $wp_tz, $display_tz );
+                $start_date = DateTime::convertTimeZone( $start_date, $wp_tz, $display_tz );
+                $end_date = DateTime::convertTimeZone( $end_date, $wp_tz, $display_tz );
             }
 
-            $response['data']['total_number_of_persons'] = (int) $info['total_number_of_persons'];
-            $response['data']['min_capacity']            = (int) $info['min_capacity'];
-            $response['data']['max_capacity']            = (int) $info['max_capacity'];
-            $response['data']['start_date']              = $info['start_date'];
-            $response['data']['end_date']                = $info['end_date'];
-            $response['data']['start_time']              = $info['start_date'] ?
-                array(
-                    'value' => date( 'H:i', strtotime( $info['start_date'] ) ),
-                    'title' => DateTime::formatTime( $info['start_date'] ),
-                ) : null;
-            $response['data']['end_time']                = $info['end_date'] ?
-                array(
-                    'value' => date( 'H:i', strtotime( $info['end_date'] ) ),
-                    'title' => DateTime::formatTime( $info['end_date'] ),
-                ) : null;
-            $response['data']['staff_id']                = (int) $info['staff_id'];
-            $response['data']['staff_any']               = (int) $info['staff_any'];
-            $response['data']['service_id']              = (int) $info['service_id'];
-            $response['data']['custom_service_name']     = $info['custom_service_name'];
-            $response['data']['custom_service_price']    = (float) $info['custom_service_price'];
-            $response['data']['internal_note']           = $info['internal_note'];
-            $response['data']['location_id']             = (int) $info['location_id'];
-            $response['data']['online_meeting_provider'] = $info['online_meeting_provider'];
-            $response['data']['online_meeting_id']       = $info['online_meeting_id'];
+            $response['data']['start_date'] = $start_date;
+            $response['data']['end_date'] = $end_date;
+            $response['data']['start_time'] = $start_date
+                ? array(
+                    'value' => date( 'H:i', strtotime( $start_date ) ),
+                    'title' => DateTime::formatTime( $start_date ),
+                )
+                : null;
+            $response['data']['end_time'] = $end_date
+                ? array(
+                    'value' => date( 'H:i', strtotime( $end_date ) ),
+                    'title' => DateTime::formatTime( $end_date ),
+                )
+                : null;
+            $response['data']['staff_id'] = (int) $appointment->getStaffId();
+            $response['data']['staff_any'] = (int) $appointment->getStaffAny();
+            $response['data']['service_id'] = (int) $appointment->getServiceId();
+            $response['data']['custom_service_name'] = $appointment->getCustomServiceName();
+            $response['data']['custom_service_price'] = (float) $appointment->getCustomServicePrice();
+            $response['data']['internal_note'] = $appointment->getInternalNote();
+            $response['data']['location_id'] = (int) $appointment->getLocationId();
+            $response['data']['online_meeting_start_url'] = Lib\Proxy\Shared::buildOnlineMeetingStartUrl( '', $appointment );
 
             $customers = CustomerAppointment::query( 'ca' )
                 ->select( 'ca.id,
@@ -289,7 +262,6 @@ class Ajax extends Lib\Base\Ajax
                     ca.custom_fields,
                     ca.extras,
                     ca.extras_multiply_nop,
-                    ca.extras_consider_duration,
                     ca.number_of_persons,
                     ca.notes,
                     ca.status,
@@ -340,10 +312,10 @@ class Ajax extends Lib\Base\Ajax
                     $name .= ' (' . trim( $customer['email'] . ', ' . $customer['phone'], ', ' ) . ')';
                 }
                 $response['data']['customers_data'][] = array(
-                    'id'                => (int) $customer['customer_id'],
-                    'name'              => $name,
-                    'group_id'          => $customer['group_id'],
-                    'timezone'          => Lib\Proxy\Pro::getLastCustomerTimezone( $customer['customer_id'] ),
+                    'id' => (int) $customer['customer_id'],
+                    'name' => $name,
+                    'group_id' => $customer['group_id'],
+                    'timezone' => Lib\Proxy\Pro::getLastCustomerTimezone( $customer['customer_id'] ),
                 );
                 $response['data']['customers'][] = array(
                     'id' => (int) $customer['customer_id'],
@@ -358,7 +330,6 @@ class Ajax extends Lib\Base\Ajax
                     'files' => Lib\Proxy\Files::getFileNamesForCustomFields( $custom_fields ),
                     'extras' => (array) json_decode( $customer['extras'], true ),
                     'extras_multiply_nop' => (int) $customer['extras_multiply_nop'],
-                    'extras_consider_duration' => (int) $customer['extras_consider_duration'],
                     'number_of_persons' => (int) $customer['number_of_persons'],
                     'notes' => $customer['notes'],
                     'payment_id' => $customer['payment_id'],
@@ -372,8 +343,8 @@ class Ajax extends Lib\Base\Ajax
                 );
             }
             // Service data
-            if ( $info['service_id'] ) {
-                $service = Service::find( $info['service_id'] );
+            if ( $appointment->getServiceId() ) {
+                $service = Service::find( $appointment->getServiceId() );
                 if ( $service ) {
                     $category = '';
                     if ( $service->getCategoryId() ) {
@@ -411,8 +382,8 @@ class Ajax extends Lib\Base\Ajax
         $appointment_id       = (int) self::parameter( 'id', 0 );
         $staff_id             = (int) self::parameter( 'staff_id', 0 );
         $service_id           = (int) self::parameter( 'service_id', -1 );
-        $custom_service_name  = trim( self::parameter( 'custom_service_name' ) );
-        $custom_service_price = trim( self::parameter( 'custom_service_price' ) );
+        $custom_service_name  = trim( self::parameter( 'custom_service_name', '' ) );
+        $custom_service_price = trim( self::parameter( 'custom_service_price', '' ) );
         $location_id          = (int) self::parameter( 'location_id', 0 );
         $skip_date            = self::parameter( 'skip_date', 0 );
         $start_date           = self::parameter( 'start_date' );
@@ -462,13 +433,15 @@ class Ajax extends Lib\Base\Ajax
 
         $total_number_of_persons = 0;
         $max_extras_duration = 0;
+        $extras_consider_duration = (bool) Lib\Proxy\ServiceExtras::considerDuration();
+        $busy_statuses = Lib\Proxy\CustomStatuses::prepareBusyStatuses( array(
+            CustomerAppointment::STATUS_PENDING,
+            CustomerAppointment::STATUS_APPROVED
+        ) );
         foreach ( $customers as $i => $customer ) {
-            if ( in_array( $customer['status'], Lib\Proxy\CustomStatuses::prepareBusyStatuses( array(
-                CustomerAppointment::STATUS_PENDING,
-                CustomerAppointment::STATUS_APPROVED
-            ) ) ) ) {
+            if ( in_array( $customer['status'], $busy_statuses ) ) {
                 $total_number_of_persons += $customer['number_of_persons'];
-                if ( $customer['extras_consider_duration'] ) {
+                if ( $extras_consider_duration ) {
                     $extras_duration = Lib\Proxy\ServiceExtras::getTotalDuration( $customer['extras'] );
                     if ( $extras_duration > $max_extras_duration ) {
                         $max_extras_duration = $extras_duration;
@@ -498,16 +471,19 @@ class Ajax extends Lib\Base\Ajax
 
         // If no errors then try to save the appointment.
         if ( ! isset ( $response['errors'] ) ) {
-            // Determine display time zone,
-            // and shift the dates to WP time zone if needed
             $display_tz = Common::getCurrentUserTimeZone();
-            $wp_tz = Lib\Config::getWPTimeZone();
-            if ( $display_tz !== $wp_tz ) {
-                $start_date = DateTime::convertTimeZone( $start_date, $display_tz, $wp_tz );
-                $end_date   = DateTime::convertTimeZone( $end_date, $display_tz, $wp_tz );
+            if ( $skip_date ) {
+                $duration = 0;
+            } else {
+                // Determine display time zone,
+                // and shift the dates to WP time zone if needed
+                $wp_tz = Lib\Config::getWPTimeZone();
+                if ( $display_tz !== $wp_tz ) {
+                    $start_date = DateTime::convertTimeZone( $start_date, $display_tz, $wp_tz );
+                    $end_date = DateTime::convertTimeZone( $end_date, $display_tz, $wp_tz );
+                }
+                $duration = Lib\Slots\DatePoint::fromStr( $end_date )->diff( Lib\Slots\DatePoint::fromStr( $start_date ) );
             }
-
-            $duration = Lib\Slots\DatePoint::fromStr( $end_date )->diff( Lib\Slots\DatePoint::fromStr( $start_date ) );
             if ( ! $skip_date && $repeat['enabled'] ) {
                 $queue = array();
                 // Series.
@@ -587,6 +563,9 @@ class Ajax extends Lib\Base\Ajax
                                 Lib\Proxy\Shared::syncOnlineMeeting( array(), $appointment, $service );
                                 // Save customer appointments.
                                 $ca_list = $appointment->saveCustomerAppointments( array_merge( $ca_customers, array( $customer ) ), $series->getId() );
+                                if ( $customer['payment_for'] === 'current' ) {
+                                    $customer['payment_action'] = $customer['payment_for'] = null;
+                                }
                                 // Google Calendar.
                                 Lib\Proxy\Pro::syncGoogleCalendarEvent( $appointment );
                                 // Outlook Calendar.
@@ -657,13 +636,17 @@ class Ajax extends Lib\Base\Ajax
                     if ( ! $appointment_id ) {
                         Lib\Utils\Log::createEntity( $appointment, __METHOD__ );
                     }
+                    foreach ( $customers as &$customer ) {
+                        if ( $customer['payment_action'] === 'create' ) {
+                            // Set 'current', the employee can choose 'Create: Payment for the entire series',
+                            // but series cannot be created here
+                            $customer['payment_for'] = 'current';
+                        }
+                    }
                     // Save customer appointments.
                     $ca_status_changed = $appointment->saveCustomerAppointments( $customers );
 
                     foreach ( $customers as $customer ) {
-                        if ( $customer['payment_action'] == 'create' && $customer['payment_for'] == 'series' && $customer['series_id'] ) {
-                            Proxy\RecurringAppointments::createBackendPayment( Lib\Entities\Series::find( $customer['series_id'] ), $customer );
-                        }
                         // Reschedule all recurring appointments for $days_offset days and set it's time to $reschedule_start_time
                         $rescheduled_appointments = array( $appointment_id );
                         if ( $appointment_id && $reschedule_type != 'current' && $customer['series_id'] ) {
@@ -733,7 +716,9 @@ class Ajax extends Lib\Base\Ajax
                     }
 
                     $response['success'] = true;
-                    $response['data'] = self::_getAppointmentForCalendar( $appointment->getId(), $display_tz );
+                    $response['data'] = $skip_date
+                        ? array()
+                        : self::_getAppointmentForCalendar( $appointment->getId(), $display_tz );
                     $response['queue'] = array( 'all' => $queue, 'changed_status' => $queue_changed_status );
 
                     self::_deleteSentReminders( $appointment, $modified );
@@ -752,41 +737,26 @@ class Ajax extends Lib\Base\Ajax
      */
     public static function checkAppointmentErrors()
     {
-        $start_date     = self::parameter( 'start_date' );
-        $end_date       = self::parameter( 'end_date' );
-        $staff_id       = (int) self::parameter( 'staff_id' );
-        $service_id     = (int) self::parameter( 'service_id' );
-        $location_id    = Lib\Proxy\Locations::prepareStaffScheduleLocationId( self::parameter( 'location_id' ), $staff_id ) ?: null;
+        $start_date = self::parameter( 'start_date' );
+        $end_date = self::parameter( 'end_date' );
+        $appointment_duration = isset ( $start_date, $end_date )
+            ? strtotime( $end_date ) - strtotime( $start_date )
+            : 0;
+        $staff_id = (int) self::parameter( 'staff_id' );
+        $service_id = (int) self::parameter( 'service_id' );
+        $location_id = (int) self::parameter( 'location_id' );
         $appointment_id = (int) self::parameter( 'appointment_id' );
-        $appointment_duration = strtotime( $end_date ) - strtotime( $start_date );
-        $customers      = json_decode( self::parameter( 'customers', '[]' ), true );
-        $service        = Service::find( $service_id );
+        $customers = json_decode( self::parameter( 'customers', '[]' ), true );
+        $service = Service::find( $service_id );
         $service_duration = $service ? $service->getDuration() : 0;
-
         $result = array(
-            'date_interval_not_available'      => false,
-            'date_interval_warning'            => false,
-            'interval_not_in_staff_schedule'   => false,
+            'date_interval_not_available' => false,
+            'date_interval_warning' => false,
+            'interval_not_in_staff_schedule' => false,
             'interval_not_in_service_schedule' => false,
             'staff_reaches_working_time_limit' => false,
-            'customers_appointments_limit'     => array(),
+            'customers_appointments_limit' => array(),
         );
-
-        $max_extras_duration = 0;
-        foreach ( $customers as $customer ) {
-            if ( in_array( $customer['status'], Lib\Proxy\CustomStatuses::prepareBusyStatuses( array(
-                CustomerAppointment::STATUS_PENDING,
-                CustomerAppointment::STATUS_APPROVED
-            ) ) ) ) {
-                if ( $customer['extras_consider_duration'] ) {
-                    $extras_duration = Lib\Proxy\ServiceExtras::getTotalDuration( $customer['extras'] );
-                    if ( $extras_duration > $max_extras_duration ) {
-                        $max_extras_duration = $extras_duration;
-                    }
-                }
-            }
-        }
-
         if ( $start_date && $end_date ) {
             // Determine display time zone,
             // and shift the dates to WP time zone if needed
@@ -800,12 +770,28 @@ class Ajax extends Lib\Base\Ajax
             $staff_start_date = $start_date;
             $staff_end_date = $end_date;
 
+            $busy_statuses = Lib\Proxy\CustomStatuses::prepareBusyStatuses( array(
+                CustomerAppointment::STATUS_PENDING,
+                CustomerAppointment::STATUS_APPROVED,
+            ) );
+            $max_extras_duration = 0;
+            if ( Lib\Proxy\ServiceExtras::considerDuration() ) {
+                foreach ( $customers as $customer ) {
+                    if ( in_array( $customer['status'], $busy_statuses ) ) {
+                        $extras_duration = Lib\Proxy\ServiceExtras::getTotalDuration( $customer['extras'] );
+                        if ( $extras_duration > $max_extras_duration ) {
+                            $max_extras_duration = $extras_duration;
+                        }
+                    }
+                }
+            }
+
             $total_end_date = $end_date;
             if ( $max_extras_duration > 0 ) {
                 $total_end_date = date_create( $end_date )->modify( '+' . $max_extras_duration . ' sec' )->format( 'Y-m-d H:i:s' );
             }
 
-            $result['date_interval_not_available'] = self::_dateIntervalIsIntersectWith( $start_date, $total_end_date, $staff_id, $appointment_id ) ?: false;
+            $result['date_interval_not_available'] = self::_dateIntervalIsIntersectWith( $start_date, $total_end_date, $staff_id, $appointment_id, $busy_statuses ) ?: false;
 
             // Check if selected interval fits into staff schedule
             if ( $staff_id ) {
@@ -830,11 +816,12 @@ class Ajax extends Lib\Base\Ajax
 
                 $start = date_create( $staff_start_date );
                 $end = date_create( $staff_end_date );
-                $schedule_items = $staff->getScheduleItems( $location_id );
+                $schedule_items = $staff->getScheduleItems( Lib\Proxy\Locations::prepareStaffScheduleLocationId( $location_id, $staff_id ) ?: null );
                 $special_days = array();
+                $special_days_location_id = Lib\Proxy\Locations::prepareStaffSpecialDaysLocationId( $location_id, $staff_id ) ?: null;
                 $schedule = Lib\Proxy\SpecialDays::getSchedule( array( $staff_id ), $start, $end ) ?: array();
                 foreach ( $schedule  as $day ) {
-                    if ( $location_id == $day['location_id'] ) {
+                    if ( $special_days_location_id === ( Lib\Proxy\Locations::prepareStaffSpecialDaysLocationId( $day['location_id'], $staff_id ) ?: null ) ) {
                         $special_days[ $day['date'] ][] = $day;
                     }
                 }
@@ -967,6 +954,9 @@ class Ajax extends Lib\Base\Ajax
         $location_id = self::parameter( 'location_id' );
         $nop = max( 1, self::parameter( 'nop', 1 ) );
 
+        // Get array of extras with max duration
+        $extras = Proxy\Extras::getMaxDurationExtras( self::parameter( 'extras', array() ) );
+
         $chain_item = new Lib\ChainItem();
         $chain_item
             ->setStaffIds( $staff_ids )
@@ -976,7 +966,7 @@ class Ajax extends Lib\Base\Ajax
             ->setQuantity( 1 )
             ->setLocationId( $location_id )
             ->setUnits( 1 )
-            ->setExtras( array() );
+            ->setExtras( $extras );
 
         $chain = new Lib\Chain();
         $chain->add( $chain_item );
@@ -1034,7 +1024,6 @@ class Ajax extends Lib\Base\Ajax
      * Get appointment for Event Calendar
      *
      * @param int $appointment_id
-     * @param int $staff_id
      * @param string $display_tz
      * @return array
      */
@@ -1049,23 +1038,26 @@ class Ajax extends Lib\Base\Ajax
     }
 
     /**
-     * Check whether interval is intersect with another appointments.
+     * Check whether interval is intersected with another appointments.
      *
-     * @param $start_date
-     * @param $end_date
-     * @param $staff_id
-     * @param $appointment_id
+     * @param string $start_date
+     * @param string $end_date
+     * @param int $staff_id
+     * @param int $appointment_id
+     * @param array $statuses
      * @return array|null
      */
-    private static function _dateIntervalIsIntersectWith( $start_date, $end_date, $staff_id, $appointment_id )
+    private static function _dateIntervalIsIntersectWith( $start_date, $end_date, $staff_id, $appointment_id, $statuses )
     {
         return Appointment::query( 'a' )
             ->select( 'a.id AS appointment_id, COALESCE(s.title, a.custom_service_name) AS service' )
+            ->leftJoin( 'CustomerAppointment', 'ca', 'ca.appointment_id = a.id' )
             ->leftJoin( 'Service', 's', 's.id = a.service_id' )
             ->whereNot( 'a.id', $appointment_id )
             ->where( 'a.staff_id', $staff_id )
             ->whereLt( 'a.start_date', $end_date )
             ->whereRaw( 'DATE_ADD(a.end_date, INTERVAL a.extras_duration SECOND) > \'%s\'', array( $start_date ) )
+            ->whereIn( 'ca.status', $statuses )
             ->limit( 1 )
             ->fetchRow();
     }

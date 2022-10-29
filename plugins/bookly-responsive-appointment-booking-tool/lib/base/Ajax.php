@@ -51,7 +51,13 @@ abstract class Ajax extends Component
             $original_timezone = date_default_timezone_get();
             // @codingStandardsIgnoreStart
             date_default_timezone_set( 'UTC' );
-            call_user_func( array( get_called_class(), $action ) );
+            try {
+                call_user_func( array( get_called_class(), $action ) );
+            } catch ( \Error $e ) {
+                Lib\Utils\Log::error( $e->getMessage(), $e->getFile(), $e->getLine() );
+            } catch ( \Exception $e ) {
+                Lib\Utils\Log::error( $e->getMessage(), $e->getFile(), $e->getLine() );
+            }
             date_default_timezone_set( $original_timezone );
             // @codingStandardsIgnoreEnd
         } else {

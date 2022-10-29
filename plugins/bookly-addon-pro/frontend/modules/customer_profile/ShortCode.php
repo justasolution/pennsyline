@@ -7,6 +7,7 @@ use BooklyPro\Lib;
 
 /**
  * Class ShortCode
+ *
  * @package BooklyPro\Frontend\Modules\CustomerProfile
  */
 class ShortCode extends BooklyLib\Base\Component
@@ -30,7 +31,7 @@ class ShortCode extends BooklyLib\Base\Component
     public static function linkStyles()
     {
         if (
-            get_option( 'bookly_gen_link_assets_method' ) == 'enqueue' ||
+            get_option( 'bookly_gen_link_assets_method' ) === 'enqueue' ||
             BooklyLib\Utils\Common::postsHaveShortCode( 'bookly-appointments-list' )
         ) {
             self::enqueueStyles( array(
@@ -45,7 +46,7 @@ class ShortCode extends BooklyLib\Base\Component
     public static function linkScripts()
     {
         if (
-            get_option( 'bookly_gen_link_assets_method' ) == 'enqueue' ||
+            get_option( 'bookly_gen_link_assets_method' ) === 'enqueue' ||
             BooklyLib\Utils\Common::postsHaveShortCode( 'bookly-appointments-list' )
         ) {
             self::enqueueScripts( array(
@@ -53,7 +54,7 @@ class ShortCode extends BooklyLib\Base\Component
             ) );
             wp_localize_script( 'bookly-customer-profile.js', 'BooklyCustomerProfileL10n', array(
                 'csrf_token' => BooklyLib\Utils\Common::getCsrfToken(),
-                'show_more'  => __( 'Show more', 'bookly' ),
+                'show_more' => __( 'Show more', 'bookly' ),
             ) );
         }
     }
@@ -64,7 +65,7 @@ class ShortCode extends BooklyLib\Base\Component
      * @param array $attributes
      * @return string
      */
-    public static function render( $attributes )
+    public static function render( $attributes ) // Mady M
     {
         global $sitepress;
 
@@ -72,7 +73,7 @@ class ShortCode extends BooklyLib\Base\Component
         BooklyLib\Utils\Common::noCache();
 
         $customer = new BooklyLib\Entities\Customer();
-        //$user = get_user_by( 'email', 'aprthree@gm.com' );
+        //$user = get_user_by( 'email', 'aprthree@gm.com' ); // Mady M
         foreach ( BooklyLib\Entities\Customer::query()->find() as $customer ) {
             $user = get_user_by( 'email', $customer->getEmail() );
             $customer->loadBy( array( 'wp_user_id' => $user->ID ) );
@@ -106,13 +107,14 @@ class ShortCode extends BooklyLib\Base\Component
         }
 
         $titles = array();
-        if ( @$attributes['show_column_titles'] ) {
+        if ( isset( $attributes['show_column_titles'] ) && $attributes['show_column_titles'] ) {
             $titles = array(
                 'category' => BooklyLib\Utils\Common::getTranslatedOption( 'bookly_l10n_label_category' ),
                 'service' => BooklyLib\Utils\Common::getTranslatedOption( 'bookly_l10n_label_service' ),
                 'staff' => BooklyLib\Utils\Common::getTranslatedOption( 'bookly_l10n_label_employee' ),
                 'date' => __( 'Date', 'bookly' ),
                 'time' => __( 'Time', 'bookly' ),
+                'time_zone' => __( 'Timezone', 'bookly' ),
                 'price' => __( 'Price', 'bookly' ),
                 'cancel' => __( 'Cancel', 'bookly' ),
                 'online_meeting' => __( 'Online meeting', 'bookly' ),
@@ -131,7 +133,7 @@ class ShortCode extends BooklyLib\Base\Component
         if ( is_user_logged_in() ) {
             Stat::record( 'view_customer_profile', 1 );
         }
-
+        // Mady M
         return self::renderTemplate( 'short_code', compact( 'ajaxurl', 'all_appointments', 'attributes', 'url_cancel', 'titles', 'more' ), false );
     }
 }

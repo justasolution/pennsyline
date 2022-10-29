@@ -36,12 +36,14 @@ class Ajax extends BooklyLib\Base\Ajax
      */
     public static function updateLocationsPosition()
     {
-        $locations_sort = (array) self::parameter( 'positions' );
+        $locations_sort = json_decode( self::parameter( 'positions' ), true ) ?: array();
         foreach ( $locations_sort as $position => $location_id ) {
-            $locations_sort = new Lib\Entities\Location();
-            $locations_sort->load( $location_id );
-            $locations_sort->setPosition( $position );
-            $locations_sort->save();
+            Lib\Entities\Location::query()
+                ->update()
+                ->set( 'position', $position )
+                ->where( 'id', $location_id )
+                ->whereNot( 'position', $position )
+                ->execute();
         }
         wp_send_json_success();
     }

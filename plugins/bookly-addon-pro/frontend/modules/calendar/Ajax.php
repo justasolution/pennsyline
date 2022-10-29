@@ -79,7 +79,7 @@ class Ajax extends BooklyLib\Base\Ajax
     {
         $coloring_mode = get_option( 'bookly_cal_coloring_mode' );
         $query
-            ->select( 'a.id, a.start_date, DATE_ADD(a.end_date, INTERVAL IF(ca.extras_consider_duration, a.extras_duration, 0) SECOND) AS end_date, COALESCE(s.color,"silver") AS service_color, s.title AS service_name, st.color AS staff_color' )
+            ->select( 'a.id, a.start_date, DATE_ADD(a.end_date, INTERVAL a.extras_duration SECOND) AS end_date, COALESCE(s.color,"silver") AS service_color, s.title AS service_name, st.color AS staff_color' )
             ->leftJoin( 'CustomerAppointment', 'ca', 'ca.appointment_id = a.id' )
             ->leftJoin( 'Customer', 'c', 'c.id = ca.customer_id' )
             ->leftJoin( 'Service', 's', 's.id = a.service_id' )

@@ -27,19 +27,23 @@ class StaffServices extends Lib\Base\Form
 
     public function load( $staff_id, $location_id = null )
     {
+        $types = array( Lib\Entities\Service::TYPE_SIMPLE );
+        if ( Lib\Config::packagesActive() ) {
+            $types[] = Lib\Entities\Service::TYPE_PACKAGE;
+        }
         $data = Lib\Entities\Category::query( 'c' )
             ->select( 'c.name AS category_name, s.*' )
             ->innerJoin( 'Service', 's', 's.category_id = c.id' )
             ->sortBy( 'c.position, s.position' )
-            ->whereIn( 's.type', array( Lib\Entities\Service::TYPE_SIMPLE, Lib\Entities\Service::TYPE_PACKAGE ) )
+            ->whereIn( 's.type', $types )
             ->fetchArray();
-        if ( !$data ) {
+        if ( ! $data ) {
             $data = array();
         }
 
         $this->uncategorized_services = Lib\Entities\Service::query( 's' )
             ->where( 's.category_id', null )
-            ->whereIn( 's.type', array( Lib\Entities\Service::TYPE_SIMPLE, Lib\Entities\Service::TYPE_PACKAGE ) )
+            ->whereIn( 's.type', $types )
             ->sortBy( 's.position' )
             ->find();
 

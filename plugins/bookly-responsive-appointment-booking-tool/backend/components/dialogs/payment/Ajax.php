@@ -81,6 +81,12 @@ class Ajax extends Lib\Base\Ajax
             );
 
             $data['payment']['created_at'] = Lib\Utils\DateTime::applyStaffTimeZone( $data['payment']['created_at'] );
+            if ( isset( $data['payment']['gateway_ref_id'] )
+                && $payment->getType() == Lib\Entities\Payment::TYPE_WOOCOMMERCE
+                && current_user_can( 'edit_post', $data['payment']['gateway_ref_id'] )
+            ) {
+                $data['payment']['order_link'] = admin_url( 'post.php?action=edit&post=' . $data['payment']['gateway_ref_id'] );
+            }
             $data['refundable'] = $payment->getRefId() && $payment->getType() == Lib\Entities\Payment::TYPE_CLOUD_STRIPE && $payment->getStatus() != Lib\Entities\Payment::STATUS_REFUNDED;
             foreach ( $data['payment']['items'] as &$item ) {
                 if ( isset( $item['units'], $item['duration'] ) && $item['units'] > 1 ) {
@@ -161,6 +167,7 @@ class Ajax extends Lib\Base\Ajax
      */
     public static function getPaymentInfo()
     {
+        $payment = null;
         if ( self::hasParameter( 'payment_id' ) ) {
             $payment = Lib\Entities\Payment::find( self::parameter( 'payment_id' ) );
             if ( ! $payment ) {
@@ -178,8 +185,15 @@ class Ajax extends Lib\Base\Ajax
         }
 
         update_user_meta( get_current_user_id(), 'bookly_attach_payment_for', self::parameter( 'for' ) );
-        $payment_title = Lib\Entities\Payment::paymentInfo( $paid, $total, $type, $status );
+        $payment_info = array(
+            'payment_title' => Lib\Entities\Payment::paymentInfo( $paid, $total, $type, $status ),
+            'payment_type' => $paid == $total ? 'full' : 'partial',
+        );
 
-        wp_send_json_success( array( 'payment_title' => $payment_title, 'payment_type' => $paid == $total ? 'full' : 'partial' ) );
+        if ( ! $payment ) {
+            $payment_info = Proxy\Shared::preparePaymentInfo( $payment_info, $total );
+        }
+
+        wp_send_json_success( $payment_info );
     }
 }

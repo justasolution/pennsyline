@@ -58,11 +58,11 @@ class Ajax extends Lib\Base\Ajax
         $payment = new Lib\Entities\Payment();
         $payment->loadBy( array( 'id' => $data['metadata']['payment_id'], 'type' => Lib\Entities\Payment::TYPE_CLOUD_STRIPE ) );
         if ( $payment->getStatus() === Lib\Entities\Payment::STATUS_PENDING ) {
-            if ( strtoupper( $data['currency'] ) == get_option( 'bookly_pmt_currency' ) ) {
+            if ( strtoupper( $data['currency'] ) == Lib\Config::getCurrency() ) {
                 $amount = $payment->getPaid();
-                if ( ! in_array( get_option( 'bookly_pmt_currency' ), array( 'BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF', ) ) ) {
-                    // Zero-decimal currency
-                    $amount = (int) ($amount * 100);
+                if ( ! Lib\Config::isZeroDecimalsCurrency() ) {
+                    // Amount in cents
+                    $amount = (int) ( $amount * 100 );
                 }
                 if ( $stripe_amount == $amount ) {
                     $payment->setStatus( Lib\Entities\Payment::STATUS_COMPLETED )->save();

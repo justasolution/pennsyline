@@ -27,7 +27,7 @@ class Attachments extends Base\Attachments
     /**
      * @inheritDoc
      */
-    public function createFor( Notification $notification )
+    public function createFor( Notification $notification, $recipient = 'client' )
     {
         if ( $notification->getAttachInvoice() ) {
             if ( ! isset ( $this->files['invoice'] ) ) {

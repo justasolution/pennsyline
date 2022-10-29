@@ -7,9 +7,9 @@ namespace BooklyAdvancedGoogleCalendar\Lib;
  */
 class Boot
 {
-    public static $plugin_title     = 'Bookly Advanced Google Calendar (Add-on)';
+    public static $plugin_title = 'Bookly Advanced Google Calendar (Add-on)';
     public static $req_plugin_class = 'BooklyPro\Lib\Plugin';
-    public static $req_version      = '4.1';
+    public static $req_version = '5.0';
 
     /**
      * Boot up.

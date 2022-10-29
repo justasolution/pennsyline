@@ -1,6 +1,7 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 use Bookly\Backend\Components\Controls\Buttons;
 use Bookly\Backend\Components\Controls\Inputs;
+
 ?>
 <div id=bookly-test-email-notifications-modal class="bookly-modal bookly-fade" tabindex=-1 role="dialog">
     <div class="modal-dialog">
@@ -23,16 +24,16 @@ use Bookly\Backend\Components\Controls\Inputs;
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <div class="dropdown">
-                                    <button class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">
+                                <div class="bookly-dropdown">
+                                    <button class="btn btn-default bookly-dropdown-toggle" data-toggle="bookly-dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">
                                         <?php esc_html_e( 'Notification templates', 'bookly' ) ?>
                                         (<span class="bookly-js-count">0</span>)
                                     </button>
-                                    <div class="dropdown-menu">
-                                        <div class="dropdown-item my-0 pl-3">
+                                    <div class="bookly-dropdown-menu">
+                                        <div class="bookly-dropdown-item my-0 pl-3">
                                             <?php Inputs::renderCheckBox( __( 'All templates', 'bookly' ), null, null, array( 'id' => 'bookly-check-all-entities' ) ) ?>
                                         </div>
-                                        <div class="dropdown-divider"></div>
+                                        <div class="bookly-dropdown-divider"></div>
                                         <div id="bookly-js-test-notifications-list"></div>
                                     </div>
                                 </div>

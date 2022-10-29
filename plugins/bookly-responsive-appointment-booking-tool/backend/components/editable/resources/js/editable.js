@@ -25,10 +25,12 @@
                             $.each(obj.values, function (option, value) {
                                 $('[data-option="' + option + '"]')
                                     .not('.bookly-js-editable')
-                                        .text(value)
+                                    .text(value)
+                                    .end()
+                                    .filter('.bookly-js-editable:not(.bookly-js-permanent-title)')
+                                    .text(value || obj.opts.l10n.empty)
                                     .end()
                                     .filter('.bookly-js-editable')
-                                        .text(value || obj.opts.l10n.empty)
                                         .each(function () {
                                             const elObj = $(this).data('booklyEditable');
                                             $.extend(elObj.values, obj.values);

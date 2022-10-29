@@ -6,6 +6,8 @@ use Bookly\Backend\Components\Controls\Buttons;
 use Bookly\Backend\Components\Controls\Inputs;
 use Bookly\Backend\Components;
 use Bookly\Backend\Modules\Appearance\Proxy;
+use Bookly\Backend\Modules\Appearance;
+
 ?>
 <?php if ( trim( $custom_css ) ) : ?>
     <style type="text/css">
@@ -18,12 +20,22 @@ use Bookly\Backend\Modules\Appearance\Proxy;
         <h4 class="col m-0"><?php esc_html_e( 'Appearance', 'bookly' ) ?></h4>
         <?php Support\Buttons::render( $self::pageSlug() ) ?>
     </div>
+    <?php if ( Lib\Config::proActive() ) : ?>
+        <div class="card mb-2">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col"><h5 class="mb-0"><?php esc_html_e( 'Bookly form', 'bookly' ) ?></h5></div>
+                    <div class="col text-right"><a class="btn btn-default" href="<?php echo add_query_arg( array( 'page' => Appearance\Page::pageSlug() ), admin_url( 'admin.php' ) ) ?>"><?php esc_html_e( 'Back', 'bookly' ) ?></a></div>
+                </div>
+            </div>
+        </div>
+    <?php endif ?>
     <div class="card mb-2">
         <div class="card-body">
             <div class="row align-items-center">
                 <div class="col-lg-3 col-xl-2 bookly-color-picker-wrapper mb-2 mb-lg-0">
                     <div class="bookly-color-picker">
-                        <input name="color" value="<?php form_option( 'bookly_app_color' ) ?>" class="bookly-js-color-picker" data-selected="<?php form_option( 'bookly_app_color' ) ?>" type="text" />
+                        <input name="color" value="<?php form_option( 'bookly_app_color' ) ?>" class="bookly-js-color-picker" data-selected="<?php form_option( 'bookly_app_color' ) ?>" type="text"/>
                     </div>
                 </div>
                 <div class="col-lg-9 col-xl-10">
@@ -49,7 +61,7 @@ use Bookly\Backend\Modules\Appearance\Proxy;
                 <?php $i = 1 ?>
                 <?php foreach ( $steps as $data ) : ?>
                     <li class="nav-item text-center" <?php if ( ! $data['show'] ) : ?>style="display: none;"<?php endif ?>>
-                        <a class="nav-link<?php if ( $data['step'] == 1 ) : ?> active<?php endif ?>" href="#bookly-step-<?php echo esc_attr( $data['step'] ) ?>" data-toggle="bookly-tab"><span class="bookly-js-step-number"><?php echo esc_html( $data['show'] ? $i ++ : $i ) ?></span>. <?php echo esc_html( $data['title'] ) ?></a>
+                        <a class="nav-link<?php if ( $data['step'] == 1 ) : ?> active<?php endif ?>" href="#bookly-step-<?php echo esc_attr( $data['step'] ) ?>" data-toggle="bookly-tab"><span class="bookly-js-step-number"><?php echo esc_html( $data['show'] ? $i++ : $i ) ?></span>. <?php echo esc_html( $data['title'] ) ?></a>
                     </li>
                 <?php endforeach ?>
             </ul>
@@ -61,12 +73,12 @@ use Bookly\Backend\Modules\Appearance\Proxy;
                     <div class="alert alert-info alert-dismissible my-2" id="bookly-js-hint-alert" role="alert">
                         <button type="button" class="close" data-dismiss="alert">&times;</button>
                         <p>
-                        <?php esc_html_e( 'Click on the underlined text to edit.', 'bookly' ) ?>
+                            <?php esc_html_e( 'Click on the underlined text to edit.', 'bookly' ) ?>
                         </p>
                         <p class="mb-0"><?php esc_html_e( 'How to publish this form on your web site?', 'bookly' ) ?>
-                        <br/>
-                        <?php esc_html_e( 'Open the page where you want to add the booking form in page edit mode and click on the "Add Bookly booking form" button. Choose which fields you\'d like to keep or remove from the booking form. Click Insert, and the booking form will be added to the page.', 'bookly' ) ?>
-                        <a href="<?php echo Bookly\Lib\Utils\Common::prepareUrlReferrers( 'https://support.booking-wp-plugin.com/hc/en-us/articles/212800185-Publish-Booking-Form', 'appearance' ) ?>" target="_blank"><?php esc_html_e( 'Read more', 'bookly' ) ?></a>
+                            <br/>
+                            <?php esc_html_e( 'Open the page where you want to add the booking form in page edit mode and click on the "Add Bookly booking form" button. Choose which fields you\'d like to keep or remove from the booking form. Click Insert, and the booking form will be added to the page.', 'bookly' ) ?>
+                            <a href="<?php echo Bookly\Lib\Utils\Common::prepareUrlReferrers( 'https://support.booking-wp-plugin.com/hc/en-us/articles/212800185-Publish-Booking-Form', 'appearance' ) ?>" target="_blank"><?php esc_html_e( 'Read more', 'bookly' ) ?></a>
                         </p>
                     </div>
                 <?php endif ?>
@@ -84,6 +96,9 @@ use Bookly\Backend\Modules\Appearance\Proxy;
                                 <?php Inputs::renderCheckBox( __( 'Show service duration next to service name', 'bookly' ), null, get_option( 'bookly_app_service_name_with_duration' ), array( 'id' => 'bookly-service-name-with-duration' ) ) ?>
                             </div>
                             <div class="col-md-3 my-2">
+                                <?php Inputs::renderCheckBox( __( 'Show category info', 'bookly' ), null, get_option( 'bookly_app_show_category_info' ), array( 'id' => 'bookly-show-category-info' ) ) ?>
+                            </div>
+                            <div class="col-md-3 my-2">
                                 <?php Inputs::renderCheckBox( __( 'Show service info', 'bookly' ), null, get_option( 'bookly_app_show_service_info' ), array( 'id' => 'bookly-show-service-info' ) ) ?>
                             </div>
                             <div class="col-md-3 my-2">
@@ -92,7 +107,7 @@ use Bookly\Backend\Modules\Appearance\Proxy;
                             <?php Proxy\Shared::renderServiceStepSettings() ?>
                         </div>
                     </div>
-                    <div class="bookly-js-time-settings collapse">
+                    <div class="bookly-js-time-settings bookly-collapse">
                         <div class="row">
                             <div class="col-md-3 my-2">
                                 <?php Inputs::renderCheckBox( __( 'Show calendar', 'bookly' ), null, get_option( 'bookly_app_show_calendar' ), array( 'id' => 'bookly-show-calendar' ) ) ?>
@@ -114,10 +129,11 @@ use Bookly\Backend\Modules\Appearance\Proxy;
                         </div>
                     </div>
 
+                    <?php Proxy\RecurringAppointments::renderRepeatStepSettings() ?>
                     <?php Proxy\Cart::renderCartStepSettings() ?>
                     <?php Proxy\ServiceExtras::renderStepSettings() ?>
 
-                    <div class="bookly-js-details-settings collapse">
+                    <div class="bookly-js-details-settings bookly-collapse">
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group mb-0">
@@ -154,7 +170,7 @@ use Bookly\Backend\Modules\Appearance\Proxy;
                             </div>
                         </div>
                     </div>
-                    <div class="bookly-js-payment-settings collapse">
+                    <div class="bookly-js-payment-settings bookly-collapse">
                         <div class="row">
                             <?php Proxy\Coupons::renderShowCoupons() ?>
                             <?php Proxy\Pro::renderShowTips() ?>
@@ -162,7 +178,7 @@ use Bookly\Backend\Modules\Appearance\Proxy;
                         <?php Proxy\Pro::renderBookingStatesSelector() ?>
                     </div>
 
-                    <div class="bookly-js-done-settings collapse">
+                    <div class="bookly-js-done-settings bookly-collapse">
                         <div class="row">
                             <div class="col-md-3 my-2">
                                 <?php Inputs::renderCheckBox( __( 'Show \'Start over\' button', 'bookly' ), null, get_option( 'bookly_app_show_start_over' ), array( 'id' => 'bookly-show-start-over' ) ) ?>

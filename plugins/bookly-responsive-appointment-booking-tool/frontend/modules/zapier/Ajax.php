@@ -96,7 +96,14 @@ class Ajax extends Lib\Base\Ajax
      */
     private static function getAppointments()
     {
-        $query = self::getAppointmentsQuery( self::parameter( 'with-updated' ) );
+        $records = 'new';
+        if ( self::parameter( 'with-updated' ) ) {
+            $records = 'new_or_updated';
+        } elseif ( self::parameter( 'only-updated' ) ) {
+            $records = 'updated';
+        }
+
+        $query = self::getAppointmentsQuery( $records );
 
         $all_extras = array();
         foreach ( Lib\Proxy\ServiceExtras::findAll() as $item ) {
@@ -139,11 +146,13 @@ class Ajax extends Lib\Base\Ajax
             $appointment['end_date']    = Lib\Slots\DatePoint::fromStr( $appointment['end_date'] )->format( 'Y-m-d\TH:i:sO' );
             $appointment['updated_at']  = Lib\Slots\DatePoint::fromStr( $appointment['updated_at'] )->format( 'Y-m-d\TH:i:sO' );
 
+            $customer = new Customer();
+            $customer->setFullName( $appointment['client_name'] );
             // Online meeting
-            $appointment['online_meeting_url']       = Lib\Proxy\Shared::buildOnlineMeetingUrl( '', $app );
+            $appointment['online_meeting_url']       = Lib\Proxy\Shared::buildOnlineMeetingUrl( '', $app, $customer );
             $appointment['online_meeting_password']  = Lib\Proxy\Shared::buildOnlineMeetingPassword( '', $app );
             $appointment['online_meeting_start_url'] = Lib\Proxy\Shared::buildOnlineMeetingStartUrl( '', $app );
-            $appointment['online_meeting_join_url']  = Lib\Proxy\Shared::buildOnlineMeetingJoinUrl( '', $app );
+            $appointment['online_meeting_join_url']  = Lib\Proxy\Shared::buildOnlineMeetingJoinUrl( '', $app, $customer );
 
             $appointment['client_time_zone'] = Lib\Proxy\Pro::getCustomerTimezone( $appointment['time_zone'], $appointment['time_zone_offset'] );
             $appointment['custom_fields']    = implode( '; ', $custom_fields );
@@ -158,27 +167,40 @@ class Ajax extends Lib\Base\Ajax
     /**
      * Get query for appointments
      *
-     * @param bool $with_updated
+     * @param string $records
      * @return Lib\Query
      */
-    private static function getAppointmentsQuery( $with_updated )
+    private static function getAppointmentsQuery( $records )
     {
         $date  = date_create( current_time( 'mysql' ) )->modify( '-1 hours' )->format( 'Y-m-d H:i:s' );
         $query = Lib\Entities\Appointment::query( 'a' );
-        if ( $with_updated ) {
-            $query
-                ->select( 'CONCAT(ca.id,\'-\',UNIX_TIMESTAMP(GREATEST(ca.updated_at,a.updated_at,COALESCE(p.updated_at,0)))) AS id' )
-                ->whereRaw(
-                'ca.updated_at >= \'%s\' 
-                OR a.updated_at >= \'%s\'
-                OR p.updated_at >= \'%s\'
-                ', array( $date, $date, $date ) );
-        } else {
-            $query
-                ->select( 'CONCAT(ca.id,\'-\',UNIX_TIMESTAMP(ca.created_at)) AS id' )
-                ->whereGte( 'ca.created_at', $date );
+        switch ( $records ) {
+            case 'new':
+                $query
+                    ->select( 'CONCAT(ca.id,\'-\',UNIX_TIMESTAMP(ca.created_at)) AS id' )
+                    ->whereGte( 'ca.created_at', $date );
+                break;
+            case 'new_or_updated':
+                $query
+                    ->select( 'CONCAT(ca.id,\'-\',UNIX_TIMESTAMP(GREATEST(ca.updated_at,a.updated_at,COALESCE(p.updated_at,0)))) AS id' )
+                    ->whereRaw(
+                        'ca.updated_at >= \'%s\' 
+                        OR a.updated_at >= \'%s\'
+                        OR p.updated_at >= \'%s\'',
+                        array( $date, $date, $date )
+                    );
+                break;
+            case 'updated':
+                $query
+                    ->select( 'CONCAT(ca.id,\'-\',UNIX_TIMESTAMP(GREATEST(ca.updated_at,a.updated_at,COALESCE(p.updated_at,0)))) AS id' )
+                    ->whereRaw(
+                        '(ca.updated_at > ca.created_at AND ca.updated_at >= \'%s\') 
+                        OR (a.updated_at > a.created_at AND a.updated_at >= \'%s\')
+                        OR (p.updated_at > p.created_at AND p.updated_at >= \'%s\')',
+                        array( $date, $date, $date )
+                    );
         }
-        $query->addSelect( 'a.internal_note, a.start_date, DATE_ADD(a.end_date, INTERVAL IF(ca.extras_consider_duration, a.extras_duration, 0) SECOND) AS end_date,
+        $query->addSelect( 'a.internal_note, a.start_date, DATE_ADD(a.end_date, INTERVAL a.extras_duration SECOND) AS end_date,
             COALESCE(s.title,a.custom_service_name) AS service_name, s.info AS service_info,
             COALESCE(ss.price,a.custom_service_price) AS service_price,
             st.full_name AS staff_name, st.email AS staff_email, st.info AS staff_info, st.phone AS staff_phone,

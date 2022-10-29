@@ -4,6 +4,7 @@ namespace Bookly\Lib\Notifications\Assets\StaffAgenda;
 use Bookly\Lib\Entities\Staff;
 use Bookly\Lib\Notifications\Assets\Base;
 use Bookly\Lib\Utils\DateTime;
+use Bookly\Lib\Utils\Common;
 
 /**
  * Class Codes
@@ -26,19 +27,10 @@ class Codes extends Base\Codes
         $replace_codes = parent::getReplaceCodes( $format );
 
         // Prepare data.
-        $staff_photo  = '';
-        $photo = wp_get_attachment_image_src( $this->staff->getAttachmentId(), 'full' );
-        if ( $photo != '' ) {
-            if ( $format == 'html' ) {
-                // Staff photo as <img> tag.
-                $staff_photo = sprintf(
-                    '<img src="%s" alt="%s" />',
-                    esc_attr( $photo[0] ),
-                    esc_attr( $this->staff->getFullName() )
-                );
-            } else {
-                $staff_photo  = $photo[0];
-            }
+        $staff_photo = $this->staff->getImageUrl();
+        if ( $format == 'html' ) {
+            // Staff photo as <img> tag.
+            $staff_photo = Common::getImageTag( $staff_photo, $this->staff->getFullName() );
         }
 
         // Add replace codes.

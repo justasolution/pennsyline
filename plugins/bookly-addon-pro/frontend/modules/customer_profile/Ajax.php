@@ -27,11 +27,12 @@ class Ajax extends BooklyLib\Base\Ajax
     public static function getPastAppointments()
     {
         $past = self::$customer->getPastAppointments( self::parameter( 'page' ), 30 );
-        $appointments  = Lib\Utils\Common::translateAppointments( $past['appointments'] );
+        $appointments = Lib\Utils\Common::translateAppointments( $past['appointments'] );
         $custom_fields = self::parameter( 'custom_fields' ) ? explode( ',', self::parameter( 'custom_fields' ) ) : array();
-        $columns       = (array) self::parameter( 'columns' );
-        $with_cancel   = in_array( 'cancel', $columns );
-        $html = self::renderTemplate( '_rows', compact( 'appointments', 'columns', 'custom_fields', 'with_cancel' ), false );
+        $columns = (array) self::parameter( 'columns' );
+        $with_cancel = in_array( 'cancel', $columns );
+        $customer = self::$customer;
+        $html = self::renderTemplate( '_rows', compact( 'appointments', 'columns', 'custom_fields', 'with_cancel', 'customer' ), false );
         wp_send_json_success( array( 'html' => $html, 'more' => $past['more'] ) );
     }
 
@@ -41,7 +42,8 @@ class Ajax extends BooklyLib\Base\Ajax
     protected static function hasAccess( $action )
     {
         if ( parent::hasAccess( $action ) ) {
-            self::$customer = BooklyLib\Entities\Customer::query()->findOne(); // TODO Fix it approiporte
+            self::$customer = BooklyLib\Entities\Customer::query()->findOne(); // Mady TODO Fix it approiporte
+            //self::$customer = BooklyLib\Entities\Customer::query()->where( 'wp_user_id', get_current_user_id() )->findOne();
 
             return self::$customer->isLoaded();
         }

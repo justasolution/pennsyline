@@ -31,7 +31,7 @@ abstract class Shared extends Proxy\Shared
     public static function prepareReplaceCodes( array $replace_codes, Codes $codes, $format )
     {
         $replace_codes['custom_fields'] = $codes->custom_fields;
-        $replace_codes['custom_fields_2c'] = $format == 'html' ? $codes->custom_fields_2c : $codes->custom_fields;
+        $replace_codes['custom_fields_2c'] = $format === 'html' ? $codes->custom_fields_2c : $codes->custom_fields;
         if ( $codes->custom_fields_data !== null ) {
             foreach ( $codes->custom_fields_data as $key => $value ) {
                 $replace_codes[ $key ] = $value;

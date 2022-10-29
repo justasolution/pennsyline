@@ -1,9 +1,9 @@
-jQuery(function ($) {
+jQuery(function($) {
     'use strict';
 
     $(document.body)
         .on('staff.saved', {},
-            function (event, tab, staffData) {
+            function(event, tab, staffData) {
                 if (tab == 'staff-details') {
                     let staff = BooklyStaffOrderDialogL10n.staff
                         .find(function(s) { return s.id == staffData.id; });
@@ -16,7 +16,7 @@ jQuery(function ($) {
                 }
             })
         .on('staff.deleted', {},
-            function (event, staff) {
+            function(event, staff) {
                 staff.forEach(function(id) {
                     BooklyStaffOrderDialogL10n.staff.forEach(function(s, index) {
                         if (s.id === parseInt(id)) {
@@ -26,19 +26,19 @@ jQuery(function ($) {
                 });
             });
 
-    var $dialog   = $('#bookly-staff-order-modal'),
-        $list     = $('#bookly-list', $dialog),
+    var $dialog = $('#bookly-staff-order-modal'),
+        $list = $('#bookly-list', $dialog),
         $template = $('#bookly-staff-template'),
-        $table    = $('#services-list'),
-        $save     = $('#bookly-save', $dialog)
+        $table = $('#services-list'),
+        $save = $('#bookly-save', $dialog)
     ;
 
     // Save categories
-    $save.on('click', function (e) {
+    $save.on('click', function(e) {
         e.preventDefault();
         let ladda = Ladda.create(this),
             staff = [],
-            list  = [];
+            list = [];
         ladda.start();
         $('li', $list).each(function(index, elem) {
             let id = $('[name="id"]', $(elem)).val();
@@ -51,7 +51,7 @@ jQuery(function ($) {
                 staff: staff,
                 csrf_token: BooklyL10nGlobal.csrf_token
             },
-            function (response) {
+            function(response) {
                 if (response.success) {
                     $dialog.booklyModal('hide');
                     BooklyStaffOrderDialogL10n.staff = list;
@@ -60,9 +60,9 @@ jQuery(function ($) {
             });
     });
 
-    $dialog.off().on('show.bs.modal', function () {
+    $dialog.off().on('show.bs.modal', function() {
         $list.html('');
-        BooklyStaffOrderDialogL10n.staff.forEach(function (staff) {
+        BooklyStaffOrderDialogL10n.staff.forEach(function(staff) {
             $list.append(
                 $template.clone().show().html()
                     .replace(/{{id}}/g, staff.id)
@@ -74,4 +74,5 @@ jQuery(function ($) {
     Sortable.create($list[0], {
         handle: '.bookly-js-draghandle',
     });
+    $('[data-target="#bookly-staff-order-modal"]').prop('disabled', false);
 });

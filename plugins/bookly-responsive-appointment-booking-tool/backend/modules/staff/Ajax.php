@@ -57,20 +57,20 @@ class Ajax extends Lib\Base\Ajax
         $total = $query->count();
 
         if ( $filter['archived'] ) {
-            if ( $filter['visibility'] != '' ) {
+            if ( isset( $filter['visibility'] ) && $filter['visibility'] != '' ) {
                 $query->whereRaw( 's.visibility = %s OR s.visibility = %s', array( $filter['visibility'], 'archive' ) );
             }
-        } elseif ( $filter['visibility'] != '' ) {
+        } elseif ( isset( $filter['visibility'] ) && $filter['visibility'] != '' ) {
             $query->where( 's.visibility', $filter['visibility'] );
         } else {
             $query->whereNot( 's.visibility', 'archive' );
         }
 
-        if ( $filter['category'] != '' ) {
+        if ( isset( $filter['category'] ) && $filter['category'] != '' ) {
             $query->where( 's.category_id', $filter['category'] );
         }
 
-        if ( $filter['search'] != '' ) {
+        if ( isset( $filter['search'] ) && $filter['search'] != '' ) {
             $fields = array();
             foreach ( $columns as $column ) {
                 switch ( $column['data'] ) {

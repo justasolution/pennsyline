@@ -16,7 +16,7 @@
                 <td style="width: 50%; text-align: right; vertical-align: top;">
                 <?php $helper::renderString( 'bookly_l10n_invoice_label', $codes ) ?><br/>
                 <?php if ( $bill_to_s[0] ) echo esc_html( 'Invoice Category: ' . $bill_to_s[0] ) ?><br/>
-                <?php if ( $codes['{po_number}'] ) echo esc_html( 'PO Number: ' . $codes['{po_number}'] ) ?>
+                <?php if ( $codes['{po_number}'] ) echo esc_html( 'Account Number: ' . $codes['{po_number}'] ) ?>
                 </td>
             </tr>
         <?php endif ?>

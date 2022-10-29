@@ -19,20 +19,20 @@ use Bookly\Backend\Components\Cloud\Recharge;
         <?php include '_balance.php' ?>
     </div>
     <div class="col">
-        <div class="dropdown show">
-            <a id="bookly-open-account-settings" class="btn <?php echo esc_attr( $cloud->account->getEmailConfirmed() ? 'btn-default' : 'btn-danger' ) ?> text-truncate dropdown-toggle ladda-button" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-spinner-color="#666666" data-style="zoom-in" data-spinner-size="40">
+        <div class="bookly-dropdown bookly-show">
+            <a id="bookly-open-account-settings" class="btn <?php echo esc_attr( $cloud->account->getEmailConfirmed() ? 'btn-default' : 'btn-danger' ) ?> text-truncate bookly-dropdown-toggle ladda-button" href="#" data-toggle="bookly-dropdown" aria-haspopup="true" aria-expanded="false" data-spinner-color="#666666" data-style="zoom-in" data-spinner-size="40">
                 <span class="ladda-label"><i class="fas <?php echo esc_attr( $cloud->account->getEmailConfirmed() ? 'fa-user' : 'fa-user-slash' ) ?>"></i><span class="d-none d-md-inline ml-2"><?php echo esc_html( $cloud->account->getUserName() ) ?></span></span>
             </a>
-            <div class="dropdown-menu dropdown-menu-compact dropdown-menu-right" aria-labelledby="bookly-open-account-settings">
+            <div class="bookly-dropdown-menu bookly-dropdown-menu-compact bookly-dropdown-menu-right" aria-labelledby="bookly-open-account-settings">
                 <?php if ( ! $cloud->account->getEmailConfirmed() ) : ?>
-                    <a id="bookly-open-email-confirm" class="dropdown-item text-danger" href="#">
+                    <a id="bookly-open-email-confirm" class="bookly-dropdown-item text-danger" href="#">
                         <i class="fas fa-exclamation-circle mr-2"></i><?php esc_html_e( 'Confirm email', 'bookly' ) ?>
                     </a>
                 <?php endif ?>
-                <a class="dropdown-item bookly-js-ladda" href="<?php echo Common::escAdminUrl( Bookly\Backend\Modules\CloudSettings\Page::pageSlug() ) ?>">
+                <a class="bookly-dropdown-item bookly-js-ladda" href="<?php echo Common::escAdminUrl( Bookly\Backend\Modules\CloudSettings\Page::pageSlug() ) ?>">
                     <i class="fas fa-cog mr-2"></i><?php esc_html_e( 'Settings', 'bookly' ) ?>
                 </a>
-                <a id="bookly-logout" class="dropdown-item bookly-js-ladda" href="#">
+                <a id="bookly-logout" class="bookly-dropdown-item bookly-js-ladda" href="#">
                     <i class="fas fa-sign-out-alt mr-2"></i><?php esc_html_e( 'Log out', 'bookly' ) ?>
                 </a>
             </div>

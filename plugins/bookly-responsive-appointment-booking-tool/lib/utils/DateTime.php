@@ -6,6 +6,7 @@ use Bookly\Lib\Base\Cache;
 
 /**
  * Class DateTime
+ *
  * @package Bookly\Lib\Utils
  */
 class DateTime extends Cache
@@ -97,41 +98,64 @@ class DateTime extends Cache
         ),
         self::FORMAT_JQUERY_DATEPICKER => array(
             // Day
-            'd' => 'dd', '\d' => '\'d\'',
-            'j' => 'd',  '\j' => 'j',
-            'l' => 'DD', '\l' => 'l',
-            'D' => 'D',  '\D' => '\'D\'',
-            'z' => 'o',  '\z' => 'z',
+            'd' => 'dd',
+            '\d' => '\'d\'',
+            'j' => 'd',
+            '\j' => 'j',
+            'l' => 'DD',
+            '\l' => 'l',
+            'D' => 'D',
+            '\D' => '\'D\'',
+            'z' => 'o',
+            '\z' => 'z',
             // Month
-            'm' => 'mm', '\m' => '\'m\'',
-            'n' => 'm',  '\n' => 'n',
-            'F' => 'MM', '\F' => 'F',
+            'm' => 'mm',
+            '\m' => '\'m\'',
+            'n' => 'm',
+            '\n' => 'n',
+            'F' => 'MM',
+            '\F' => 'F',
             // Year
-            'Y' => 'yy', '\Y' => 'Y',
-            'y' => 'y',  '\y' => '\'y\'',
+            'Y' => 'yy',
+            '\Y' => 'Y',
+            'y' => 'y',
+            '\y' => '\'y\'',
             // Others
-            'S' => '',   '\S' => 'S',
-            'o' => 'yy', '\o' => '\'o\'',
+            'S' => '',
+            '\S' => 'S',
+            'o' => 'yy',
+            '\o' => '\'o\'',
             '\\' => '',
         ),
         self::FORMAT_PICKADATE => array(
             // Day
-            'd' => 'dd',   '\d' => '!d',
-            'D' => 'ddd',  '\D' => 'D',
-            'l' => 'dddd', '\l' => 'l',
-            'j' => 'd',    '\j' => 'j',
+            'd' => 'dd',
+            '\d' => '!d',
+            'D' => 'ddd',
+            '\D' => 'D',
+            'l' => 'dddd',
+            '\l' => 'l',
+            'j' => 'd',
+            '\j' => 'j',
             // Month
-            'm' => 'mm',   '\m' => '!m',
-            'M' => 'mmm',  '\M' => 'M',
-            'F' => 'mmmm', '\F' => 'F',
-            'n' => 'm',    '\n' => 'n',
+            'm' => 'mm',
+            '\m' => '!m',
+            'M' => 'mmm',
+            '\M' => 'M',
+            'F' => 'mmmm',
+            '\F' => 'F',
+            'n' => 'm',
+            '\n' => 'n',
             // Year
-            'y' => 'yy',   '\y' => 'y',
-            'Y' => 'yyyy', '\Y' => 'Y',
+            'y' => 'yy',
+            '\y' => 'y',
+            'Y' => 'yyyy',
+            '\Y' => 'Y',
             // Others
-            'S' => '',     '\S' => 'S',
+            'S' => '',
+            '\S' => 'S',
             '\\' => '',
-        )
+        ),
     );
 
     /**
@@ -148,11 +172,10 @@ class DateTime extends Cache
     /**
      * Skip unsupported formatting options in js library
      *
-     * @deprecated since 18.4
-     *
      * @param string|integer $iso_date
-     * @param int            $for
+     * @param int $for
      * @return string
+     * @deprecated since 18.4
      */
     public static function formatDateFor( $iso_date, $for )
     {
@@ -200,8 +223,8 @@ class DateTime extends Cache
      *
      * @param string $iso_date_time
      * @param string $time_zone
-     * @param int $offset  Offset in JS format (i.e. in minutes and +/- opposite to PHP format)
-     * @param string $format  Output format
+     * @param int $offset Offset in JS format (i.e. in minutes and +/- opposite to PHP format)
+     * @param string $format Output format
      * @return false|string
      */
     public static function applyTimeZone( $iso_date_time, $time_zone, $offset, $format = 'Y-m-d H:i:s' )
@@ -221,8 +244,8 @@ class DateTime extends Cache
      * which is considered to be in WP time zone.
      *
      * @param string $iso_date_time
-     * @param int $offset  Offset in JS format (i.e. in minutes and +/- opposite to PHP format)
-     * @param string $format  Output format
+     * @param int $offset Offset in JS format (i.e. in minutes and +/- opposite to PHP format)
+     * @param string $format Output format
      * @return false|string
      */
     public static function applyTimeZoneOffset( $iso_date_time, $offset, $format = 'Y-m-d H:i:s' )
@@ -235,8 +258,8 @@ class DateTime extends Cache
     /**
      * From UTC0 datetime to WP timezone time
      *
-     * @param string $iso_date_time  UTC0 time
-     * @param string $format  Output format
+     * @param string $iso_date_time UTC0 time
+     * @param string $format Output format
      * @return string
      */
     public static function UTCToWPTimeZone( $iso_date_time, $format = 'Y-m-d H:i:s' )
@@ -265,7 +288,7 @@ class DateTime extends Cache
      * Convert WordPress date and time format into requested JS format.
      *
      * @param string $source_format
-     * @param int    $to
+     * @param int $to
      * @return string
      */
     public static function convertFormat( $source_format, $to )
@@ -301,11 +324,11 @@ class DateTime extends Cache
      */
     public static function buildTimeString( $seconds, $show_seconds = true )
     {
-        $sign     = $seconds < 0 ? '-' : '';
-        $seconds  = abs( $seconds );
-        $hours    = (int) ( $seconds / 3600 );
+        $sign = $seconds < 0 ? '-' : '';
+        $seconds = abs( $seconds );
+        $hours = (int) ( $seconds / 3600 );
         $seconds -= $hours * 3600;
-        $minutes  = (int) ( $seconds / 60 );
+        $minutes = (int) ( $seconds / 60 );
         $seconds -= $minutes * 60;
 
         return $show_seconds
@@ -325,7 +348,7 @@ class DateTime extends Cache
         if ( $str ) {
             $seconds = 3600;
             if ( $str[0] === '-' ) {
-                $sign = - 1;
+                $sign = -1;
                 $str = substr( $str, 1 );
             } else {
                 $sign = 1;
@@ -388,8 +411,8 @@ class DateTime extends Cache
     /**
      * Return formatted time interval
      *
-     * @param string $start_time    like 08:00:00
-     * @param string $end_time      like 18:45:00
+     * @param string $start_time like 08:00:00
+     * @param string $end_time like 18:45:00
      * @return string
      */
     public static function formatInterval( $start_time, $end_time )
@@ -423,6 +446,7 @@ class DateTime extends Cache
     {
         if ( preg_match( '/^UTC[+-]/', $time_zone ) ) {
             $offset = preg_replace( '/UTC\+?/', '', $time_zone );
+
             return $offset * HOUR_IN_SECONDS;
         } else {
             return timezone_offset_get( timezone_open( $time_zone ), new \DateTime() );
@@ -436,7 +460,7 @@ class DateTime extends Cache
      */
     public static function getDatePartsOrder()
     {
-        $order       = array();
+        $order = array();
         $date_format = preg_replace( '/[^A-Za-z]/', '', get_option( 'date_format' ) );
 
         foreach ( str_split( $date_format ) as $character ) {
@@ -465,6 +489,9 @@ class DateTime extends Cache
      */
     public static function validateDate( $date, $format = 'Y-m-d' )
     {
+        if ( $date === null ) {
+            return false;
+        }
         $d = \DateTime::createFromFormat( $format, $date );
 
         return $d && $d->format( $format ) === $date;
@@ -478,20 +505,22 @@ class DateTime extends Cache
     {
         return array_merge(
             array(
-                'format'           => self::convertFormat( 'date', self::FORMAT_MOMENT_JS ),
-                'applyLabel'       => __( 'Apply', 'bookly' ),
-                'cancelLabel'      => __( 'Cancel', 'bookly' ),
-                'fromLabel'        => __( 'From', 'bookly' ),
-                'toLabel'          => __( 'To', 'bookly' ),
+                'format' => self::convertFormat( 'date', self::FORMAT_MOMENT_JS ),
+                'applyLabel' => __( 'Apply', 'bookly' ),
+                'cancelLabel' => __( 'Cancel', 'bookly' ),
+                'fromLabel' => __( 'From', 'bookly' ),
+                'toLabel' => __( 'To', 'bookly' ),
                 'customRangeLabel' => __( 'Custom range', 'bookly' ),
-                'tomorrow'         => __( 'Tomorrow', 'bookly' ),
-                'today'            => __( 'Today', 'bookly' ),
-                'yesterday'        => __( 'Yesterday', 'bookly' ),
-                'last_7'           => __( 'Last 7 days', 'bookly' ),
-                'last_30'          => __( 'Last 30 days', 'bookly' ),
-                'thisMonth'        => __( 'This month', 'bookly' ),
-                'nextMonth'        => __( 'Next month', 'bookly' ),
-                'firstDay'         => (int) get_option( 'start_of_week' ),
+                'tomorrow' => __( 'Tomorrow', 'bookly' ),
+                'today' => __( 'Today', 'bookly' ),
+                'yesterday' => __( 'Yesterday', 'bookly' ),
+                'last_7' => __( 'Last 7 days', 'bookly' ),
+                'last_30' => __( 'Last 30 days', 'bookly' ),
+                'next_7' => __( 'Next 7 days', 'bookly' ),
+                'next_30' => __( 'Next 30 days', 'bookly' ),
+                'thisMonth' => __( 'This month', 'bookly' ),
+                'nextMonth' => __( 'Next month', 'bookly' ),
+                'firstDay' => (int) get_option( 'start_of_week' ),
             ),
             $array
         );
@@ -506,20 +535,24 @@ class DateTime extends Cache
         /** @var \WP_Locale $wp_locale */
         global $wp_locale;
 
+        if ( ! $wp_locale ) {
+            $wp_locale = new \WP_Locale();
+        }
+
         if ( is_rtl() ) {
             $array['direction'] = 'rtl';
         }
 
         return array_merge(
             array(
-                'format'          => self::convertFormat( 'date', self::FORMAT_MOMENT_JS ),
-                'monthNames'      => array_values( $wp_locale->month ),
-                'daysOfWeek'      => array_values( $wp_locale->weekday_abbrev ),
-                'firstDay'        => (int) get_option( 'start_of_week' ),
+                'format' => self::convertFormat( 'date', self::FORMAT_MOMENT_JS ),
+                'monthNames' => array_values( $wp_locale->month ),
+                'daysOfWeek' => array_values( $wp_locale->weekday_abbrev ),
+                'firstDay' => (int) get_option( 'start_of_week' ),
                 'monthNamesShort' => array_values( $wp_locale->month_abbrev ),
-                'dayNames'        => array_values( $wp_locale->weekday ),
-                'dayNamesShort'   => array_values( $wp_locale->weekday_abbrev ),
-                'meridiem'        => $wp_locale->meridiem
+                'dayNames' => array_values( $wp_locale->weekday ),
+                'dayNamesShort' => array_values( $wp_locale->weekday_abbrev ),
+                'meridiem' => $wp_locale->meridiem,
             ),
             $array
         );
@@ -544,45 +577,45 @@ class DateTime extends Cache
             if ( ! array_key_exists( $key, $unsorted ) ) {
                 $unsorted[ $key ] = array();
             }
-            $unsorted[ $key ][ $zone_value ] = translate( isset( $zone[1] ) ? implode( ' - ', array_map( function ( $item ) { return translate( $item, 'continents-cities' ); }, explode( '/', str_replace( '_', ' ', $zone[1] ) ) ) ) : $zone[0], 'continents-cities' );
+            $unsorted[ $key ][ $zone_value ] = translate( isset( $zone[1] ) ? implode( ' - ', array_map( function( $item ) { return translate( $item, 'continents-cities' ); }, explode( '/', str_replace( '_', ' ', $zone[1] ) ) ) ) : $zone[0], 'continents-cities' );
         }
 
         // Sort arrays
         unset( $unsorted['UTC'] );
         $sorted_continents = array_keys( $unsorted );
-        asort( $sorted_continents);
+        asort( $sorted_continents );
         foreach ( $sorted_continents as $continent ) {
             $continent_data = $unsorted[ $continent ];
-            asort($continent_data);
+            asort( $continent_data );
             $result[ $continent ] = $continent_data;
         }
         $result['UTC'] = array( 'UTC' => 'UTC' );
 
         $offset_range = array(
-            - 12,
-            - 11.5,
-            - 11,
-            - 10.5,
-            - 10,
-            - 9.5,
-            - 9,
-            - 8.5,
-            - 8,
-            - 7.5,
-            - 7,
-            - 6.5,
-            - 6,
-            - 5.5,
-            - 5,
-            - 4.5,
-            - 4,
-            - 3.5,
-            - 3,
-            - 2.5,
-            - 2,
-            - 1.5,
-            - 1,
-            - 0.5,
+            -12,
+            -11.5,
+            -11,
+            -10.5,
+            -10,
+            -9.5,
+            -9,
+            -8.5,
+            -8,
+            -7.5,
+            -7,
+            -6.5,
+            -6,
+            -5.5,
+            -5,
+            -4.5,
+            -4,
+            -3.5,
+            -3,
+            -2.5,
+            -2,
+            -1.5,
+            -1,
+            -0.5,
             0,
             0.5,
             1,

@@ -83,10 +83,10 @@ class Service extends Lib\Base\Form
 
         if ( ! array_key_exists( 'id', $params ) ) {
             // Set the default values for the new service
-            if ( $params['wc_cart_info_name'] == '' ) {
+            if ( ! isset( $params['wc_cart_info_name'] ) || $params['wc_cart_info_name'] == '' ) {
                 $params['wc_cart_info_name'] = get_option( 'bookly_l10n_wc_cart_info_name' );
             }
-            if ( $params['wc_cart_info'] == '' ) {
+            if ( ! isset( $params['wc_cart_info'] ) || $params['wc_cart_info'] == '' ) {
                 $params['wc_cart_info'] = get_option( 'bookly_l10n_wc_cart_info_value' );
             }
         }
@@ -103,11 +103,11 @@ class Service extends Lib\Base\Form
             // When adding new service - set its color randomly.
             $this->data['color'] = sprintf( '#%06X', mt_rand( 0, 0x64FFFF ) );
         } else {
-            if ( $this->data['type'] == Lib\Entities\Service::TYPE_SIMPLE ) {
+            if ( $this->data['type'] === Lib\Entities\Service::TYPE_SIMPLE ) {
                 Lib\Entities\SubService::query()->delete()->where( 'service_id', $this->data['id'] )->execute();
             }
 
-            if ( $this->data['limit_period'] == 'off' || ! $this->data['appointments_limit'] ) {
+            if ( ! isset( $this->data['limit_period'], $this->data['appointments_limit'] ) || $this->data['limit_period'] === 'off' || ! $this->data['appointments_limit'] ) {
                 $this->data['appointments_limit'] = null;
             }
 

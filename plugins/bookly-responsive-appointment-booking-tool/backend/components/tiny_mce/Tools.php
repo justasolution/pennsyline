@@ -6,6 +6,7 @@ use Bookly\Lib;
 
 /**
  * Class Tools
+ *
  * @package Bookly\Backend\Modules\TinyMce
  */
 class Tools extends Lib\Base\Component
@@ -14,9 +15,9 @@ class Tools extends Lib\Base\Component
     {
         global $PHP_SELF;
         if ( // check if we are in admin area and current page is adding/editing the post
-            is_admin()  && ( strpos( $PHP_SELF, 'post-new.php' ) !== false || strpos( $PHP_SELF, 'post.php' ) !== false || strpos( $PHP_SELF, 'admin-ajax.php' ) )
+            is_admin() && ( strpos( $PHP_SELF, 'post-new.php' ) !== false || strpos( $PHP_SELF, 'post.php' ) !== false || strpos( $PHP_SELF, 'admin-ajax.php' ) )
         ) {
-            add_action( 'admin_footer',  array( '\Bookly\Backend\Components\TinyMce\Tools', 'renderPopup' ), 10, 0 );
+            add_action( 'admin_footer', array( '\Bookly\Backend\Components\TinyMce\Tools', 'renderPopup' ), 10, 0 );
             add_filter( 'media_buttons', array( '\Bookly\Backend\Components\TinyMce\Tools', 'addButton' ), 50, 1 );
             add_action( 'elementor/editor/footer', array( '\Bookly\Backend\Components\TinyMce\Tools', 'renderPopup' ), 10, 0 );
         }
@@ -51,18 +52,16 @@ class Tools extends Lib\Base\Component
 
     public static function enqueueAssets()
     {
-        $casest = Lib\Config::getCaSeSt();
-
         self::enqueueScripts( array(
-            'module' => array( 'js/bookly-form-settings.js' => array( 'jquery' ), ),
+            'module' => array( 'js/bookly-form-settings.js' => array( 'jquery', 'bookly-backend-globals' ), ),
+        ) );
+
+        self::enqueueData( array(
+            'casest',
+            'custom-location-settings',
         ) );
 
         wp_localize_script( 'bookly-bookly-form-settings.js', 'BooklyFormShortCodeL10n', array(
-            'locationCustom' => (int) Lib\Proxy\Locations::servicesPerLocationAllowed(),
-            'locations' => $casest['locations'],
-            'categories' => $casest['categories'],
-            'services' => $casest['services'],
-            'staff' => $casest['staff'],
             'title' => __( 'Insert Appointment Booking Form', 'bookly' ),
         ) );
     }

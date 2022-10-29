@@ -162,7 +162,7 @@ class Service extends Lib\Base\Entity
     );
 
     /** @var \BooklyServiceExtras\Lib\Entities\ServiceExtra[] */
-    protected $extras = null;
+    protected $extras;
 
     /**
      * Get translated title (if empty returns "Untitled").
@@ -422,17 +422,16 @@ class Service extends Lib\Base\Entity
 
     /**
      * Get service image url
+     *
      * @param string $size
      *
-     * @return false|string
+     * @return string
      */
     public function getImageUrl( $size = 'full' )
     {
-        if ( $this->attachment_id && $img = wp_get_attachment_image_src( $this->attachment_id, $size ) ) {
-            return $img[0];
-        }
-
-        return '';
+        return $this->attachment_id
+            ? Lib\Utils\Common::getAttachmentUrl( $this->attachment_id, $size )
+            : '';
     }
 
     /**************************************************************************

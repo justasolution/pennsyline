@@ -11,7 +11,7 @@ use BooklyPro\Lib\Google;
 class Ajax extends BooklyLib\Base\Ajax
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     protected static function permissions()
     {

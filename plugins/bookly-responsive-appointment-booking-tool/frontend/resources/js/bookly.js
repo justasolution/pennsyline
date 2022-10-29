@@ -2334,13 +2334,15 @@ var bookly = (function ($) {
 
 	function scrollTo($elem, formId) {
 	  if (opt[formId].scroll) {
-	    var elemTop = $elem.offset().top;
-	    var scrollTop = $__default['default'](window).scrollTop();
+	    if ($elem.length) {
+	      var elemTop = $elem.offset().top;
+	      var scrollTop = $__default['default'](window).scrollTop();
 
-	    if (elemTop < $__default['default'](window).scrollTop() || elemTop > scrollTop + window.innerHeight) {
-	      $__default['default']('html,body').animate({
-	        scrollTop: elemTop - 50
-	      }, 500);
+	      if (elemTop < $__default['default'](window).scrollTop() || elemTop > scrollTop + window.innerHeight) {
+	        $__default['default']('html,body').animate({
+	          scrollTop: elemTop - 50
+	        }, 500);
+	      }
 	    }
 	  } else {
 	    opt[formId].scroll = true;
@@ -2909,6 +2911,7 @@ var bookly = (function ($) {
 	          });
 	          scrollTo($container, params.form_id);
 	          $__default['default']('.bookly-js-start-over', $container).on('click', function (e) {
+	            e.stopPropagation();
 	            e.preventDefault();
 	            laddaStart(this);
 	            stepService({
@@ -2972,26 +2975,26 @@ var bookly = (function ($) {
 	          opt[params.form_id].status.booking = 'ok';
 	        }
 
-	        var customJS = response.custom_js; // Init stripe intents form
+	        var customJS = response.custom_js;
+	        var $stripe_card_field = $__default['default']('#bookly-stripe-card-field', $container); // Init stripe intents form
 
-	        if (find($container).call($container, '#bookly-stripe-card-field').length) {
+	        if ($stripe_card_field.length) {
 	          if (response.stripe_publishable_key) {
 	            var stripe = Stripe(response.stripe_publishable_key, {
 	              betas: ['payment_intent_beta_3']
 	            });
 	            var elements = stripe.elements();
 	            var stripe_card = elements.create('cardNumber');
-	            stripe_card.mount("#bookly-stripe-card-field");
+	            stripe_card.mount("#bookly-form-" + params.form_id + " #bookly-stripe-card-field");
 	            var stripe_expiry = elements.create('cardExpiry');
-	            stripe_expiry.mount("#bookly-stripe-card-expiry-field");
+	            stripe_expiry.mount("#bookly-form-" + params.form_id + " #bookly-stripe-card-expiry-field");
 	            var stripe_cvc = elements.create('cardCvc');
-	            stripe_cvc.mount("#bookly-stripe-card-cvc-field");
+	            stripe_cvc.mount("#bookly-form-" + params.form_id + " #bookly-stripe-card-cvc-field");
 	          } else {
-	            find($container).call($container, '.bookly-stripe #bookly-stripe-card-field').hide();
-
-	            find($container).call($container, '.pay-card .bookly-js-next-step').prop('disabled', true);
-
-	            find($container).call($container, '.bookly-stripe .bookly-js-card-error').text('Please call Stripe() with your publishable key. You used an empty string.');
+	            $__default['default']('.pay-card .bookly-js-next-step', $container).prop('disabled', true);
+	            var $details = $stripe_card_field.closest('.bookly-js-details');
+	            $__default['default']('.bookly-form-group', $details).hide();
+	            $__default['default']('.bookly-js-card-error', $details).text('Please call Stripe() with your publishable key. You used an empty string.');
 	          }
 	        }
 
@@ -3005,13 +3008,18 @@ var bookly = (function ($) {
 	            $tips_error = $__default['default']('.bookly-js-tips-error', $container),
 	            $deposit_mode = $__default['default']('input[type=radio][name=bookly-full-payment]', $container),
 	            $coupon_info_text = $__default['default']('.bookly-info-text-coupon', $container),
-	            $buttons = $__default['default']('.bookly-gateway-buttons,form.bookly-authorize_net,form.bookly-stripe', $container);
+	            $buttons = $__default['default']('.bookly-gateway-buttons,.bookly-js-details', $container),
+	            $payment_details;
 	        $payments.on('click', function () {
 	          $buttons.hide();
 	          $__default['default']('.bookly-gateway-buttons.pay-' + $__default['default'](this).val(), $container).show();
 
-	          if ($__default['default'](this).val() == 'card') {
-	            $__default['default']('form.bookly-' + $__default['default'](this).data('form'), $container).show();
+	          if ($__default['default'](this).data('with-details') == 1) {
+	            var $parent = $__default['default'](this).closest('.bookly-list');
+	            $payment_details = $__default['default']('.bookly-js-details', $parent);
+	            $__default['default']('.bookly-js-details', $parent).show();
+	          } else {
+	            $payment_details = null;
 	          }
 	        });
 	        $payments.eq(0).trigger('click');
@@ -3102,6 +3110,8 @@ var bookly = (function ($) {
 	          });
 	        });
 	        $__default['default']('.bookly-js-next-step', $container).on('click', function (e) {
+	          e.stopPropagation();
+	          e.preventDefault();
 	          var ladda = laddaStart(this),
 	              $form; // Execute custom JavaScript
 
@@ -3116,6 +3126,24 @@ var bookly = (function ($) {
 	            // handle only if was selected local payment !
 	            e.preventDefault();
 	            save(params.form_id);
+	          } else if ($__default['default']('.bookly-payment[value=gift_card]', $container).is(':checked')) {
+	            booklyAjax({
+	              type: 'POST',
+	              data: {
+	                action: 'bookly_gift_cards_payment',
+	                csrf_token: BooklyL10n.csrf_token,
+	                gift_card: $__default['default']('[name=gift_card]', $container).val(),
+	                form_id: params.form_id
+	              },
+	              success: function success(response) {
+	                if (response.success) {
+	                  save(params.form_id);
+	                } else {
+	                  ladda.stop();
+	                  $__default['default']('.bookly-js-gift_card-error', $container).text(response.error);
+	                }
+	              }
+	            });
 	          } else if ($__default['default']('.bookly-payment[value=card]', $container).is(':checked')) {
 	            if ($__default['default']('.bookly-payment[data-form=stripe]', $container).is(':checked')) {
 	              booklyAjax({
@@ -3144,8 +3172,7 @@ var bookly = (function ($) {
 	                          success: function success(response) {
 	                            if (response.success) {
 	                              ladda.stop();
-
-	                              find($container).call($container, '.bookly-stripe .bookly-js-card-error').text(result.error.message);
+	                              $__default['default']('.bookly-js-card-error', $payment_details).text(result.error.message);
 	                            }
 	                          }
 	                        });
@@ -3161,28 +3188,25 @@ var bookly = (function ($) {
 	                    }
 
 	                    ladda.stop();
-
-	                    find($container).call($container, '.bookly-stripe .bookly-js-card-error').text(response.error_message);
+	                    $__default['default']('.bookly-js-card-error', $payment_details).text(response.error_message);
 	                  }
 	                }
 	              });
 	            } else {
-	              var card_action = 'bookly_authorize_net_aim_payment';
-	              $form = find($container).call($container, '.bookly-authorize_net');
 	              e.preventDefault();
+
 	              var data = {
-	                action: card_action,
+	                action: 'bookly_authorize_net_aim_payment',
 	                csrf_token: BooklyL10n.csrf_token,
 	                card: {
-	                  number: find($form).call($form, 'input[name="card_number"]').val(),
-	                  cvc: find($form).call($form, 'input[name="card_cvc"]').val(),
-	                  exp_month: find($form).call($form, 'select[name="card_exp_month"]').val(),
-	                  exp_year: find($form).call($form, 'select[name="card_exp_year"]').val()
+	                  number: $__default['default']('input[name="card_number"]', $payment_details).val(),
+	                  cvc: $__default['default']('input[name="card_cvc"]', $payment_details).val(),
+	                  exp_month: $__default['default']('select[name="card_exp_month"]', $payment_details).val(),
+	                  exp_year: $__default['default']('select[name="card_exp_year"]', $payment_details).val()
 	                },
 	                form_id: params.form_id
-	              };
-
-	              var cardPayment = function cardPayment(data) {
+	              },
+	                  cardPayment = function cardPayment(data) {
 	                booklyAjax({
 	                  type: 'POST',
 	                  data: data,
@@ -3195,8 +3219,7 @@ var bookly = (function ($) {
 	                      handleErrorCartItemNotAvailable(response, params.form_id);
 	                    } else if (response.error == 'payment_error') {
 	                      ladda.stop();
-
-	                      find($form).call($form, '.bookly-js-card-error').text(response.error_message);
+	                      $__default['default']('.bookly-js-card-error', $payment_details).text(response.error_message);
 	                    }
 	                  }
 	                });
@@ -3204,7 +3227,7 @@ var bookly = (function ($) {
 
 	              cardPayment(data);
 	            }
-	          } else if ($__default['default']('.bookly-payment[value=paypal]', $container).is(':checked') || $__default['default']('.bookly-payment[value=2checkout]', $container).is(':checked') || $__default['default']('.bookly-payment[value=payu_biz]', $container).is(':checked') || $__default['default']('.bookly-payment[value=payu_latam]', $container).is(':checked') || $__default['default']('.bookly-payment[value=payson]', $container).is(':checked') || $__default['default']('.bookly-payment[value=mollie]', $container).is(':checked') || $__default['default']('.bookly-payment[value=cloud_stripe]', $container).is(':checked')) {
+	          } else if ($__default['default']('.bookly-js-checkout', $container).is(':checked')) {
 	            e.preventDefault();
 	            $form = $__default['default'](this).closest('form');
 
@@ -3247,6 +3270,7 @@ var bookly = (function ($) {
 	          }
 	        });
 	        $__default['default']('.bookly-js-back-step', $container).on('click', function (e) {
+	          e.stopPropagation();
 	          e.preventDefault();
 	          laddaStart(this);
 	          stepDetails({
@@ -3478,8 +3502,124 @@ var bookly = (function ($) {
 	          filter($errors).call($errors, ':not(.bookly-custom-field-error)').html('');
 	        }; // Conditional custom fields
 
+	        var populateUserFormMady = function populateUserFormMady(response, erase) {
+              if(erase){
+                $('#mady_users_list').val('').trigger('change');
+              }
+              $full_name_field.val(response.data.full_name).removeClass('bookly-error');
+              $first_name_field.val(response.data.first_name).removeClass('bookly-error');
+              $last_name_field.val(response.data.last_name).removeClass('bookly-error');
 
-	        $__default['default']('.bookly-custom-field-row').on('change', 'select, input[type="checkbox"], input[type="radio"]', function () {
+              if (response.data.birthday) {
+                var dateParts = response.data.birthday.split('-'),
+                    year = _parseInt(dateParts[0]),
+                    month = _parseInt(dateParts[1]),
+                    day = _parseInt(dateParts[2]);
+
+                $birthday_day_field.val(day).removeClass('bookly-error');
+                $birthday_month_field.val(month).removeClass('bookly-error');
+                $birthday_year_field.val(year).removeClass('bookly-error');
+              }
+
+              if (erase ? $phone_field.val() : response.data.phone) {
+                $phone_field.removeClass('bookly-error');
+                if(erase && $phone_field.intlTelInput('getNumber')){
+                    $phone_field.intlTelInput('setNumber', response.data.phone);
+                }
+                if (intlTelInput.enabled) {
+                  $phone_field.intlTelInput('setNumber', response.data.phone);
+                } else {
+                  $phone_field.val(response.data.phone);
+                }
+              }
+
+              if (erase ? $address_country_field.val() : response.data.country) {
+                $address_country_field.val(response.data.country).removeClass('bookly-error');
+              }
+
+              if (erase ? $address_state_field.val() : response.data.state) {
+                $address_state_field.val(response.data.state).removeClass('bookly-error');
+              }
+
+              if (erase ? $address_postcode_field.val() : response.data.postcode) {
+                $address_postcode_field.val(response.data.postcode).removeClass('bookly-error');
+              }
+
+              if (erase ? $address_city_field.val() : response.data.city) {
+                $address_city_field.val(response.data.city).removeClass('bookly-error');
+              }
+
+              if (erase ? $address_street_field.val() : response.data.street) {
+                $address_street_field.val(response.data.street).removeClass('bookly-error');
+              }
+
+              if (erase ? $address_street_number_field.val() : response.data.street_number) {
+                $address_street_number_field.val(response.data.street_number).removeClass('bookly-error');
+              }
+
+              if (erase ? $address_additional_field.val() : response.data.additional_address) {
+                $address_additional_field.val(response.data.additional_address).removeClass('bookly-error');
+              }
+
+              $email_field.val(response.data.email).removeClass('bookly-error');
+
+              if (response.data.info_fields) {
+                  Object.keys(response.data.info_fields).forEach(field => {
+                      var $info_field = $container.find('.bookly-js-info-field-row[data-id="' + field + '"]');
+                      switch ($info_field.data('type')) {
+                          case 'checkboxes':
+                              response.data.info_fields[field].value.forEach(function (value) {
+                                  $info_field.find('.bookly-js-info-field').filter(function () {
+                                      return this.value == value;
+                                  }).prop('checked', true);
+                              });
+                              break;
+                          case 'radio-buttons':
+                              $info_field.find('.bookly-js-info-field').filter(function () {
+                                  return this.value == response.data.info_fields[field].value;
+                              }).prop('checked', true);
+                              break;
+                          default:
+                              $info_field.find('.bookly-js-info-field').val(response.data.info_fields[field].value);
+                              break;
+                      }
+                  });
+//                  [response.data.info_fields].forEach(function (field) {
+//                      var $info_field = $container.find('.bookly-js-info-field-row[data-id="' + field.id + '"]');
+//                      switch ($info_field.data('type')) {
+//                          case 'checkboxes':
+//                              field.value.forEach(function (value) {
+//                                  $info_field.find('.bookly-js-info-field').filter(function () {
+//                                      return this.value == value;
+//                                  }).prop('checked', true);
+//                              });
+//                              break;
+//                          case 'radio-buttons':
+//                              $info_field.find('.bookly-js-info-field').filter(function () {
+//                                  return this.value == field.value;
+//                              }).prop('checked', true);
+//                              break;
+//                          default:
+//                              $info_field.find('.bookly-js-info-field').val(field.value);
+//                              break;
+//                      }
+//                  });
+              }
+              $errors.filter(':not(.bookly-custom-field-error)').html('');
+            }; // Conditional custom fields Mady M
+
+
+            $('input.bookly-js-first-name').change(function() {
+                console.log($first_name_field.val());
+                $email_field.val($first_name_field.val() + '.' + $last_name_field.val() + '@pennsyline.com');
+            });
+
+            $('input.bookly-js-last-name').change(function() {
+                console.log($last_name_field.val());
+                $email_field.val($first_name_field.val() + '.' + $last_name_field.val() + '@pennsyline.com');
+            });
+
+	        $__default['default']('.bookly-custom-field-row').on('change', 'input, input[type="checkbox"], input[type="radio"]', function () {
 	          var $row = $__default['default'](this).closest('.bookly-custom-field-row'),
 	              id = $row.data('id'),
 	              $that = $__default['default'](this);
@@ -3609,26 +3749,314 @@ var bookly = (function ($) {
 	            }
 	          });
 	        }); // Customer duplicate modal.
-            $('#mady_users_list').select2();
+            //$('#mady_users_list').booklySelect2();
+            $('#mady_users_list').booklySelect2({
+                width: '100%',
+                allowClear: true,
+                placeholder: '',
+                theme: 'bootstrap4',
+                dropdownParent: '#bookly-tbs',
+                language: {
+                    noResults: function() {
+                        return BooklyL10n.noResultFound;
+                    }
+                },
+                matcher: function(params, data) {
+                    const term = $.trim(params.term).toLowerCase();
+                    if (term === '' || data.text.toLowerCase().indexOf(term) !== -1) {
+                        return data;
+                    }
+
+                    let result = null;
+                    const search = $(data.element).data('search');
+                    search &&
+                    search.find(function(text) {
+                        if (result === null && text.toLowerCase().indexOf(term) !== -1) {
+                            result = data;
+                        }
+                    });
+
+                    return result;
+                }
+            });
+
+            var clearUserForm = function(){
+                var response = {};
+                var empty = {
+                              "id": "",
+                              "wp_user_id": "",
+                              "wp_user": "",
+                              "facebook_id": null,
+                              "group_id": null,
+                              "full_name": "",
+                              "first_name": "",
+                              "last_name": "",
+                              "phone": "",
+                              "email": "",
+                              "country": "",
+                              "state": "",
+                              "postcode": "",
+                              "city": "",
+                              "street": "",
+                              "street_number": "",
+                              "additional_address": "",
+                              "address": "",
+                              "notes": "",
+                              "birthday": null,
+                              "birthday_formatted": null,
+                              "custom_data": false,
+                              "last_appointment": "",
+                              "total_appointments": "",
+                              "payments": "",
+                              "info_fields": {
+                                "27012": {
+                                  "id": "27012",
+                                  "value": ""
+                                },
+                                "31143": {
+                                  "id": "31143",
+                                  "value": ""
+                                },
+                                "42021": {
+                                  "id": "42021",
+                                  "value": ""
+                                },
+                                "63135": {
+                                  "id": "63135",
+                                  "value": ""
+                                },
+                                "80472": {
+                                  "id": "80472",
+                                  "value": ""
+                                },
+                                "86719": {
+                                  "id": "86719",
+                                  "value": ""
+                                }
+                              }
+                            }
+                response['data'] = empty;
+                populateUserFormMady(response, true);
+            }
+
+            $__default['default']('#clear_user_form').on('click', function (e) {
+                e.preventDefault();
+                clearUserForm();
+            });
+
             $__default['default']('#load_customer_profile').on('click', function (e) {
                 e.preventDefault();
+                console.log($("#mady_users_list option:selected"));
                 if($("#mady_users_list option:selected").attr('value') !=""){
                     var ladda = Ladda.create(this);
                     ladda.start();
                     booklyAjax({
                         type        : 'POST',
                         data        : {
-                            action     : 'bookly_wp_load_user',
+                            action     : 'bookly_get_customers',
                             csrf_token : BooklyL10n.csrf_token,
-                            form_id    : params.form_id,
-                            log        : $("#mady_users_list option:selected").attr('value')
+                            filter        : $("#mady_users_list option:selected").attr('value'),
+                            columns : {
+                                        "0": {
+                                          "data": "id",
+                                          "name": "",
+                                          "searchable": "true",
+                                          "orderable": "true",
+                                          "search": {
+                                            "value": "",
+                                            "regex": "false"
+                                          }
+                                        },
+                                        "1": {
+                                          "data": "full_name",
+                                          "name": "",
+                                          "searchable": "true",
+                                          "orderable": "true",
+                                          "search": {
+                                            "value": "",
+                                            "regex": "false"
+                                          }
+                                        },
+                                        "2": {
+                                          "data": "first_name",
+                                          "name": "",
+                                          "searchable": "true",
+                                          "orderable": "true",
+                                          "search": {
+                                            "value": "",
+                                            "regex": "false"
+                                          }
+                                        },
+                                        "3": {
+                                          "data": "last_name",
+                                          "name": "",
+                                          "searchable": "true",
+                                          "orderable": "true",
+                                          "search": {
+                                            "value": "",
+                                            "regex": "false"
+                                          }
+                                        },
+                                        "4": {
+                                          "data": "phone",
+                                          "name": "",
+                                          "searchable": "true",
+                                          "orderable": "true",
+                                          "search": {
+                                            "value": "",
+                                            "regex": "false"
+                                          }
+                                        },
+                                        "5": {
+                                          "data": "email",
+                                          "name": "",
+                                          "searchable": "true",
+                                          "orderable": "true",
+                                          "search": {
+                                            "value": "",
+                                            "regex": "false"
+                                          }
+                                        },
+                                        "6": {
+                                          "data": "notes",
+                                          "name": "",
+                                          "searchable": "true",
+                                          "orderable": "true",
+                                          "search": {
+                                            "value": "",
+                                            "regex": "false"
+                                          }
+                                        },
+                                        "7": {
+                                          "data": "last_appointment",
+                                          "name": "",
+                                          "searchable": "true",
+                                          "orderable": "true",
+                                          "search": {
+                                            "value": "",
+                                            "regex": "false"
+                                          }
+                                        },
+                                        "8": {
+                                          "data": "total_appointments",
+                                          "name": "",
+                                          "searchable": "true",
+                                          "orderable": "true",
+                                          "search": {
+                                            "value": "",
+                                            "regex": "false"
+                                          }
+                                        },
+                                        "9": {
+                                          "data": "payments",
+                                          "name": "",
+                                          "searchable": "true",
+                                          "orderable": "true",
+                                          "search": {
+                                            "value": "",
+                                            "regex": "false"
+                                          }
+                                        },
+                                        "10": {
+                                          "data": "address",
+                                          "name": "",
+                                          "searchable": "true",
+                                          "orderable": "false",
+                                          "search": {
+                                            "value": "",
+                                            "regex": "false"
+                                          }
+                                        },
+                                        "11": {
+                                          "data": "info_fields.86719.value",
+                                          "name": "",
+                                          "searchable": "true",
+                                          "orderable": "false",
+                                          "search": {
+                                            "value": "",
+                                            "regex": "false"
+                                          }
+                                        },
+                                        "12": {
+                                          "data": "info_fields.31143.value",
+                                          "name": "",
+                                          "searchable": "true",
+                                          "orderable": "false",
+                                          "search": {
+                                            "value": "",
+                                            "regex": "false"
+                                          }
+                                        },
+                                        "13": {
+                                          "data": "info_fields.27012.value",
+                                          "name": "",
+                                          "searchable": "true",
+                                          "orderable": "false",
+                                          "search": {
+                                            "value": "",
+                                            "regex": "false"
+                                          }
+                                        },
+                                        "14": {
+                                          "data": "info_fields.63135.value",
+                                          "name": "",
+                                          "searchable": "true",
+                                          "orderable": "false",
+                                          "search": {
+                                            "value": "",
+                                            "regex": "false"
+                                          }
+                                        },
+                                        "15": {
+                                          "data": "info_fields.80472.value",
+                                          "name": "",
+                                          "searchable": "true",
+                                          "orderable": "false",
+                                          "search": {
+                                            "value": "",
+                                            "regex": "false"
+                                          }
+                                        },
+                                        "16": {
+                                          "data": "info_fields.42021.value",
+                                          "name": "",
+                                          "searchable": "true",
+                                          "orderable": "false",
+                                          "search": {
+                                            "value": "",
+                                            "regex": "false"
+                                          }
+                                        },
+                                        "17": {
+                                          "data": "",
+                                          "name": "",
+                                          "searchable": "false",
+                                          "orderable": "false",
+                                          "search": {
+                                            "value": "",
+                                            "regex": "false"
+                                          }
+                                        },
+                                        "18": {
+                                          "data": "",
+                                          "name": "",
+                                          "searchable": "false",
+                                          "orderable": "false",
+                                          "search": {
+                                            "value": "",
+                                            "regex": "false"
+                                          }
+                                        }
+                                      }
                         },
                         success: function (response) {
-                            if (response.success) {
-                                BooklyL10n.csrf_token = response.data.csrf_token;
-                                $guest_info.fadeOut('slow');
-                                populateForm(response);
-                                $login_modal.removeClass('bookly-in');
+                            console.log(response);
+                            response.data = response.data[0];
+                            if (response.data) {
+                                //BooklyL10n.csrf_token = response.data.csrf_token;
+                                //$guest_info.fadeOut('slow');
+                                populateUserFormMady(response, false);
+                                //$login_modal.removeClass('bookly-in');
                             } else if (response.error == 'incorrect_username_password') {
                                 $login_modal.find('input').addClass('bookly-error');
                                 $login_modal.find('.bookly-label-error').html(opt[params.form_id].errors[response.error]);
@@ -3636,6 +4064,27 @@ var bookly = (function ($) {
                             ladda.stop();
                         }
                     })
+//                    booklyAjax({
+//                        type        : 'POST',
+//                        data        : {
+//                            action     : 'bookly_wp_load_user',
+//                            csrf_token : BooklyL10n.csrf_token,
+//                            form_id    : params.form_id,
+//                            log        : $("#mady_users_list option:selected").attr('value')
+//                        },
+//                        success: function (response) {
+//                            if (response.success) {
+//                                BooklyL10n.csrf_token = response.data.csrf_token;
+//                                $guest_info.fadeOut('slow');
+//                                populateForm(response);
+//                                $login_modal.removeClass('bookly-in');
+//                            } else if (response.error == 'incorrect_username_password') {
+//                                $login_modal.find('input').addClass('bookly-error');
+//                                $login_modal.find('.bookly-label-error').html(opt[params.form_id].errors[response.error]);
+//                            }
+//                            ladda.stop();
+//                        }
+//                    })
                 } else{
                    alert('Please Select an user.');
                 }
@@ -3685,6 +4134,7 @@ var bookly = (function ($) {
 	        }
 
 	        $next_btn.on('click', function (e, force_update_customer) {
+	          e.stopPropagation();
 	          e.preventDefault(); // Terms and conditions checkbox
 
 	          var $terms = $__default['default']('.bookly-js-terms', $container),
@@ -4076,6 +4526,7 @@ var bookly = (function ($) {
 	          }
 	        });
 	        $__default['default']('.bookly-js-back-step', $container).on('click', function (e) {
+	          e.stopPropagation();
 	          e.preventDefault();
 	          laddaStart(this);
 
@@ -4171,7 +4622,7 @@ var bookly = (function ($) {
 	    }, {
 	      selector: '.bookly-js-address-city',
 	      val: function val() {
-	        return getFieldValueByType('locality') || getFieldValueByType('administrative_area_level_3');
+	        return getFieldValueByType('locality') || getFieldValueByType('administrative_area_level_3') || getFieldValueByType('postal_town');
 	      }
 	    }, {
 	      selector: '.bookly-js-address-state',
@@ -4258,7 +4709,9 @@ var bookly = (function ($) {
 
 	          scrollTo($container, params.form_id);
 	          var customJS = response.custom_js;
-	          $__default['default']('.bookly-js-next-step', $container).on('click', function () {
+	          $__default['default']('.bookly-js-next-step', $container).on('click', function (e) {
+	            e.stopPropagation();
+	            e.preventDefault();
 	            laddaStart(this); // Execute custom JavaScript
 
 	            if (customJS) {
@@ -4272,7 +4725,9 @@ var bookly = (function ($) {
 	              form_id: params.form_id
 	            });
 	          });
-	          $__default['default']('.bookly-add-item', $container).on('click', function () {
+	          $__default['default']('.bookly-add-item', $container).on('click', function (e) {
+	            e.stopPropagation();
+	            e.preventDefault();
 	            laddaStart(this);
 	            stepService({
 	              form_id: params.form_id,
@@ -4281,6 +4736,7 @@ var bookly = (function ($) {
 	          }); // 'BACK' button.
 
 	          $__default['default']('.bookly-js-back-step', $container).on('click', function (e) {
+	            e.stopPropagation();
 	            e.preventDefault();
 	            laddaStart(this);
 
@@ -5013,6 +5469,7 @@ var bookly = (function ($) {
 	            });
 	          });
 	          $__default['default']('.bookly-js-back-step', $container).on('click', function (e) {
+	            e.stopPropagation();
 	            e.preventDefault();
 	            laddaStart(this);
 	            booklyAjax({
@@ -5037,6 +5494,7 @@ var bookly = (function ($) {
 	            });
 	          });
 	          $__default['default']('.bookly-js-go-to-cart', $container).on('click', function (e) {
+	            e.stopPropagation();
 	            e.preventDefault();
 	            laddaStart(this);
 	            stepCart({
@@ -5045,6 +5503,8 @@ var bookly = (function ($) {
 	            });
 	          });
 	          $__default['default']('.bookly-js-next-step', $container).on('click', function (e) {
+	            e.stopPropagation();
+	            e.preventDefault();
 	            laddaStart(this); // Execute custom JavaScript
 
 	            if (customJS) {
@@ -5203,6 +5663,7 @@ var bookly = (function ($) {
 	          customJS = response.custom_js; // 'BACK' button.
 
 	      $__default['default']('.bookly-js-back-step', $container).on('click', function (e) {
+	        e.stopPropagation();
 	        e.preventDefault();
 	        laddaStart(this);
 
@@ -5223,6 +5684,7 @@ var bookly = (function ($) {
 	        }
 	      }).toggle(!opt[params.form_id].skip_steps.service || !opt[params.form_id].skip_steps.extras);
 	      $__default['default']('.bookly-js-go-to-cart', $container).on('click', function (e) {
+	        e.stopPropagation();
 	        e.preventDefault();
 	        laddaStart(this);
 	        stepCart({
@@ -5253,6 +5715,8 @@ var bookly = (function ($) {
 	          weekdaysFull: BooklyL10n.days,
 	          weekdaysShort: BooklyL10n.daysShort,
 	          monthsFull: BooklyL10n.months,
+	          labelMonthNext: BooklyL10n.nextMonth,
+	          labelMonthPrev: BooklyL10n.prevMonth,
 	          firstDay: opt[params.form_id].firstDay,
 	          clear: false,
 	          close: false,
@@ -5293,7 +5757,9 @@ var bookly = (function ($) {
 	          },
 	          onRender: function onRender() {
 	            var date = new Date(Date.UTC(this.get('view').year, this.get('view').month));
-	            $__default['default']('.picker__nav--next', $container).on('click', function () {
+	            $__default['default']('.picker__nav--next', $container).on('click', function (e) {
+	              e.stopPropagation();
+	              e.preventDefault();
 	              date.setUTCMonth(date.getUTCMonth() + 1);
 	              dropAjax();
 	              stepTime({
@@ -5302,7 +5768,9 @@ var bookly = (function ($) {
 	              });
 	              showSpinner();
 	            });
-	            $__default['default']('.picker__nav--prev', $container).on('click', function () {
+	            $__default['default']('.picker__nav--prev', $container).on('click', function (e) {
+	              e.stopPropagation();
+	              e.preventDefault();
 	              date.setUTCMonth(date.getUTCMonth() - 1);
 	              dropAjax();
 	              stepTime({
@@ -5605,6 +6073,8 @@ var bookly = (function ($) {
 	        }
 
 	        $__default['default']('button.bookly-time-skip', $container).off('click').on('click', function (e) {
+	          e.stopPropagation();
+	          e.preventDefault();
 	          laddaStart(this);
 
 	          if (!opt[params.form_id].no_extras && opt[params.form_id].step_extras === 'after_step_time') {
@@ -5634,6 +6104,7 @@ var bookly = (function ($) {
 	            xhr_session_save = null;
 	          }
 
+	          e.stopPropagation();
 	          e.preventDefault();
 	          var $this = $__default['default'](this),
 	              data = {
@@ -5785,6 +6256,7 @@ var bookly = (function ($) {
 	          });
 	        });
 	        $goto_cart.on('click', function (e) {
+	          e.stopPropagation();
 	          e.preventDefault();
 	          laddaStart(this);
 	          stepCart({
@@ -5793,6 +6265,7 @@ var bookly = (function ($) {
 	          });
 	        });
 	        $next_step.on('click', function (e) {
+	          e.stopPropagation();
 	          e.preventDefault();
 	          laddaStart(this); // Execute custom JavaScript
 
@@ -5854,6 +6327,7 @@ var bookly = (function ($) {
 	          });
 	        });
 	        $back_step.on('click', function (e) {
+	          e.stopPropagation();
 	          e.preventDefault();
 	          laddaStart(this);
 
@@ -9182,7 +9656,7 @@ var bookly = (function ($) {
 
 	function _isNativeReflectConstruct$1() { if (typeof Reflect === "undefined" || !construct) return false; if (construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 
-	function create_if_block_12(ctx) {
+	function create_if_block_14(ctx) {
 	  var div;
 	  var select;
 	  var updating_el;
@@ -9190,33 +9664,33 @@ var bookly = (function ($) {
 
 	  function select_el_binding(value) {
 	    /*select_el_binding*/
-	    ctx[64](value);
+	    ctx[66](value);
 	  }
 
 	  var select_props = {
 	    label:
 	    /*l10n*/
-	    ctx[14].location_label,
+	    ctx[16].location_label,
 	    placeholder:
 	    /*locationPlaceholder*/
-	    ctx[28],
+	    ctx[30],
 	    items: values(
 	    /*locations*/
 	    ctx[0]),
 	    selected:
 	    /*locationId*/
-	    ctx[15],
+	    ctx[17],
 	    error:
 	    /*locationError*/
-	    ctx[32]
+	    ctx[34]
 	  };
 
 	  if (
 	  /*locationEl*/
-	  ctx[33] !== void 0) {
+	  ctx[35] !== void 0) {
 	    select_props.el =
 	    /*locationEl*/
-	    ctx[33];
+	    ctx[35];
 	  }
 
 	  select = new Select({
@@ -9227,7 +9701,7 @@ var bookly = (function ($) {
 	  });
 	  select.$on("change",
 	  /*onLocationChange*/
-	  ctx[38]);
+	  ctx[40]);
 	  return {
 	    c: function c() {
 	      div = element("div");
@@ -9244,14 +9718,14 @@ var bookly = (function ($) {
 	      var select_changes = {};
 	      if (dirty[0] &
 	      /*l10n*/
-	      16384) select_changes.label =
+	      65536) select_changes.label =
 	      /*l10n*/
-	      ctx[14].location_label;
+	      ctx[16].location_label;
 	      if (dirty[0] &
 	      /*locationPlaceholder*/
-	      268435456) select_changes.placeholder =
+	      1073741824) select_changes.placeholder =
 	      /*locationPlaceholder*/
-	      ctx[28];
+	      ctx[30];
 	      if (dirty[0] &
 	      /*locations*/
 	      1) select_changes.items = values(
@@ -9259,22 +9733,22 @@ var bookly = (function ($) {
 	      ctx[0]);
 	      if (dirty[0] &
 	      /*locationId*/
-	      32768) select_changes.selected =
+	      131072) select_changes.selected =
 	      /*locationId*/
-	      ctx[15];
+	      ctx[17];
 	      if (dirty[1] &
 	      /*locationError*/
-	      2) select_changes.error =
+	      8) select_changes.error =
 	      /*locationError*/
-	      ctx[32];
+	      ctx[34];
 
 	      if (!updating_el && dirty[1] &
 	      /*locationEl*/
-	      4) {
+	      16) {
 	        updating_el = true;
 	        select_changes.el =
 	        /*locationEl*/
-	        ctx[33];
+	        ctx[35];
 	        add_flush_callback(function () {
 	          return updating_el = false;
 	        });
@@ -9296,135 +9770,249 @@ var bookly = (function ($) {
 	      destroy_component(select);
 	    }
 	  };
-	} // (486:4) {#if hasCategorySelect}
+	} // (488:4) {#if hasCategorySelect}
 
 
-	function create_if_block_11(ctx) {
+	function create_if_block_12(ctx) {
 	  var div;
 	  var select;
+	  var t;
+	  var show_if =
+	  /*showCategoryInfo*/
+	  ctx[4] &&
+	  /*categoryId*/
+	  ctx[18] &&
+	  /*categories*/
+	  ctx[1][
+	  /*categoryId*/
+	  ctx[18]].hasOwnProperty("info") &&
+	  /*categories*/
+	  ctx[1][
+	  /*categoryId*/
+	  ctx[18]].info !== "";
+	  var if_block_anchor;
 	  var current;
 	  select = new Select({
 	    props: {
 	      label:
 	      /*l10n*/
-	      ctx[14].category_label,
+	      ctx[16].category_label,
 	      placeholder:
 	      /*categoryPlaceholder*/
-	      ctx[29],
+	      ctx[31],
 	      items: values(
 	      /*categoryItems*/
-	      ctx[24]),
+	      ctx[26]),
 	      selected:
 	      /*categoryId*/
-	      ctx[16]
+	      ctx[18]
 	    }
 	  });
 	  select.$on("change",
 	  /*onCategoryChange*/
-	  ctx[39]);
+	  ctx[41]);
+	  var if_block = show_if && create_if_block_13(ctx);
 	  return {
 	    c: function c() {
 	      div = element("div");
 	      create_component(select.$$.fragment);
+	      t = space();
+	      if (if_block) if_block.c();
+	      if_block_anchor = empty();
 	      attr(div, "class", "bookly-form-group");
 	      attr(div, "data-type", "category");
 	    },
 	    m: function m(target, anchor) {
 	      insert(target, div, anchor);
 	      mount_component(select, div, null);
+	      insert(target, t, anchor);
+	      if (if_block) if_block.m(target, anchor);
+	      insert(target, if_block_anchor, anchor);
 	      current = true;
 	    },
 	    p: function p(ctx, dirty) {
 	      var select_changes = {};
 	      if (dirty[0] &
 	      /*l10n*/
-	      16384) select_changes.label =
+	      65536) select_changes.label =
 	      /*l10n*/
-	      ctx[14].category_label;
-	      if (dirty[0] &
+	      ctx[16].category_label;
+	      if (dirty[1] &
 	      /*categoryPlaceholder*/
-	      536870912) select_changes.placeholder =
+	      1) select_changes.placeholder =
 	      /*categoryPlaceholder*/
-	      ctx[29];
+	      ctx[31];
 	      if (dirty[0] &
 	      /*categoryItems*/
-	      16777216) select_changes.items = values(
+	      67108864) select_changes.items = values(
 	      /*categoryItems*/
-	      ctx[24]);
+	      ctx[26]);
 	      if (dirty[0] &
 	      /*categoryId*/
-	      65536) select_changes.selected =
+	      262144) select_changes.selected =
 	      /*categoryId*/
-	      ctx[16];
+	      ctx[18];
 	      select.$set(select_changes);
+	      if (dirty[0] &
+	      /*showCategoryInfo, categoryId, categories*/
+	      262162) show_if =
+	      /*showCategoryInfo*/
+	      ctx[4] &&
+	      /*categoryId*/
+	      ctx[18] &&
+	      /*categories*/
+	      ctx[1][
+	      /*categoryId*/
+	      ctx[18]].hasOwnProperty("info") &&
+	      /*categories*/
+	      ctx[1][
+	      /*categoryId*/
+	      ctx[18]].info !== "";
+
+	      if (show_if) {
+	        if (if_block) {
+	          if_block.p(ctx, dirty);
+
+	          if (dirty[0] &
+	          /*showCategoryInfo, categoryId, categories*/
+	          262162) {
+	            transition_in(if_block, 1);
+	          }
+	        } else {
+	          if_block = create_if_block_13(ctx);
+	          if_block.c();
+	          transition_in(if_block, 1);
+	          if_block.m(if_block_anchor.parentNode, if_block_anchor);
+	        }
+	      } else if (if_block) {
+	        group_outros();
+	        transition_out(if_block, 1, 1, function () {
+	          if_block = null;
+	        });
+	        check_outros();
+	      }
 	    },
 	    i: function i(local) {
 	      if (current) return;
 	      transition_in(select.$$.fragment, local);
+	      transition_in(if_block);
 	      current = true;
 	    },
 	    o: function o(local) {
 	      transition_out(select.$$.fragment, local);
+	      transition_out(if_block);
 	      current = false;
 	    },
 	    d: function d(detaching) {
 	      if (detaching) detach(div);
 	      destroy_component(select);
+	      if (detaching) detach(t);
+	      if (if_block) if_block.d(detaching);
+	      if (detaching) detach(if_block_anchor);
 	    }
 	  };
-	} // (497:4) {#if hasServiceSelect}
+	} // (498:8) {#if showCategoryInfo && categoryId && categories[categoryId].hasOwnProperty('info') && categories[categoryId].info !== ''}
 
 
-	function create_if_block_9(ctx) {
+	function create_if_block_13(ctx) {
+	  var div;
+	  var raw_value =
+	  /*categories*/
+	  ctx[1][
+	  /*categoryId*/
+	  ctx[18]].info + "";
+	  var div_transition;
+	  var current;
+	  return {
+	    c: function c() {
+	      div = element("div");
+	      attr(div, "class", "bookly-box bookly-visible-sm bookly-category-info");
+	    },
+	    m: function m(target, anchor) {
+	      insert(target, div, anchor);
+	      div.innerHTML = raw_value;
+	      current = true;
+	    },
+	    p: function p(ctx, dirty) {
+	      if ((!current || dirty[0] &
+	      /*categories, categoryId*/
+	      262146) && raw_value !== (raw_value =
+	      /*categories*/
+	      ctx[1][
+	      /*categoryId*/
+	      ctx[18]].info + "")) div.innerHTML = raw_value;
+	    },
+	    i: function i(local) {
+	      if (current) return;
+	      add_render_callback(function () {
+	        if (!div_transition) div_transition = create_bidirectional_transition(div, slide, {}, true);
+	        div_transition.run(1);
+	      });
+	      current = true;
+	    },
+	    o: function o(local) {
+	      if (!div_transition) div_transition = create_bidirectional_transition(div, slide, {}, false);
+	      div_transition.run(0);
+	      current = false;
+	    },
+	    d: function d(detaching) {
+	      if (detaching) detach(div);
+	      if (detaching && div_transition) div_transition.end();
+	    }
+	  };
+	} // (504:4) {#if hasServiceSelect}
+
+
+	function create_if_block_10(ctx) {
 	  var div;
 	  var select;
 	  var updating_el;
 	  var t;
 	  var show_if =
 	  /*showServiceInfo*/
-	  ctx[3] &&
+	  ctx[5] &&
 	  /*serviceId*/
-	  ctx[17] &&
+	  ctx[19] &&
 	  /*services*/
-	  ctx[1][
+	  ctx[2][
 	  /*serviceId*/
-	  ctx[17]].hasOwnProperty("info") &&
+	  ctx[19]].hasOwnProperty("info") &&
 	  /*services*/
-	  ctx[1][
+	  ctx[2][
 	  /*serviceId*/
-	  ctx[17]].info !== "";
+	  ctx[19]].info !== "";
 	  var if_block_anchor;
 	  var current;
 
 	  function select_el_binding_1(value) {
 	    /*select_el_binding_1*/
-	    ctx[65](value);
+	    ctx[67](value);
 	  }
 
 	  var select_props = {
 	    label:
 	    /*l10n*/
-	    ctx[14].service_label,
+	    ctx[16].service_label,
 	    placeholder:
 	    /*servicePlaceholder*/
-	    ctx[30],
+	    ctx[32],
 	    items: values(
 	    /*serviceItems*/
-	    ctx[25]),
+	    ctx[27]),
 	    selected:
 	    /*serviceId*/
-	    ctx[17],
+	    ctx[19],
 	    error:
 	    /*serviceError*/
-	    ctx[34]
+	    ctx[36]
 	  };
 
 	  if (
 	  /*serviceEl*/
-	  ctx[35] !== void 0) {
+	  ctx[37] !== void 0) {
 	    select_props.el =
 	    /*serviceEl*/
-	    ctx[35];
+	    ctx[37];
 	  }
 
 	  select = new Select({
@@ -9435,8 +10023,8 @@ var bookly = (function ($) {
 	  });
 	  select.$on("change",
 	  /*onServiceChange*/
-	  ctx[40]);
-	  var if_block = show_if && create_if_block_10(ctx);
+	  ctx[42]);
+	  var if_block = show_if && create_if_block_11(ctx);
 	  return {
 	    c: function c() {
 	      div = element("div");
@@ -9459,37 +10047,37 @@ var bookly = (function ($) {
 	      var select_changes = {};
 	      if (dirty[0] &
 	      /*l10n*/
-	      16384) select_changes.label =
+	      65536) select_changes.label =
 	      /*l10n*/
-	      ctx[14].service_label;
-	      if (dirty[0] &
+	      ctx[16].service_label;
+	      if (dirty[1] &
 	      /*servicePlaceholder*/
-	      1073741824) select_changes.placeholder =
+	      2) select_changes.placeholder =
 	      /*servicePlaceholder*/
-	      ctx[30];
+	      ctx[32];
 	      if (dirty[0] &
 	      /*serviceItems*/
-	      33554432) select_changes.items = values(
+	      134217728) select_changes.items = values(
 	      /*serviceItems*/
-	      ctx[25]);
+	      ctx[27]);
 	      if (dirty[0] &
 	      /*serviceId*/
-	      131072) select_changes.selected =
+	      524288) select_changes.selected =
 	      /*serviceId*/
-	      ctx[17];
+	      ctx[19];
 	      if (dirty[1] &
 	      /*serviceError*/
-	      8) select_changes.error =
+	      32) select_changes.error =
 	      /*serviceError*/
-	      ctx[34];
+	      ctx[36];
 
 	      if (!updating_el && dirty[1] &
 	      /*serviceEl*/
-	      16) {
+	      64) {
 	        updating_el = true;
 	        select_changes.el =
 	        /*serviceEl*/
-	        ctx[35];
+	        ctx[37];
 	        add_flush_callback(function () {
 	          return updating_el = false;
 	        });
@@ -9498,19 +10086,19 @@ var bookly = (function ($) {
 	      select.$set(select_changes);
 	      if (dirty[0] &
 	      /*showServiceInfo, serviceId, services*/
-	      131082) show_if =
+	      524324) show_if =
 	      /*showServiceInfo*/
-	      ctx[3] &&
+	      ctx[5] &&
 	      /*serviceId*/
-	      ctx[17] &&
+	      ctx[19] &&
 	      /*services*/
-	      ctx[1][
+	      ctx[2][
 	      /*serviceId*/
-	      ctx[17]].hasOwnProperty("info") &&
+	      ctx[19]].hasOwnProperty("info") &&
 	      /*services*/
-	      ctx[1][
+	      ctx[2][
 	      /*serviceId*/
-	      ctx[17]].info !== "";
+	      ctx[19]].info !== "";
 
 	      if (show_if) {
 	        if (if_block) {
@@ -9518,11 +10106,11 @@ var bookly = (function ($) {
 
 	          if (dirty[0] &
 	          /*showServiceInfo, serviceId, services*/
-	          131082) {
+	          524324) {
 	            transition_in(if_block, 1);
 	          }
 	        } else {
-	          if_block = create_if_block_10(ctx);
+	          if_block = create_if_block_11(ctx);
 	          if_block.c();
 	          transition_in(if_block, 1);
 	          if_block.m(if_block_anchor.parentNode, if_block_anchor);
@@ -9554,16 +10142,16 @@ var bookly = (function ($) {
 	      if (detaching) detach(if_block_anchor);
 	    }
 	  };
-	} // (509:8) {#if showServiceInfo && serviceId && services[serviceId].hasOwnProperty('info') && services[serviceId].info !== ''}
+	} // (516:8) {#if showServiceInfo && serviceId && services[serviceId].hasOwnProperty('info') && services[serviceId].info !== ''}
 
 
-	function create_if_block_10(ctx) {
+	function create_if_block_11(ctx) {
 	  var div;
 	  var raw_value =
 	  /*services*/
-	  ctx[1][
+	  ctx[2][
 	  /*serviceId*/
-	  ctx[17]].info + "";
+	  ctx[19]].info + "";
 	  var div_transition;
 	  var current;
 	  return {
@@ -9579,11 +10167,11 @@ var bookly = (function ($) {
 	    p: function p(ctx, dirty) {
 	      if ((!current || dirty[0] &
 	      /*services, serviceId*/
-	      131074) && raw_value !== (raw_value =
+	      524292) && raw_value !== (raw_value =
 	      /*services*/
-	      ctx[1][
+	      ctx[2][
 	      /*serviceId*/
-	      ctx[17]].info + "")) div.innerHTML = raw_value;
+	      ctx[19]].info + "")) div.innerHTML = raw_value;
 	    },
 	    i: function i(local) {
 	      if (current) return;
@@ -9603,59 +10191,59 @@ var bookly = (function ($) {
 	      if (detaching && div_transition) div_transition.end();
 	    }
 	  };
-	} // (515:4) {#if hasStaffSelect}
+	} // (522:4) {#if hasStaffSelect}
 
 
-	function create_if_block_7(ctx) {
+	function create_if_block_8(ctx) {
 	  var div;
 	  var select;
 	  var updating_el;
 	  var t;
 	  var show_if =
 	  /*showStaffInfo*/
-	  ctx[4] &&
+	  ctx[6] &&
 	  /*staffId*/
-	  ctx[18] &&
+	  ctx[20] &&
 	  /*staff*/
-	  ctx[2][
+	  ctx[3][
 	  /*staffId*/
-	  ctx[18]].hasOwnProperty("info") &&
+	  ctx[20]].hasOwnProperty("info") &&
 	  /*staff*/
-	  ctx[2][
+	  ctx[3][
 	  /*staffId*/
-	  ctx[18]].info !== "";
+	  ctx[20]].info !== "";
 	  var if_block_anchor;
 	  var current;
 
 	  function select_el_binding_2(value) {
 	    /*select_el_binding_2*/
-	    ctx[66](value);
+	    ctx[68](value);
 	  }
 
 	  var select_props = {
 	    label:
 	    /*l10n*/
-	    ctx[14].staff_label,
+	    ctx[16].staff_label,
 	    placeholder:
 	    /*staffPlaceholder*/
-	    ctx[31],
+	    ctx[33],
 	    items: values(
 	    /*staffItems*/
-	    ctx[21]),
+	    ctx[23]),
 	    selected:
 	    /*staffId*/
-	    ctx[18],
+	    ctx[20],
 	    error:
 	    /*staffError*/
-	    ctx[36]
+	    ctx[38]
 	  };
 
 	  if (
 	  /*staffEl*/
-	  ctx[37] !== void 0) {
+	  ctx[39] !== void 0) {
 	    select_props.el =
 	    /*staffEl*/
-	    ctx[37];
+	    ctx[39];
 	  }
 
 	  select = new Select({
@@ -9666,8 +10254,8 @@ var bookly = (function ($) {
 	  });
 	  select.$on("change",
 	  /*onStaffChange*/
-	  ctx[41]);
-	  var if_block = show_if && create_if_block_8(ctx);
+	  ctx[43]);
+	  var if_block = show_if && create_if_block_9(ctx);
 	  return {
 	    c: function c() {
 	      div = element("div");
@@ -9690,37 +10278,37 @@ var bookly = (function ($) {
 	      var select_changes = {};
 	      if (dirty[0] &
 	      /*l10n*/
-	      16384) select_changes.label =
+	      65536) select_changes.label =
 	      /*l10n*/
-	      ctx[14].staff_label;
+	      ctx[16].staff_label;
 	      if (dirty[1] &
 	      /*staffPlaceholder*/
-	      1) select_changes.placeholder =
+	      4) select_changes.placeholder =
 	      /*staffPlaceholder*/
-	      ctx[31];
+	      ctx[33];
 	      if (dirty[0] &
 	      /*staffItems*/
-	      2097152) select_changes.items = values(
+	      8388608) select_changes.items = values(
 	      /*staffItems*/
-	      ctx[21]);
+	      ctx[23]);
 	      if (dirty[0] &
 	      /*staffId*/
-	      262144) select_changes.selected =
+	      1048576) select_changes.selected =
 	      /*staffId*/
-	      ctx[18];
+	      ctx[20];
 	      if (dirty[1] &
 	      /*staffError*/
-	      32) select_changes.error =
+	      128) select_changes.error =
 	      /*staffError*/
-	      ctx[36];
+	      ctx[38];
 
 	      if (!updating_el && dirty[1] &
 	      /*staffEl*/
-	      64) {
+	      256) {
 	        updating_el = true;
 	        select_changes.el =
 	        /*staffEl*/
-	        ctx[37];
+	        ctx[39];
 	        add_flush_callback(function () {
 	          return updating_el = false;
 	        });
@@ -9729,19 +10317,19 @@ var bookly = (function ($) {
 	      select.$set(select_changes);
 	      if (dirty[0] &
 	      /*showStaffInfo, staffId, staff*/
-	      262164) show_if =
+	      1048648) show_if =
 	      /*showStaffInfo*/
-	      ctx[4] &&
+	      ctx[6] &&
 	      /*staffId*/
-	      ctx[18] &&
+	      ctx[20] &&
 	      /*staff*/
-	      ctx[2][
+	      ctx[3][
 	      /*staffId*/
-	      ctx[18]].hasOwnProperty("info") &&
+	      ctx[20]].hasOwnProperty("info") &&
 	      /*staff*/
-	      ctx[2][
+	      ctx[3][
 	      /*staffId*/
-	      ctx[18]].info !== "";
+	      ctx[20]].info !== "";
 
 	      if (show_if) {
 	        if (if_block) {
@@ -9749,11 +10337,11 @@ var bookly = (function ($) {
 
 	          if (dirty[0] &
 	          /*showStaffInfo, staffId, staff*/
-	          262164) {
+	          1048648) {
 	            transition_in(if_block, 1);
 	          }
 	        } else {
-	          if_block = create_if_block_8(ctx);
+	          if_block = create_if_block_9(ctx);
 	          if_block.c();
 	          transition_in(if_block, 1);
 	          if_block.m(if_block_anchor.parentNode, if_block_anchor);
@@ -9785,16 +10373,16 @@ var bookly = (function ($) {
 	      if (detaching) detach(if_block_anchor);
 	    }
 	  };
-	} // (527:8) {#if showStaffInfo && staffId && staff[staffId].hasOwnProperty('info') && staff[staffId].info !== ''}
+	} // (534:8) {#if showStaffInfo && staffId && staff[staffId].hasOwnProperty('info') && staff[staffId].info !== ''}
 
 
-	function create_if_block_8(ctx) {
+	function create_if_block_9(ctx) {
 	  var div;
 	  var raw_value =
 	  /*staff*/
-	  ctx[2][
+	  ctx[3][
 	  /*staffId*/
-	  ctx[18]].info + "";
+	  ctx[20]].info + "";
 	  var div_transition;
 	  var current;
 	  return {
@@ -9810,11 +10398,11 @@ var bookly = (function ($) {
 	    p: function p(ctx, dirty) {
 	      if ((!current || dirty[0] &
 	      /*staff, staffId*/
-	      262148) && raw_value !== (raw_value =
+	      1048584) && raw_value !== (raw_value =
 	      /*staff*/
-	      ctx[2][
+	      ctx[3][
 	      /*staffId*/
-	      ctx[18]].info + "")) div.innerHTML = raw_value;
+	      ctx[20]].info + "")) div.innerHTML = raw_value;
 	    },
 	    i: function i(local) {
 	      if (current) return;
@@ -9834,10 +10422,10 @@ var bookly = (function ($) {
 	      if (detaching && div_transition) div_transition.end();
 	    }
 	  };
-	} // (533:4) {#if hasDurationSelect}
+	} // (540:4) {#if hasDurationSelect}
 
 
-	function create_if_block_6(ctx) {
+	function create_if_block_7(ctx) {
 	  var div;
 	  var select;
 	  var current;
@@ -9845,18 +10433,18 @@ var bookly = (function ($) {
 	    props: {
 	      label:
 	      /*l10n*/
-	      ctx[14].duration_label,
+	      ctx[16].duration_label,
 	      items: values(
 	      /*durationItems*/
-	      ctx[22]),
+	      ctx[24]),
 	      selected:
 	      /*duration*/
-	      ctx[19]
+	      ctx[21]
 	    }
 	  });
 	  select.$on("change",
 	  /*onDurationChange*/
-	  ctx[42]);
+	  ctx[44]);
 	  return {
 	    c: function c() {
 	      div = element("div");
@@ -9873,19 +10461,19 @@ var bookly = (function ($) {
 	      var select_changes = {};
 	      if (dirty[0] &
 	      /*l10n*/
-	      16384) select_changes.label =
+	      65536) select_changes.label =
 	      /*l10n*/
-	      ctx[14].duration_label;
+	      ctx[16].duration_label;
 	      if (dirty[0] &
 	      /*durationItems*/
-	      4194304) select_changes.items = values(
+	      16777216) select_changes.items = values(
 	      /*durationItems*/
-	      ctx[22]);
+	      ctx[24]);
 	      if (dirty[0] &
 	      /*duration*/
-	      524288) select_changes.selected =
+	      2097152) select_changes.selected =
 	      /*duration*/
-	      ctx[19];
+	      ctx[21];
 	      select.$set(select_changes);
 	    },
 	    i: function i(local) {
@@ -9902,10 +10490,10 @@ var bookly = (function ($) {
 	      destroy_component(select);
 	    }
 	  };
-	} // (543:4) {#if hasNopSelect}
+	} // (550:4) {#if hasNopSelect}
 
 
-	function create_if_block_5(ctx) {
+	function create_if_block_6(ctx) {
 	  var div;
 	  var select;
 	  var current;
@@ -9913,18 +10501,18 @@ var bookly = (function ($) {
 	    props: {
 	      label:
 	      /*l10n*/
-	      ctx[14].nop_label,
+	      ctx[16].nop_label,
 	      items: values(
 	      /*nopItems*/
-	      ctx[26]),
+	      ctx[28]),
 	      selected:
 	      /*nop*/
-	      ctx[20]
+	      ctx[22]
 	    }
 	  });
 	  select.$on("change",
 	  /*onNopChange*/
-	  ctx[43]);
+	  ctx[45]);
 	  return {
 	    c: function c() {
 	      div = element("div");
@@ -9941,19 +10529,19 @@ var bookly = (function ($) {
 	      var select_changes = {};
 	      if (dirty[0] &
 	      /*l10n*/
-	      16384) select_changes.label =
+	      65536) select_changes.label =
 	      /*l10n*/
-	      ctx[14].nop_label;
+	      ctx[16].nop_label;
 	      if (dirty[0] &
 	      /*nopItems*/
-	      67108864) select_changes.items = values(
+	      268435456) select_changes.items = values(
 	      /*nopItems*/
-	      ctx[26]);
+	      ctx[28]);
 	      if (dirty[0] &
 	      /*nop*/
-	      1048576) select_changes.selected =
+	      4194304) select_changes.selected =
 	      /*nop*/
-	      ctx[20];
+	      ctx[22];
 	      select.$set(select_changes);
 	    },
 	    i: function i(local) {
@@ -9970,10 +10558,10 @@ var bookly = (function ($) {
 	      destroy_component(select);
 	    }
 	  };
-	} // (553:4) {#if hasQuantitySelect}
+	} // (560:4) {#if hasQuantitySelect}
 
 
-	function create_if_block_4(ctx) {
+	function create_if_block_5(ctx) {
 	  var div;
 	  var select;
 	  var current;
@@ -9981,18 +10569,18 @@ var bookly = (function ($) {
 	    props: {
 	      label:
 	      /*l10n*/
-	      ctx[14].quantity_label,
+	      ctx[16].quantity_label,
 	      items: values(
 	      /*quantityItems*/
-	      ctx[27]),
+	      ctx[29]),
 	      selected:
 	      /*quantity*/
-	      ctx[23]
+	      ctx[25]
 	    }
 	  });
 	  select.$on("change",
 	  /*onQuantityChange*/
-	  ctx[44]);
+	  ctx[46]);
 	  return {
 	    c: function c() {
 	      div = element("div");
@@ -10009,19 +10597,19 @@ var bookly = (function ($) {
 	      var select_changes = {};
 	      if (dirty[0] &
 	      /*l10n*/
-	      16384) select_changes.label =
+	      65536) select_changes.label =
 	      /*l10n*/
-	      ctx[14].quantity_label;
+	      ctx[16].quantity_label;
 	      if (dirty[0] &
 	      /*quantityItems*/
-	      134217728) select_changes.items = values(
+	      536870912) select_changes.items = values(
 	      /*quantityItems*/
-	      ctx[27]);
+	      ctx[29]);
 	      if (dirty[0] &
 	      /*quantity*/
-	      8388608) select_changes.selected =
+	      33554432) select_changes.selected =
 	      /*quantity*/
-	      ctx[23];
+	      ctx[25];
 	      select.$set(select_changes);
 	    },
 	    i: function i(local) {
@@ -10038,17 +10626,17 @@ var bookly = (function ($) {
 	      destroy_component(select);
 	    }
 	  };
-	} // (563:4) {#if hasDropBtn}
+	} // (570:4) {#if hasDropBtn}
 
 
-	function create_if_block_2(ctx) {
+	function create_if_block_3(ctx) {
 	  var div1;
 	  var label;
 	  var t;
 	  var div0;
 	  var if_block =
 	  /*showDropBtn*/
-	  ctx[13] && create_if_block_3(ctx);
+	  ctx[15] && create_if_block_4(ctx);
 	  return {
 	    c: function c() {
 	      div1 = element("div");
@@ -10068,11 +10656,11 @@ var bookly = (function ($) {
 	    p: function p(ctx, dirty) {
 	      if (
 	      /*showDropBtn*/
-	      ctx[13]) {
+	      ctx[15]) {
 	        if (if_block) {
 	          if_block.p(ctx, dirty);
 	        } else {
-	          if_block = create_if_block_3(ctx);
+	          if_block = create_if_block_4(ctx);
 	          if_block.c();
 	          if_block.m(div0, null);
 	        }
@@ -10086,10 +10674,10 @@ var bookly = (function ($) {
 	      if (if_block) if_block.d();
 	    }
 	  };
-	} // (567:16) {#if showDropBtn}
+	} // (574:16) {#if showDropBtn}
 
 
-	function create_if_block_3(ctx) {
+	function create_if_block_4(ctx) {
 	  var button;
 	  var mounted;
 	  var dispose;
@@ -10105,7 +10693,7 @@ var bookly = (function ($) {
 	      if (!mounted) {
 	        dispose = listen(button, "click",
 	        /*onDropBtnClick*/
-	        ctx[45]);
+	        ctx[47]);
 	        mounted = true;
 	      }
 	    },
@@ -10116,22 +10704,22 @@ var bookly = (function ($) {
 	      dispose();
 	    }
 	  };
-	} // (574:0) {#if showServiceInfo && serviceId && services[serviceId].hasOwnProperty('info') && services[serviceId].info !== ''}
+	} // (581:0) {#if showCategoryInfo && categoryId && categories[categoryId].hasOwnProperty('info') && categories[categoryId].info !== ''}
 
 
-	function create_if_block_1(ctx) {
+	function create_if_block_2(ctx) {
 	  var div;
 	  var raw_value =
-	  /*services*/
+	  /*categories*/
 	  ctx[1][
-	  /*serviceId*/
-	  ctx[17]].info + "";
+	  /*categoryId*/
+	  ctx[18]].info + "";
 	  var div_transition;
 	  var current;
 	  return {
 	    c: function c() {
 	      div = element("div");
-	      attr(div, "class", "bookly-box bookly-visible-md bookly-service-info");
+	      attr(div, "class", "bookly-box bookly-visible-md bookly-category-info");
 	    },
 	    m: function m(target, anchor) {
 	      insert(target, div, anchor);
@@ -10140,12 +10728,12 @@ var bookly = (function ($) {
 	    },
 	    p: function p(ctx, dirty) {
 	      if ((!current || dirty[0] &
-	      /*services, serviceId*/
-	      131074) && raw_value !== (raw_value =
-	      /*services*/
+	      /*categories, categoryId*/
+	      262146) && raw_value !== (raw_value =
+	      /*categories*/
 	      ctx[1][
-	      /*serviceId*/
-	      ctx[17]].info + "")) div.innerHTML = raw_value;
+	      /*categoryId*/
+	      ctx[18]].info + "")) div.innerHTML = raw_value;
 	    },
 	    i: function i(local) {
 	      if (current) return;
@@ -10165,16 +10753,65 @@ var bookly = (function ($) {
 	      if (detaching && div_transition) div_transition.end();
 	    }
 	  };
-	} // (579:0) {#if showStaffInfo && staffId && staff[staffId].hasOwnProperty('info') && staff[staffId].info !== ''}
+	} // (586:0) {#if showServiceInfo && serviceId && services[serviceId].hasOwnProperty('info') && services[serviceId].info !== ''}
+
+
+	function create_if_block_1(ctx) {
+	  var div;
+	  var raw_value =
+	  /*services*/
+	  ctx[2][
+	  /*serviceId*/
+	  ctx[19]].info + "";
+	  var div_transition;
+	  var current;
+	  return {
+	    c: function c() {
+	      div = element("div");
+	      attr(div, "class", "bookly-box bookly-visible-md bookly-service-info");
+	    },
+	    m: function m(target, anchor) {
+	      insert(target, div, anchor);
+	      div.innerHTML = raw_value;
+	      current = true;
+	    },
+	    p: function p(ctx, dirty) {
+	      if ((!current || dirty[0] &
+	      /*services, serviceId*/
+	      524292) && raw_value !== (raw_value =
+	      /*services*/
+	      ctx[2][
+	      /*serviceId*/
+	      ctx[19]].info + "")) div.innerHTML = raw_value;
+	    },
+	    i: function i(local) {
+	      if (current) return;
+	      add_render_callback(function () {
+	        if (!div_transition) div_transition = create_bidirectional_transition(div, slide, {}, true);
+	        div_transition.run(1);
+	      });
+	      current = true;
+	    },
+	    o: function o(local) {
+	      if (!div_transition) div_transition = create_bidirectional_transition(div, slide, {}, false);
+	      div_transition.run(0);
+	      current = false;
+	    },
+	    d: function d(detaching) {
+	      if (detaching) detach(div);
+	      if (detaching && div_transition) div_transition.end();
+	    }
+	  };
+	} // (591:0) {#if showStaffInfo && staffId && staff[staffId].hasOwnProperty('info') && staff[staffId].info !== ''}
 
 
 	function create_if_block$1(ctx) {
 	  var div;
 	  var raw_value =
 	  /*staff*/
-	  ctx[2][
+	  ctx[3][
 	  /*staffId*/
-	  ctx[18]].info + "";
+	  ctx[20]].info + "";
 	  var div_transition;
 	  var current;
 	  return {
@@ -10190,11 +10827,11 @@ var bookly = (function ($) {
 	    p: function p(ctx, dirty) {
 	      if ((!current || dirty[0] &
 	      /*staff, staffId*/
-	      262148) && raw_value !== (raw_value =
+	      1048584) && raw_value !== (raw_value =
 	      /*staff*/
-	      ctx[2][
+	      ctx[3][
 	      /*staffId*/
-	      ctx[18]].info + "")) div.innerHTML = raw_value;
+	      ctx[20]].info + "")) div.innerHTML = raw_value;
 	    },
 	    i: function i(local) {
 	      if (current) return;
@@ -10226,61 +10863,76 @@ var bookly = (function ($) {
 	  var t5;
 	  var t6;
 	  var t7;
+	  var show_if_2 =
+	  /*showCategoryInfo*/
+	  ctx[4] &&
+	  /*categoryId*/
+	  ctx[18] &&
+	  /*categories*/
+	  ctx[1][
+	  /*categoryId*/
+	  ctx[18]].hasOwnProperty("info") &&
+	  /*categories*/
+	  ctx[1][
+	  /*categoryId*/
+	  ctx[18]].info !== "";
+	  var t8;
 	  var show_if_1 =
 	  /*showServiceInfo*/
-	  ctx[3] &&
+	  ctx[5] &&
 	  /*serviceId*/
-	  ctx[17] &&
+	  ctx[19] &&
 	  /*services*/
-	  ctx[1][
+	  ctx[2][
 	  /*serviceId*/
-	  ctx[17]].hasOwnProperty("info") &&
+	  ctx[19]].hasOwnProperty("info") &&
 	  /*services*/
-	  ctx[1][
+	  ctx[2][
 	  /*serviceId*/
-	  ctx[17]].info !== "";
-	  var t8;
+	  ctx[19]].info !== "";
+	  var t9;
 	  var show_if =
 	  /*showStaffInfo*/
-	  ctx[4] &&
+	  ctx[6] &&
 	  /*staffId*/
-	  ctx[18] &&
+	  ctx[20] &&
 	  /*staff*/
-	  ctx[2][
+	  ctx[3][
 	  /*staffId*/
-	  ctx[18]].hasOwnProperty("info") &&
+	  ctx[20]].hasOwnProperty("info") &&
 	  /*staff*/
-	  ctx[2][
+	  ctx[3][
 	  /*staffId*/
-	  ctx[18]].info !== "";
-	  var if_block9_anchor;
+	  ctx[20]].info !== "";
+	  var if_block10_anchor;
 	  var current;
 	  var if_block0 =
 	  /*hasLocationSelect*/
-	  ctx[5] && create_if_block_12(ctx);
+	  ctx[7] && create_if_block_14(ctx);
 	  var if_block1 =
 	  /*hasCategorySelect*/
-	  ctx[6] && create_if_block_11(ctx);
+	  ctx[8] && create_if_block_12(ctx);
 	  var if_block2 =
 	  /*hasServiceSelect*/
-	  ctx[7] && create_if_block_9(ctx);
+	  ctx[9] && create_if_block_10(ctx);
 	  var if_block3 =
 	  /*hasStaffSelect*/
-	  ctx[8] && create_if_block_7(ctx);
+	  ctx[10] && create_if_block_8(ctx);
 	  var if_block4 =
 	  /*hasDurationSelect*/
-	  ctx[9] && create_if_block_6(ctx);
+	  ctx[11] && create_if_block_7(ctx);
 	  var if_block5 =
 	  /*hasNopSelect*/
-	  ctx[10] && create_if_block_5(ctx);
+	  ctx[12] && create_if_block_6(ctx);
 	  var if_block6 =
 	  /*hasQuantitySelect*/
-	  ctx[11] && create_if_block_4(ctx);
+	  ctx[13] && create_if_block_5(ctx);
 	  var if_block7 =
 	  /*hasDropBtn*/
-	  ctx[12] && create_if_block_2(ctx);
-	  var if_block8 = show_if_1 && create_if_block_1(ctx);
-	  var if_block9 = show_if && create_if_block$1(ctx);
+	  ctx[14] && create_if_block_3(ctx);
+	  var if_block8 = show_if_2 && create_if_block_2(ctx);
+	  var if_block9 = show_if_1 && create_if_block_1(ctx);
+	  var if_block10 = show_if && create_if_block$1(ctx);
 	  return {
 	    c: function c() {
 	      div = element("div");
@@ -10303,7 +10955,9 @@ var bookly = (function ($) {
 	      if (if_block8) if_block8.c();
 	      t8 = space();
 	      if (if_block9) if_block9.c();
-	      if_block9_anchor = empty();
+	      t9 = space();
+	      if (if_block10) if_block10.c();
+	      if_block10_anchor = empty();
 	      attr(div, "class", "bookly-table bookly-box");
 	    },
 	    m: function m(target, anchor) {
@@ -10327,23 +10981,25 @@ var bookly = (function ($) {
 	      if (if_block8) if_block8.m(target, anchor);
 	      insert(target, t8, anchor);
 	      if (if_block9) if_block9.m(target, anchor);
-	      insert(target, if_block9_anchor, anchor);
+	      insert(target, t9, anchor);
+	      if (if_block10) if_block10.m(target, anchor);
+	      insert(target, if_block10_anchor, anchor);
 	      current = true;
 	    },
 	    p: function p(ctx, dirty) {
 	      if (
 	      /*hasLocationSelect*/
-	      ctx[5]) {
+	      ctx[7]) {
 	        if (if_block0) {
 	          if_block0.p(ctx, dirty);
 
 	          if (dirty[0] &
 	          /*hasLocationSelect*/
-	          32) {
+	          128) {
 	            transition_in(if_block0, 1);
 	          }
 	        } else {
-	          if_block0 = create_if_block_12(ctx);
+	          if_block0 = create_if_block_14(ctx);
 	          if_block0.c();
 	          transition_in(if_block0, 1);
 	          if_block0.m(div, t0);
@@ -10358,17 +11014,17 @@ var bookly = (function ($) {
 
 	      if (
 	      /*hasCategorySelect*/
-	      ctx[6]) {
+	      ctx[8]) {
 	        if (if_block1) {
 	          if_block1.p(ctx, dirty);
 
 	          if (dirty[0] &
 	          /*hasCategorySelect*/
-	          64) {
+	          256) {
 	            transition_in(if_block1, 1);
 	          }
 	        } else {
-	          if_block1 = create_if_block_11(ctx);
+	          if_block1 = create_if_block_12(ctx);
 	          if_block1.c();
 	          transition_in(if_block1, 1);
 	          if_block1.m(div, t1);
@@ -10383,17 +11039,17 @@ var bookly = (function ($) {
 
 	      if (
 	      /*hasServiceSelect*/
-	      ctx[7]) {
+	      ctx[9]) {
 	        if (if_block2) {
 	          if_block2.p(ctx, dirty);
 
 	          if (dirty[0] &
 	          /*hasServiceSelect*/
-	          128) {
+	          512) {
 	            transition_in(if_block2, 1);
 	          }
 	        } else {
-	          if_block2 = create_if_block_9(ctx);
+	          if_block2 = create_if_block_10(ctx);
 	          if_block2.c();
 	          transition_in(if_block2, 1);
 	          if_block2.m(div, t2);
@@ -10408,17 +11064,17 @@ var bookly = (function ($) {
 
 	      if (
 	      /*hasStaffSelect*/
-	      ctx[8]) {
+	      ctx[10]) {
 	        if (if_block3) {
 	          if_block3.p(ctx, dirty);
 
 	          if (dirty[0] &
 	          /*hasStaffSelect*/
-	          256) {
+	          1024) {
 	            transition_in(if_block3, 1);
 	          }
 	        } else {
-	          if_block3 = create_if_block_7(ctx);
+	          if_block3 = create_if_block_8(ctx);
 	          if_block3.c();
 	          transition_in(if_block3, 1);
 	          if_block3.m(div, t3);
@@ -10433,17 +11089,17 @@ var bookly = (function ($) {
 
 	      if (
 	      /*hasDurationSelect*/
-	      ctx[9]) {
+	      ctx[11]) {
 	        if (if_block4) {
 	          if_block4.p(ctx, dirty);
 
 	          if (dirty[0] &
 	          /*hasDurationSelect*/
-	          512) {
+	          2048) {
 	            transition_in(if_block4, 1);
 	          }
 	        } else {
-	          if_block4 = create_if_block_6(ctx);
+	          if_block4 = create_if_block_7(ctx);
 	          if_block4.c();
 	          transition_in(if_block4, 1);
 	          if_block4.m(div, t4);
@@ -10458,17 +11114,17 @@ var bookly = (function ($) {
 
 	      if (
 	      /*hasNopSelect*/
-	      ctx[10]) {
+	      ctx[12]) {
 	        if (if_block5) {
 	          if_block5.p(ctx, dirty);
 
 	          if (dirty[0] &
 	          /*hasNopSelect*/
-	          1024) {
+	          4096) {
 	            transition_in(if_block5, 1);
 	          }
 	        } else {
-	          if_block5 = create_if_block_5(ctx);
+	          if_block5 = create_if_block_6(ctx);
 	          if_block5.c();
 	          transition_in(if_block5, 1);
 	          if_block5.m(div, t5);
@@ -10483,17 +11139,17 @@ var bookly = (function ($) {
 
 	      if (
 	      /*hasQuantitySelect*/
-	      ctx[11]) {
+	      ctx[13]) {
 	        if (if_block6) {
 	          if_block6.p(ctx, dirty);
 
 	          if (dirty[0] &
 	          /*hasQuantitySelect*/
-	          2048) {
+	          8192) {
 	            transition_in(if_block6, 1);
 	          }
 	        } else {
-	          if_block6 = create_if_block_4(ctx);
+	          if_block6 = create_if_block_5(ctx);
 	          if_block6.c();
 	          transition_in(if_block6, 1);
 	          if_block6.m(div, t6);
@@ -10508,11 +11164,11 @@ var bookly = (function ($) {
 
 	      if (
 	      /*hasDropBtn*/
-	      ctx[12]) {
+	      ctx[14]) {
 	        if (if_block7) {
 	          if_block7.p(ctx, dirty);
 	        } else {
-	          if_block7 = create_if_block_2(ctx);
+	          if_block7 = create_if_block_3(ctx);
 	          if_block7.c();
 	          if_block7.m(div, null);
 	        }
@@ -10522,32 +11178,32 @@ var bookly = (function ($) {
 	      }
 
 	      if (dirty[0] &
-	      /*showServiceInfo, serviceId, services*/
-	      131082) show_if_1 =
-	      /*showServiceInfo*/
-	      ctx[3] &&
-	      /*serviceId*/
-	      ctx[17] &&
-	      /*services*/
+	      /*showCategoryInfo, categoryId, categories*/
+	      262162) show_if_2 =
+	      /*showCategoryInfo*/
+	      ctx[4] &&
+	      /*categoryId*/
+	      ctx[18] &&
+	      /*categories*/
 	      ctx[1][
-	      /*serviceId*/
-	      ctx[17]].hasOwnProperty("info") &&
-	      /*services*/
+	      /*categoryId*/
+	      ctx[18]].hasOwnProperty("info") &&
+	      /*categories*/
 	      ctx[1][
-	      /*serviceId*/
-	      ctx[17]].info !== "";
+	      /*categoryId*/
+	      ctx[18]].info !== "";
 
-	      if (show_if_1) {
+	      if (show_if_2) {
 	        if (if_block8) {
 	          if_block8.p(ctx, dirty);
 
 	          if (dirty[0] &
-	          /*showServiceInfo, serviceId, services*/
-	          131082) {
+	          /*showCategoryInfo, categoryId, categories*/
+	          262162) {
 	            transition_in(if_block8, 1);
 	          }
 	        } else {
-	          if_block8 = create_if_block_1(ctx);
+	          if_block8 = create_if_block_2(ctx);
 	          if_block8.c();
 	          transition_in(if_block8, 1);
 	          if_block8.m(t8.parentNode, t8);
@@ -10561,40 +11217,79 @@ var bookly = (function ($) {
 	      }
 
 	      if (dirty[0] &
-	      /*showStaffInfo, staffId, staff*/
-	      262164) show_if =
-	      /*showStaffInfo*/
-	      ctx[4] &&
-	      /*staffId*/
-	      ctx[18] &&
-	      /*staff*/
+	      /*showServiceInfo, serviceId, services*/
+	      524324) show_if_1 =
+	      /*showServiceInfo*/
+	      ctx[5] &&
+	      /*serviceId*/
+	      ctx[19] &&
+	      /*services*/
 	      ctx[2][
-	      /*staffId*/
-	      ctx[18]].hasOwnProperty("info") &&
-	      /*staff*/
+	      /*serviceId*/
+	      ctx[19]].hasOwnProperty("info") &&
+	      /*services*/
 	      ctx[2][
-	      /*staffId*/
-	      ctx[18]].info !== "";
+	      /*serviceId*/
+	      ctx[19]].info !== "";
 
-	      if (show_if) {
+	      if (show_if_1) {
 	        if (if_block9) {
 	          if_block9.p(ctx, dirty);
 
 	          if (dirty[0] &
-	          /*showStaffInfo, staffId, staff*/
-	          262164) {
+	          /*showServiceInfo, serviceId, services*/
+	          524324) {
 	            transition_in(if_block9, 1);
 	          }
 	        } else {
-	          if_block9 = create_if_block$1(ctx);
+	          if_block9 = create_if_block_1(ctx);
 	          if_block9.c();
 	          transition_in(if_block9, 1);
-	          if_block9.m(if_block9_anchor.parentNode, if_block9_anchor);
+	          if_block9.m(t9.parentNode, t9);
 	        }
 	      } else if (if_block9) {
 	        group_outros();
 	        transition_out(if_block9, 1, 1, function () {
 	          if_block9 = null;
+	        });
+	        check_outros();
+	      }
+
+	      if (dirty[0] &
+	      /*showStaffInfo, staffId, staff*/
+	      1048648) show_if =
+	      /*showStaffInfo*/
+	      ctx[6] &&
+	      /*staffId*/
+	      ctx[20] &&
+	      /*staff*/
+	      ctx[3][
+	      /*staffId*/
+	      ctx[20]].hasOwnProperty("info") &&
+	      /*staff*/
+	      ctx[3][
+	      /*staffId*/
+	      ctx[20]].info !== "";
+
+	      if (show_if) {
+	        if (if_block10) {
+	          if_block10.p(ctx, dirty);
+
+	          if (dirty[0] &
+	          /*showStaffInfo, staffId, staff*/
+	          1048648) {
+	            transition_in(if_block10, 1);
+	          }
+	        } else {
+	          if_block10 = create_if_block$1(ctx);
+	          if_block10.c();
+	          transition_in(if_block10, 1);
+	          if_block10.m(if_block10_anchor.parentNode, if_block10_anchor);
+	        }
+	      } else if (if_block10) {
+	        group_outros();
+	        transition_out(if_block10, 1, 1, function () {
+	          if_block10 = null;
 	        });
 	        check_outros();
 	      }
@@ -10610,6 +11305,7 @@ var bookly = (function ($) {
 	      transition_in(if_block6);
 	      transition_in(if_block8);
 	      transition_in(if_block9);
+	      transition_in(if_block10);
 	      current = true;
 	    },
 	    o: function o(local) {
@@ -10622,6 +11318,7 @@ var bookly = (function ($) {
 	      transition_out(if_block6);
 	      transition_out(if_block8);
 	      transition_out(if_block9);
+	      transition_out(if_block10);
 	      current = false;
 	    },
 	    d: function d(detaching) {
@@ -10638,7 +11335,9 @@ var bookly = (function ($) {
 	      if (if_block8) if_block8.d(detaching);
 	      if (detaching) detach(t8);
 	      if (if_block9) if_block9.d(detaching);
-	      if (detaching) detach(if_block9_anchor);
+	      if (detaching) detach(t9);
+	      if (if_block10) if_block10.d(detaching);
+	      if (detaching) detach(if_block10_anchor);
 	    }
 	  };
 	}
@@ -10662,10 +11361,14 @@ var bookly = (function ($) {
 	      required = _$$props$required === void 0 ? {} : _$$props$required;
 	  var _$$props$servicesPerL = $$props.servicesPerLocation,
 	      servicesPerLocation = _$$props$servicesPerL === void 0 ? false : _$$props$servicesPerL;
+	  var _$$props$staffNameWit = $$props.staffNameWithPrice,
+	      staffNameWithPrice = _$$props$staffNameWit === void 0 ? false : _$$props$staffNameWit;
 	  var _$$props$collaborativ = $$props.collaborativeHideStaff,
 	      collaborativeHideStaff = _$$props$collaborativ === void 0 ? false : _$$props$collaborativ;
 	  var _$$props$showRatings = $$props.showRatings,
 	      showRatings = _$$props$showRatings === void 0 ? false : _$$props$showRatings;
+	  var _$$props$showCategory = $$props.showCategoryInfo,
+	      showCategoryInfo = _$$props$showCategory === void 0 ? false : _$$props$showCategory;
 	  var _$$props$showServiceI = $$props.showServiceInfo,
 	      showServiceInfo = _$$props$showServiceI === void 0 ? false : _$$props$showServiceI;
 	  var _$$props$showStaffInf = $$props.showStaffInfo,
@@ -10786,10 +11489,10 @@ var bookly = (function ($) {
 	  });
 
 	  function onLocationChange(event) {
-	    $$invalidate(15, locationId = event.detail); // Validate value
+	    $$invalidate(17, locationId = event.detail); // Validate value
 
 	    if (!(locationId in locations)) {
-	      $$invalidate(15, locationId = 0);
+	      $$invalidate(17, locationId = 0);
 	    } // Update related values
 
 
@@ -10798,9 +11501,9 @@ var bookly = (function ($) {
 
 	      if (staffId) {
 	        if (!(staffId in locations[locationId].staff)) {
-	          $$invalidate(18, staffId = 0);
+	          $$invalidate(20, staffId = 0);
 	        } else if (serviceId && !(_lookupLocationId in staff[staffId].services[serviceId].locations)) {
-	          $$invalidate(18, staffId = 0);
+	          $$invalidate(20, staffId = 0);
 	        }
 	      }
 
@@ -10814,7 +11517,7 @@ var bookly = (function ($) {
 	        });
 
 	        if (!valid) {
-	          $$invalidate(17, serviceId = 0);
+	          $$invalidate(19, serviceId = 0);
 	        }
 	      }
 
@@ -10834,26 +11537,26 @@ var bookly = (function ($) {
 	        });
 
 	        if (!_valid) {
-	          $$invalidate(16, categoryId = 0);
+	          $$invalidate(18, categoryId = 0);
 	        }
 	      }
 	    }
 	  }
 
 	  function onCategoryChange(event) {
-	    $$invalidate(16, categoryId = event.detail); // Validate value
+	    $$invalidate(18, categoryId = event.detail); // Validate value
 
 	    if (!(categoryId in categoryItems)) {
-	      $$invalidate(16, categoryId = 0);
+	      $$invalidate(18, categoryId = 0);
 	    } // Update related values
 
 
 	    if (categoryId) {
-	      $$invalidate(59, categorySelected = true);
+	      $$invalidate(61, categorySelected = true);
 
 	      if (serviceId) {
 	        if (services[serviceId].category_id !== categoryId) {
-	          $$invalidate(17, serviceId = 0);
+	          $$invalidate(19, serviceId = 0);
 	        }
 	      }
 
@@ -10867,37 +11570,37 @@ var bookly = (function ($) {
 	        });
 
 	        if (!valid) {
-	          $$invalidate(18, staffId = 0);
+	          $$invalidate(20, staffId = 0);
 	        }
 	      }
 	    } else {
-	      $$invalidate(59, categorySelected = false);
+	      $$invalidate(61, categorySelected = false);
 	    }
 	  }
 
 	  function onServiceChange(event) {
 	    var dateMin = false;
-	    $$invalidate(63, srvMinCapacity = false);
-	    $$invalidate(62, srvMaxCapacity = false);
-	    $$invalidate(17, serviceId = event.detail); // Validate value
+	    $$invalidate(65, srvMinCapacity = false);
+	    $$invalidate(64, srvMaxCapacity = false);
+	    $$invalidate(19, serviceId = event.detail); // Validate value
 
 	    if (!(serviceId in serviceItems)) {
-	      $$invalidate(17, serviceId = 0);
+	      $$invalidate(19, serviceId = 0);
 	    } // Update related values
 
 
 	    if (serviceId) {
-	      $$invalidate(16, categoryId = services[serviceId].category_id);
+	      $$invalidate(18, categoryId = services[serviceId].category_id);
 
 	      if (staffId && !(serviceId in staff[staffId].services)) {
-	        $$invalidate(18, staffId = 0);
+	        $$invalidate(20, staffId = 0);
 	      }
 
 	      if (date_from_element[0]) {
 	        dateMin = services[serviceId].hasOwnProperty("min_time_prior_booking") ? services[serviceId].min_time_prior_booking : date_from_element.data("date_min");
 	      }
 	    } else if (!categorySelected) {
-	      $$invalidate(16, categoryId = 0);
+	      $$invalidate(18, categoryId = 0);
 
 	      if (date_from_element[0]) {
 	        dateMin = date_from_element.data("date_min");
@@ -10916,34 +11619,34 @@ var bookly = (function ($) {
 	  }
 
 	  function onStaffChange(event) {
-	    $$invalidate(18, staffId = event.detail); // Validate value
+	    $$invalidate(20, staffId = event.detail); // Validate value
 
 	    if (!(staffId in staffItems)) {
-	      $$invalidate(18, staffId = 0);
+	      $$invalidate(20, staffId = 0);
 	    }
 	  }
 
 	  function onDurationChange(event) {
-	    $$invalidate(19, duration = event.detail); // Validate value
+	    $$invalidate(21, duration = event.detail); // Validate value
 
 	    if (!(duration in durationItems)) {
-	      $$invalidate(19, duration = 1);
+	      $$invalidate(21, duration = 1);
 	    }
 	  }
 
 	  function onNopChange(event) {
-	    $$invalidate(20, nop = event.detail); // Validate value
+	    $$invalidate(22, nop = event.detail); // Validate value
 
 	    if (!(nop in nopItems)) {
-	      $$invalidate(20, nop = 1);
+	      $$invalidate(22, nop = 1);
 	    }
 	  }
 
 	  function onQuantityChange(event) {
-	    $$invalidate(23, quantity = event.detail); // Validate value
+	    $$invalidate(25, quantity = event.detail); // Validate value
 
 	    if (!(quantity in quantityItems)) {
-	      $$invalidate(23, quantity = 1);
+	      $$invalidate(25, quantity = 1);
 	    }
 	  }
 
@@ -10954,23 +11657,23 @@ var bookly = (function ($) {
 	  function validate() {
 	    var valid = true;
 	    var el = null;
-	    $$invalidate(36, staffError = $$invalidate(34, serviceError = $$invalidate(32, locationError = null)));
+	    $$invalidate(38, staffError = $$invalidate(36, serviceError = $$invalidate(34, locationError = null)));
 
 	    if (required.staff && !staffId && (!collaborativeHideStaff || !serviceId || services[serviceId].type !== "collaborative")) {
 	      valid = false;
-	      $$invalidate(36, staffError = l10n.staff_error);
+	      $$invalidate(38, staffError = l10n.staff_error);
 	      el = staffEl;
 	    }
 
 	    if (!serviceId) {
 	      valid = false;
-	      $$invalidate(34, serviceError = l10n.service_error);
+	      $$invalidate(36, serviceError = l10n.service_error);
 	      el = serviceEl;
 	    }
 
 	    if (required.location && !locationId) {
 	      valid = false;
-	      $$invalidate(32, locationError = l10n.location_error);
+	      $$invalidate(34, locationError = l10n.location_error);
 	      el = locationEl;
 	    }
 
@@ -10996,71 +11699,73 @@ var bookly = (function ($) {
 
 	  function select_el_binding(value) {
 	    locationEl = value;
-	    $$invalidate(33, locationEl);
+	    $$invalidate(35, locationEl);
 	  }
 
 	  function select_el_binding_1(value) {
 	    serviceEl = value;
-	    $$invalidate(35, serviceEl);
+	    $$invalidate(37, serviceEl);
 	  }
 
 	  function select_el_binding_2(value) {
 	    staffEl = value;
-	    $$invalidate(37, staffEl);
+	    $$invalidate(39, staffEl);
 	  }
 
 	  $$self.$$set = function ($$props) {
-	    if ("item" in $$props) $$invalidate(46, item = $$props.item);
-	    if ("index" in $$props) $$invalidate(47, index = $$props.index);
+	    if ("item" in $$props) $$invalidate(48, item = $$props.item);
+	    if ("index" in $$props) $$invalidate(49, index = $$props.index);
 	    if ("locations" in $$props) $$invalidate(0, locations = $$props.locations);
-	    if ("categories" in $$props) $$invalidate(48, categories = $$props.categories);
-	    if ("services" in $$props) $$invalidate(1, services = $$props.services);
-	    if ("staff" in $$props) $$invalidate(2, staff = $$props.staff);
-	    if ("defaults" in $$props) $$invalidate(49, defaults = $$props.defaults);
-	    if ("required" in $$props) $$invalidate(50, required = $$props.required);
-	    if ("servicesPerLocation" in $$props) $$invalidate(51, servicesPerLocation = $$props.servicesPerLocation);
-	    if ("collaborativeHideStaff" in $$props) $$invalidate(52, collaborativeHideStaff = $$props.collaborativeHideStaff);
-	    if ("showRatings" in $$props) $$invalidate(53, showRatings = $$props.showRatings);
-	    if ("showServiceInfo" in $$props) $$invalidate(3, showServiceInfo = $$props.showServiceInfo);
-	    if ("showStaffInfo" in $$props) $$invalidate(4, showStaffInfo = $$props.showStaffInfo);
-	    if ("maxQuantity" in $$props) $$invalidate(54, maxQuantity = $$props.maxQuantity);
-	    if ("hasLocationSelect" in $$props) $$invalidate(5, hasLocationSelect = $$props.hasLocationSelect);
-	    if ("hasCategorySelect" in $$props) $$invalidate(6, hasCategorySelect = $$props.hasCategorySelect);
-	    if ("hasServiceSelect" in $$props) $$invalidate(7, hasServiceSelect = $$props.hasServiceSelect);
-	    if ("hasStaffSelect" in $$props) $$invalidate(8, hasStaffSelect = $$props.hasStaffSelect);
-	    if ("hasDurationSelect" in $$props) $$invalidate(9, hasDurationSelect = $$props.hasDurationSelect);
-	    if ("hasNopSelect" in $$props) $$invalidate(10, hasNopSelect = $$props.hasNopSelect);
-	    if ("hasQuantitySelect" in $$props) $$invalidate(11, hasQuantitySelect = $$props.hasQuantitySelect);
-	    if ("hasDropBtn" in $$props) $$invalidate(12, hasDropBtn = $$props.hasDropBtn);
-	    if ("showDropBtn" in $$props) $$invalidate(13, showDropBtn = $$props.showDropBtn);
-	    if ("l10n" in $$props) $$invalidate(14, l10n = $$props.l10n);
-	    if ("date_from_element" in $$props) $$invalidate(55, date_from_element = $$props.date_from_element);
+	    if ("categories" in $$props) $$invalidate(1, categories = $$props.categories);
+	    if ("services" in $$props) $$invalidate(2, services = $$props.services);
+	    if ("staff" in $$props) $$invalidate(3, staff = $$props.staff);
+	    if ("defaults" in $$props) $$invalidate(50, defaults = $$props.defaults);
+	    if ("required" in $$props) $$invalidate(51, required = $$props.required);
+	    if ("servicesPerLocation" in $$props) $$invalidate(52, servicesPerLocation = $$props.servicesPerLocation);
+	    if ("staffNameWithPrice" in $$props) $$invalidate(53, staffNameWithPrice = $$props.staffNameWithPrice);
+	    if ("collaborativeHideStaff" in $$props) $$invalidate(54, collaborativeHideStaff = $$props.collaborativeHideStaff);
+	    if ("showRatings" in $$props) $$invalidate(55, showRatings = $$props.showRatings);
+	    if ("showCategoryInfo" in $$props) $$invalidate(4, showCategoryInfo = $$props.showCategoryInfo);
+	    if ("showServiceInfo" in $$props) $$invalidate(5, showServiceInfo = $$props.showServiceInfo);
+	    if ("showStaffInfo" in $$props) $$invalidate(6, showStaffInfo = $$props.showStaffInfo);
+	    if ("maxQuantity" in $$props) $$invalidate(56, maxQuantity = $$props.maxQuantity);
+	    if ("hasLocationSelect" in $$props) $$invalidate(7, hasLocationSelect = $$props.hasLocationSelect);
+	    if ("hasCategorySelect" in $$props) $$invalidate(8, hasCategorySelect = $$props.hasCategorySelect);
+	    if ("hasServiceSelect" in $$props) $$invalidate(9, hasServiceSelect = $$props.hasServiceSelect);
+	    if ("hasStaffSelect" in $$props) $$invalidate(10, hasStaffSelect = $$props.hasStaffSelect);
+	    if ("hasDurationSelect" in $$props) $$invalidate(11, hasDurationSelect = $$props.hasDurationSelect);
+	    if ("hasNopSelect" in $$props) $$invalidate(12, hasNopSelect = $$props.hasNopSelect);
+	    if ("hasQuantitySelect" in $$props) $$invalidate(13, hasQuantitySelect = $$props.hasQuantitySelect);
+	    if ("hasDropBtn" in $$props) $$invalidate(14, hasDropBtn = $$props.hasDropBtn);
+	    if ("showDropBtn" in $$props) $$invalidate(15, showDropBtn = $$props.showDropBtn);
+	    if ("l10n" in $$props) $$invalidate(16, l10n = $$props.l10n);
+	    if ("date_from_element" in $$props) $$invalidate(57, date_from_element = $$props.date_from_element);
 	  };
 
 	  $$self.$$.update = function () {
 	    if ($$self.$$.dirty[0] &
-	    /*locationId, staff, locations, serviceId, categoryId, services, staffItems, staffId, nop, hasNopSelect, duration, durationItems, l10n*/
-	    8373255 | $$self.$$.dirty[1] &
-	    /*servicesPerLocation, lookupLocationId, collaborativeHideStaff, showRatings, categories, categorySelected, minCapacity, maxCapacity, maxQuantity*/
-	    2029125632 | $$self.$$.dirty[2] &
-	    /*srvMinCapacity, srvMaxCapacity*/
-	    3) {
+	    /*locationId, staff, locations, serviceId, categoryId, services, staffItems, categories, staffId, nop, hasNopSelect, duration, durationItems, l10n*/
+	    33493007 | $$self.$$.dirty[1] &
+	    /*servicesPerLocation, lookupLocationId, staffNameWithPrice, collaborativeHideStaff, showRatings, categorySelected, maxQuantity*/
+	    1675624448 | $$self.$$.dirty[2] &
+	    /*srvMinCapacity, srvMaxCapacity, minCapacity, maxCapacity*/
+	    15) {
 	      {
-	        $$invalidate(58, lookupLocationId = servicesPerLocation && locationId ? locationId : 0);
-	        $$invalidate(24, categoryItems = {});
-	        $$invalidate(25, serviceItems = {});
-	        $$invalidate(21, staffItems = {});
-	        $$invalidate(26, nopItems = {}); // Staff
+	        $$invalidate(60, lookupLocationId = servicesPerLocation && locationId ? locationId : 0);
+	        $$invalidate(26, categoryItems = {});
+	        $$invalidate(27, serviceItems = {});
+	        $$invalidate(23, staffItems = {});
+	        $$invalidate(28, nopItems = {}); // Staff
 
 	        $__default['default'].each(staff, function (id, staffMember) {
 	          if (!locationId || id in locations[locationId].staff) {
 	            if (!serviceId) {
 	              if (!categoryId) {
-	                $$invalidate(21, staffItems[id] = $__default['default'].extend({}, staffMember), staffItems);
+	                $$invalidate(23, staffItems[id] = $__default['default'].extend({}, staffMember), staffItems);
 	              } else {
 	                $__default['default'].each(staffMember.services, function (srvId) {
 	                  if (services[srvId].category_id === categoryId) {
-	                    $$invalidate(21, staffItems[id] = $__default['default'].extend({}, staffMember), staffItems);
+	                    $$invalidate(23, staffItems[id] = $__default['default'].extend({}, staffMember), staffItems);
 	                    return false;
 	                  }
 	                });
@@ -11071,15 +11776,15 @@ var bookly = (function ($) {
 	                  return true;
 	                }
 
-	                $$invalidate(63, srvMinCapacity = srvMinCapacity ? Math.min(srvMinCapacity, locSrv.min_capacity) : locSrv.min_capacity);
-	                $$invalidate(62, srvMaxCapacity = srvMaxCapacity ? Math.max(srvMaxCapacity, locSrv.max_capacity) : locSrv.max_capacity);
-	                $$invalidate(21, staffItems[id] = $__default['default'].extend({}, staffMember, {
-	                  name: staffMember.name + (locSrv.price !== null && (lookupLocationId || !servicesPerLocation) ? " (" + locSrv.price + ")" : ""),
+	                $$invalidate(65, srvMinCapacity = srvMinCapacity ? Math.min(srvMinCapacity, locSrv.min_capacity) : locSrv.min_capacity);
+	                $$invalidate(64, srvMaxCapacity = srvMaxCapacity ? Math.max(srvMaxCapacity, locSrv.max_capacity) : locSrv.max_capacity);
+	                $$invalidate(23, staffItems[id] = $__default['default'].extend({}, staffMember, {
+	                  name: staffMember.name + (staffNameWithPrice && locSrv.price !== null && (lookupLocationId || !servicesPerLocation) ? " (" + locSrv.price + ")" : ""),
 	                  hidden: collaborativeHideStaff && services[serviceId].type === "collaborative"
 	                }), staffItems);
 
 	                if (collaborativeHideStaff && services[serviceId].type === "collaborative") {
-	                  $$invalidate(18, staffId = 0);
+	                  $$invalidate(20, staffId = 0);
 	                }
 	              });
 	            }
@@ -11091,10 +11796,10 @@ var bookly = (function ($) {
 	            if (staffMember.id in staffItems) {
 	              if (serviceId) {
 	                if (serviceId in staffMember.services && staffMember.services[serviceId].rating) {
-	                  $$invalidate(21, staffItems[staffMember.id].name = "★" + staffMember.services[serviceId].rating + " " + staffItems[staffMember.id].name, staffItems);
+	                  $$invalidate(23, staffItems[staffMember.id].name = "★" + staffMember.services[serviceId].rating + " " + staffItems[staffMember.id].name, staffItems);
 	                }
 	              } else if (staffMember.rating) {
-	                $$invalidate(21, staffItems[staffMember.id].name = "★" + staffMember.rating + " " + staffItems[staffMember.id].name, staffItems);
+	                $$invalidate(23, staffItems[staffMember.id].name = "★" + staffMember.rating + " " + staffItems[staffMember.id].name, staffItems);
 	              }
 	            }
 	          });
@@ -11102,11 +11807,11 @@ var bookly = (function ($) {
 
 
 	        if (!locationId) {
-	          $$invalidate(24, categoryItems = categories);
+	          $$invalidate(26, categoryItems = categories);
 	          $__default['default'].each(services, function (id, service) {
 	            if (!categoryId || !categorySelected || service.category_id === categoryId) {
 	              if (!staffId || id in staff[staffId].services) {
-	                $$invalidate(25, serviceItems[id] = service, serviceItems);
+	                $$invalidate(27, serviceItems[id] = service, serviceItems);
 	              }
 	            }
 	          });
@@ -11134,20 +11839,20 @@ var bookly = (function ($) {
 
 	          $__default['default'].each(categories, function (id, category) {
 	            if ($__default['default'].inArray(_parseInt(id), categoryIds) > -1) {
-	              $$invalidate(24, categoryItems[id] = category, categoryItems);
+	              $$invalidate(26, categoryItems[id] = category, categoryItems);
 	            }
 	          });
 
 	          if (categoryId && $__default['default'].inArray(categoryId, categoryIds) === -1) {
-	            $$invalidate(16, categoryId = 0);
-	            $$invalidate(59, categorySelected = false);
+	            $$invalidate(18, categoryId = 0);
+	            $$invalidate(61, categorySelected = false);
 	          }
 
 	          $__default['default'].each(services, function (id, service) {
 	            if ($__default['default'].inArray(id, serviceIds) > -1) {
 	              if (!categoryId || !categorySelected || service.category_id === categoryId) {
 	                if (!staffId || id in staff[staffId].services) {
-	                  $$invalidate(25, serviceItems[id] = service, serviceItems);
+	                  $$invalidate(27, serviceItems[id] = service, serviceItems);
 	                }
 	              }
 	            }
@@ -11155,26 +11860,26 @@ var bookly = (function ($) {
 	        } // Number of persons
 
 
-	        $$invalidate(60, maxCapacity = serviceId ? staffId ? lookupLocationId in staff[staffId].services[serviceId].locations ? staff[staffId].services[serviceId].locations[lookupLocationId].max_capacity : 1 : srvMaxCapacity ? srvMaxCapacity : 1 : 1);
-	        $$invalidate(61, minCapacity = serviceId ? staffId ? lookupLocationId in staff[staffId].services[serviceId].locations ? staff[staffId].services[serviceId].locations[lookupLocationId].min_capacity : 1 : srvMinCapacity ? srvMinCapacity : 1 : 1);
+	        $$invalidate(62, maxCapacity = serviceId ? staffId ? lookupLocationId in staff[staffId].services[serviceId].locations ? staff[staffId].services[serviceId].locations[lookupLocationId].max_capacity : 1 : srvMaxCapacity ? srvMaxCapacity : 1 : 1);
+	        $$invalidate(63, minCapacity = serviceId ? staffId ? lookupLocationId in staff[staffId].services[serviceId].locations ? staff[staffId].services[serviceId].locations[lookupLocationId].min_capacity : 1 : srvMinCapacity ? srvMinCapacity : 1 : 1);
 
 	        for (var i = minCapacity; i <= maxCapacity; ++i) {
-	          $$invalidate(26, nopItems[i] = {
+	          $$invalidate(28, nopItems[i] = {
 	            id: i,
 	            name: i
 	          }, nopItems);
 	        }
 
 	        if (nop > maxCapacity) {
-	          $$invalidate(20, nop = maxCapacity);
+	          $$invalidate(22, nop = maxCapacity);
 	        }
 
 	        if (nop < minCapacity || !hasNopSelect) {
-	          $$invalidate(20, nop = minCapacity);
+	          $$invalidate(22, nop = minCapacity);
 	        } // Duration
 
 
-	        $$invalidate(22, durationItems = {
+	        $$invalidate(24, durationItems = {
 	          1: {
 	            id: 1,
 	            name: "-"
@@ -11184,7 +11889,7 @@ var bookly = (function ($) {
 	        if (serviceId) {
 	          if (!staffId || servicesPerLocation && !locationId) {
 	            if ("units" in services[serviceId]) {
-	              $$invalidate(22, durationItems = services[serviceId].units);
+	              $$invalidate(24, durationItems = services[serviceId].units);
 	            }
 	          } else {
 	            var locId = locationId || 0;
@@ -11194,7 +11899,7 @@ var bookly = (function ($) {
 	              var staffLocation = locId in staffLocations ? staffLocations[locId] : staffLocations[0];
 
 	              if ("units" in staffLocation) {
-	                $$invalidate(22, durationItems = staffLocation.units);
+	                $$invalidate(24, durationItems = staffLocation.units);
 	              }
 	            }
 	          }
@@ -11202,36 +11907,36 @@ var bookly = (function ($) {
 
 	        if (!(duration in durationItems)) {
 	          if (keys(durationItems).length > 0) {
-	            $$invalidate(19, duration = values(durationItems)[0].id);
+	            $$invalidate(21, duration = values(durationItems)[0].id);
 	          } else {
-	            $$invalidate(19, duration = 1);
+	            $$invalidate(21, duration = 1);
 	          }
 	        } // Quantity
 
 
-	        $$invalidate(27, quantityItems = {});
+	        $$invalidate(29, quantityItems = {});
 
 	        for (var q = 1; q <= maxQuantity; ++q) {
-	          $$invalidate(27, quantityItems[q] = {
+	          $$invalidate(29, quantityItems[q] = {
 	            id: q,
 	            name: q
 	          }, quantityItems);
 	        } // Placeholders
 
 
-	        $$invalidate(28, locationPlaceholder = {
+	        $$invalidate(30, locationPlaceholder = {
 	          id: 0,
 	          name: l10n.location_option
 	        });
-	        $$invalidate(29, categoryPlaceholder = {
+	        $$invalidate(31, categoryPlaceholder = {
 	          id: 0,
 	          name: l10n.category_option
 	        });
-	        $$invalidate(30, servicePlaceholder = {
+	        $$invalidate(32, servicePlaceholder = {
 	          id: 0,
 	          name: l10n.service_option
 	        });
-	        $$invalidate(31, staffPlaceholder = {
+	        $$invalidate(33, staffPlaceholder = {
 	          id: 0,
 	          name: l10n.staff_option
 	        });
@@ -11239,7 +11944,7 @@ var bookly = (function ($) {
 	    }
 	  };
 
-	  return [locations, services, staff, showServiceInfo, showStaffInfo, hasLocationSelect, hasCategorySelect, hasServiceSelect, hasStaffSelect, hasDurationSelect, hasNopSelect, hasQuantitySelect, hasDropBtn, showDropBtn, l10n, locationId, categoryId, serviceId, staffId, duration, nop, staffItems, durationItems, quantity, categoryItems, serviceItems, nopItems, quantityItems, locationPlaceholder, categoryPlaceholder, servicePlaceholder, staffPlaceholder, locationError, locationEl, serviceError, serviceEl, staffError, staffEl, onLocationChange, onCategoryChange, onServiceChange, onStaffChange, onDurationChange, onNopChange, onQuantityChange, onDropBtnClick, item, index, categories, defaults, required, servicesPerLocation, collaborativeHideStaff, showRatings, maxQuantity, date_from_element, validate, getValues, lookupLocationId, categorySelected, maxCapacity, minCapacity, srvMaxCapacity, srvMinCapacity, select_el_binding, select_el_binding_1, select_el_binding_2];
+	  return [locations, categories, services, staff, showCategoryInfo, showServiceInfo, showStaffInfo, hasLocationSelect, hasCategorySelect, hasServiceSelect, hasStaffSelect, hasDurationSelect, hasNopSelect, hasQuantitySelect, hasDropBtn, showDropBtn, l10n, locationId, categoryId, serviceId, staffId, duration, nop, staffItems, durationItems, quantity, categoryItems, serviceItems, nopItems, quantityItems, locationPlaceholder, categoryPlaceholder, servicePlaceholder, staffPlaceholder, locationError, locationEl, serviceError, serviceEl, staffError, staffEl, onLocationChange, onCategoryChange, onServiceChange, onStaffChange, onDurationChange, onNopChange, onQuantityChange, onDropBtnClick, item, index, defaults, required, servicesPerLocation, staffNameWithPrice, collaborativeHideStaff, showRatings, maxQuantity, date_from_element, validate, getValues, lookupLocationId, categorySelected, maxCapacity, minCapacity, srvMaxCapacity, srvMinCapacity, select_el_binding, select_el_binding_1, select_el_binding_2];
 	}
 
 	var ChainItem = /*#__PURE__*/function (_SvelteComponent) {
@@ -11254,33 +11959,35 @@ var bookly = (function ($) {
 
 	    _this = _super.call(this);
 	    init(_assertThisInitialized(_this), options, instance$1, create_fragment$1, safe_not_equal, {
-	      item: 46,
-	      index: 47,
+	      item: 48,
+	      index: 49,
 	      locations: 0,
-	      categories: 48,
-	      services: 1,
-	      staff: 2,
-	      defaults: 49,
-	      required: 50,
-	      servicesPerLocation: 51,
-	      collaborativeHideStaff: 52,
-	      showRatings: 53,
-	      showServiceInfo: 3,
-	      showStaffInfo: 4,
-	      maxQuantity: 54,
-	      hasLocationSelect: 5,
-	      hasCategorySelect: 6,
-	      hasServiceSelect: 7,
-	      hasStaffSelect: 8,
-	      hasDurationSelect: 9,
-	      hasNopSelect: 10,
-	      hasQuantitySelect: 11,
-	      hasDropBtn: 12,
-	      showDropBtn: 13,
-	      l10n: 14,
-	      date_from_element: 55,
-	      validate: 56,
-	      getValues: 57
+	      categories: 1,
+	      services: 2,
+	      staff: 3,
+	      defaults: 50,
+	      required: 51,
+	      servicesPerLocation: 52,
+	      staffNameWithPrice: 53,
+	      collaborativeHideStaff: 54,
+	      showRatings: 55,
+	      showCategoryInfo: 4,
+	      showServiceInfo: 5,
+	      showStaffInfo: 6,
+	      maxQuantity: 56,
+	      hasLocationSelect: 7,
+	      hasCategorySelect: 8,
+	      hasServiceSelect: 9,
+	      hasStaffSelect: 10,
+	      hasDurationSelect: 11,
+	      hasNopSelect: 12,
+	      hasQuantitySelect: 13,
+	      hasDropBtn: 14,
+	      showDropBtn: 15,
+	      l10n: 16,
+	      date_from_element: 57,
+	      validate: 58,
+	      getValues: 59
 	    }, [-1, -1, -1]);
 	    return _this;
 	  }
@@ -11288,12 +11995,12 @@ var bookly = (function ($) {
 	  _createClass(ChainItem, [{
 	    key: "validate",
 	    get: function get() {
-	      return this.$$.ctx[56];
+	      return this.$$.ctx[58];
 	    }
 	  }, {
 	    key: "getValues",
 	    get: function get() {
-	      return this.$$.ctx[57];
+	      return this.$$.ctx[59];
 	    }
 	  }]);
 
@@ -11745,8 +12452,10 @@ var bookly = (function ($) {
 	            defaults = opt[params.form_id].defaults,
 	            servicesPerLocation = response.services_per_location || false,
 	            serviceNameWithDuration = response.service_name_with_duration,
+	            staffNameWithPrice = response.staff_name_with_price,
 	            collaborativeHideStaff = response.collaborative_hide_staff,
 	            showRatings = response.show_ratings,
+	            showCategoryInfo = response.show_category_info,
 	            showServiceInfo = response.show_service_info,
 	            showStaffInfo = response.show_staff_info,
 	            maxQuantity = response.max_quantity || 1,
@@ -11772,8 +12481,10 @@ var bookly = (function ($) {
 	              defaults: defaults,
 	              required: required,
 	              servicesPerLocation: servicesPerLocation,
+	              staffNameWithPrice: staffNameWithPrice,
 	              collaborativeHideStaff: collaborativeHideStaff,
 	              showRatings: showRatings,
+	              showCategoryInfo: showCategoryInfo,
 	              showServiceInfo: showServiceInfo,
 	              showStaffInfo: showStaffInfo,
 	              maxQuantity: maxQuantity,
@@ -11824,6 +12535,7 @@ var bookly = (function ($) {
 	          $__default['default']('#' + $date_from.attr('aria-owns')).show();
 	        });
 	        $__default['default']('.bookly-js-go-to-cart', $container).on('click', function (e) {
+	          e.stopPropagation();
 	          e.preventDefault();
 	          laddaStart(this);
 	          stepCart({
@@ -11892,12 +12604,15 @@ var bookly = (function ($) {
 	          } // week days
 
 
-	          if (!$__default['default'](':checked', $week_days).length) {
+	          if ($week_days.length && !$__default['default'](':checked', $week_days).length) {
 	            valid = false;
+	            $week_days.addClass('bookly-error');
 
 	            if ($scroll_to === null) {
 	              $scroll_to = $week_days;
 	            }
+	          } else {
+	            $week_days.removeClass('bookly-error');
 	          }
 
 	          if ($scroll_to !== null) {
@@ -11909,6 +12624,7 @@ var bookly = (function ($) {
 
 
 	        $next_step.on('click', function (e) {
+	          e.stopPropagation();
 	          e.preventDefault();
 
 	          if (stepServiceValidator()) {
@@ -11937,7 +12653,6 @@ var bookly = (function ($) {
 	              _chain.push({
 	                location_id: values.locationId,
 	                service_id: values.serviceId,
-	                category_id: values.categoryId,
 	                staff_ids: values.staffIds,
 	                units: values.duration,
 	                number_of_persons: values.nop,
@@ -11990,7 +12705,10 @@ var bookly = (function ($) {
 	            });
 	          }
 	        });
-	        $mobile_next_step.on('click', function () {
+	        $mobile_next_step.on('click', function (e) {
+	          e.stopPropagation();
+	          e.preventDefault();
+
 	          if (stepServiceValidator()) {
 	            if (opt[params.form_id].skip_steps.service_part2) {
 	              laddaStart(this);
@@ -12015,7 +12733,9 @@ var bookly = (function ($) {
 
 	          $mobile_prev_step.remove();
 	        } else {
-	          $mobile_prev_step.on('click', function () {
+	          $mobile_prev_step.on('click', function (e) {
+	            e.stopPropagation();
+	            e.preventDefault();
 	            $__default['default']('.bookly-js-mobile-step-1', $container).show();
 	            $__default['default']('.bookly-js-mobile-step-2', $container).hide();
 	            return false;

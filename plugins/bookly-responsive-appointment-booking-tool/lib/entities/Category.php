@@ -12,14 +12,20 @@ class Category extends Lib\Base\Entity
     /** @var  string */
     protected $name;
     /** @var  int */
+    protected $attachment_id;
+    /** @var  string */
+    protected $info;
+    /** @var  int */
     protected $position = 9999;
 
     protected static $table = 'bookly_categories';
 
     protected static $schema = array(
-        'id'        => array( 'format' => '%d' ),
-        'name'      => array( 'format' => '%s' ),
-        'position'  => array( 'format' => '%d' ),
+        'id' => array( 'format' => '%d' ),
+        'name' => array( 'format' => '%s' ),
+        'attachment_id' => array( 'format' => '%d' ),
+        'info' => array( 'format' => '%s' ),
+        'position' => array( 'format' => '%d' ),
     );
 
     /**
@@ -37,6 +43,17 @@ class Category extends Lib\Base\Entity
     }
 
     /**
+     * Get translated info.
+     *
+     * @param string $locale
+     * @return string
+     */
+    public function getTranslatedInfo( $locale = null )
+    {
+        return Lib\Utils\Common::getTranslatedString( 'category_' . $this->getId() . '_info', $this->getInfo(), $locale );
+    }
+
+    /**
      * @param Service $service
      */
     public function addService( Service $service )
@@ -50,6 +67,19 @@ class Category extends Lib\Base\Entity
     public function getServices()
     {
         return $this->services;
+    }
+
+    /**
+     * Get image url
+     * @param string $size
+     *
+     * @return string
+     */
+    public function getImageUrl( $size = 'full' )
+    {
+        return $this->attachment_id
+            ? Lib\Utils\Common::getAttachmentUrl( $this->attachment_id, $size )
+            : '';
     }
 
     /**************************************************************************
@@ -75,6 +105,43 @@ class Category extends Lib\Base\Entity
     public function setName( $name )
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getAttachmentId()
+    {
+        return $this->attachment_id;
+    }
+
+    /**
+     * @param int $attachment_id
+     */
+    public function setAttachmentId( $attachment_id )
+    {
+        $this->attachment_id = $attachment_id;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getInfo()
+    {
+        return $this->info;
+    }
+
+    /**
+     * @param string $info
+     * @return $this
+     */
+    public function setInfo( $info )
+    {
+        $this->info = $info;
 
         return $this;
     }
@@ -112,6 +179,7 @@ class Category extends Lib\Base\Entity
         if ( $this->isLoaded() ) {
             // Register string for translate in WPML.
             do_action( 'wpml_register_single_string', 'bookly', 'category_' . $this->getId(), $this->getName() );
+            do_action( 'wpml_register_single_string', 'bookly', 'category_' . $this->getId() . '_info', $this->getInfo() );
         }
         return $return;
     }

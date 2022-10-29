@@ -17,7 +17,7 @@ use Bookly\Lib\Config;
             </div>
             <?php Proxy\Pro::renderBookingStatesText() ?>
             <div class="bookly-js-payment-gateways">
-                <?php foreach ( $payment_options as $gateway ) : ?>
+                <?php foreach ( $payment_options as $slug => $gateway ) : ?>
                     <div class="bookly-box bookly-list">
                         <label>
                             <input type="radio" name="payment" id="bookly-card-payment"/>
@@ -67,6 +67,9 @@ use Bookly\Lib\Config;
                                 </div>
                             </form>
                         <?php endif ?>
+                        <form class="bookly-card-form bookly-clear-bottom" style="display: none;">
+                            <?php Proxy\Shared::renderGatewayOptions( $slug ) ?>
+                        </form>
                     </div>
                 <?php endforeach ?>
             </div>

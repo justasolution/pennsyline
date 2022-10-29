@@ -5,6 +5,7 @@ use Bookly\Lib;
 
 /**
  * Class Shop
+ *
  * @package Bookly\Lib\Entities
  */
 class Shop extends Lib\Base\Entity
@@ -29,6 +30,8 @@ class Shop extends Lib\Base\Entity
     protected $url;
     /** @var  string */
     protected $icon;
+    /** @var  string */
+    protected $image;
     /** @var float */
     protected $price;
     /** @var int */
@@ -47,24 +50,25 @@ class Shop extends Lib\Base\Entity
     protected static $table = 'bookly_shop';
 
     protected static $schema = array(
-        'id'          => array( 'format' => '%d' ),
-        'plugin_id'   => array( 'format' => '%d' ),
-        'type'        => array( 'format' => '%s' ),
+        'id' => array( 'format' => '%d' ),
+        'plugin_id' => array( 'format' => '%d' ),
+        'type' => array( 'format' => '%s' ),
         'highlighted' => array( 'format' => '%d' ),
-        'priority'    => array( 'format' => '%d' ),
-        'demo_url'    => array( 'format' => '%s' ),
-        'title'       => array( 'format' => '%s' ),
-        'slug'        => array( 'format' => '%s' ),
+        'priority' => array( 'format' => '%d' ),
+        'demo_url' => array( 'format' => '%s' ),
+        'title' => array( 'format' => '%s' ),
+        'slug' => array( 'format' => '%s' ),
         'description' => array( 'format' => '%s' ),
-        'url'         => array( 'format' => '%s' ),
-        'icon'        => array( 'format' => '%s' ),
-        'price'       => array( 'format' => '%f' ),
-        'sales'       => array( 'format' => '%d' ),
-        'rating'      => array( 'format' => '%f' ),
-        'reviews'     => array( 'format' => '%d' ),
-        'published'   => array( 'format' => '%s' ),
-        'seen'        => array( 'format' => '%d' ),
-        'created_at'  => array( 'format' => '%s' ),
+        'url' => array( 'format' => '%s' ),
+        'icon' => array( 'format' => '%s' ),
+        'image' => array( 'format' => '%s' ),
+        'price' => array( 'format' => '%f' ),
+        'sales' => array( 'format' => '%d' ),
+        'rating' => array( 'format' => '%f' ),
+        'reviews' => array( 'format' => '%d' ),
+        'published' => array( 'format' => '%s' ),
+        'seen' => array( 'format' => '%d' ),
+        'created_at' => array( 'format' => '%s' ),
     );
 
     /**************************************************************************
@@ -297,6 +301,29 @@ class Shop extends Lib\Base\Entity
     public function setIcon( $icon )
     {
         $this->icon = $icon;
+
+        return $this;
+    }
+
+    /**
+     * Gets image
+     *
+     * @return string
+     */
+    public function getImage()
+    {
+        return $this->image;
+    }
+
+    /**
+     * Sets image
+     *
+     * @param string $image
+     * @return $this
+     */
+    public function setImage( $image )
+    {
+        $this->image = $image;
 
         return $this;
     }

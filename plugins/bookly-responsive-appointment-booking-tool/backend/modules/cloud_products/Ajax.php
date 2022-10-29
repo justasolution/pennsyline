@@ -104,7 +104,6 @@ class Ajax extends Lib\Base\Ajax
         }
     }
 
-
     /**
      * Revert cancel Zapier subscription
      */
@@ -119,12 +118,51 @@ class Ajax extends Lib\Base\Ajax
     }
 
     /**
+     * Enable/disable Cron
+     */
+    public static function cloudCronChangeStatus()
+    {
+        $status = self::parameter( 'status' );
+        $api = Lib\Cloud\API::getInstance();
+        if ( $status === '1' ) {
+            $response = $api->cron->activate( self::parameter( 'product_price' ) );
+            if ( $response !== false ) {
+                wp_send_json_success( array(
+                    'redirect_url' => add_query_arg(
+                            array( 'page' => Page::pageSlug() ),
+                            admin_url( 'admin.php' )
+                        ) . '#cloud-product=cron&status=activated',
+                ) );
+            } else {
+                wp_send_json_error( array( 'message' => current( $api->getErrors() ) ) );
+            }
+        } elseif ( $api->cron->deactivate( $status ) ) {
+            wp_send_json_success();
+        } else {
+            wp_send_json_error( array( 'message' => current( $api->getErrors() ) ) );
+        }
+    }
+
+    /**
+     * Revert cancel Cron subscription
+     */
+    public static function cloudCronRevertCancel()
+    {
+        $api = Lib\Cloud\API::getInstance();
+        if ( $api->cron->revertCancel() ) {
+            wp_send_json_success();
+        } else {
+            wp_send_json_error( array( 'message' => current( $api->getErrors() ) ) );
+        }
+    }
+
+    /**
      * Get text for 'product activation' modal
      */
     public static function cloudGetProductActivationMessage()
     {
         $product = self::parameter( 'product' );
-        $status  = self::parameter( 'status' );
+        $status = self::parameter( 'status' );
         if ( $product === Account::PRODUCT_STRIPE && $status === 'cancelled' ) {
             wp_send_json_error( array( 'content' => __( 'Stripe activation was not completed', 'bookly' ) ) );
         }
@@ -147,7 +185,7 @@ class Ajax extends Lib\Base\Ajax
                             'content' => $texts['message'],
                             'button'  => array(
                                 'caption' => $texts['button'],
-                                'url'     => add_query_arg( array( 'page' => SettingsPage::pageSlug(), 'tab' => 'payments' ), admin_url( 'admin.php' ) )
+                                'url' => add_query_arg( array( 'page' => SettingsPage::pageSlug(), 'tab' => 'payments' ), admin_url( 'admin.php' ) ),
                             )
                         ) );
                     }
@@ -155,10 +193,15 @@ class Ajax extends Lib\Base\Ajax
                 case Account::PRODUCT_ZAPIER:
                     wp_send_json_success( array(
                         'content' => $texts['message'],
-                        'button'  => array(
+                        'button' => array(
                             'caption' => $texts['button'],
-                            'url' => add_query_arg( array( 'page' => CloudZapierPage::pageSlug() ), admin_url( 'admin.php' ) )
-                        )
+                            'url' => add_query_arg( array( 'page' => CloudZapierPage::pageSlug() ), admin_url( 'admin.php' ) ),
+                        ),
+                    ) );
+                    break;
+                case Account::PRODUCT_CRON:
+                    wp_send_json_success( array(
+                        'content' => $texts['message'],
                     ) );
                     break;
             }

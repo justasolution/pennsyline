@@ -10,9 +10,9 @@ use Bookly\Lib\Config;
 class DatePoint implements IPoint
 {
     /** @var string */
-    protected static $wp_timezone = null;
+    protected static $wp_timezone;
     /** @var string */
-    public static $client_timezone = null;
+    public static $client_timezone;
 
     /** @var \DateTime */
     protected $datetime;
@@ -67,7 +67,13 @@ class DatePoint implements IPoint
      */
     public static function fromStrInTz( $date_str, $timezone )
     {
-        return new static( date_create( $date_str . ' ' . $timezone ) );
+        try {
+            $date = new static( date_create( $date_str, new \DateTimeZone( $timezone ) ) );
+        } catch ( \Exception $e ) {
+            $date = new static( date_create( $date_str . ' ' . $timezone ) );
+        }
+
+        return $date;
     }
 
     /**

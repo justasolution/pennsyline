@@ -1,32 +1,33 @@
-jQuery(function ($) {
+jQuery(function($) {
 
-    let $calendar        = $('.bookly-js-calendar'),
-        $staffPills      = $('.bookly-js-staff-pills ul'),
-        $staffLinks      = $('li > a', $staffPills),
-        $staffFilter     = $('#bookly-js-staff-filter'),
-        $servicesFilter  = $('#bookly-js-services-filter'),
+    let $calendar = $('.bookly-js-calendar'),
+        $staffPills = $('.bookly-js-staff-pills ul'),
+        $staffLinks = $('li > a', $staffPills),
+        $staffFilter = $('#bookly-js-staff-filter'),
+        $servicesFilter = $('#bookly-js-services-filter'),
         $locationsFilter = $('#bookly-js-locations-filter'),
-        $gcSyncButton    = $('#bookly-google-calendar-sync'),
-        $ocSyncButton    = $('#bookly-outlook-calendar-sync'),
-        staffMembers     = [],
-        staffIds         = getCookie('bookly_cal_st_ids'),
-        serviceIds       = getCookie('bookly_cal_service_ids'),
-        locationIds      = getCookie('bookly_cal_location_ids'),
-        tabId            = getCookie('bookly_cal_tab_id'),
-        lastView         = getCookie('bookly_cal_view'),
-        headerToolbar    = {
+        $gcSyncButton = $('#bookly-google-calendar-sync'),
+        $ocSyncButton = $('#bookly-outlook-calendar-sync'),
+        staffMembers = [],
+        staffIds = getCookie('bookly_cal_st_ids'),
+        serviceIds = getCookie('bookly_cal_service_ids'),
+        locationIds = getCookie('bookly_cal_location_ids'),
+        tabId = getCookie('bookly_cal_tab_id'),
+        lastView = getCookie('bookly_cal_view'),
+        headerToolbar = {
             start: 'prev,next today',
             center: 'title',
             end: 'dayGridMonth,timeGridWeek,timeGridDay,resourceTimeGridDay,listWeek'
         },
-        calendarTimer    = null;
+        calendarTimer = null,
+        resizeTimer = null;
 
     /**
      * Init tabs.
      */
     // Scrollable pills
     $('.bookly-js-staff-pills').booklyNavScrollable();
-    $staffLinks.on('click', function (e) {
+    $staffLinks.on('click', function(e) {
         e.preventDefault();
         $staffLinks.removeClass('active');
         $(this).addClass('active');
@@ -59,10 +60,10 @@ jQuery(function ($) {
      * Init staff filter.
      */
     $staffFilter.booklyDropdown({
-        onChange: function (values, selected, all) {
+        onChange: function(values, selected, all) {
             let ids = [];
             staffMembers = [];
-            this.booklyDropdown('getSelectedExt').forEach(function (item) {
+            this.booklyDropdown('getSelectedExt').forEach(function(item) {
                 ids.push(item.value);
                 staffMembers.push({id: item.value, title: encodeHTML(item.name)});
             });
@@ -71,7 +72,7 @@ jQuery(function ($) {
             if (all) {
                 $staffLinks.filter('[data-staff_id!=0]').parent().toggle(selected);
             } else {
-                values.forEach(function (value) {
+                values.forEach(function(value) {
                     $staffLinks.filter('[data-staff_id=' + value + ']').parent().toggle(selected);
                 });
             }
@@ -90,7 +91,7 @@ jQuery(function ($) {
         $staffFilter.booklyDropdown('toggle');
     }
     // Populate staffMembers.
-    $staffFilter.booklyDropdown('getSelectedExt').forEach(function (item) {
+    $staffFilter.booklyDropdown('getSelectedExt').forEach(function(item) {
         staffMembers.push({id: item.value, title: encodeHTML(item.name)});
         $staffLinks.filter('[data-staff_id=' + item.value + ']').parent().show();
     });
@@ -99,7 +100,7 @@ jQuery(function ($) {
      * Init services filter.
      */
     $servicesFilter.booklyDropdown({
-        onChange: function (values, selected, all) {
+        onChange: function(values, selected, all) {
             serviceIds = this.booklyDropdown('getSelected');
             setCookie('bookly_cal_service_ids', serviceIds);
             calendar.ec.refetchEvents();
@@ -119,7 +120,7 @@ jQuery(function ($) {
      * Init locations filter.
      */
     $locationsFilter.booklyDropdown({
-        onChange: function (values, selected, all) {
+        onChange: function(values, selected, all) {
             locationIds = this.booklyDropdown('getSelected');
             setCookie('bookly_cal_location_ids', locationIds);
             calendar.ec.refetchEvents();
@@ -142,7 +143,7 @@ jQuery(function ($) {
         let $refresh = $('input[name="bookly_calendar_refresh_rate"]:checked');
         clearTimeout(calendarTimer);
         if ($refresh.val() > 0) {
-            calendarTimer = setInterval(function () {
+            calendarTimer = setInterval(function() {
                 calendar.ec.refetchEvents();
             }, $refresh.val() * 1000);
         }
@@ -152,15 +153,15 @@ jQuery(function ($) {
         return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
-    $('#bookly-calendar-refresh').on('click', function () {
+    $('#bookly-calendar-refresh').on('click', function() {
         calendar.ec.refetchEvents();
     });
 
-    $('input[name="bookly_calendar_refresh_rate"]').change(function () {
+    $('input[name="bookly_calendar_refresh_rate"]').change(function() {
         $.post(
             ajaxurl,
             {action: 'bookly_update_calendar_refresh_rate', csrf_token: BooklyL10nGlobal.csrf_token, rate: this.value},
-            function (response) {},
+            function(response) {},
             'json'
         );
         if (this.value > 0) {
@@ -203,16 +204,16 @@ jQuery(function ($) {
                 }
             }
         },
-        getCurrentStaffId: function () {
+        getCurrentStaffId: function() {
             return $staffLinks.filter('.active').data('staff_id');
         },
-        getStaffMemberIds: function () {
+        getStaffMemberIds: function() {
             let ids = [],
                 staffId = this.getCurrentStaffId()
             ;
 
             if (staffId == 0) {
-                staffMembers.forEach(function (staff) {
+                staffMembers.forEach(function(staff) {
                     ids.push(staff.id);
                 });
             } else {
@@ -221,14 +222,14 @@ jQuery(function ($) {
 
             return ids;
         },
-        getLocationIds: function () {
+        getLocationIds: function() {
             return locationIds;
         },
-        getServiceIds: function () {
+        getServiceIds: function() {
             return serviceIds;
         },
         refresh: refreshBooklyCalendar,
-        viewChanged: function (view) {
+        viewChanged: function(view) {
             setCookie('bookly_cal_view', view.type);
             calendar.ec.setOption('height', heightEC(view.type));
         },
@@ -259,8 +260,11 @@ jQuery(function ($) {
         return height === 'auto' ? 'auto' : (calendar_tools_height + height) + 'px';
     }
 
-    $(window).on('resize', function () {
-        calendar.ec.setOption('height', heightEC(calendar.ec.getOption('view')));
+    $(window).on('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function() {
+            calendar.ec.setOption('height', heightEC(calendar.ec.getOption('view')));
+        }, 500);
     });
 
     /**
@@ -289,13 +293,13 @@ jQuery(function ($) {
     /**
      * Sync with Google Calendar.
      */
-    $gcSyncButton.on('click', function () {
+    $gcSyncButton.on('click', function() {
         var ladda = Ladda.create(this);
         ladda.start();
         $.post(
             ajaxurl,
             {action: 'bookly_advanced_google_calendar_sync', csrf_token: BooklyL10nGlobal.csrf_token},
-            function (response) {
+            function(response) {
                 if (response.success) {
                     calendar.ec.refetchEvents();
                 }
@@ -309,13 +313,13 @@ jQuery(function ($) {
     /**
      * Sync with Outlook Calendar.
      */
-    $ocSyncButton.on('click', function () {
+    $ocSyncButton.on('click', function() {
         var ladda = Ladda.create(this);
         ladda.start();
         $.post(
             ajaxurl,
             {action: 'bookly_outlook_calendar_sync', csrf_token: BooklyL10nGlobal.csrf_token},
-            function (response) {
+            function(response) {
                 if (response.success) {
                     calendar.ec.refetchEvents();
                 }

@@ -2,8 +2,8 @@
 namespace BooklyGoogleMapsAddress\Lib;
 
 use Bookly\Lib as BooklyLib;
-use BooklyGoogleMapsAddress\Backend\Modules as Backend;
-use BooklyGoogleMapsAddress\Frontend\Modules as Frontend;
+use BooklyGoogleMapsAddress\Backend;
+use BooklyGoogleMapsAddress\Frontend;
 
 /**
  * Class Plugin
@@ -23,17 +23,17 @@ abstract class Plugin extends BooklyLib\Base\Plugin
     protected static $embedded;
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     protected static function init()
     {
         // Init proxy.
-        Backend\Appearance\ProxyProviders\Local::init();
-        Backend\Appearance\ProxyProviders\Shared::init();
-        Backend\Settings\ProxyProviders\Shared::init();
+        Backend\Modules\Appearance\ProxyProviders\Local::init();
+        Backend\Modules\Appearance\ProxyProviders\Shared::init();
+        Backend\Modules\Settings\ProxyProviders\Shared::init();
         if ( get_option( 'bookly_google_maps_address_enabled' ) ) {
-            Frontend\Booking\ProxyProviders\Local::init();
-            Frontend\Booking\ProxyProviders\Shared::init();
+            Frontend\Modules\Booking\ProxyProviders\Local::init();
+            Frontend\Modules\Booking\ProxyProviders\Shared::init();
         }
     }
 }

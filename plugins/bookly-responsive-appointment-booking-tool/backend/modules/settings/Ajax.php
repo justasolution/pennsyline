@@ -81,7 +81,7 @@ class Ajax extends Page
 
         $filter  = self::parameter( 'filter' );
         $columns = self::parameter( 'columns' );
-        $order   = self::parameter( 'order', array() );
+        $order = self::parameter( 'order', array() );
 
         $query = Lib\Entities\Log::query();
 
@@ -90,8 +90,14 @@ class Ajax extends Page
         $end = date( 'Y-m-d', strtotime( '+1 day', strtotime( $end ) ) );
 
         $query->whereBetween( 'created_at', $start, $end );
-        if ( $filter['search'] != '' ) {
-            $query->whereRaw( 'target LIKE "%%%s%" OR details LIKE "%%%s%" OR ref LIKE "%%%s%" OR comment LIKE "%%%s%"', array_fill( 0, 4, $wpdb->esc_like( $filter['search'] ) ) );
+        if ( isset( $filter['search'] ) && $filter['search'] !== '' ) {
+            $query->whereRaw( 'target LIKE "%%%s%" OR details LIKE "%%%s%" OR ref LIKE "%%%s%" OR comment LIKE "%%%s%" OR author LIKE "%%%s%"', array_fill( 0, 5, $wpdb->esc_like( $filter['search'] ) ) );
+        }
+        if ( isset( $filter['target'] ) && $filter['target'] !== '' ) {
+            $query->where( 'target_id', $filter['target'] );
+        }
+        if ( isset( $filter['action'] ) && $filter['action'] && count( $filter['action'] ) < 3 ) {
+            $query->whereIn( 'action', $filter['action'] );
         }
 
         $filtered = $query->count();

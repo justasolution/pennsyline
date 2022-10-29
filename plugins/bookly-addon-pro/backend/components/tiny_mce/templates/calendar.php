@@ -1,6 +1,7 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 use Bookly\Lib\Config;
 use Bookly\Lib\Utils;
+
 /** @var array $casest */
 ?>
 <div id="bookly-tinymce-calendar" style="display: none">
@@ -55,9 +56,9 @@ use Bookly\Lib\Utils;
     </form>
 </div>
 <script type='text/javascript'>
-    jQuery(function ($) {
-        let casest = <?php echo json_encode( $casest ) ?>,
-            locationCustom = <?php echo (int) \Bookly\Lib\Proxy\Locations::servicesPerLocationAllowed() ?>,
+    jQuery(function($) {
+        let casest = BooklyL10nGlobal.casest,
+            locationCustom = BooklyL10nGlobal.custom_location_settings,
             $form = $('#bookly-tinymce-calendar form'),
             $insert = $('button.bookly-js-insert-shortcode', $form),
             $select_location = $('#bookly-select-location', $form),
@@ -72,7 +73,7 @@ use Bookly\Lib\Utils;
             let docFragment = document.createDocumentFragment();
 
             function valuesToArray(obj) {
-                return Object.keys(obj).map(function (key) {
+                return Object.keys(obj).map(function(key) {
                     return obj[key];
                 });
             }
@@ -88,7 +89,7 @@ use Bookly\Lib\Utils;
             // sort select by position
             data = valuesToArray(data).sort(compare);
 
-            $.each(data, function (key, object) {
+            $.each(data, function(key, object) {
                 let option = document.createElement('option');
                 option.value = object.id;
                 option.text = object.name;
@@ -104,10 +105,10 @@ use Bookly\Lib\Utils;
                 _staff = {},
                 _services = {}
             ;
-            $.each(casest.staff, function (id, staff_member) {
+            $.each(casest.staff, function(id, staff_member) {
                 if (!location_id || casest.locations[location_id].staff.hasOwnProperty(id)) {
                     if (!service_id) {
-                        $.each(staff_member.services, function (s_id) {
+                        $.each(staff_member.services, function(s_id) {
                             _staff[id] = staff_member;
                             return false;
                         });
@@ -131,21 +132,21 @@ use Bookly\Lib\Utils;
                 }
             });
             if (!location_id) {
-                $.each(casest.services, function (id, service) {
+                $.each(casest.services, function(id, service) {
                     if (!staff_id || casest.staff[staff_id].services.hasOwnProperty(id)) {
                         _services[id] = service;
                     }
                 });
             } else {
                 let service_ids = [];
-                $.each(casest.staff, function (st_id) {
-                    $.each(casest.staff[st_id].services, function (s_id) {
+                $.each(casest.staff, function(st_id) {
+                    $.each(casest.staff[st_id].services, function(s_id) {
                         if (casest.staff[st_id].services[s_id].locations.hasOwnProperty(_location_id)) {
                             service_ids.push(s_id);
                         }
                     });
                 });
-                $.each(casest.services, function (id, service) {
+                $.each(casest.services, function(id, service) {
                     if ($.inArray(id, service_ids) > -1) {
                         if (!staff_id || casest.staff[staff_id].services.hasOwnProperty(id)) {
                             _services[id] = service;
@@ -159,7 +160,7 @@ use Bookly\Lib\Utils;
         }
 
         // Location select change
-        $select_location.on('change', function () {
+        $select_location.on('change', function() {
             let location_id = this.value,
                 service_id = $select_service.val() || '',
                 staff_id = $select_employee.val() || ''
@@ -172,7 +173,7 @@ use Bookly\Lib\Utils;
                 }
                 if (service_id != '') {
                     let valid = false;
-                    $.each(casest.locations[location_id].staff, function (id) {
+                    $.each(casest.locations[location_id].staff, function(id) {
                         if (casest.staff[id].services.hasOwnProperty(service_id)) {
                             valid = true;
                             return false;
@@ -186,7 +187,7 @@ use Bookly\Lib\Utils;
             setSelects(location_id, service_id, staff_id);
         });
         // Service select change
-        $select_service.on('change', function () {
+        $select_service.on('change', function() {
             let location_id = $select_location.val() || '',
                 service_id = this.value,
                 staff_id = $select_employee.val() || ''
@@ -202,7 +203,7 @@ use Bookly\Lib\Utils;
         });
 
         // Staff select change
-        $select_employee.on('change', function () {
+        $select_employee.on('change', function() {
             let location_id = $select_location.val() || '',
                 service_id = $select_service.val() || '',
                 staff_id = this.value
@@ -216,7 +217,7 @@ use Bookly\Lib\Utils;
         setSelect($select_employee, casest.staff);
 
 
-        $insert.on('click', function (e) {
+        $insert.on('click', function(e) {
             e.preventDefault();
 
             let shortcode = '[bookly-calendar',

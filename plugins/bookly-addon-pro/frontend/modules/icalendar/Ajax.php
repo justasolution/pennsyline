@@ -2,11 +2,6 @@
 namespace BooklyPro\Frontend\Modules\Icalendar;
 
 use Bookly\Lib as BooklyLib;
-use Bookly\Backend\Modules\Appointments\Page;
-use Bookly\Backend\Modules\Staff\Proxy;
-use Bookly\Lib\Utils\Common;
-use BooklyPro\Backend\Modules\Staff\Forms;
-use BooklyPro\Lib;
 
 /**
  * Class Ajax
@@ -23,6 +18,9 @@ class Ajax extends BooklyLib\Base\Ajax
         return array( '_default' => 'anonymous' );
     }
 
+    /**
+     * Staff iCalendar feed
+     */
     public static function staffIcalendar()
     {
         /** @var BooklyLib\Entities\Staff $staff */
@@ -33,7 +31,7 @@ class Ajax extends BooklyLib\Base\Ajax
         if ( $staff && $staff->getICalendar() ) {
             $appointments = BooklyLib\Entities\Appointment::query()
                 ->where( 'staff_id', $staff->getId() )
-                ->whereGte( 'start_date', date_create()->modify( - $staff->getICalendarDaysBefore() . 'days' )->format( 'Y-m-d' ) )
+                ->whereGte( 'start_date', date_create()->modify( -$staff->getICalendarDaysBefore() . 'days' )->format( 'Y-m-d' ) )
                 ->whereLte( 'end_date', date_create()->modify( $staff->getICalendarDaysAfter() . 'days' )->format( 'Y-m-d' ) )
                 ->find();
 
@@ -44,21 +42,14 @@ class Ajax extends BooklyLib\Base\Ajax
                     $service = BooklyLib\Entities\Service::find( $appointment->getServiceId() );
                     $service_name = $service->getTranslatedTitle();
                 }
-                $descriptions = array();
-                foreach ( $appointment->getCustomerAppointments( true ) as $customer_appointment ) {
-                    $descriptions[] = sprintf(
-                        '%s: %s\n%s: %s\n%s: %s\n%s: %s\n',
-                        __( 'Name', 'bookly' ),
-                        $customer_appointment->customer->getFullName(),
-                        __( 'Email', 'bookly' ),
-                        $customer_appointment->customer->getEmail(),
-                        __( 'Phone', 'bookly' ),
-                        $customer_appointment->customer->getPhone(),
-                        __( 'Status', 'bookly' ),
-                        BooklyLib\Entities\CustomerAppointment::statusToString( $customer_appointment->getStatus() )
-                    );
-                }
-                $ics->addEvent( $appointment->getStartDate(), $appointment->getEndDate(), $service_name, implode( '\n', $descriptions ), $appointment->getLocationId() );
+
+                $template = __( 'Service', 'bookly' ) . ": {service_name}\n";
+                $template .= "{#each participants as participant}\n";
+                $template .= "{participant.client_name}{#if participant.client_phone} ({participant.client_phone}){/if}{#if participant.client_email} {participant.client_email} \n{/if}";
+                $template .= "{/each}\n";
+                
+                $description = BooklyLib\Utils\Codes::replace( $template, BooklyLib\Utils\Codes::getAppointmentCodes( $appointment ), false );
+                $ics->addEvent( $appointment->getStartDate(), $appointment->getEndDate(), $service_name, $description, $appointment->getLocationId() );
             }
         }
 

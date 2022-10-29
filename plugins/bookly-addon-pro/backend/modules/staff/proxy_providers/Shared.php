@@ -4,7 +4,6 @@ namespace BooklyPro\Backend\Modules\Staff\ProxyProviders;
 use Bookly\Backend\Modules\Staff\Proxy;
 use Bookly\Lib as BooklyLib;
 use Bookly\Lib\Entities\Staff;
-use BooklyPro\Lib\Config;
 use BooklyPro\Lib\Google;
 
 /**
@@ -21,7 +20,7 @@ class Shared extends Proxy\Shared
         // Check if this request is the request after google auth, set the token-data to the staff.
         if ( isset ( $params['code'] ) ) {
             $google = new Google\Client();
-            $token  = $google->exchangeCodeForAccessToken( $params[ 'code'] );
+            $token  = $google->exchangeCodeForAccessToken( $params['code'] );
 
             if ( $token ) {
                 $staff_id = (int) base64_decode( strtr( $params['state'], '-_,', '+/=' ) );

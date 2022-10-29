@@ -3,7 +3,7 @@
 Plugin Name: Bookly Advanced Google Calendar (Add-on)
 Plugin URI: https://www.booking-wp-plugin.com/?utm_source=bookly_admin&utm_medium=plugins_page&utm_campaign=plugins_page
 Description: Bookly Advanced Google Calendar add-on allows you to get a full two-way synchronization between Bookly Calendar and Google Calendar.
-Version: 2.3
+Version: 2.4
 Author: Bookly
 Author URI: https://www.booking-wp-plugin.com/?utm_source=bookly_admin&utm_medium=plugins_page&utm_campaign=plugins_page
 Text Domain: bookly

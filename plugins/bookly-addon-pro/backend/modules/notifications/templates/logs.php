@@ -7,14 +7,18 @@ use Bookly\Lib\Utils\DateTime;
 
 /** @var array $datatables */
 ?>
-
 <div class="form-row">
-    <div class="col-xl-4 col-lg-5 col-md-8">
+    <div class="col-xl-3 col-lg-5 col-md-4">
         <div class="form-group">
             <button type="button" class="btn btn-default w-100 text-truncate text-left" id="bookly-email-logs-date-range" data-date="<?php echo date( 'Y-m-d', strtotime( 'first day of' ) ) ?> - <?php echo date( 'Y-m-d', strtotime( 'last day of' ) ) ?>">
                 <i class="far fa-calendar-alt mr-1"></i>
                 <span><?php echo DateTime::formatDate( 'first day of this month' ) ?> - <?php echo DateTime::formatDate( 'last day of this month' ) ?></span>
             </button>
+        </div>
+    </div>
+    <div class="col">
+        <div class="form-group">
+            <input class="form-control" type="text" id="bookly-email-log-search" placeholder="<?php esc_attr_e( 'Quick search', 'bookly' ) ?>">
         </div>
     </div>
     <div class="flex-fill justify-content-end form-row">

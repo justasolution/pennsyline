@@ -37,7 +37,7 @@
             }
 
             if (this.data('value') !== undefined) {
-                editor.session.setValue(this.data('value'));
+                editor.session.setValue('' + this.data('value'));
             }
 
             return this;

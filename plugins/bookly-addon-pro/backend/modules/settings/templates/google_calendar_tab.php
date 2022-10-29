@@ -29,14 +29,7 @@ use BooklyPro\Lib\Google;
             </div>
             <?php Inputs::renderText( 'bookly_gc_client_id', __( 'Client ID', 'bookly' ), __( 'The client ID obtained from the Google Cloud Platform', 'bookly' ) ) ?>
             <?php Inputs::renderText( 'bookly_gc_client_secret', __( 'Client secret', 'bookly' ), __( 'The client secret obtained from the Google Cloud Platform', 'bookly' ) ) ?>
-            <div class="form-group">
-                <label for="bookly-redirect-uri"><?php esc_html_e( 'Redirect URI', 'bookly' ) ?></label>
-                <input id="bookly-redirect-uri" class="form-control" type="text" readonly
-                       value="<?php echo Google\Client::generateRedirectURI() ?>" onclick="this.select();"
-                       style="cursor: pointer;"
-                />
-                <small class="text-muted form-text"><?php esc_html_e( 'Enter this URL as a redirect URI in the Google Cloud Platform', 'bookly' ) ?></small>
-            </div>
+            <?php Inputs::renderTextCopy( Google\Client::generateRedirectURI(), __( 'Redirect URI', 'bookly' ), __( 'Enter this URL as a redirect URI in the Google Cloud Platform', 'bookly' ) ) ?>
             <?php if ( Config::advancedGoogleCalendarActive() ) : ?>
                 <?php Proxy\AdvancedGoogleCalendar::renderSettings() ?>
             <?php else : ?>

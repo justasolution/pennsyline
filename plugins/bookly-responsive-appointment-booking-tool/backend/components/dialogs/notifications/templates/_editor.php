@@ -5,7 +5,7 @@ use Bookly\Backend\Components\Ace;
     <div class="col-md-12">
         <div class="form-group">
             <label class="float-left mt-2"><?php esc_html_e( 'Body', 'bookly' ) ?></label>
-            <ul class="nav nav-tabs justify-content-end mr-2<?php if ( !user_can_richedit() ) : ?> collapse<?php endif ?>" style="border-bottom: none;">
+            <ul class="nav nav-tabs justify-content-end mr-2<?php if ( !user_can_richedit() ) : ?> bookly-collapse<?php endif ?>" style="border-bottom: none;">
                 <li class="nav-item">
                     <a class="nav-link active" href="#bookly-wp-editor-pane" data-toggle="bookly-tab" data-tinymce><?php esc_html_e( 'Visual', 'bookly' ) ?></a>
                 </li>

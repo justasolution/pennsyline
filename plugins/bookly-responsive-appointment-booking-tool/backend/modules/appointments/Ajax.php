@@ -5,6 +5,7 @@ use Bookly\Lib;
 
 /**
  * Class Ajax
+ *
  * @package Bookly\Backend\Modules\Appointments
  */
 class Ajax extends Lib\Base\Ajax
@@ -23,11 +24,11 @@ class Ajax extends Lib\Base\Ajax
     public static function getAppointments()
     {
         $columns = self::parameter( 'columns' );
-        $order   = self::parameter( 'order', array() );
-        $filter  = self::parameter( 'filter' );
-        $limits  = array(
+        $order = self::parameter( 'order', array() );
+        $filter = self::parameter( 'filter' );
+        $limits = array(
             'length' => self::parameter( 'length' ),
-            'start'  => self::parameter( 'start' ),
+            'start' => self::parameter( 'start' ),
         );
 
         $data = self::getAppointmentsTableData( $filter, $limits, $columns, $order );
@@ -37,10 +38,10 @@ class Ajax extends Lib\Base\Ajax
         Lib\Utils\Tables::updateSettings( 'appointments', $columns, $order, $filter );
 
         wp_send_json( array(
-            'draw'            => ( int ) self::parameter( 'draw' ),
-            'recordsTotal'    => $data['total'],
+            'draw' => ( int ) self::parameter( 'draw' ),
+            'recordsTotal' => $data['total'],
             'recordsFiltered' => $data['filtered'],
-            'data'            => $data['data'],
+            'data' => $data['data'],
         ) );
     }
 
@@ -111,7 +112,7 @@ class Ajax extends Lib\Base\Ajax
      */
     public static function getAppointmentsTableData( $filter = array(), $limits = array(), $columns = array(), $order = array() )
     {
-        $postfix_any      = sprintf( ' (%s)', get_option( 'bookly_l10n_option_employee' ) );
+        $postfix_any = sprintf( ' (%s)', get_option( 'bookly_l10n_option_employee' ) );
         $postfix_archived = sprintf( ' (%s)', __( 'Archived', 'bookly' ) );
 
         $query = Lib\Entities\Appointment::query( 'a' )
@@ -149,7 +150,7 @@ class Ajax extends Lib\Base\Ajax
                 p.type       AS payment_type,
                 p.status     AS payment_status,
                 COALESCE(s.title, a.custom_service_name) AS service_title,
-                TIME_TO_SEC(TIMEDIFF(a.end_date, a.start_date)) + IF(ca.extras_consider_duration, a.extras_duration, 0) AS service_duration' )
+                (TIME_TO_SEC(TIMEDIFF(a.end_date, a.start_date)) + a.extras_duration) AS service_duration' )
             ->leftJoin( 'CustomerAppointment', 'ca', 'a.id = ca.appointment_id' )
             ->leftJoin( 'Service', 's', 's.id = a.service_id' )
             ->leftJoin( 'Customer', 'c', 'c.id = ca.customer_id' )
@@ -215,8 +216,8 @@ class Ajax extends Lib\Base\Ajax
             }
         }
 
-        if ( $filter['status'] != '' ) {
-            $query->where( 'ca.status', $filter['status'] );
+        if ( isset( $filter['status'] ) && count( $filter['status'] ) !== count( Lib\Entities\CustomerAppointment::getStatuses() ) && count( $filter['status'] ) !== 0 ) {
+            $query->whereIn( 'ca.status', $filter['status'] );
         }
 
         foreach ( $order as $sort_by ) {
@@ -225,7 +226,7 @@ class Ajax extends Lib\Base\Ajax
         }
 
         $custom_fields = array();
-        $fields_data   = (array) Lib\Proxy\CustomFields::getWhichHaveData();
+        $fields_data = (array) Lib\Proxy\CustomFields::getWhichHaveData();
         foreach ( $fields_data as $field_data ) {
             $custom_fields[ $field_data->id ] = '';
         }
@@ -242,12 +243,10 @@ class Ajax extends Lib\Base\Ajax
         foreach ( $query->fetchArray() as $row ) {
             // Service duration.
             $service_duration = Lib\Utils\DateTime::secondsToInterval( $row['service_duration'] );
-            // Appointment status.
-            $row['status'] = Lib\Entities\CustomerAppointment::statusToString( $row['status'] );
             // Payment title.
             $payment_title = '';
             $payment_raw_title = '';
-            if ( $row['payment'] !== null ) {
+            if ( $row['payment'] !== null && $row['status'] !== Lib\Entities\CustomerAppointment::STATUS_WAITLISTED ) {
                 $payment_title = Lib\Utils\Price::format( $row['payment'] );
                 if ( $row['payment'] != $row['payment_total'] ) {
                     $payment_title = sprintf( __( '%s of %s', 'bookly' ), $payment_title, Lib\Utils\Price::format( $row['payment_total'] ) );
@@ -267,6 +266,8 @@ class Ajax extends Lib\Base\Ajax
                     Lib\Entities\Payment::statusToString( $row['payment_status'] )
                 );
             }
+            // Appointment status.
+            $row['status'] = Lib\Entities\CustomerAppointment::statusToString( $row['status'] );
             // Custom fields
             $customer_appointment = new Lib\Entities\CustomerAppointment();
             $customer_appointment->load( $row['ca_id'] );
@@ -285,7 +286,8 @@ class Ajax extends Lib\Base\Ajax
             }
 
             $data[] = array(
-                'id' => Lib\Config::groupBookingActive() && $row['ca_id'] ? $row['id'] . '-' . $row['ca_id'] : $row['id'],
+                'id' => $row['id'],
+                'no' => Lib\Config::groupBookingActive() && $row['ca_id'] ? $row['id'] . '-' . $row['ca_id'] : $row['ca_id'],
                 'start_date' => $row['start_date'] === null ? __( 'N/A', 'bookly' ) : Lib\Utils\DateTime::formatDateTime( $row['start_date'] ),
                 'staff' => array(
                     'name' => $row['staff_name'] . ( $row['staff_any'] ? $postfix_any : '' ) . ( $row['staff_visibility'] == 'archive' ? $postfix_archived : '' ),
@@ -328,7 +330,7 @@ class Ajax extends Lib\Base\Ajax
                 'created_date' => Lib\Utils\DateTime::formatDateTime( $row['created_date'] ),
             );
 
-            $custom_fields = array_map( function () { return ''; }, $custom_fields );
+            $custom_fields = array_map( function() { return ''; }, $custom_fields );
         }
 
         return compact( 'data', 'total', 'filtered' );

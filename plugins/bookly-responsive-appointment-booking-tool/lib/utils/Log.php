@@ -5,6 +5,7 @@ use Bookly\Lib;
 
 /**
  * Class Log
+ *
  * @package Bookly\Lib\Utils
  */
 abstract class Log
@@ -12,6 +13,7 @@ abstract class Log
     const ACTION_CREATE = 'create';
     const ACTION_UPDATE = 'update';
     const ACTION_DELETE = 'delete';
+    const ACTION_ERROR  = 'error';
 
     /**
      * @param        $entity
@@ -31,7 +33,7 @@ abstract class Log
     public static function updateEntity( $entity, $ref = null, $comment = null )
     {
         $modified = array();
-        $fields   = $entity->getFields();
+        $fields = $entity->getFields();
         foreach ( array_keys( $entity->getModified() ) as $key ) {
             $modified[ $key ] = $fields[ $key ];
         }
@@ -56,7 +58,6 @@ abstract class Log
      * @param string $details
      * @param string $ref
      * @param string $comment
-     *
      * @return void|bool
      */
     public static function common( $action = null, $target = null, $target_id = null, $details = null, $ref = null, $comment = null )
@@ -65,6 +66,57 @@ abstract class Log
             return false;
         }
 
+        self::put( $action, $target, $target_id, $details, $ref, $comment );
+    }
+
+    /**
+     * @param string $message
+     * @param string $file
+     * @param string $line
+     * @return void
+     */
+    public static function error( $message = null, $file = null, $line = null )
+    {
+        try {
+            $target = $file . ':' . $line;
+            if ( $entry = Lib\Entities\Log::query()->where( 'target', $target )->findOne() ) {
+                /** @var Lib\Entities\Log $entry */
+                $entry
+                    ->setDetails( $message )
+                    ->setComment( 'Last occurrence: ' . current_time( 'mysql' ) )
+                    ->save();
+            } else {
+                $plugins_updated = true;
+                $plugins = get_site_transient( 'update_plugins' );
+                if ( $plugins && property_exists( $plugins, 'response' ) ) {
+                    foreach ( $plugins->response as $plugin => $data ) {
+                        if ( strpos( $plugin, 'bookly-' ) === 0 ) {
+                            $plugins_updated = false;
+                        }
+                    }
+                }
+                self::put( self::ACTION_ERROR, $target, null, $message, null, $plugins_updated ? null : 'Bookly plugins has not updated to the latest versions' );
+            }
+        } catch ( \Exception $e ) {
+        }
+        if ( get_option( 'bookly_dev' ) ) {
+            $message = sprintf( '<b>%s</b><p>%s:%s</p>', $message, substr( $file, strpos( $file, 'bookly-' ) ), $line );
+            $wp_error = new \WP_Error( 'bookly_error', $message, array() );
+            wp_die( $wp_error, 'Bookly', array( 'response' => 500, 'exit' => true, ) );
+        }
+    }
+
+    /**
+     * @param string $action
+     * @param string $target
+     * @param string $target_id
+     * @param string $details
+     * @param string $ref
+     * @param string $comment
+     * @return void
+     */
+    public static function put( $action = null, $target = null, $target_id = null, $details = null, $ref = null, $comment = null )
+    {
         $log = new Lib\Entities\Log();
         $log
             ->setAction( $action )

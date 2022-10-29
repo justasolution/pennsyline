@@ -95,12 +95,14 @@ export default function stepExtras(params) {
                 });
 
                 $goto_cart.on('click', function (e) {
+                    e.stopPropagation();
                     e.preventDefault();
                     laddaStart(this);
                     stepCart({form_id: params.form_id, from_step : 'extras'});
                 });
 
                 $next_step.on('click', function (e) {
+                    e.stopPropagation();
                     e.preventDefault();
                     laddaStart(this);
 
@@ -150,6 +152,7 @@ export default function stepExtras(params) {
                     });
                 });
                 $back_step.on('click', function (e) {
+                    e.stopPropagation();
                     e.preventDefault();
                     laddaStart(this);
                     if (opt[params.form_id].step_extras == 'after_step_time' && !opt[params.form_id].no_time) {

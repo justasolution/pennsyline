@@ -1,7 +1,7 @@
 <?php
 namespace BooklyPro\Lib\Payment;
 
-use Bookly\Lib\Entities\Payment;
+use Bookly\Lib\Config;
 use Bookly\Lib\Utils\Common;
 
 /**
@@ -46,10 +46,10 @@ class PayPal
             'BRANDNAME'    => get_option( 'bookly_co_name' ),
             'SOLUTIONTYPE' => 'Sole',
             'PAYMENTREQUEST_0_PAYMENTACTION' => 'Sale',
-            'PAYMENTREQUEST_0_CURRENCYCODE'  => get_option( 'bookly_pmt_currency' ),
+            'PAYMENTREQUEST_0_CURRENCYCODE'  => Config::getCurrency(),
             'NOSHIPPING' => 1,
-            'RETURNURL'  => add_query_arg( array( 'bookly_action' => 'paypal-ec-return', 'bookly_fid' => $form_id ), $current_url ),
-            'CANCELURL'  => add_query_arg( array( 'bookly_action' => 'paypal-ec-cancel', 'bookly_fid' => $form_id ), $current_url )
+            'RETURNURL'  => add_query_arg( array( 'bookly_action' => 'paypal-express-checkout-return', 'bookly_fid' => $form_id ), $current_url ),
+            'CANCELURL'  => add_query_arg( array( 'bookly_action' => 'paypal-express-checkout-cancel', 'bookly_fid' => $form_id ), $current_url )
         );
         $data['L_PAYMENTREQUEST_0_NAME0'] = $this->product->name;
         $data['L_PAYMENTREQUEST_0_AMT0']  = $this->product->price;
@@ -67,7 +67,7 @@ class PayPal
         if ( $response === null ) {
             $url = wp_sanitize_redirect(
                 add_query_arg( array(
-                    'bookly_action' => 'paypal-ec-error',
+                    'bookly_action' => 'paypal-express-checkout-error',
                     'bookly_fid'    => $form_id,
                     'error_msg'     => urlencode( $this->error ),
                 ), $current_url ) );
@@ -84,7 +84,7 @@ class PayPal
             } else {
                 $url = wp_sanitize_redirect(
                     add_query_arg( array(
-                        'bookly_action' => 'paypal-ec-error',
+                        'bookly_action' => 'paypal-express-checkout-error',
                         'bookly_fid'    => $form_id,
                         'error_msg'     => urlencode( $response['L_LONGMESSAGE0'] ),
                     ), $current_url ) );
@@ -133,33 +133,6 @@ class PayPal
         }
 
         return $paypal_response;
-    }
-
-    /**
-     * Outputs HTML form for PayPal Express Checkout.
-     *
-     * @param string $form_id
-     */
-    public static function renderECForm( $form_id )
-    {
-        $replacement = array(
-            '%form_id%'     => $form_id,
-            '%gateway%'     => Payment::TYPE_PAYPAL,
-            '%back%'        => Common::getTranslatedOption( 'bookly_l10n_button_back' ),
-            '%next%'        => Common::getTranslatedOption( 'bookly_l10n_step_payment_button_next' ),
-            '%align_class%' => get_option( 'bookly_app_align_buttons_left' ) ? 'bookly-left' : 'bookly-right',
-        );
-
-        $form = '<form method="post" class="bookly-%gateway%-form">
-                <input type="hidden" name="bookly_action" value="paypal-ec-init"/>
-                <input type="hidden" name="bookly_fid" value="%form_id%"/>
-                <button class="bookly-back-step bookly-js-back-step bookly-btn ladda-button" data-style="zoom-in" style="margin-right: 10px;" data-spinner-size="40"><span class="ladda-label">%back%</span></button>
-                <div class="%align_class%">
-                    <button class="bookly-next-step bookly-js-next-step bookly-btn ladda-button" data-style="zoom-in" data-spinner-size="40"><span class="ladda-label">%next%</span></button>
-                </div>
-             </form>';
-
-        echo strtr( $form, $replacement );
     }
 
     /**

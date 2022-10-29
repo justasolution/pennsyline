@@ -24,47 +24,47 @@ class Ajax extends BooklyLib\Base\Ajax
      */
     public static function getEmailLogs()
     {
-        $range = self::parameter( 'range' );
+        /** @global \wpdb $wpdb*/
+        global $wpdb;
 
-        $query = Lib\Entities\EmailLog::query( 'e' )
-            ->select( 'e.*' );
+        $order = self::parameter( 'order', array() );
+        $columns = self::parameter( 'columns' );
+        $filter = self::parameter( 'filter' );
+
+        $query = Lib\Entities\EmailLog::query( 'e' );
 
         // Filters.
-        list ( $start, $end ) = explode( ' - ', $range, 2 );
+        list ( $start, $end ) = explode( ' - ', $filter['range'], 2 );
         $end = date( 'Y-m-d', strtotime( '+1 day', strtotime( $end ) ) );
 
         $query->whereBetween( 'e.created_at', $start, $end );
+        if ( isset( $filter['search'] ) && $filter['search'] !== '' ) {
+            $query->whereRaw( 'e.to LIKE "%%%s%" OR e.subject LIKE "%%%s%" OR e.body LIKE "%%%s%"', array_fill( 0, 3, $wpdb->esc_like( $filter['search'] ) ) );
+        }
+
         $total = $query->count();
 
         $query->limit( self::parameter( 'length' ) )->offset( self::parameter( 'start' ) );
-
-        // Order.
-        $order = self::parameter( 'order', array() );
-        $columns = self::parameter( 'columns' );
 
         foreach ( $order as $sort_by ) {
             $query->sortBy( '`' . str_replace( '.', '_', $columns[ $sort_by['column'] ]['data'] ) . '`' )
                 ->order( $sort_by['dir'] == 'desc' ? BooklyLib\Query::ORDER_DESCENDING : BooklyLib\Query::ORDER_ASCENDING );
         }
 
-        $logs = $query->fetchArray();
+        $data = $query->select( 'e.id, e.to, e.subject, e.body, e.headers, e.attach, e.created_at' )->fetchArray();
 
-        $data = array();
-        foreach ( $logs as $record ) {
-            $data[] = array(
-                'id' => $record['id'],
-                'to' => $record['to'],
-                'subject' => $record['subject'],
-                'body' => $record['body'],
-                'headers' => json_decode( $record['headers'] ),
-                'attach' => json_decode( $record['attach'] ),
-                'created_at' => BooklyLib\Utils\DateTime::formatDateTime( $record['created_at'] ),
-            );
+        foreach ( $data as &$record ) {
+            $record['headers'] = json_decode( $record['headers'] );
+            $record['attach'] = json_decode( $record['attach'] );
+            $record['created_at'] = BooklyLib\Utils\DateTime::formatDateTime( $record['created_at'] );
         }
+
+        unset( $filter['range'], $filter['search'] );
+        BooklyLib\Utils\Tables::updateSettings( BooklyLib\Utils\Tables::EMAIL_LOGS, $columns, $order, $filter );
 
         wp_send_json( array(
             'draw' => ( int ) self::parameter( 'draw' ),
-            'recordsTotal' => count( $logs ),
+            'recordsTotal' => count( $data ),
             'recordsFiltered' => $total,
             'data' => $data,
         ) );

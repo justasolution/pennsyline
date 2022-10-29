@@ -9,6 +9,14 @@ use Bookly\Lib;
  */
 class Updater extends Lib\Base\Updater
 {
+    public function update_3_1()
+    {
+        add_option( 'bookly_files_extensions', '' );
+        $this->addL10nOptions( array(
+            'bookly_l10n_incorrect_file_type' => __( 'File\'s extension is not allowed', 'bookly' ),
+        ) );
+    }
+
     public function update_1_8()
     {
         $this->upgradeCharsetCollate( array(

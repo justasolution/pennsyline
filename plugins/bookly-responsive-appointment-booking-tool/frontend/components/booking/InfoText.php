@@ -23,7 +23,24 @@ class InfoText
     {
         $codes = self::getCodes( $step, $userData );
 
-        return nl2br( Lib\Utils\Codes::replace( $text, $codes, array( 'online_meeting_url', 'online_meeting_join_url' ) ) );
+        return self::replace( $text, $codes, true, true, array( 'online_meeting_url', 'online_meeting_join_url' ) );
+    }
+
+    /**
+     * @param string $text
+     * @param array $codes
+     * @param bool $bold
+     * @param bool $nl2br
+     * @param array $exclude
+     * @return string
+     */
+    public static function replace( $text, $codes, $bold = true, $nl2br = true, $exclude = array() )
+    {
+        if ( $nl2br ) {
+            return nl2br( Lib\Utils\Codes::replace( $text, $codes, $bold, $exclude ) );
+        }
+
+        return Lib\Utils\Codes::replace( $text, $codes, $bold, $exclude );
     }
 
     /**
@@ -45,16 +62,21 @@ class InfoText
                     'appointments' => array(),
                     'appointment_date' => array(),
                     'appointment_time' => array(),
+                    'category_image' => array(),
+                    'category_info' => array(),
                     'category_name' => array(),
                     'number_of_persons' => array(),
-                    'online_meeting_url' => array(),       // @todo Remove it from here and adjust proxy methods so that codes can be processed for each step independently
-                    'online_meeting_password' => array(),
                     'online_meeting_join_url' => array(),
+                    'online_meeting_password' => array(),
+                    'online_meeting_url' => array(),       // @todo Remove it from here and adjust proxy methods so that codes can be processed for each step independently
                     'service_duration' => array(),
+                    'service_image' => array(),
                     'service_info' => array(),
                     'service_name' => array(),
-                    'service_image' => array(),
                     'service_price' => array(),
+                    'staff_category_image' => array(),
+                    'staff_category_info' => array(),
+                    'staff_category_name' => array(),
                     'staff_info' => array(),
                     'staff_name' => array(),
                     'staff_photo' => array(),
@@ -69,16 +91,26 @@ class InfoText
                     );
                     /** @var Lib\Entities\Service $service */
                     $service = Lib\Entities\Service::find( $chain_item->getServiceId() );
+                    $category = $service->getCategoryId() ? Lib\Entities\Category::find( $service->getCategoryId() ) : false;
+
+                    $appointment_data['category_image'] = ( $category && $url = $category->getImageUrl() ) ? '<img src="' . $url . '"/>' : '';
+                    $appointment_data['category_info'] = $category ? $category->getTranslatedInfo() : '';
                     $appointment_data['category_name'] = $service->getTranslatedCategoryName();
                     $appointment_data['service_name'] = $service->getTranslatedTitle();
                     $appointment_data['service_image'] = ( $url = $service->getImageUrl() ) ? '<img src="' . $url . '"/>' : '';
                     $appointment_data['service_info'] = $service->getTranslatedInfo();
 
+                    $data['staff'] = null;
+                    $data['staff_category_image'] = array();
+                    $data['staff_category_info'] = array();
+                    $data['staff_category_name'] = array();
                     $data['number_of_persons'][] = $chain_item->getNumberOfPersons();
+                    $data['category_image'][] = $appointment_data['category_image'];
+                    $data['category_info'][] = $appointment_data['category_info'];
                     $data['category_name'][] = $appointment_data['category_name'];
-                    $data['service_name'][] = $appointment_data['service_name'];
                     $data['service_image'][] = $appointment_data['service_image'];
                     $data['service_info'][] = $service->getTranslatedInfo();
+                    $data['service_name'][] = $appointment_data['service_name'];
 
                     $duration = 0;
                     if ( $service->withSubServices() ) {
@@ -100,7 +132,7 @@ class InfoText
                     if ( $step == Steps::REPEAT ) {
                         $slot = $userData->getSlots();
                         list ( $slot_service, $slot_staff, $slot_time ) = $slot[ $num ];
-                        $staff = Lib\Entities\Staff::find( $slot_staff );
+                        $data['staff'] = Lib\Entities\Staff::find( $slot_staff );
 
                         if ( $slot_time !== null ) {
                             $service_dp = Lib\Slots\DatePoint::fromStr( $slot_time )->toClientTz();
@@ -115,30 +147,29 @@ class InfoText
                     } else {
                         $staff_ids = $chain_item->getStaffIds();
                         if ( count( $staff_ids ) == 1 ) {
-                            $staff = Lib\Entities\Staff::find( $staff_ids[0] );
+                            $data['staff'] = Lib\Entities\Staff::find( $staff_ids[0] );
                         }
                     }
                     $staff_photo = '';
-                    if ( $staff ) {
-                        $appointment_data['staff_name'] = esc_html( $staff->getTranslatedName() );
-                        $data['staff_info'][] = esc_html( $staff->getTranslatedInfo() );
-
-                        if ( $staff->getAttachmentId() && $img = wp_get_attachment_image_src( $staff->getAttachmentId(), 'full' ) ) {
-                            $staff_photo = '<img src="' . $img[0] . '"/>';
-                        }
+                    if ( $data['staff'] ) {
+                        $appointment_data['staff_name'] = esc_html( $data['staff']->getTranslatedName() );
+                        $data['staff_info'][] = esc_html( $data['staff']->getTranslatedInfo() );
+                        $photo = $data['staff']->getImageUrl();
+                        $staff_photo = $photo ? '<img src="' . $photo . '"/>' : '';
                         if ( $service->withSubServices() ) {
                             $service_price = $service->getPrice();
                             $price = $deposit_price = $service_price;
                         } else {
                             $staff_service = new Lib\Entities\StaffService();
+
                             $staff_service->loadBy( array(
-                                'staff_id' => $staff->getId(),
+                                'staff_id' => $data['staff']->getId(),
                                 'service_id' => $service->getId(),
-                                'location_id' => $chain_item->getLocationId() ?: null,
+                                'location_id' => Lib\Proxy\Locations::prepareStaffLocationId( $chain_item->getLocationId(), $data['staff']->getId() ) ?: null,
                             ) );
                             if ( ! $staff_service->getId() ) {
                                 $staff_service->loadBy( array(
-                                    'staff_id' => $staff->getId(),
+                                    'staff_id' => $data['staff']->getId(),
                                     'service_id' => $service->getId(),
                                     'location_id' => null,
                                 ) );
@@ -182,14 +213,16 @@ class InfoText
                     'appointments' => $data['appointments'],
                     'appointment_date' => self::implode( $data['appointment_date'] ),
                     'appointment_time' => self::implode( $data['appointment_time'] ),
+                    'category_image' => self::implode( $data['category_image'] ),
+                    'category_info' => self::implode( $data['category_info'] ),
                     'category_name' => self::implode( $data['category_name'] ),
                     'deposit_value' => Lib\Utils\Price::format( $data['total_deposit_price'] ),
                     'number_of_persons' => self::implode( $data['number_of_persons'] ),
                     'service_date' => self::implode( $data['appointment_date'] ),  // deprecated
                     'service_duration' => self::implode( $data['service_duration'] ),
+                    'service_image' => self::implode( $data['service_image'] ),
                     'service_info' => self::implode( $data['service_info'] ),
                     'service_name' => self::implode( $data['service_name'] ),
-                    'service_image' => self::implode( $data['service_image'] ),
                     'service_price' => self::implode( $data['service_price'] ),
                     'service_time' => self::implode( $data['appointment_time'] ),  // deprecated
                     'staff_info' => self::implode( $data['staff_info'] ),
@@ -203,10 +236,13 @@ class InfoText
             default:
                 $data = array(
                     'appointments' => array(),
+                    'appointment_id' => array(),
                     'appointment_date' => array(),
                     'appointment_time' => array(),
                     'booking_number' => array(),
                     'category_name' => array(),
+                    'category_info' => array(),
+                    'category_image' => array(),
                     'extras' => array(),
                     'number_of_persons' => array(),
                     'online_meeting_url' => array(),
@@ -228,19 +264,25 @@ class InfoText
                     $slots = $cart_item->getSlots();
                     $service_dp = Lib\Slots\DatePoint::fromStr( $slots[0][2] )->toClientTz();
 
+                    $category = $service->getCategoryId() ? Lib\Entities\Category::find( $service->getCategoryId() ) : false;
+                    $appointment_data['appointment_id'] = $cart_item->getAppointmentId();
                     $appointment_data['appointment_date'] = $slots[0][2] !== null ? $service_dp->formatI18nDate() : __( 'N/A', 'bookly' );
+                    $appointment_data['category_image'] = ( $category && $url = $category->getImageUrl() ) ? '<img src="' . $url . '"/>' : '';
+                    $appointment_data['category_info'] = $category ? $category->getTranslatedInfo() : '';
                     $appointment_data['category_name'] = $service->getTranslatedCategoryName();
-                    $appointment_data['service_price'] = Lib\Utils\Price::format( $cart_item->getServicePriceWithoutExtras() );
-                    $appointment_data['service_name'] = $service->getTranslatedTitle();
                     $appointment_data['service_image'] = ( $url = $service->getImageUrl() ) ? '<img src="' . $url . '"/>' : '';
                     $appointment_data['service_info'] = $service->getTranslatedInfo();
+                    $appointment_data['service_name'] = $service->getTranslatedTitle();
+                    $appointment_data['service_price'] = Lib\Utils\Price::format( $cart_item->getServicePriceWithoutExtras() );
 
-                    $data['appointment_date'][] = $appointment_data['appointment_date'];
-                    $data['category_name'][] = $appointment_data['category_name'];
                     $data['number_of_persons'][] = $cart_item->getNumberOfPersons();
+                    $data['appointment_date'][] = $appointment_data['appointment_date'];
+                    $data['category_image'][] = $appointment_data['category_image'];
+                    $data['category_info'][] = $appointment_data['category_info'];
+                    $data['category_name'][] = $appointment_data['category_name'];
+                    $data['service_image'][] = $appointment_data['service_image'];
                     $data['service_info'][] = $service->getTranslatedInfo();
                     $data['service_name'][] = $appointment_data['service_name'];
-                    $data['service_image'][] = $appointment_data['service_image'];
                     $data['service_price'][] = $appointment_data['service_price'];
                     if ( $cart_item->getService()->withSubServices() ) {
                         $duration = 0;
@@ -264,19 +306,18 @@ class InfoText
                     $data['appointment_time'][] = $appointment_data['appointment_time'];
                     $data['service_duration'][] = $appointment_data['service_duration'];
                     // For Task when time step can be skipped, staff can be false
-                    $staff = $cart_item->getStaff();
-                    $appointment_data['staff_name'] = $staff ? esc_html( $staff->getTranslatedName() ) : '';
-                    $data['staff_info'][] = $staff ? esc_html( $staff->getTranslatedInfo() ) : '';
+                    $data['staff'] = $cart_item->getStaff();
+                    $appointment_data['staff_name'] = $data['staff'] ? esc_html( $data['staff']->getTranslatedName() ) : '';
+                    $data['staff_info'][] = $data['staff'] ? esc_html( $data['staff']->getTranslatedInfo() ) : '';
                     $data['staff_name'][] = $appointment_data['staff_name'];
-                    if ( $staff && $staff->getAttachmentId() && $img = wp_get_attachment_image_src( $staff->getAttachmentId(), 'full' ) ) {
-                        $data['staff_photo'][] = '<img src="' . $img[0] . '"/>';
-                    } else {
-                        $data['staff_photo'][] = '';
-                    }
-
+                    $photo = $data['staff'] ? $data['staff']->getImageUrl() : '';
+                    $data['staff_photo'][] = $photo
+                        ? '<img src="' . $photo . '"/>'
+                        : '';
                     // If appointment exists, prepare some additional data.
                     if ( $cart_item->getAppointmentId() ) {
                         $data['booking_number'][] = $cart_item->getAppointmentId();
+                        $data['appointment_id'][] = $cart_item->getAppointmentId();
                     }
 
                     $data['appointments'][] = $appointment_data;
@@ -294,10 +335,13 @@ class InfoText
                     'amount_to_pay' => Lib\Utils\Price::format( $cart_info->getPayNow() ),
                     'appointments' => $data['appointments'],
                     'appointments_count' => count( $userData->cart->getItems() ),
+                    'appointment_id' => self::implode( $data['appointment_id'] ),
                     'appointment_date' => self::implode( $data['appointment_date'] ),
                     'appointment_time' => self::implode( $data['appointment_time'] ),
                     'booking_number' => self::implode( $data['booking_number'] ),
                     'category_name' => self::implode( $data['category_name'] ),
+                    'category_info' => self::implode( $data['category_info'] ),
+                    'category_image' => self::implode( $data['category_image'] ),
                     'deposit_value' => Lib\Utils\Price::format( $cart_info->getDepositPay() ),
                     'number_of_persons' => self::implode( $data['number_of_persons'] ),
                     'service_date' => self::implode( $data['appointment_date'] ),  // deprecated
@@ -350,7 +394,6 @@ class InfoText
                         : '';
                 }
                 $codes = Proxy\Shared::prepareInfoTextCodes( $codes, $data );
-
                 break;
         }
 
@@ -363,7 +406,7 @@ class InfoText
      * @param array $data
      * @return string
      */
-    protected static function implode( $data )
+    public static function implode( $data )
     {
         return implode( ', ', array_filter( $data, function ( $value ) { return ! is_null( $value ) && $value !== ''; } ) );
     }

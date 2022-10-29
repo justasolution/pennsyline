@@ -16,7 +16,7 @@
                     : obj.options.l10n.datePicker.meridiem[isLower ? 'pm' : 'PM'];
             },
         });
-
+        let existsAppointmentForm  = typeof BooklyAppointmentDialog !== 'undefined'
         // Settings for Event Calendar
         let settings = {
             view: 'timeGridWeek',
@@ -96,7 +96,7 @@
                         let $popover = $('<div class="bookly-popover bs-popover-top bookly-ec-popover">')
                         let $arrow = $('<div class="arrow" style="left:8px;">');
                         let $body = $('<div class="popover-body">');
-                        let $buttons = popoverButtons(arg);
+                        let $buttons = existsAppointmentForm ? popoverButtons(arg) : '';
                         $body.append(arg.event.extendedProps.tooltip).append($buttons).css({minWidth: '200px'});
                         $popover.append($arrow).append($body);
                         $event.append($popover);
@@ -135,7 +135,7 @@
                         break;
                 }
 
-                if (arg.view.type === 'listWeek') {
+                if (arg.view.type === 'listWeek' && existsAppointmentForm) {
                     $title.append(popoverButtons(arg));
                 }
 
@@ -146,41 +146,42 @@
                     return;
                 }
                 arg.jsEvent.stopPropagation();
-                var visible_staff_id;
-                if (arg.view.type === 'resourceTimeGridDay') {
-                    visible_staff_id = 0;
-                } else {
-                    visible_staff_id = obj.options.getCurrentStaffId();
-                }
-
-                BooklyAppointmentDialog.showDialog(
-                    arg.event.id,
-                    null,
-                    null,
-                    function (event) {
-                        if (event == 'refresh') {
-                            calendar.refetchEvents();
-                        } else {
-                            if (event.start === null) {
-                                // Task
-                                calendar.removeEventById(event.id);
+                if (existsAppointmentForm) {
+                    let visible_staff_id;
+                    if (arg.view.type === 'resourceTimeGridDay') {
+                        visible_staff_id = 0;
+                    } else {
+                        visible_staff_id = obj.options.getCurrentStaffId();
+                    }
+                    BooklyAppointmentDialog.showDialog(
+                        arg.event.id,
+                        null,
+                        null,
+                        function (event) {
+                            if (event == 'refresh') {
+                                calendar.refetchEvents();
                             } else {
-                                if (visible_staff_id == event.resourceId || visible_staff_id == 0) {
-                                    // Update event in calendar.
-                                    calendar.updateEvent(event);
+                                if (event.start === null) {
+                                    // Task
+                                    calendar.removeEventById(event.id);
                                 } else {
-                                    // Switch to the event owner tab.
-                                    jQuery('li > a[data-staff_id=' + event.resourceId + ']').click();
+                                    if (visible_staff_id == event.resourceId || visible_staff_id == 0) {
+                                        // Update event in calendar.
+                                        calendar.updateEvent(event);
+                                    } else {
+                                        // Switch to the event owner tab.
+                                        jQuery('li > a[data-staff_id=' + event.resourceId + ']').click();
+                                    }
                                 }
                             }
-                        }
 
-                        if (locationChanged) {
-                            calendar.refetchEvents();
-                            locationChanged = false;
+                            if (locationChanged) {
+                                calendar.refetchEvents();
+                                locationChanged = false;
+                            }
                         }
-                    }
-                );
+                    );
+                }
             },
             dateClick: function (arg) {
                 let staff_id, visible_staff_id;
@@ -198,7 +199,9 @@
             },
             loading: function (isLoading) {
                 if (isLoading) {
-                    BooklyL10nAppDialog.refreshed = true;
+                    if (existsAppointmentForm) {
+                        BooklyL10nAppDialog.refreshed = true;
+                    }
                     if (dateSetFromDatePicker) {
                         dateSetFromDatePicker = false;
                     } else {
@@ -296,35 +299,37 @@
         }
 
         function addAppointmentDialog(date, staffId, visibleStaffId) {
-            BooklyAppointmentDialog.showDialog(
-                null,
-                parseInt(staffId),
-                moment(date),
-                function (event) {
-                    if (event == 'refresh') {
-                        calendar.refetchEvents();
-                    } else {
-                        if (visibleStaffId == event.resourceId || visibleStaffId == 0) {
-                            if (event.start !== null) {
-                                if (event.id) {
-                                    // Create event in calendar.
-                                    calendar.addEvent(event);
-                                } else {
-                                    calendar.refetchEvents();
-                                }
-                            }
+            if( existsAppointmentForm) {
+                BooklyAppointmentDialog.showDialog(
+                    null,
+                    parseInt(staffId),
+                    moment(date),
+                    function (event) {
+                        if (event == 'refresh') {
+                            calendar.refetchEvents();
                         } else {
-                            // Switch to the event owner tab.
-                            jQuery('li[data-staff_id=' + event.resourceId + ']').click();
+                            if (visibleStaffId == event.resourceId || visibleStaffId == 0) {
+                                if (event.start !== null) {
+                                    if (event.id) {
+                                        // Create event in calendar.
+                                        calendar.addEvent(event);
+                                    } else {
+                                        calendar.refetchEvents();
+                                    }
+                                }
+                            } else {
+                                // Switch to the event owner tab.
+                                jQuery('li[data-staff_id=' + event.resourceId + ']').click();
+                            }
+                        }
+
+                        if (locationChanged) {
+                            calendar.refetchEvents();
+                            locationChanged = false;
                         }
                     }
-
-                    if (locationChanged) {
-                        calendar.refetchEvents();
-                        locationChanged = false;
-                    }
-                }
-            );
+                );
+            }
         }
 
         let dateSetFromDatePicker = false;

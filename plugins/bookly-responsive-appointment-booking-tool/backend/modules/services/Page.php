@@ -42,24 +42,27 @@ class Page extends Lib\Base\Ajax
             ->sortBy( 'position' )
             ->fetchArray();
         $categories = Lib\Entities\Category::query()->sortBy( 'position' )->fetchArray();
+        foreach ( $categories as &$category ) {
+            $category['attachment'] = Lib\Utils\Common::getAttachmentUrl( $category['attachment_id'], 'thumbnail' ) ?: null;
+        }
 
         $datatables = Lib\Utils\Tables::getSettings( 'services' );
 
         wp_localize_script( 'bookly-services-list.js', 'BooklyL10n', array(
-            'are_you_sure'     => esc_attr__( 'Are you sure?', 'bookly' ),
-            'private_warning'  => esc_attr__( 'The service will be created with the visibility of Private.', 'bookly' ),
-            'edit'             => esc_attr__( 'Edit', 'bookly' ),
-            'duplicate'        => esc_attr__( 'Duplicate', 'bookly' ),
-            'reorder'          => esc_attr__( 'Reorder', 'bookly' ),
-            'staff'            => $staff,
-            'categories'       => $categories,
-            'uncategorized'    => esc_attr__( 'Uncategorized', 'bookly' ),
-            'services'         => $services,
-            'noResultFound'    => esc_attr__( 'No result found', 'bookly' ),
-            'zeroRecords'      => esc_attr__( 'No records.', 'bookly' ),
-            'processing'       => esc_attr__( 'Processing...', 'bookly' ),
-            'show_type'        => count( Proxy\Shared::prepareServiceTypes( array() ) ) > 0,
-            'datatables'       => $datatables,
+            'are_you_sure' => esc_attr__( 'Are you sure?', 'bookly' ),
+            'private_warning' => esc_attr__( 'The service will be created with the visibility of Private.', 'bookly' ),
+            'edit' => esc_attr__( 'Edit', 'bookly' ),
+            'duplicate' => esc_attr__( 'Duplicate', 'bookly' ),
+            'reorder' => esc_attr__( 'Reorder', 'bookly' ),
+            'staff' => $staff,
+            'categories' => $categories,
+            'uncategorized' => esc_attr__( 'Uncategorized', 'bookly' ),
+            'services' => $services,
+            'noResultFound' => esc_attr__( 'No result found', 'bookly' ),
+            'zeroRecords' => esc_attr__( 'No records.', 'bookly' ),
+            'processing' => esc_attr__( 'Processing...', 'bookly' ),
+            'show_type' => count( Proxy\Shared::prepareServiceTypes( array() ) ) > 0,
+            'datatables' => $datatables,
         ) );
 
         foreach ( $services as &$service ) {

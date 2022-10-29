@@ -253,7 +253,7 @@ use Bookly\Backend\Components\Controls;
                                   </select>
                               </div>
                           </div>
-                          <div class="col-lg-1 col-md-2 d-none">
+                          <div class="col-lg-1 col-md-2">
                               <div class="form-group">
                                   <select id="bookly-generate-filter-status" class="form-control bookly-js-select" data-placeholder="<?php esc_attr_e( 'Status', 'bookly' ) ?>">
                                       <option value="<?php echo Payment::STATUS_COMPLETED ?>"><?php echo Payment::statusToString( Payment::STATUS_COMPLETED ) ?></option>

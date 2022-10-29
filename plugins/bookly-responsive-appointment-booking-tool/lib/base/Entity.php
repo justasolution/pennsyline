@@ -54,13 +54,13 @@ abstract class Entity extends Cache
      * Name of table in database with WordPress prefix.
      * @var string
      */
-    private $table_name = null;
+    private $table_name;
 
     /**
      * Values loaded from the database.
      * @var boolean
      */
-    private $loaded_values = null;
+    private $loaded_values;
 
 
     // Public methods.

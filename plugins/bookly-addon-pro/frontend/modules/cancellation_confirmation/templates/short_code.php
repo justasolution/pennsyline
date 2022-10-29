@@ -1,65 +1,41 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
-    $color = get_option( 'bookly_app_color', '#f4662f' );
+use Bookly\Lib\Utils\Common;
+
+$color = get_option( 'bookly_app_color', '#f4662f' );
+/** @var array $appearance */
+/** @var array $attributes */
+/** @var string $token */
 ?>
-<style>
-    .bookly-btn-default {
-        padding: 9px 18px!important;
-        border: 1px solid #b1bbc4 !important;
-        min-width: 118px;
-        display: block;
-        text-align: center;
-        border-radius: 4px!important;
-        background-color: #fff;
-        cursor: pointer!important;
-        height: auto!important;
-        outline: none!important;
-        float: left;
-        width: auto;
-    }
-
-    .bookly-cancellation-reason {
-        margin: 15px 0!important;
-    }
-
-    .bookly-btn-default.bookly-btn-active {
-        border: 1px solid <?php echo $color ?> !important;
-        background-color: <?php echo $color ?>!important;
-    }
-
-    .bookly-btn-default:hover {
-        text-decoration: unset!important;
-    }
-
-    .bookly-btn-default, .bookly-btn-default > span {
-        color: #212529 !important;
-        font-size: 18px!important;
-        line-height: 17px!important;
-        font-weight: bold!important;
-        text-transform: uppercase!important;
-    }
-    .bookly-btn-default.bookly-btn-active > span {
-        color: #fff!important;
-    }
-</style>
+<?php if ( isset( $appearance['custom_css'] ) && $appearance['custom_css'] !== '' ) : ?>
+    <style>
+        <?php echo Common::css( $appearance['custom_css'] ) ?>
+    </style>
+<?php endif ?>
 <div id="bookly-tbs" class="bookly-js-cancellation-confirmation">
-    <div class="bookly-js-cancellation-confirmation-buttons">
-        <?php if ( isset( $attributes['reason'] ) && $attributes['reason'] ) : ?>
-        <div class="bookly-cancellation-reason">
-            <label for="bookly-cancellation-reason"><?php esc_html_e( 'Cancellation reason', 'bookly' ) ?></label>
-            <input type="text" id="bookly-cancellation-reason" class="bookly-js-cancellation-confirmation-reason"/>
+    <div<?php if ( isset( $appearance['token'] ) ): ?> id="bookly-cancellation-confirmation-<?php echo Common::html( $appearance['token'] ) ?>"<?php endif ?>>
+        <div class="bookly-js-cancellation-confirmation-buttons">
+            <?php if ( $attributes && ( ( ! isset( $attributes['reason'] ) && $appearance['show_reason'] ) || ( isset( $attributes['reason'] ) && $attributes['reason'] ) ) ): ?>
+                <div class="mb-2"><?php echo Common::html( $appearance['l10n']['text_cancellation'] ) ?></div>
+                <?php if ( $appearance['show_reason'] ) : ?>
+                    <div class="bookly-cancellation-reason form-group">
+                        <textarea type="text" id="bookly-cancellation-reason" class="bookly-js-cancellation-confirmation-reason form-control"></textarea>
+                    </div>
+                <?php endif ?>
+            <?php endif ?>
+            <div>
+                <a href="<?php echo admin_url( 'admin-ajax.php?action=bookly_cancel_appointment&token=' . $token ) ?>" class="btn btn-default bookly-js-cancellation-confirmation-yes" style="margin-right: 12px">
+                    <span><?php echo Common::html( $appearance['l10n']['confirm'] ) ?></span>
+                </a>
+                <a href="#" class="btn btn-default bookly-js-cancellation-confirmation-no" style="color: <?php echo Common::html( $appearance['main_color'] ) ?>; border-color: <?php echo Common::html( $appearance['main_color'] ) ?>;">
+                    <span><?php echo Common::html( $appearance['l10n']['cancel'] ) ?></span>
+                </a>
+            </div>
         </div>
-        <?php endif ?>
-        <a href="<?php echo admin_url( 'admin-ajax.php?action=bookly_cancel_appointment&token=' . $token ) ?>" class="bookly-btn-default bookly-js-cancellation-confirmation-yes" style="margin-right: 12px">
-            <span><?php esc_html_e( 'Confirm cancellation', 'bookly' ) ?></span>
-        </a>
-        <a href="#" class="bookly-js-cancellation-confirmation-no bookly-btn-default bookly-btn-active">
-            <span><?php esc_html_e( 'Do not cancel', 'bookly' ) ?></span>
-        </a>
-    </div>
-    <div class="bookly-js-cancellation-confirmation-message bookly-row" style="display: none">
-        <p class="bookly-bold">
-            <?php esc_html_e( 'Thank you for being with us', 'bookly' ) ?>
-        </p>
+        <div class="bookly-js-cancellation-confirmation-message bookly-row" style="display: none">
+            <p class="bookly-bold">
+                <?php echo Common::html( $appearance['l10n']['text_do_not_cancel'] ) ?>
+            </p>
+        </div>
     </div>
 </div>
 <script type="text/javascript">
@@ -67,7 +43,7 @@
     var links = document.getElementsByClassName('bookly-js-cancellation-confirmation-no');
     for (var i = 0; i < links.length; i++) {
         if (links[i].onclick == undefined) {
-            links[i].onclick = function (e) {
+            links[i].onclick = function(e) {
                 e.preventDefault();
                 var container = this.closest('.bookly-js-cancellation-confirmation'),
                     buttons = container.getElementsByClassName('bookly-js-cancellation-confirmation-buttons')[0],
@@ -81,7 +57,7 @@
     links = document.getElementsByClassName('bookly-js-cancellation-confirmation-yes');
     for (i = 0; i < links.length; i++) {
         if (links[i].onclick == undefined) {
-            links[i].onclick = function (e) {
+            links[i].onclick = function(e) {
                 e.preventDefault();
                 var url = this.href,
                     $reason = this.closest('.bookly-js-cancellation-confirmation-buttons').querySelector('.bookly-js-cancellation-confirmation-reason');

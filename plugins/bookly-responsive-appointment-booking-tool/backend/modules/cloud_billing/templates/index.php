@@ -3,7 +3,6 @@ use Bookly\Lib\Utils;
 use Bookly\Backend\Components\Support;
 use Bookly\Backend\Components\Dialogs;
 use Bookly\Backend\Components\Cloud;
-use Bookly\Lib;
 /** @var array $datatables */
 ?>
 <div id="bookly-tbs" class="wrap">

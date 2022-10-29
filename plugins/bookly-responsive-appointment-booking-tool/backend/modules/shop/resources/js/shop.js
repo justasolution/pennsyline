@@ -4,7 +4,7 @@ jQuery(function ($) {
         $loading = $('#bookly-shop-loading'),
         $template = $('#bookly-shop-template')
     ;
-    $('.bookly-js-select').select2({
+    $('.bookly-js-select').booklySelect2({
         width: '100%',
         theme: 'bootstrap4',
         dropdownParent: '#bookly-tbs',

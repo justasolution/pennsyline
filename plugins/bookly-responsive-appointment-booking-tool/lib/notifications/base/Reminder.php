@@ -282,14 +282,15 @@ abstract class Reminder
                 'message' => $message,
                 'headers' => $headers,
                 'type_id' => $notification->getTypeId(),
-                'attachments' => $attachments ? $attachments->createFor( $notification ) : array(),
+                'attachments' => $attachments ? $attachments->createFor( $notification, $recipient ) : array(),
             );
 
             return true;
-        } else {
-            Proxy\Pro::logEmail( $to_email, $subject, $message, $headers, $attachments ? $attachments->createFor( $notification ) : array(), $notification->getTypeId() );
-            return wp_mail( $to_email, $subject, $message, $headers, $attachments ? $attachments->createFor( $notification ) : array() );
         }
+
+        Proxy\Pro::logEmail( $to_email, $subject, $message, $headers, $attachments ? $attachments->createFor( $notification, $recipient ) : array(), $notification->getTypeId() );
+
+        return wp_mail( $to_email, $subject, $message, $headers, $attachments ? $attachments->createFor( $notification, $recipient ) : array() );
     }
 
     /**

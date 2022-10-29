@@ -5,6 +5,7 @@ use Bookly\Lib;
 
 /**
  * Class ICS
+ *
  * @package Bookly\Lib\Notifications\Assets\Item
  */
 class ICS
@@ -15,9 +16,11 @@ class ICS
      * Constructor.
      *
      * @param Codes $codes
+     * @param string $recipient
      */
-    public function __construct( Codes $codes )
+    public function __construct( Codes $codes, $recipient = 'client' )
     {
+        $description_template = $this->getDescriptionTemplate( $recipient );
         $this->data = sprintf(
             "BEGIN:VCALENDAR\n"
             . "VERSION:2.0\n"
@@ -34,9 +37,18 @@ class ICS
             $this->_formatDateTime( $codes->appointment_start ),
             $this->_formatDateTime( $codes->appointment_end ),
             $this->_escape( $codes->service_name ),
-            $this->_escape( sprintf( "%s\n%s", $codes->service_name, $codes->staff_name ) ),
-            $this->_escape( sprintf( "%s", $codes->location_name ) )
+            $this->_escape( $codes->replace( $description_template ) ),
+            $this->_escape( $codes->location_name )
         );
+    }
+
+    /**
+     * @param $recipient
+     * @return string
+     */
+    public function getDescriptionTemplate( $recipient = 'client' )
+    {
+        return Lib\Utils\Codes::getICSDescriptionTemplate( $recipient );
     }
 
     /**
@@ -86,7 +98,7 @@ class ICS
      */
     protected function _escape( $input )
     {
-        $input = preg_replace( '/([\,;])/','\\\$1', $input );
+        $input = preg_replace( '/([\,;])/', '\\\$1', $input );
         $input = str_replace( "\n", "\\n", $input );
         $input = str_replace( "\r", "\\r", $input );
 

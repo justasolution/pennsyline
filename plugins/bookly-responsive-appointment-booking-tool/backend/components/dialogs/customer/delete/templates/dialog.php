@@ -13,7 +13,7 @@ use Bookly\Backend\Components\Controls\Inputs;
             <div class="modal-body">
                 <p class="bookly-js-delete-with-events"><?php esc_html_e( 'You are going to delete customers with existing bookings. Notifications will not be sent to them.', 'bookly' ) ?></p>
                 <p class="bookly-js-delete-without-events"><?php esc_html_e( 'You are going to delete customers, are you sure?', 'bookly' ) ?></p>
-                <div class="bookly-js-delete-with-events collapse">
+                <div class="bookly-js-delete-with-events bookly-collapse">
                     <?php Inputs::renderCheckBox( __( 'Delete customers with existing bookings', 'bookly' ), null, null, array( 'id' => 'bookly-js-delete-with-events-checkbox' ) ) ?>
                 </div>
                 <div>

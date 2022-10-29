@@ -3,7 +3,7 @@
 Plugin Name: Bookly Staff Cabinet (Add-on)
 Plugin URI: https://www.booking-wp-plugin.com/?utm_source=bookly_admin&utm_medium=plugins_page&utm_campaign=plugins_page
 Description: Bookly Staff Cabinet add-on allows your staff members view and manage their calendars and services on the front-end.
-Version: 4.1
+Version: 4.5
 Author: Bookly
 Author URI: https://www.booking-wp-plugin.com/?utm_source=bookly_admin&utm_medium=plugins_page&utm_campaign=plugins_page
 Text Domain: bookly

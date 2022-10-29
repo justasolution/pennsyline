@@ -14,7 +14,7 @@ abstract class Form
      * Must be defined in child form class.
      * @staticvar string
      */
-    protected static $entity_class = null;
+    protected static $entity_class;
 
     /**
      * @staticvar string
@@ -25,7 +25,7 @@ abstract class Form
      * Entity object.
      * @var Entity|null
      */
-    protected $object = null;
+    protected $object;
 
     /**
      * Fields of form.

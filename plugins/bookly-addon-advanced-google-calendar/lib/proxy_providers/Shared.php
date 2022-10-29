@@ -11,7 +11,7 @@ use BooklyPro\Lib\Google;
 class Shared extends BooklyLib\Proxy\Shared
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public static function doDailyRoutine()
     {

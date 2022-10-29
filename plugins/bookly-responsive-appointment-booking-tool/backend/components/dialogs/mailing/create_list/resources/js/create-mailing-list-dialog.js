@@ -34,6 +34,6 @@ jQuery(function ($) {
     });
 
     $dialog.off().on('show.bs.modal', function () {
-        $name.html('');
+        $name.val('');
     });
 });

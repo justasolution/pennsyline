@@ -3,7 +3,7 @@
 Plugin Name: Bookly Customer Information (Add-on)
 Plugin URI: https://www.booking-wp-plugin.com/?utm_source=bookly_admin&utm_medium=plugins_page&utm_campaign=plugins_page
 Description: Bookly Customer Information add-on allows you to add custom fields to customer profile.
-Version: 2.4
+Version: 2.5
 Author: Bookly
 Author URI: https://www.booking-wp-plugin.com/?utm_source=bookly_admin&utm_medium=plugins_page&utm_campaign=plugins_page
 Text Domain: bookly

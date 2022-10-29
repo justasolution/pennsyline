@@ -111,9 +111,8 @@ abstract class Backend
                 add_submenu_page( 'bookly-menu', $setup, $setup, $required_capability, Modules\Setup\Page::pageSlug(), function () { Modules\Setup\Page::render(); } );
             } elseif ( Lib\Proxy\Pro::graceExpired() ) {
                 Lib\Proxy\Pro::addLicenseBooklyMenuItem();
-                if ( isset ( $_GET['page'] ) && $_GET['page'] == 'bookly-debug' ) {
-                    add_submenu_page( 'bookly-menu', 'Debug', 'Debug', $required_capability,
-                        Modules\Debug\Page::pageSlug(), function () { Modules\Debug\Page::render(); } );
+                if ( isset ( $_GET['page'] ) && $_GET['page'] == 'bookly-diagnostics' ) {
+                    Modules\Diagnostics\Page::addBooklyMenuItem();
                 }
             } else {
                 // Translated submenu pages.
@@ -169,16 +168,16 @@ abstract class Backend
                 add_submenu_page( 'bookly-menu', $appearance, $appearance, $required_capability,
                     Modules\Appearance\Page::pageSlug(), function () { Modules\Appearance\Page::render(); } );
                 Lib\Proxy\Coupons::addBooklyMenuItem();
+                Lib\Proxy\GiftCards::addBooklyMenuItem();
                 Lib\Proxy\CustomFields::addBooklyMenuItem();
-                add_submenu_page( 'bookly-menu', $settings, $settings, $required_capability,
-                    Modules\Settings\Page::pageSlug(), function () { Modules\Settings\Page::render(); } );
+                add_submenu_page(
+                    'bookly-menu', $settings, $settings, $required_capability,
+                    Modules\Settings\Page::pageSlug(), function () { Modules\Settings\Page::render(); }
+                );
+                Modules\Diagnostics\Page::addBooklyMenuItem();
                 Modules\News\Page::addBooklyMenuItem();
                 Modules\Shop\Page::addBooklyMenuItem();
 
-                if ( isset ( $_GET['page'] ) && $_GET['page'] == 'bookly-debug' ) {
-                    add_submenu_page( 'bookly-menu', 'Debug', 'Debug', $required_capability,
-                        Modules\Debug\Page::pageSlug(), function () { Modules\Debug\Page::render(); } );
-                }
                 if ( ! Lib\Config::proActive() ) {
                     $submenu['bookly-menu'][] = array( esc_attr__( 'Get Bookly Pro', 'bookly' ) . ' <i class="fas fa-fw fa-certificate" style="color: #f4662f"></i>', 'read', Lib\Utils\Common::prepareUrlReferrers( 'https://codecanyon.net/item/bookly/7226091?ref=ladela', 'admin_menu' ), );
                 }

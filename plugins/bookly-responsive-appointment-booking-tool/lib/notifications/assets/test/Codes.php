@@ -46,7 +46,7 @@ class Codes extends Assets\Item\Codes
 
         parent::__construct( new Order( $customer ) );
 
-        $this->item = Simple::create( new Entities\CustomerAppointment() );
+        $this->item = Simple::create( new Entities\CustomerAppointment( array( 'token' => '2000200020002000200020002' ) ) );
 
         $start_date  = date_create( '-1 month' );
         $event_start = $start_date->format( 'Y-m-d 12:00:00' );
@@ -63,27 +63,33 @@ class Codes extends Assets\Item\Codes
         $schedule = array(
             array(
                 'start' => $start_date->format( 'Y-m-d 12:00:00' ),
-                'token' => null,
+                'token' => '3000300030003000300030003',
+                'duration' => '3600'
             ),
             array(
                 'start' => $start_date->modify( '1 day' )->format( 'Y-m-d 14:00:00' ),
-                'token' => null,
+                'token' => '4000400040004000400040004',
+                'duration' => '3600'
             ),
             array(
                 'start' => $start_date->modify( '1 day' )->format( 'Y-m-d 12:00:00' ),
-                'token' => null,
+                'token' => '5000500050005000500050005',
+                'duration' => '3600'
             ),
         );
         $this->series_token             = '1000100010001000100010001';
         $this->agenda_date              = Utils\DateTime::formatDate( current_time( 'mysql' ) );
-        $this->appointment_token        = '';
         $this->amount_due               = '';
         $this->amount_paid              = '';
         $this->appointment_end          = $event_end;
+        $this->appointment_id           = '1';
         $this->appointment_start        = $event_start;
+        $this->appointment_token        = '';
         $this->booking_number           = '1';
         $this->cancellation_reason      = 'Some Reason';
         $this->cart_info                = $cart_info;
+        $this->category_image           = 'https://dummyimage.com/100/cccccc/000000';
+        $this->category_info            = 'Category info text';
         $this->category_name            = 'Category Name';
         $this->client_timezone          = 'UTC';
         $this->extras                   = 'Extras 1, Extras 2';
@@ -105,6 +111,9 @@ class Codes extends Assets\Item\Codes
         $this->staff_name               = 'Staff Name';
         $this->staff_phone              = '23456789';
         $this->staff_photo              = 'https://dummyimage.com/100/dddddd/000000';
+        $this->staff_category_image     = 'https://dummyimage.com/100/666666/000000';
+        $this->staff_category_info      = 'Staff Category info text';
+        $this->staff_category_name      = 'Staff Category Name';
         $this->total_price              = '24';
         $this->client_birthday          = date_i18n( 'F j', strtotime( $customer->getBirthday() ) );
 

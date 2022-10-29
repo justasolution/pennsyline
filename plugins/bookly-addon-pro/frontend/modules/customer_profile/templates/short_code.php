@@ -17,9 +17,9 @@ $container = 'bookly-js-appointments-list-' . mt_rand( 0, PHP_INT_MAX );
     }
 </style>
     <div class="bookly-customer-appointment-list <?php echo $container ?>">
-        <h2><?php esc_html_e( 'Upcoming Appointments', 'bookly' ) ?></h2>
+        <h2><?php esc_html_e( 'Appointments', 'bookly' ) ?></h2>
         <?php if ( ! empty( $columns ) || ! empty( $custom_fields ) ) : ?>
-            <table class="table-bordered table-condensed table-striped" data-columns="<?php echo esc_attr( json_encode( $columns ) ) ?>" data-custom_fields="<?php echo esc_attr( implode(',', $custom_fields ) ) ?>" data-page="0">
+            <table class="bookly-appointments-table" data-bookly_columns="<?php echo esc_attr( json_encode( $columns ) ) ?>" data-custom_fields="<?php echo esc_attr( implode(',', $custom_fields ) ) ?>" data-page="0">
                 <?php if ( isset( $attributes['show_column_titles'] ) && $attributes['show_column_titles'] ) : ?>
                     <thead>
                         <tr>
@@ -37,7 +37,7 @@ $container = 'bookly-js-appointments-list-' . mt_rand( 0, PHP_INT_MAX );
                         </tr>
                     </thead>
                 <?php endif ?>
-                <?php if ( empty( $all_appointments ) ) : ?>
+                <?php if ( empty( $appointments ) ) : ?>
                     <tr class="bookly--no-appointments"><td colspan="<?php echo count( $columns ) + count( $custom_fields ) ?>"><?php esc_html_e( 'No appointments found.', 'bookly' ) ?></td></tr>
                 <?php else : ?>
                     <?php include '_rows.php' ?>

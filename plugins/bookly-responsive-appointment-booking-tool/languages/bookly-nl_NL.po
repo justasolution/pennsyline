@@ -8,11 +8,11 @@ msgstr ""
 "Language: nl_NL\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-01 10:34+0000\n"
-"PO-Revision-Date: 2022-04-01 10:59+0000\n"
+"POT-Creation-Date: 2022-09-20 08:25+0000\n"
+"PO-Revision-Date: 2022-09-20 11:42+0000\n"
 "Last-Translator: support@bookly.info\n"
 "Language-Team: Dutch\n"
-"X-Loco-Version: 2.3.1; wp-5.9.2"
+"X-Loco-Version: 2.3.1; wp-6.0"
 
 msgid "Invoice #{invoice_number} for your appointment"
 msgstr "Factuur #{invoice_number} voor uw afspraak"
@@ -177,6 +177,9 @@ msgstr "Kortingsbon"
 msgid "Group discount"
 msgstr "Groepskorting"
 
+msgid "Gift card discount"
+msgstr "Cadeaubon korting"
+
 msgid "Total"
 msgstr "Totaal"
 
@@ -232,25 +235,31 @@ msgstr ""
 "Azure AD huurder."
 
 msgid ""
-"In the left-hand navigation pane, select the <b>Azure Active Directory</b> "
-"service, and then select <b>App registrations &gt; New registration</b>."
+"In the left-hand navigation panel, select the <b>Azure Active Directory</b>. "
+"Then select <b>Add > App registration</b>."
 msgstr ""
-"Selecteer in het linker navigatievenster de service <b>Azure Actieve "
-"Directory</b> en selecteer vervolgens <b>App registraties &gt; Nieuwe "
-"registratie</b>."
+"Selecteer in het linkernavigatievenster de <b>Azure Active Directory</b>. "
+"Selecteer vervolgens <b>Toevoegen > App-registratie</b>."
 
 msgid ""
 "When the <b>Register an application</b> page appears, enter your "
-"application's <b>Name</b> and <b>Redirect URI</b> found below on this page. "
-"Make sure that the <b>Supported account types</b> is set to <b>Accounts in "
-"any organizational directory and personal Microsoft accounts</b>. When "
-"finished, select <b>Register</b>."
+"application's <b>Name</b> and <b>Redirect URI</b> found below on this page."
 msgstr ""
-"Wanneer de pagina <b>Registreer een applicatie</b> wordt weergegeven, voert "
-"u de <b>Naam</b> en <b>Omleiding-URL </b> van uw app hieronder op deze "
-"pagina in. Zorg ervoor dat de <b>Ondersteunde account typen</b> zijn "
-"ingesteld in <b>Accounts in een organisatie directory en persoonlijke "
-"Microsoft-accounts</b>. Selecteer <b>Registreren</b> als u klaar bent."
+"Wanneer de pagina <b>Een toepassing registreren</b> wordt weergegeven, voert "
+"u de <b>Naam</b> en <b>Omleidings-URI</b> van uw toepassing in die u "
+"hieronder op deze pagina vindt."
+
+msgid ""
+"Make sure that the <b>Supported account types</b> is set to <b>Accounts in "
+"any organizational directory (Any Azure AD directory - Multitenant) and "
+"personal Microsoft accounts (e.g. Skype, Xbox)</b>."
+msgstr ""
+"Zorg ervoor dat de <b>Ondersteunde accounttypen</b> zijn ingesteld op <b>"
+"Accounts in elke organisatiedirectory (Elke Azure AD-directory - Multitenant)"
+" en persoonlijke Microsoft-accounts (bijv. Skype, Xbox)</b>."
+
+msgid "When finished, select <b>Register</b>."
+msgstr "Als u klaar bent, selecteert u <b>Registreren</b>."
 
 msgid ""
 "Azure AD assigns a unique application (client) ID to your app, and you're "
@@ -267,15 +276,21 @@ msgstr ""
 "formulier op deze pagina in."
 
 msgid ""
-"Under <b>Certificates &amp; secrets</b>, choose <b>New client secret</b>, "
-"set <b>Expires</b> to <b>Never</b> and click <b>Add</b>. Copy the app secret "
-"from the <b>Client secrets</b> list before leaving the page. Insert the "
-"secret into the form below on this page."
+"Under <b>Certificates & secrets</b>, choose <b>New client secret</b>, set <b>"
+"Expires</b> to <b>24 months</b> and click <b>Add</b>."
 msgstr ""
-"Onder <b>Certificaten &amp; geheimen</b>, kies <b>Nieuw client geheim</b>, "
-"stel <b>Vervalt</b> in op <b>Nooit</b> en klik op <b>Toevoegen</b>. Kopieer "
-"het app-geheim uit de lijst <b>Client geheimen</b> voordat u de pagina "
-"verlaat. Voer het geheim in onderstaand formulier in."
+"Kies onder <b>Certificaten en geheimen</b> <b>Nieuw klantgeheim</b>, stel <b>"
+"Verloopt</b> in op <b>24 maanden</b> en klik op <b>Toevoegen</b>."
+
+msgid ""
+"Copy the app secret value from the <b>Client secrets</b> list before leaving "
+"the page."
+msgstr ""
+"Kopieer de geheime waarde van de app uit de lijst <b>Geheim klant</b> "
+"voordat u de pagina verlaat."
+
+msgid "Insert the secret into the form below on this page."
+msgstr "Vul het geheim in op het formulier hieronder op deze pagina."
 
 msgid ""
 "Under <b>API permissions</b>, choose <b>Add a permission</b>, and select <b>"
@@ -292,11 +307,11 @@ msgid "<b>Save</b> your changes."
 msgstr "<b>Bewaar</b> uw wijzigingen."
 
 msgid ""
-"Go to Staff Members, select a staff member and click <b>Connect</b> which is "
-"located at the bottom of the page."
+"Go to Staff Members, select a staff member. On the <b>Advanced</b> tab, "
+"click <b>Sign in with Microsoft</b>."
 msgstr ""
-"Ga naar Medewerkers, selecteer een medewerker, en klik op <b>Verbinden</b>, "
-"onderaan de pagina."
+"Ga naar Medewerkers, selecteer een medewerker. Klik op het tabblad <b>"
+"Geavanceerd</b> op <b>Aanmelden met Microsoft</b>."
 
 msgid "Application ID"
 msgstr "Applicatie ID"
@@ -736,17 +751,53 @@ msgstr ""
 "overeenstemming met de gegevens van Bookly. U kunt deze namen vinden in <b>"
 "Publieksinstellingen > Publieksvelden en %s tags</b> in uw Mailchimp account"
 
-msgid "Customer's first name"
-msgstr "Voornaam klant"
+msgid "Value"
+msgstr "Waarde"
 
-msgid "Customer's second name"
-msgstr "Achternaam klant"
+msgid "Codes"
+msgstr "Codes"
+
+msgid "Add field"
+msgstr "Veld toevoegen"
 
 msgid ""
 "Remove a subscriber from mailing list when customer is deleted in Bookly"
 msgstr ""
 "Een abonnee uit de mailinglijst verwijderen wanneer de klant wordt "
 "verwijderd in Bookly"
+
+msgid "Delete"
+msgstr "Verwijderen"
+
+msgid "Are you sure?"
+msgstr "Weet je het zeker?"
+
+msgid "Cancel"
+msgstr "Annuleren"
+
+msgid "Address of client"
+msgstr "Adres van klant"
+
+msgid "Client birthday"
+msgstr "Verjaardag klant"
+
+msgid "Email of client"
+msgstr "E-mailadres van klant"
+
+msgid "First name of client"
+msgstr "Voornaam van klant"
+
+msgid "Last name of client"
+msgstr "Achternaam van klant"
+
+msgid "Full name of client"
+msgstr "Volledige naam van klant"
+
+msgid "Note of client"
+msgstr "Opmerking van klant"
+
+msgid "Phone of client"
+msgstr "Telefoonnummer van klant"
 
 msgid "Notification to customer about approved recurring appointment"
 msgstr "Melding an klant over goedgekeurde terugkerende afspraak"
@@ -1383,6 +1434,9 @@ msgstr "Herstellen"
 msgid "Pages with another time"
 msgstr "Pagina's met een andere tijd"
 
+msgid "Hide times input"
+msgstr "Verberg tijden invoer"
+
 msgid "Show Repeat step"
 msgstr "Toon Herhaal stap"
 
@@ -1418,9 +1472,6 @@ msgstr "Afspraken worden gepland om"
 
 msgid "Back"
 msgstr "Vorige"
-
-msgid "Delete"
-msgstr "Verwijderen"
 
 msgid "Every"
 msgstr "Iedere"
@@ -1539,8 +1590,8 @@ msgstr "Unit prijs"
 msgid "Custom"
 msgstr "Aangepast"
 
-msgid "Are you sure?"
-msgstr "Weet je het zeker?"
+msgid "Units"
+msgstr "Eenheden"
 
 msgid "Duplicate dates are not permitted."
 msgstr "Dubbele data zijn niet toegestaan."
@@ -1574,9 +1625,6 @@ msgstr "De gevraagde interval is niet beschikbaar"
 
 msgid "OFF"
 msgstr "UIT"
-
-msgid "Uncategorized"
-msgstr "Geen categorie"
 
 msgid "Compound"
 msgstr "Samengestelde"
@@ -1635,6 +1683,9 @@ msgid ""
 msgstr ""
 "Verberg dit veld als u de lijst met WP-gebruikers voor uw medewerkers wilt "
 "verbergen."
+
+msgid "Read only"
+msgstr "Alleen lezen"
 
 msgid "Hide visibility field"
 msgstr "Verberg zichtbaarheidsveld"
@@ -1706,9 +1757,6 @@ msgstr "Speciale uren"
 
 msgid "Fields"
 msgstr "Velden"
-
-msgid "read only"
-msgstr "alleen lezen"
 
 msgid "Repeat every year"
 msgstr "Herhaal ieder jaar"
@@ -2140,9 +2188,6 @@ msgstr "Online vergadering"
 msgid "Join online meeting"
 msgstr "Doe mee met online vergadering"
 
-msgid "Cancel"
-msgstr "Annuleren"
-
 msgid "Cancellation reason"
 msgstr "Annuleringsreden"
 
@@ -2276,6 +2321,9 @@ msgid_plural " and %d more items"
 msgstr[0] " en nog %d item"
 msgstr[1] " en nog %d items"
 
+msgid "Bookly Cloud couldn't connect to your server."
+msgstr "Bookly Cloud kon geen verbinding maken met uw server."
+
 msgid "Stripe not connected"
 msgstr "Stripe niet verbonden"
 
@@ -2385,6 +2433,9 @@ msgstr "Geen krediet"
 
 msgid "Country out of service"
 msgstr "Land buiten dienst"
+
+msgid "Blocked"
+msgstr "Geblokkeerd"
 
 msgid "Sending"
 msgstr "Verzenden"
@@ -3044,6 +3095,9 @@ msgstr ""
 "Volg, wanneer u niet automatisch wordt doorgestuurd,  de <a href=\"%s\">"
 "link</a>."
 
+msgid "Uncategorized"
+msgstr "Geen categorie"
+
 msgid "Local"
 msgstr "Lokaal"
 
@@ -3308,6 +3362,12 @@ msgstr "Afgelopen 7 dagen"
 msgid "Last 30 days"
 msgstr "Afgelopen 30 dagen"
 
+msgid "Next 7 days"
+msgstr "Volgende 7 dagen"
+
+msgid "Next 30 days"
+msgstr "Volgende 30 dagen"
+
 msgid "This month"
 msgstr "Deze maand"
 
@@ -3454,6 +3514,17 @@ msgid "Bookly updater"
 msgstr "Bookly updater"
 
 msgid ""
+"Please note that upon deleting this Bookly item, all data associated with it "
+"will be permanently deleted"
+msgstr ""
+"Let op: als u dit Bookly-item verwijdert, worden alle bijbehorende gegevens "
+"permanent verwijderd"
+
+#, php-format
+msgid "%s updated"
+msgstr "%s bijgewerkt"
+
+msgid ""
 "Please wait, we are checking updates for {checked}/{total} Bookly add-ons"
 msgstr ""
 "Even geduld, we controleren op updates voor {check}/{total} Bookly-add-ons"
@@ -3463,6 +3534,9 @@ msgstr "Geen updates beschikbaar"
 
 msgid "Free"
 msgstr "Vrij"
+
+msgid "Gift Card"
+msgstr "Cadeaubon"
 
 msgid "Completed"
 msgstr "Voltooid"
@@ -3585,6 +3659,12 @@ msgstr "Nieuwe Afspraak"
 
 msgid "Created at any time"
 msgstr "Aangemaakt op elk moment"
+
+msgid "All statuses"
+msgstr "Alle statussen"
+
+msgid "No status selected"
+msgstr "Geen status geselecteerd"
 
 msgid "No result found"
 msgstr "Geen resultaten gevonden"
@@ -3713,6 +3793,20 @@ msgstr "Afbeelding"
 
 msgid "Website"
 msgstr "Website"
+
+msgid "Bookly data upon deleting Bookly items"
+msgstr "Bookly gegevens bij het verwijderen van Bookly items"
+
+msgid ""
+"If you choose Delete, all data associated with Bookly will be permanently "
+"deleted when deleting Bookly items (Bookly, Bookly Pro, or any Bookly add-on)"
+msgstr ""
+"Als u voor Verwijderen kiest, worden alle aan Bookly gekoppelde gegevens "
+"permanent verwijderd wanneer u Bookly-items verwijdert (Bookly, Bookly Pro "
+"of een add-on voor Bookly)"
+
+msgid "Don't delete"
+msgstr "Niet verwijderen."
 
 msgid "Time slot length"
 msgstr "Lengte tijdsblok"
@@ -3908,6 +4002,15 @@ msgstr ""
 "kantooruren van het bedrijf. Zorg ervoor om de planning van uw medewerkers "
 "te controleren als u onverwacht gedrag van de reserveringssysteem heeft."
 
+msgid ""
+"Please note that business hours you set here will be used as visible hours "
+"in Calendar for all staff members if you enable \"Show only business hours "
+"in the calendar\" in Settings > Calendar."
+msgstr ""
+"Let op: de kantooruren die u hier instelt zullen worden gebruikt als "
+"zichtbare uren in Agenda voor alle personeelsleden als u \"Toon alleen "
+"kantooruren in de agenda\" inschakelt in Instellingen > Agenda."
+
 msgid "Select status for newly booked appointments."
 msgstr "Selecteer de status van nieuw geboekte afspraken."
 
@@ -3922,6 +4025,12 @@ msgstr ""
 
 msgid "Default appointment status"
 msgstr "Standaard status van de afspraak"
+
+msgid "ICS description for customers"
+msgstr "ICS-beschrijving voor klanten"
+
+msgid "ICS description for staff"
+msgstr "ICS-beschrijving voor het personeel"
 
 msgid "Show only business days in the calendar"
 msgstr "Toon alleen werkdagen in de kalender"
@@ -4022,9 +4131,6 @@ msgstr ""
 
 msgid "Add metadata"
 msgstr "Metadata toevoegen"
-
-msgid "Value"
-msgstr "Waarde"
 
 msgid "Phone field default country"
 msgstr "Standaard land voor telefoonveld"
@@ -4129,6 +4235,12 @@ msgstr ""
 "dit nuttig is voor ons ondersteuningsteam in geval van onvoorspelbare "
 "problemen met afspraken."
 
+msgid "All actions"
+msgstr "Alle acties"
+
+msgid "Target ID"
+msgstr "Doel-ID"
+
 msgid "Quick search"
 msgstr "Snel zoeken"
 
@@ -4137,9 +4249,6 @@ msgstr "Actie"
 
 msgid "Target"
 msgstr "Doel"
-
-msgid "Target ID"
-msgstr "Doel-ID"
 
 msgid "Author"
 msgstr "Auteur"
@@ -4152,6 +4261,9 @@ msgstr "Referentie"
 
 msgid "Clear logs"
 msgstr "Logboeken wissen"
+
+msgid "Appointment ID"
+msgstr "Afspraak-ID"
 
 msgid "Date of appointment"
 msgstr "Datum van afspraak"
@@ -4203,24 +4315,6 @@ msgstr "Telefoonnummer van personeelslid"
 
 msgid "Customer notes for appointment"
 msgstr "Opmerkingen van de klant voor afspraak"
-
-msgid "Email of client"
-msgstr "E-mailadres van klant"
-
-msgid "First name of client"
-msgstr "Voornaam van klant"
-
-msgid "Last name of client"
-msgstr "Achternaam van klant"
-
-msgid "Full name of client"
-msgstr "Volledige naam van klant"
-
-msgid "Note of client"
-msgstr "Opmerking van klant"
-
-msgid "Phone of client"
-msgstr "Telefoonnummer van klant"
 
 msgid "Status of payment"
 msgstr "Betaalstatus"
@@ -4290,21 +4384,6 @@ msgstr ""
 msgid "Quick search notifications"
 msgstr "Snel zoeken naar meldingen"
 
-#, php-format
-msgid ""
-"To send scheduled notifications please refer to <a href=\"%1$s\">Bookly "
-"Multisite</a> add-on <a href=\"%2$s\">message</a>."
-msgstr ""
-"Om geplande meldingen sturen verwijzen wij u naar <a href=\"%2$s\">"
-"boodschap</a> van <a href=\"%1$s\">Bookly Multisite</a> add-on."
-
-msgid ""
-"To send scheduled notifications please execute the following command hourly "
-"with your cron:"
-msgstr ""
-"Om geplande meldingen te verzenden, voer de volgende opdracht per uur uit "
-"met uw cron:"
-
 msgid ""
 "Please take into account that not all countries by law allow custom SMS "
 "sender ID. Please check if particular country supports custom sender ID in "
@@ -4332,6 +4411,9 @@ msgstr "Annuleer verzoek"
 msgid "Can only contain letters or digits (up to 11 characters)."
 msgstr "Kan alleen letters of cijfers bevatten (maximaal 11 tekens)."
 
+msgid "Current mailing list"
+msgstr "Huidige mailinglijst"
+
 msgid "Back to lists"
 msgstr "Terug naar lijsten"
 
@@ -4349,6 +4431,12 @@ msgstr "inschakelen"
 
 msgid "disable"
 msgstr "uitschakelen"
+
+msgid "In progress"
+msgstr "In bewerking"
+
+msgid "Canceled"
+msgstr "Geannuleerd"
 
 msgid "SMS has been sent successfully."
 msgstr "SMS is met succes verstuurd."
@@ -4597,6 +4685,153 @@ msgstr "onbeperkt in proefperiode"
 msgid "Stripe activation was not completed"
 msgstr "Stripe activatie is niet afgerond"
 
+msgid "Diagnostics"
+msgstr "Diagnoses"
+
+msgid "Success"
+msgstr "Gelukt"
+
+msgid "Warning"
+msgstr "Waarschuwing"
+
+msgid "End points"
+msgstr "Eindpunten"
+
+msgid "PHP Sessions"
+msgstr "PHP Sessies"
+
+#, php-format
+msgid ""
+"This test checks if PHP sessions are enabled. Bookly needs PHP sessions to "
+"work correctly. For more information about PHP sessions, please check the "
+"official PHP documentation %s."
+msgstr ""
+"Deze test controleert of PHP sessies zijn ingeschakeld. Bookly heeft PHP "
+"sessies nodig om correct te werken. Raadpleeg voor meer informatie over PHP-"
+"sessies de officiële PHP-documentatie %s."
+
+msgid "Critical errors"
+msgstr "Kritieke fouten"
+
+msgid "This test checks for critical errors in Bookly."
+msgstr "Deze test controleert op kritieke fouten in Bookly."
+
+msgid ""
+"Some critical errors in Bookly were found recently. Please check Settings > "
+"Logs and contact Bookly support."
+msgstr ""
+"Er zijn onlangs enkele kritieke fouten in Bookly gevonden. Controleer "
+"Instellingen > Logboeken en neem contact op met de ondersteuning van Bookly."
+
+msgid "Time settings"
+msgstr "Tijdinstellingen"
+
+msgid ""
+"We recommend to use timezones with geographic names (e.g., \"Europe/London\")"
+" instead of \"UTC +1\". Using numerical representation may cause errors with "
+"daylight saving time. You can modify your timezone in WP Settings > General >"
+" Timezone."
+msgstr ""
+"Wij raden aan om tijdzones met geografische namen te gebruiken (b.v. "
+"\"Europa/Londen\") in plaats van \"UTC +1\". Het gebruik van een numerieke "
+"weergave kan fouten veroorzaken met de zomertijd. U kunt uw tijdzone "
+"aanpassen in WP Instellingen > Algemeen > Tijdzone."
+
+msgid "Add-ons directories"
+msgstr "Add-ons directories"
+
+msgid ""
+"Since Bookly has specific add-ons directories, their renaming may cause "
+"issues."
+msgstr ""
+"Aangezien Bookly specifieke add-ons directories heeft, kan het hernoemen "
+"hiervan problemen veroorzaken."
+
+msgid "Current directory name"
+msgstr "Naam huidige directory"
+
+msgid "Expected directory name"
+msgstr "Verwachte naam directory"
+
+msgid ""
+"Some folders were renamed. Below you can find a list with current and "
+"correct names."
+msgstr ""
+"Sommige mappen hebben een andere naam gekregen. Hieronder vindt u een lijst "
+"met de huidige en correcte namen."
+
+msgid "Incompatible plugins"
+msgstr "Niet-compatibele plug-ins"
+
+msgid ""
+"This test checks the plugins that may affect Bookly. For example, some "
+"caching and optimizing plugins may cause incorrect work of Bookly."
+msgstr ""
+"Deze test controleert de plugins die Bookly kunnen beïnvloeden. Bijvoorbeeld,"
+" sommige caching en optimalisatie plugins kunnen incorrect werk van Bookly "
+"veroorzaken."
+
+msgid ""
+"One or several incompatible plugins were detected. Please add pages with "
+"Bookly shortcodes to cache exceptions and Javascript-code minification."
+msgstr ""
+"Een of meerdere incompatibele plugins werden gedetecteerd. Voeg pagina's met "
+"Bookly verkorte codes toe aan cache uitzonderingen en Javascript-code "
+"minificatie."
+
+msgid "Secure connection"
+msgstr "Beveiligde verbinding"
+
+msgid ""
+"Some Bookly integrations require HTTPS connection and won't work with your "
+"website if there is no valid SSL certificate installed on your web server."
+msgstr ""
+"Sommige Bookly-integraties vereisen een HTTPS-verbinding en zullen niet "
+"werken met uw website als er geen geldig SSL-certificaat op uw webserver is "
+"geïnstalleerd."
+
+msgid "External connections"
+msgstr "Externe verbindingen"
+
+msgid ""
+"This test checks the ability to establish a connection with the Bookly Cloud "
+"external server."
+msgstr ""
+"Deze test controleert de mogelijkheid om een verbinding met de externe "
+"server van Bookly Cloud tot stand te brengen."
+
+msgid ""
+"For some reason, your server blocks Bookly Cloud requests. To fix the issue, "
+"please ask your hosting provider to whitelist the Bookly Cloud server."
+msgstr ""
+"Om de een of andere reden blokkeert u server Bookly Cloud-verzoeken. Om dit "
+"probleem op te lossen, vraagt u uw hosting provider om de Bookly Cloud "
+"server te whitelisten."
+
+msgid "Bookly updates"
+msgstr "Bookly updates"
+
+msgid ""
+"Bookly updates bring new useful features and bugfixes. Make sure you are "
+"using the latest version of Bookly to get more possibilities and the highest "
+"quality."
+msgstr ""
+"Bookly updates brengen nieuwe handige functies en bugfixes. Zorg ervoor dat "
+"u de laatste versie van Bookly gebruikt om meer mogelijkheden en de hoogste "
+"kwaliteit te krijgen."
+
+msgid "Some Bookly items are outdated. Please update the following items:"
+msgstr ""
+"Sommige items van Bookly zijn verouderd. Gelieve de volgende items bij te "
+"werken:"
+
+msgid ""
+"Please update the following add-ons for correct work of your version of "
+"Bookly:"
+msgstr ""
+"Werk de volgende add-ons bij voor een correcte werking van uw versie van "
+"Bookly:"
+
 msgid "All staff"
 msgstr "Alle medewerkers"
 
@@ -4689,6 +4924,9 @@ msgstr "Bewerk aangepaste CSS"
 msgid "Set up your custom CSS styles"
 msgstr "Stel je aangepaste CSS-stijlen in"
 
+msgid "Bookly form"
+msgstr "Bookly formulier"
+
 msgid "Show form progress tracker"
 msgstr "Laat voortgang formulier zien"
 
@@ -4723,6 +4961,9 @@ msgstr "Toon serviceprijs naast de naam van de werknemer"
 
 msgid "Show service duration next to service name"
 msgstr "Toon service duur naast service naam"
+
+msgid "Show category info"
+msgstr "Toon categorie informatie"
 
 msgid "Show service info"
 msgstr "Toon service info"
@@ -4813,8 +5054,11 @@ msgstr "Loop door afsprakenlijst"
 msgid "Loop over appointments list with delimiter"
 msgstr "Loop door afsprakenlijst met scheidingsteken"
 
-msgid "Service name of appointment"
-msgstr "Servicenaam van afspraak"
+msgid "Image of category"
+msgstr "Afbeelding van categorie"
+
+msgid "Service category info of appointment"
+msgstr "Service categorie informatie van afspraak"
 
 msgid "Service category name of appointment"
 msgstr "Service categorienaam van afspraak"
@@ -4822,8 +5066,20 @@ msgstr "Service categorienaam van afspraak"
 msgid "Service duration of appointment"
 msgstr "Service tijdsduur van afspraak"
 
+msgid "Service name of appointment"
+msgstr "Servicenaam van afspraak"
+
 msgid "Service price of appointment"
 msgstr "Serviceprijs van afspraak"
+
+msgid "Image of staff category"
+msgstr "Afbeelding van personeelscategorie"
+
+msgid "Staff category info of appointment"
+msgstr "Personeelscategorie info van afspraak"
+
+msgid "Staff category name of appointment"
+msgstr "Personeelscategorie naam van afspraak"
 
 msgid "Staff member full name in appointment"
 msgstr "Volledige naam personeelslid in afspraak"
@@ -4831,8 +5087,8 @@ msgstr "Volledige naam personeelslid in afspraak"
 msgid "Total quantity of appointments in cart"
 msgstr "Totaal aantal afspraken in winkelwagen"
 
-msgid "Address of client"
-msgstr "Adres van klant"
+msgid "Info of category"
+msgstr "Informatie van categorie"
 
 msgid "Login form"
 msgstr "Inlogformulier"
@@ -4854,6 +5110,15 @@ msgstr "Totale prijs van boeking"
 
 msgid "URL of service image (to use inside img tag)"
 msgstr "URL van serviceafbeelding (te gebruiken in img tag)"
+
+msgid "URL of category image (to use inside img tag)"
+msgstr "URL van categorie afbeelding (te gebruiken in img tag)"
+
+msgid "Info of staff category"
+msgstr "Info van personeelscategorie"
+
+msgid "Name of staff category"
+msgstr "Naam van de personeelscategorie"
 
 msgid "URL of staff photo (to use inside img tag)"
 msgstr "URL van personeelsfoto (te gebruiken in img tag)"
@@ -5676,6 +5941,9 @@ msgstr "Verstuur indien nieuw of status gewijzigd"
 msgid "Send as for new"
 msgstr "Verstuur als voor nieuw"
 
+msgid "View"
+msgstr "Bekijken"
+
 msgid "Please select a provider"
 msgstr "Selecteer een dienstverlener"
 
@@ -5808,11 +6076,17 @@ msgstr "Stel de tijd in wanneer de mailing zal beginnen"
 msgid "Start time"
 msgstr "Starttijd"
 
+msgid "Start"
+msgstr "Start"
+
 msgid "Sms text"
 msgstr "Sms tekst"
 
 msgid "Campaign"
 msgstr "Campagne"
+
+msgid "Cancel campaign"
+msgstr "Campagne annuleren"
 
 msgid "Select mailing list"
 msgstr "Selecteer mailinglijst"
@@ -5875,6 +6149,9 @@ msgstr "Voeg categorie toe"
 msgid "Adjust the order of categories in your booking form"
 msgstr "Pas de volgorde van categorieën aan in uw boekingsformulier"
 
+msgid "This text can be inserted into notifications with {category_info} code"
+msgstr "Deze tekst kan worden ingevoegd in meldingen met {category_info} code"
+
 msgid "Table settings"
 msgstr "Tabel instellingen"
 
@@ -5883,9 +6160,6 @@ msgstr "Kolom"
 
 msgid "Attach ICS file"
 msgstr "ICS bestand bijvoegen"
-
-msgid "Codes"
-msgstr "Codes"
 
 msgid "Visual"
 msgstr "Visueel"
@@ -5953,6 +6227,16 @@ msgstr "Je hebt zojuist de <b>1000e Verkoop</b> gedaan met de Bookly Plug-in!"
 
 msgid "You just made the <b>10000th Sale</b> using Bookly Plugin!"
 msgstr "Je hebt zojuist de <b>10000e Verkoop</b> gedaan met de Bookly Plug-in!"
+
+#, php-format
+msgid ""
+"To allow scheduled actions, please activate <a href=\"%s\" target=\"_blank\">"
+"Bookly Cloud Cron</a> or follow <a href=\"%s\" target=\"_blank\">the "
+"instructions</a> about cron setup"
+msgstr ""
+"Als u geplande acties wilt toestaan, activeert u <a href=\"%s\" "
+"target=\"_blank\">Bookly Cloud Cron</a> of volgt u <a href=\"%s\" "
+"target=\"_blank\">de instructies</a> over het instellen van cron"
 
 msgid ""
 "To help us improve Bookly, the plugin anonymously collects usage information."
@@ -6055,7 +6339,7 @@ msgstr "Dit e-mailadres is niet geldig."
 
 #, php-format
 msgid "Recharge your account balance and get up to %s extra."
-msgstr "Laad het saldo van uw account op en krijg tot % s extra."
+msgstr "Laad het saldo van uw account op en krijg tot %s extra."
 
 msgid ""
 "Take advantage of Bookly Cloud products which increase customers' loyalty "
@@ -6432,6 +6716,9 @@ msgstr ""
 "Klant telefoonnummer: {client_phone}\n"
 "Klant e-mail: {client_email}"
 
+msgid "Unassigned"
+msgstr "Niet toegewezen"
+
 msgid "Notification about new package creation"
 msgstr "Melding over nieuw pakket aanmaak"
 
@@ -6446,9 +6733,6 @@ msgstr "Pakketten"
 
 msgid "New package"
 msgstr "Nieuw pakket"
-
-msgid "Unassigned"
-msgstr "Niet toegewezen"
 
 msgid "Edit package"
 msgstr "Bewerk pakket"
@@ -6575,6 +6859,9 @@ msgstr "Pakketten lijst"
 
 msgid "A custom block for displaying packages list"
 msgstr "Een aangepast blok voor het weergeven van pakket lijst"
+
+msgid "Your package has been created."
+msgstr "Uw pakket is aangemaakt."
 
 msgid "Creation Date"
 msgstr "Aanmaakdatum"
@@ -6900,6 +7187,25 @@ msgstr ""
 msgid "Please verify Bookly add-ons license; {days} remaining."
 msgstr "Verifieer Bookly add-ons-licentie; {days} resterend."
 
+msgid "Cancellation confirmation"
+msgstr "Bevestiging annuleren"
+
+msgid "Search form"
+msgstr "Zoekformulier"
+
+msgid "Services form"
+msgstr "Services formulier"
+
+msgid "A custom block for displaying cancellation confirmation"
+msgstr ""
+"Een aangepast blok voor het weergeven van de bevestiging van het annuleren"
+
+msgid "A custom block for displaying search form"
+msgstr "Een aangepast blok om het zoekformulier te tonen"
+
+msgid "A custom block for displaying services form"
+msgstr "Een aangepast blok voor het tonen van een services formulier"
+
 msgid "no limit"
 msgstr "geen limiet"
 
@@ -6930,6 +7236,9 @@ msgstr ""
 #, php-format
 msgid "Your support period has expired on %s."
 msgstr "Uw ondersteuningsperiode is op %s verlopen."
+
+msgid "Failed to create an online meeting"
+msgstr "Niet gelukt om een online vergadering te maken"
 
 msgid "Print"
 msgstr "Printen"
@@ -7014,6 +7323,25 @@ msgstr ""
 "ingebouwde betaalmethoden niet meer. Al uw klanten worden doorgestuurd naar "
 "de WooCommerce winkelwagen in plaats van naar de standaard betalingsstap."
 
+msgid "Booking product"
+msgstr "Reserveringsproduct"
+
+msgid "Create a WooCommerce order from backend"
+msgstr "Maak een WooCommerce bestelling vanuit de backend"
+
+msgid ""
+"If enabled, a WooCommerce order will be created for appointment when a "
+"payment is attached in backend"
+msgstr ""
+"Indien ingeschakeld, zal een WooCommerce order worden aangemaakt voor een "
+"afspraak wanneer een betaling is gekoppeld in de backend"
+
+msgid "Default status of WooCommerce order"
+msgstr "Standaard status van WooCommerce bestelling"
+
+msgid "Status of WooCommerce order created from backend"
+msgstr "Status van WooCommerce bestelling aangemaakt vanuit backend"
+
 msgid "Create a WooCommerce order if the cost of the service is zero"
 msgstr ""
 "Maak een WooCommerce bestelling aan als de kosten van de dienst nul zijn"
@@ -7027,9 +7355,6 @@ msgstr ""
 "diensten met een prijs van 0 (nul). Denk eraan dat indien de bestelling "
 "tenminste één dienst bevat met een prijs die anders is dan 0, de WooCommerce "
 "bestelling toch zal worden aangemaakt"
-
-msgid "Booking product"
-msgstr "Reserveringsproduct"
 
 msgid "Cart item data"
 msgstr "Winkelwagen productgegevens"
@@ -7494,8 +7819,24 @@ msgstr "Loskoppelen"
 msgid "Connect"
 msgstr "Verbinden"
 
-msgid "Client birthday"
-msgstr "Verjaardag klant"
+msgid ""
+"To find your URL and Secret, connect to the server (e.g. via SSH) with "
+"hosted BBB and execute the following command in console"
+msgstr ""
+"Om uw URL en Secret te vinden, maakt u verbinding met de server (bv. via SSH)"
+" met gehoste BBB en voert u het volgende commando uit in console"
+
+msgid "The URL obtained from command return"
+msgstr "De URL verkregen uit command return"
+
+msgid "Shared secret"
+msgstr "Gedeeld geheim"
+
+msgid "The Secret obtained from command return"
+msgstr "Het Geheim verkregen uit command return"
+
+msgid "Please select a Booking product"
+msgstr "Selecteer een Booking product"
 
 msgid "Online meeting password"
 msgstr "Wachtwoord online vergadering"
@@ -7640,6 +7981,178 @@ msgstr "Denk eraan dat de QR code alleen wordt getoond voor enkele afspraken"
 msgid "Show QR code"
 msgstr "QR-code tonen"
 
+msgid ""
+"Modern, fast, and smooth form that allows your customers to easily find the "
+"right service."
+msgstr ""
+"Een modern, snel en vlot formulier waarmee uw klanten gemakkelijk de juiste "
+"dienst kunnen vinden."
+
+msgid ""
+"Catalog view allows you to organize and display the services conveniently "
+"for your customers."
+msgstr ""
+"Met de catalogusweergave kunt u de diensten overzichtelijk organiseren en "
+"weergeven voor uw klanten."
+
+msgid "Step by step form"
+msgstr "Stap voor stap formulier"
+
+msgid "Classic booking form with the consequent scheduling process."
+msgstr "Klassiek boekingsformulier met de daaropvolgende planning."
+
+msgid "Cancellation form"
+msgstr "Annuleringsformulier"
+
+msgid ""
+"Lightweight form that allows your customers to cancel their appointments and "
+"optionally specify the cancellation reason."
+msgstr ""
+"Lichtgewicht formulier waarmee uw klanten hun afspraak kunnen annuleren en "
+"optioneel de reden van annulering kunnen opgeven."
+
+msgid "Add new form"
+msgstr "Nieuw formulier toevoegen"
+
+msgid ""
+"Are you sure you want to change the slug? Changing the slug may lead to "
+"unexpected behavior."
+msgstr ""
+"Weet u zeker dat u de slug wilt veranderen? Het veranderen van de slug kan "
+"leiden tot onverwacht gedrag."
+
+msgid "Copy shortcode"
+msgstr "Verkorte code kopiëren"
+
+msgid "Clone form"
+msgstr "Kloon formulier"
+
+msgid "Delete form"
+msgstr "Formulier verwijderen"
+
+msgid "Complete"
+msgstr "Voltooid"
+
+msgid "Success appointment booking"
+msgstr "Afspraak boeken gelukt"
+
+msgid "Success package booking"
+msgstr "Pakket boeken gelukt"
+
+msgid "Custom CSS"
+msgstr "Aangepaste CSS"
+
+msgid ""
+"Select the form you want to publish, click on the menu button, and select "
+"'Copy shortcode'. Open the page where you want to add the booking form in a "
+"page edit mode and paste the previously copied shortcode. The form will be "
+"added to the page."
+msgstr ""
+"Selecteer het formulier dat u wilt publiceren, klik op de menuknop en "
+"selecteer 'Kopieer verkorte code'. Open de pagina waar u het "
+"boekingsformulier wilt toevoegen in een pagina-bewerkingsmodus en plak de "
+"eerder gekopieerde verkorte code. Het formulier wordt toegevoegd aan de "
+"pagina."
+
+msgid "Placeholder"
+msgstr "Tijdelijke aanduiding"
+
+msgid "Empty option"
+msgstr "Lege optie"
+
+msgid "Width"
+msgstr "Breedte"
+
+msgid "Form title"
+msgstr "Formulier titel"
+
+msgid "Slug"
+msgstr "Slug"
+
+msgid "Main color"
+msgstr "Hoofdkleur"
+
+msgid "Show 'Book more' button"
+msgstr "Toon 'Boek meer' knop"
+
+msgid "Show price"
+msgstr "Toon prijs"
+
+msgid "Show summary"
+msgstr "Toon samenvatting"
+
+msgid "Show QR Code"
+msgstr "QR-code tonen"
+
+msgid "Categories list"
+msgstr "Lijst van categorieën"
+
+msgid "Services list"
+msgstr "Lijst van services"
+
+msgid "Hide categories step"
+msgstr "Verberg categorieën stap"
+
+msgid "Hide services step"
+msgstr "Verberg services stap"
+
+msgid "Show cancellation reason"
+msgstr "Toon annuleringsreden"
+
+msgid "Book now"
+msgstr "Nu boeken"
+
+msgid "Buy now"
+msgstr "Nu kopen"
+
+msgid "Book more"
+msgstr "Meer boeken"
+
+msgid "No time slots available"
+msgstr "Geen tijdslots beschikbaar"
+
+msgid "Slot already booked"
+msgstr "Slot al geboekt"
+
+msgid "No results found"
+msgstr "Geen resultaten gevonden"
+
+msgid "Thank you!"
+msgstr "Dank u wel!"
+
+msgid "Your booking is complete."
+msgstr "Uw boeking is voltooid."
+
+msgid "Payment has been skipped."
+msgstr "De betaling is overgeslagen."
+
+msgid "Select the Extras you'd like (Multiple Selection)"
+msgstr "Selecteer de Extra's die u wilt (Meervoudige selectie)"
+
+msgid "Click on a time slot to proceed with booking"
+msgstr "Klik op een tijdslot om verder te gaan met boeken"
+
+msgid ""
+"Please provide your details in the form below to proceed with the booking"
+msgstr ""
+"Vul uw gegevens in op het onderstaande formulier om verder te gaan met de "
+"boeking"
+
+msgid "Please tell us how you would like to pay"
+msgstr "Vertel ons hoe u wilt betalen"
+
+msgid "Please select a category"
+msgstr "Kies een categorie"
+
+msgid "Thank you for being with us"
+msgstr "Bedankt dat u voor ons kiest"
+
+msgid "Confirm cancellation"
+msgstr "Bevestig annulering"
+
+msgid "Do not cancel"
+msgstr "Niet annuleren"
+
 msgid "Import"
 msgstr "Importeren"
 
@@ -7701,11 +8214,8 @@ msgstr "Geboortedatum klant volledige datum"
 msgid "Time zone of staff"
 msgstr "Tijdzone van personeelslid"
 
-msgid "Show cancellation reason"
-msgstr "Toon annuleringsreden"
-
-msgid "Add appointment cancellation confirmation"
-msgstr "Voeg afspraak annulering bevestiging toe"
+msgid "Appearance form name"
+msgstr "Uiterlijk formulier naam"
 
 #, php-format
 msgid ""
@@ -7723,6 +8233,15 @@ msgstr "Bookly afsprakenlijst toevoegen"
 
 msgid "Add Bookly calendar"
 msgstr "Bookly kalender toevoegen"
+
+msgid "Add Bookly search form"
+msgstr "Bookly zoekformulier toevoegen"
+
+msgid "Add Bookly services form"
+msgstr "Bookly services formulier toevoegen"
+
+msgid "Add appointment cancellation confirmation"
+msgstr "Voeg afspraak annulering bevestiging toe"
 
 #, php-format
 msgid ""
@@ -7858,6 +8377,11 @@ msgstr ""
 msgid "Create WordPress user"
 msgstr "WordPress gebruiker aanmaken"
 
+msgid ""
+"This text can be inserted into notifications with {staff_category_info} code"
+msgstr ""
+"Deze tekst kan worden ingevoegd in meldingen met {staff_category_info} code"
+
 msgid "Create payment"
 msgstr "Betaling aanmaken"
 
@@ -7886,9 +8410,11 @@ msgid "Custom service price"
 msgstr "Aangepaste dienst prijs"
 
 msgid ""
-"This link can be inserted into notifications with {online_meeting_url} code"
+"This link can be inserted into notifications with {online_meeting_start_url} "
+"code"
 msgstr ""
-"Deze link kan in meldingen met {online_meeting_url} code worden ingevoegd"
+"Deze link kan in kennisgevingen worden ingevoegd met "
+"{online_meeting_start_url} code"
 
 msgid "Save appointment to create a meeting"
 msgstr "Bewaar afspraak om een vergadering te maken"
@@ -8202,13 +8728,6 @@ msgstr ""
 "website beheerder om uw licentie te verifiëren door het leveren van een "
 "geldige aankoopcode."
 
-msgid "Cancellation confirmation"
-msgstr "Bevestiging annuleren"
-
-msgid "A custom block for displaying cancellation confirmation"
-msgstr ""
-"Een aangepast blok voor het weergeven van de bevestiging van het annuleren"
-
 msgid "A custom block for displaying frontend calendar"
 msgstr "Een aangepast blok voor het tonen van de frontend kalender"
 
@@ -8218,21 +8737,21 @@ msgstr "Afsprakenlijst"
 msgid "A custom block for displaying appointments list"
 msgstr "Een aangepast blok voor het weergeven van afsprakenlijst"
 
-msgid "Confirm cancellation"
-msgstr "Bevestig annulering"
-
-msgid "Do not cancel"
-msgstr "Niet annuleren"
-
-msgid "Thank you for being with us"
-msgstr "Bedankt dat u voor ons kiest"
-
 msgid "Invalid token provided"
 msgstr "Ongeldige token geleverd"
 
 msgid ""
 "Sorry, the time slot %date_time% for %service% has been already occupied."
 msgstr "Sorry, het tijdsblok %date_time% voor %service% is al bezet."
+
+msgid ""
+"The selected slot for service {service_name} at {appointment_time} is not "
+"available anymore. Please select another time slot or contact the service "
+"provider"
+msgstr ""
+"De geselecteerde tijd voor service {service_name} op {afspraak_tijd} is niet "
+"meer beschikbaar. Selecteer een ander tijdstip of neem contact op met de "
+"dienstverlener"
 
 msgid "This service is no longer provided."
 msgstr "Deze service wordt niet langer geleverd."
@@ -8248,6 +8767,9 @@ msgstr "Geen afspraken gevonden."
 
 msgid "Show past appointments"
 msgstr "Toon afspraken uit verleden"
+
+msgid "Invalid online meeting url"
+msgstr "Ongeldige online vergadering url"
 
 msgid "Would you like to pay deposit or total price"
 msgstr "Wilt u een aanbetaling doen of de totale prijs betalen"
@@ -8880,6 +9402,9 @@ msgstr "Toon keten afspraken"
 msgid "Browse"
 msgstr "Bladeren"
 
+msgid "File's extension is not allowed"
+msgstr "Bestandsextensie niet toegestaan"
+
 msgid "Upload directory"
 msgstr "Upload directory"
 
@@ -8893,6 +9418,15 @@ msgstr ""
 
 msgid "The specified folder is not writable"
 msgstr "De opgegeven map is niet beschrijfbaar"
+
+msgid "Allowed file extensions"
+msgstr "Toegestane bestandsextensies"
+
+msgid ""
+"Enter file extensions that can be uploaded. For example: \"png,jpg,bmp\"."
+msgstr ""
+"Voer bestandsextensies in die kunnen worden geüpload. Bijvoorbeeld: \"png, "
+"jpg, bmp\"."
 
 msgid "Files"
 msgstr "Bestanden"
@@ -8932,9 +9466,6 @@ msgstr "Accountnummer"
 msgid "Secret Word"
 msgstr "Geheim Woord"
 
-msgid "Select the Extras you'd like (Multiple Selection)"
-msgstr "Selecteer de Extra's die u wilt (Meervoudige selectie)"
-
 msgid "Multiply extras by number of persons"
 msgstr "Vermenigvuldig extra's door het aantal personen"
 
@@ -8967,17 +9498,11 @@ msgstr "Extra's totale prijs"
 msgid "Show title"
 msgstr "Toon titel"
 
-msgid "Show price"
-msgstr "Toon prijs"
-
 msgid "Show image"
 msgstr "Toon afbeelding"
 
 msgid "Show duration"
 msgstr "Toon tijdsduur"
-
-msgid "Show summary"
-msgstr "Toon samenvatting"
 
 msgid "Show Extras step"
 msgstr "Toon Extra's stap"
@@ -9014,6 +9539,115 @@ msgstr "Min hoeveelheid mag niet groter zijn dan max hoeveelheid"
 
 msgid "Extras tax"
 msgstr "Extra belasting"
+
+msgid "This gift card has expired"
+msgstr "Deze cadeaubon is verlopen"
+
+msgid "This gift card cannot be used for the current order"
+msgstr "Deze cadeaubon kan niet worden gebruikt voor de huidige bestelling"
+
+msgid "Gift card balance is not enough"
+msgstr "Het saldo van de cadeaubon is niet voldoende"
+
+msgid "Gift card not found"
+msgstr "Cadeaubon niet gevonden"
+
+msgid "I will pay by gift card"
+msgstr "Ik betaal met een cadeaubon"
+
+msgid "Balance"
+msgstr "Saldo"
+
+msgid "Gift Cards"
+msgstr "Cadeaubonnen"
+
+msgid "Add Gift card Series"
+msgstr "Cadeaubonreeks toevoegen"
+
+msgid "Add Gift card"
+msgstr "Cadeaubon toevoegen"
+
+msgid "Gift code"
+msgstr "Cadeaucode"
+
+msgid "Export only active gift cards"
+msgstr "Alleen actieve cadeaubonnen exporteren"
+
+msgid "New gift cards series"
+msgstr "Nieuwe reeks cadeaubonnen"
+
+msgid "New gift card"
+msgstr "Nieuwe cadeaubon"
+
+msgid "Edit gift card"
+msgstr "Cadeaubon bewerken"
+
+msgid ""
+"Specify minimum and maximum (optional) number of services of the same type "
+"required to apply a gift card."
+msgstr ""
+"Specificeer het minimum en maximum (optioneel) aantal services van hetzelfde "
+"type dat nodig is om een cadeaubon toe te passen."
+
+msgid "Create another gift card"
+msgstr "Maak nog een cadeaubon"
+
+msgid "No gift cards found."
+msgstr "Geen cadeaubonnen gevonden."
+
+msgid "Gift card code"
+msgstr "Cadeaubon code"
+
+#, php-format
+msgid ""
+"Go to the <a href=\"%s\" target=\"_blank\">Square Developer dashboard</a>."
+msgstr ""
+"Ga naar het <a href=\"%s\" target=\"_blank\">Square Developer dashboard</a>."
+
+msgid "Select an app or create a new one."
+msgstr "Selecteer een app of maak een nieuwe."
+
+msgid ""
+"Depending on the mode (Sandbox or Production), look for the <b>Application "
+"ID</b> and <b>Access token</b>."
+msgstr ""
+"Zoek, afhankelijk van de modus (Sandbox of Productie), naar de <b>Applicatie-"
+"ID</b> en <b>Toegangstoken</b>."
+
+msgid "Use them in the form below on this page."
+msgstr "Gebruik ze in het formulier hieronder op deze pagina."
+
+msgid "In the sidebar on the left, go to the <b>Webhooks > Subscriptions</b>."
+msgstr ""
+"Ga in de zijbalk aan de linkerkant naar de <b>Webhooks > Abonnementen</b>."
+
+#, php-format
+msgid ""
+"Depending on the mode (Sandbox or Production), press <b>Add subscription</b> "
+"button, enter the following URL as the destination for events %s and select "
+"%s in <b>Events</b>."
+msgstr ""
+"Afhankelijk van de modus (Sandbox of Productie), drukt u op de knop <b>"
+"Abonnement toevoegen</b>, voert u de volgende URL in als de bestemming voor "
+"evenementen %s en selecteert u %s in <b>Evenementen</b>."
+
+msgid "Click <b>Save</b>."
+msgstr "Klik op <b>Opslaan</b>."
+
+msgid "In the sidebar on the left, select <b>Locations</b>."
+msgstr "Selecteer in de linker zijbalk <b>Locaties</b>."
+
+msgid "Look for the necessary location and copy <b>Location ID</b>."
+msgstr "Zoek de benodigde locatie en kopieer <b>Locatie-ID</b>."
+
+msgid "Use it in the form below on this page."
+msgstr "Gebruik het in het formulier hieronder op deze pagina."
+
+msgid "Access token"
+msgstr "Toegangstoken"
+
+msgid "Location ID"
+msgstr "Locatie-ID"
 
 msgid "Book More"
 msgstr "Boek Meer"
@@ -9332,6 +9966,9 @@ msgstr ""
 "instellingen </a> van het dashboard op <b>Eindpunt toevoegen</b> om een "
 "formulier weer te geven om een nieuw eindpunt toe te voegen voor het "
 "ontvangen van gebeurtenissen."
+
+msgid "Session has expired. Please reload the page and try again"
+msgstr "Sessie is verlopen. Herlaad de pagina en probeer het opnieuw"
 
 msgid "Condition"
 msgstr "Voorwaarde"

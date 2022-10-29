@@ -34,6 +34,10 @@
                 type: 'boolean',
                 default: false
             },
+            read_only: {
+                type: 'boolean',
+                default: false
+            }
         },
         edit: function (props) {
             var inspectorElements = [],
@@ -48,9 +52,11 @@
                 if (attributes.hide_wp_users) {
                     hide.push('wp_users');
                 }
-
                 if (hide.length > 0) {
                     short_code += ' hide="' + hide.join() + '"';
+                }
+                if (attributes.read_only) {
+                    short_code += ' read-only="true"';
                 }
 
                 short_code += ']';
@@ -72,6 +78,17 @@
                 })
             ));
             inspectorElements.push(el('div', {style: {'font-style': 'italic'}}, BooklyStaffCabinetL10n.wp_users_help));
+            inspectorElements.push(el(components.PanelRow,
+                {},
+                el('label', {htmlFor: 'bookly-js-read-only'}, BooklyStaffCabinetL10n.readOnly),
+                el(components.FormToggle, {
+                    id: 'bookly-js-read-only',
+                    checked: attributes.read_only,
+                    onChange: function () {
+                        return props.setAttributes({read_only: !props.attributes.read_only});
+                    },
+                })
+            ));
 
             return [
                 el(blockControls, {key: 'controls'}),

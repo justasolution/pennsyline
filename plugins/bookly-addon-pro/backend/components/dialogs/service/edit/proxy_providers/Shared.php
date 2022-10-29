@@ -69,7 +69,7 @@ class Shared extends Proxy\Shared
                 'before' => isset( $data['staff_preferred_period_before'] ) ? max( 0, (int) $data['staff_preferred_period_before'] ) : 0,
                 'after'  => isset( $data['staff_preferred_period_after'] ) ? max( 0, (int) $data['staff_preferred_period_after'] ) : 0,
             ),
-            'random' => (bool) $data['staff_preferred_random'],
+            'random' => isset( $data['staff_preferred_random'] ) && (bool) $data['staff_preferred_random'],
         ) );
 
         return $data;

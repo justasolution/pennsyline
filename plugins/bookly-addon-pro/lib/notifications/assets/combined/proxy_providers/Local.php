@@ -15,8 +15,8 @@ abstract class Local extends Proxy\Pro
     /**
      * @inheritDoc
      */
-    public static function createICS( Codes $codes )
+    public static function createICS( Codes $codes, $recipient )
     {
-        return new ICS( $codes );
+        return new ICS( $codes, $recipient );
     }
 }

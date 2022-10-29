@@ -19,10 +19,12 @@ export function laddaStart(elem) {
  */
 export function scrollTo($elem, formId) {
     if (opt[formId].scroll) {
-        var elemTop = $elem.offset().top;
-        var scrollTop = $(window).scrollTop();
-        if (elemTop < $(window).scrollTop() || elemTop > scrollTop + window.innerHeight) {
-            $('html,body').animate({scrollTop: (elemTop - 50)}, 500);
+        if ($elem.length) {
+            var elemTop = $elem.offset().top;
+            var scrollTop = $(window).scrollTop();
+            if (elemTop < $(window).scrollTop() || elemTop > scrollTop + window.innerHeight) {
+                $('html,body').animate({scrollTop: (elemTop - 50)}, 500);
+            }
         }
     } else {
         opt[formId].scroll = true;
@@ -51,7 +53,7 @@ export class Format {
     price(amount) {
         let result = this.#w.format_price.format;
         amount = parseFloat(amount);
-        result = result.replace('{sign}', amount < 0 ? '-' : '' );
+        result = result.replace('{sign}', amount < 0 ? '-' : '');
         result = result.replace(
             '{price}',
             this._formatNumber(

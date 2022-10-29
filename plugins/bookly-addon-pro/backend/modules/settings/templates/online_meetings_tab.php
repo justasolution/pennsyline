@@ -8,14 +8,14 @@ use BooklyPro\Lib;
 <div class="tab-pane" id="bookly_settings_online_meetings">
     <form method="post" action="<?php echo esc_url( add_query_arg( 'tab', 'online_meetings' ) ) ?>">
         <div class="card-body">
-            <div class="card bookly-collapse">
+            <div class="card bookly-collapse-with-arrow">
                 <div class="card-header d-flex align-items-center">
-                    <a href="#bookly_om_zoom" class="ml-2" role="button" data-toggle="collapse">
+                    <a href="#bookly_om_zoom" class="ml-2" role="button" data-toggle="bookly-collapse">
                         Zoom
                     </a>
-                    <img class="ml-auto" src="<?php echo plugins_url( 'frontend/resources/images/zoom.png', Lib\Plugin::getMainFile() ) ?>" />
+                    <img class="ml-auto" src="<?php echo plugins_url( 'backend/modules/settings/resources/images/zoom.png', Lib\Plugin::getMainFile() ) ?>"/>
                 </div>
-                <div id='bookly_om_zoom' class='collapse show'>
+                <div id='bookly_om_zoom' class='bookly-collapse bookly-show'>
                     <div class="card-body">
                         <?php Selects::renderSingle( 'bookly_zoom_authentication', __( 'Authentication', 'bookly' ), __( 'Select the type of authorization that will be used by default for staff members' ), array( array( Lib\Zoom\Authentication::TYPE_JWT, 'JSON Web Tokens (JWT)' ), array( Lib\Zoom\Authentication::TYPE_OAuth, 'OAuth 2.0' ), ) ) ?>
                         <div id="bookly-zoom-jwt" class="bookly-js-zoom-credentials" style="display: none">
@@ -70,8 +70,27 @@ use BooklyPro\Lib;
                     </div>
                 </div>
             </div>
-        </div>
 
+            <div class="card bookly-collapse-with-arrow">
+                <div class="card-header d-flex align-items-center">
+                    <a href="#bookly_om_bbb" class="ml-2" role="button" data-toggle="bookly-collapse">
+                        BigBlueButton
+                    </a>
+                    <img class="ml-auto" src="<?php echo plugins_url( 'backend/modules/settings/resources/images/bbb.png', Lib\Plugin::getMainFile() ) ?>"/>
+                </div>
+                <div id='bookly_om_bbb' class='bookly-collapse bookly-show'>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <p><?php esc_html_e( 'To find your URL and Secret, connect to the server (e.g. via SSH) with hosted BBB and execute the following command in console', 'bookly' ) ?>:</p>
+                            <?php Inputs::renderTextCopy( 'bbb-config --secret', '', null ) ?>
+                        </div>
+
+                        <?php Inputs::renderText( 'bookly_bbb_server_end_point', __( 'Server', 'bookly' ), __( 'The URL obtained from command return', 'bookly' ) ) ?>
+                        <?php Inputs::renderText( 'bookly_bbb_shared_secret', __( 'Shared secret', 'bookly' ), __( 'The Secret obtained from command return', 'bookly' ) ) ?>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="card-footer bg-transparent d-flex justify-content-end">
             <?php ControlsInputs::renderCsrf() ?>
             <?php Buttons::renderSubmit() ?>

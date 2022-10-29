@@ -3,13 +3,14 @@ namespace Bookly\Lib;
 
 use Bookly\Lib\Entities\CustomerAppointment;
 use Bookly\Lib\Utils\Codes;
+use Bookly\Lib\Utils\Common;
 use Bookly\Lib\Utils\DateTime;
 use Bookly\Lib\Utils\Price;
 
 /**
  * Class Config
- * @package Bookly\Lib
  *
+ * @package Bookly\Lib
  * @method static bool advancedGoogleCalendarActive()  Check whether Advanced Google Calendar add-on is active or not.
  * @method static bool authorizeNetActive()            Check whether Authorize.Net add-on is active or not.
  * @method static bool cartActive()                    Check whether Cart add-on is active or not.
@@ -48,6 +49,7 @@ use Bookly\Lib\Utils\Price;
  * @method static bool waitingListActive()             Check whether Waiting List add-on is active or not.
  * @method static bool customDurationActive()          Check whether Custom Duration add-on is active or not.
  * @method static bool googleMapsAddressActive()       Check whether Google Maps Address add-on is active or not.
+ * @method static bool mailchimpActive()               Check whether Mailchimp add-on is active or not.
  */
 abstract class Config
 {
@@ -63,21 +65,12 @@ abstract class Config
     public static function getCaSeSt()
     {
         $result = array(
-            'locations'  => array(),
+            'locations' => array(),
             'categories' => array(),
-            'services'   => array(),
-            'staff'      => array(),
+            'services' => array(),
+            'staff' => array(),
         );
-
-        // Categories.
-        $rows = Entities\Category::query()->fetchArray();
-        foreach ( $rows as $row ) {
-            $result['categories'][ $row['id'] ] = array(
-                'id'   => (int) $row['id'],
-                'name' => Utils\Common::getTranslatedString( 'category_' . $row['id'], $row['name'] ),
-                'pos'  => (int) $row['position'],
-            );
-        }
+        $show_category_info = get_option( 'bookly_app_show_category_info' );
 
         // Services.
         $query = Entities\Service::query( 's' )
@@ -88,7 +81,7 @@ abstract class Config
             ) )
             ->innerJoin( 'StaffService', 'ss', 'ss.service_id = s.id' )
             ->leftJoin( 'Staff', 'st', 'st.id = ss.staff_id' )
-            ->where( 's.type',  Entities\Service::TYPE_SIMPLE )
+            ->where( 's.type', Entities\Service::TYPE_SIMPLE )
             ->where( 'st.visibility', 'public' )
             ->groupBy( 's.id' );
 
@@ -119,7 +112,8 @@ abstract class Config
 
             $result['services'][ $row['id'] ] = array(
                 'id' => (int) $row['id'],
-                'category_id' => (int) $row['category_id'] ?: - 1,
+                'img' => Utils\Common::getAttachmentUrl( $row['attachment_id'] ),
+                'category_id' => (int) $row['category_id'] ?: -1,
                 'name' => $row['title'] == ''
                     ? __( 'Untitled', 'bookly' )
                     : Utils\Common::getTranslatedString( 'service_' . $row['id'], $row['title'] ),
@@ -128,20 +122,47 @@ abstract class Config
                 'min_capacity' => (int) $row['min_capacity'],
                 'max_capacity' => (int) $row['max_capacity'],
                 'has_extras' => (int) Proxy\ServiceExtras::findByServiceId( $row['id'] ),
-                'info' => nl2br( Codes::replace( Utils\Common::getTranslatedOption( 'bookly_l10n_step_service_service_info' ), $service_codes, false ) ),
+                'info' => self::getServiceInfoCodes( $row ),
                 'type' => $row['type'],
                 'pos' => (int) $row['position'],
                 'recurrence_enabled' => (int) $row['recurrence_enabled'],
                 'min_time_prior_booking' => array( (int) $min_time_prior_booking->format( 'Y' ), (int) $min_time_prior_booking->format( 'n' ) - 1, (int) $min_time_prior_booking->format( 'j' ), ),
             );
-            if ( ! $row['category_id'] && ! isset ( $result['categories'][0] ) ) {
-                $result['categories'][0] = array(
-                    'id' => - 1,
+
+            $result = Proxy\Shared::prepareCategoryService( $result, $row );
+        }
+
+        $result = Proxy\Shared::prepareServices( $result );
+
+        $categories = array();
+        foreach ( $result['services'] as $service ) {
+            if ( $service['category_id'] && ! in_array( $service['category_id'], $categories, false ) ) {
+                $categories[] = $service['category_id'];
+            }
+            if ( $service['category_id'] === -1 && ! isset ( $result['categories'][ -1 ] ) ) {
+                $result['categories'][ -1 ] = array(
+                    'id' => -1,
                     'name' => __( 'Uncategorized', 'bookly' ),
                     'pos' => 99999,
                 );
             }
-            $result = Proxy\Shared::prepareCategoryService( $result, $row );
+        }
+
+        // Categories.
+        if ( count( $categories ) ) {
+            $rows = Entities\Category::query()->whereIn( 'id', $categories )->fetchArray();
+            foreach ( $rows as $row ) {
+                $result['categories'][ $row['id'] ] = array(
+                    'id' => (int) $row['id'],
+                    'name' => Utils\Common::getTranslatedString( 'category_' . $row['id'], $row['name'] ),
+                    'pos' => (int) $row['position'],
+                    'img' => Utils\Common::getAttachmentUrl( $row['attachment_id'] ),
+                    'info_text' => Utils\Common::getTranslatedString( 'category_' . $row['id'] . '_info', $row['info'] ),
+                );
+                if ( $show_category_info ) {
+                    $result['categories'][ $row['id'] ]['info'] = self::getCategoryInfoCodes( $row );
+                }
+            }
         }
 
         // Staff.
@@ -153,7 +174,7 @@ abstract class Config
             ->innerJoin( 'StaffService', 'ss', 'ss.staff_id = st.id' )
             ->leftJoin( 'Service', 's', 's.id = ss.service_id' )
             ->where( 'st.visibility', 'public' )
-            ->whereNot( 's.type', Entities\Service::TYPE_PACKAGE );
+            ->where( 's.type', Entities\Service::TYPE_SIMPLE );
 
         $query = Proxy\Shared::prepareCaSeStQuery( $query );
 
@@ -163,7 +184,6 @@ abstract class Config
                 ->where( 'ss.location_id', null );
         }
 
-        $staff_name_with_price = get_option( 'bookly_app_staff_name_with_price' );
         foreach ( $query->fetchArray() as $row ) {
             $staff_name = Utils\Common::getTranslatedString( 'staff_' . $row['id'], $row['full_name'] );
             $staff_info = $row['info'] == '' ? '' : Utils\Common::getTranslatedString( 'staff_' . $row['id'] . '_info', $row['info'] );
@@ -182,6 +202,7 @@ abstract class Config
                 $result['staff'][ $row['id'] ] = array(
                     'id' => (int) $row['id'],
                     'name' => $staff_name,
+                    'img' => $staff_image_url,
                     'services' => array(),
                     'pos' => (int) $row['position'],
                     'info' => nl2br( Codes::replace( Utils\Common::getTranslatedOption( 'bookly_l10n_step_service_staff_info' ), $staff_codes, false ) ),
@@ -191,9 +212,7 @@ abstract class Config
             $location_data = array(
                 'min_capacity' => (int) $row['capacity_min'],
                 'max_capacity' => (int) $row['capacity_max'],
-                'price' => $staff_name_with_price
-                    ? Utils\Price::format( $row['price'] )
-                    : null,
+                'price' => Utils\Price::format( $row['price'] ),
             );
             $location_data = Proxy\Shared::prepareCategoryServiceStaffLocation( $location_data, $row );
 
@@ -217,7 +236,7 @@ abstract class Config
         global $wp_locale;
 
         $result = array(
-            'days'  => array(),
+            'days' => array(),
             'times' => array(),
         );
 
@@ -236,13 +255,13 @@ abstract class Config
         /** @var Slots\TimePoint $min_start_time */
         /** @var Slots\TimePoint $max_end_time */
         $min_start_time = null;
-        $max_end_time   = null;
-        $days           = array();
-        $wp_tz_offset   = get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
+        $max_end_time = null;
+        $days = array();
+        $wp_tz_offset = get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
 
         foreach ( $res as $row ) {
             $start_time = Slots\TimePoint::fromStr( $row['start_time'] );
-            $end_time   = Slots\TimePoint::fromStr( $row['end_time'] );
+            $end_time = Slots\TimePoint::fromStr( $row['end_time'] );
 
             if ( $row['time_zone'] ) {
                 $staff_tz_offset = DateTime::timeZoneOffset( $row['time_zone'] );
@@ -259,7 +278,7 @@ abstract class Config
 
             // Convert to client time zone.
             $start_time = $start_time->toClientTz();
-            $end_time   = $end_time->toClientTz();
+            $end_time = $end_time->toClientTz();
 
             // Add day(s).
             if ( $start_time->value() < 0 ) {
@@ -282,10 +301,10 @@ abstract class Config
         }
 
         $start_of_week = get_option( 'start_of_week' );
-        $week_days     = array_values( $wp_locale->weekday_abbrev );
+        $week_days = array_values( $wp_locale->weekday_abbrev );
 
         // Sort days considering start_of_week;
-        uksort( $days, function ( $a, $b ) use ( $start_of_week ) {
+        uksort( $days, function( $a, $b ) use ( $start_of_week ) {
             $a -= $start_of_week;
             $b -= $start_of_week;
             if ( $a < 1 ) {
@@ -304,15 +323,15 @@ abstract class Config
         }
 
         if ( $min_start_time && $max_end_time ) {
-            $start        = $min_start_time;
-            $end          = $max_end_time;
+            $start = $min_start_time;
+            $end = $max_end_time;
             $client_start = $start->toClientTz();
-            $client_end   = $end->toClientTz();
+            $client_end = $end->toClientTz();
 
             while ( $start->lte( $end ) ) {
                 $result['times'][ Utils\DateTime::buildTimeString( $start->value(), false ) ] = $client_start->formatI18nTime();
                 // The next value will be rounded to integer number of hours, i.e. e.g. 8:00, 9:00, 10:00 and so on.
-                $start        = $start->modify( HOUR_IN_SECONDS - ( $start->value() % HOUR_IN_SECONDS ) );
+                $start = $start->modify( HOUR_IN_SECONDS - ( $start->value() % HOUR_IN_SECONDS ) );
                 $client_start = $client_start->modify( HOUR_IN_SECONDS - ( $client_start->value() % HOUR_IN_SECONDS ) );
             }
             // The last value should always be the end time.
@@ -332,7 +351,7 @@ abstract class Config
     {
         $result = array();
 
-        $min_time = Proxy\Pro::getMinimumTimePriorBooking();
+        $min_time = Proxy\Pro::getMinimumTimePriorBooking( null );
         if ( $chain !== null ) {
             foreach ( $chain->getItems() as $item ) {
                 $min_time = min( $min_time, Proxy\Pro::getMinimumTimePriorBooking( $item->getService()->getId() ) );
@@ -382,10 +401,11 @@ abstract class Config
      */
     public static function multipleServicesBookingEnabled()
     {
-        return ( Config::cartActive() ||
-                 Config::chainAppointmentsActive() ||
-                 Config::multiplyAppointmentsActive() ||
-                 Config::recurringAppointmentsActive()
+        return (
+            self::cartActive() ||
+            self::chainAppointmentsActive() ||
+            self::multiplyAppointmentsActive() ||
+            self::recurringAppointmentsActive()
         );
     }
 
@@ -659,8 +679,8 @@ abstract class Config
         $result = array();
         foreach ( array( 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday' ) as $week_day ) {
             $result[] = array(
-                'start' => get_option( 'bookly_bh_' . $week_day . '_start' ) ?: null ,
-                'end'   => get_option( 'bookly_bh_' . $week_day . '_end' ) ?: null
+                'start' => get_option( 'bookly_bh_' . $week_day . '_start' ) ?: null,
+                'end' => get_option( 'bookly_bh_' . $week_day . '_end' ) ?: null,
             );
         }
 
@@ -713,6 +733,46 @@ abstract class Config
         return (bool) get_option( 'bookly_setup_step', false );
     }
 
+    /**
+     * @param array $row
+     * @return string
+     */
+    public static function getServiceInfoCodes( $row )
+    {
+        $service_name = $row['title'] === '' ? __( 'Untitled', 'bookly' ) : Utils\Common::getTranslatedString( 'service_' . $row['id'], $row['title'] );
+        $service_info = $row['info'] === '' ? '' : Utils\Common::getTranslatedString( 'service_' . $row['id'] . '_info', $row['info'] );
+        $service_image_url = Utils\Common::getAttachmentUrl( $row['attachment_id'] );
+        $service_codes = array(
+            'service_name' => $service_name,
+            'service_info' => $service_info,
+            'service_image' => Common::getImageTag( $service_image_url, $service_name ),
+            'service_image_url' => $service_image_url,
+            'service_price' => Price::format( $row['price'] ),
+            'service_duration' => DateTime::secondsToInterval( $row['duration'] ),
+        );
+
+        return nl2br( Codes::replace( Utils\Common::getTranslatedOption( 'bookly_l10n_step_service_service_info' ), $service_codes, false ) );
+    }
+
+    /**
+     * @param array $row
+     * @return string
+     */
+    public static function getCategoryInfoCodes( $row )
+    {
+        $category_name = $row['name'] === '' ? '' : Utils\Common::getTranslatedString( 'category_' . $row['id'], $row['name'] );
+        $category_info = $row['info'] === '' ? '' : Utils\Common::getTranslatedString( 'category_' . $row['id'] . '_info', $row['info'] );
+        $category_image_url = Utils\Common::getAttachmentUrl( $row['attachment_id'] );
+        $category_codes = array(
+            'category_name' => $category_name,
+            'category_info' => $category_info,
+            'category_image' => Common::getImageTag( $category_image_url, $category_name ),
+            'category_image_url' => $category_image_url,
+        );
+
+        return nl2br( Codes::replace( Utils\Common::getTranslatedOption( 'bookly_l10n_step_service_category_info' ), $category_codes, false ) );
+    }
+
     /******************************************************************************************************************
      * Add-ons                                                                                                        *
      ******************************************************************************************************************/
@@ -724,7 +784,7 @@ abstract class Config
      */
     public static function wooCommerceEnabled()
     {
-        return ( self::proActive() &&  get_option( 'bookly_wc_enabled' ) && get_option( 'bookly_wc_product' ) && class_exists( 'WooCommerce', false ) && ( wc_get_cart_url() !== false ) );
+        return ( self::proActive() && get_option( 'bookly_wc_enabled' ) && get_option( 'bookly_wc_product' ) && class_exists( 'WooCommerce', false ) && ( wc_get_cart_url() !== false ) );
     }
 
     /**
@@ -734,7 +794,7 @@ abstract class Config
      * @param array $arguments
      * @return mixed
      */
-    public static function __callStatic( $name , array $arguments )
+    public static function __callStatic( $name, array $arguments )
     {
         // <add-on>Active
         // <add-on>Enabled
@@ -774,7 +834,7 @@ abstract class Config
     public static function getShortLocale()
     {
         $locale = self::getLocale();
-        // Cut tail for WP locales like Nederlands (Formeel) nl_NL_formal, Deutsch (Schweiz, Du) de_CH_informal and etc
+        // Cut tail for WP locales like Netherlands (Formeel) nl_NL_formal, Deutsch (Schweiz, Du) de_CH_informal and etc
         if ( $second = strpos( $locale, '_', min( 3, strlen( $locale ) ) ) ) {
             $locale = substr( $locale, 0, $second );
         }
@@ -782,4 +842,26 @@ abstract class Config
         return $locale;
     }
 
+    /**
+     * Get current currency code
+     *
+     * @return string
+     */
+    public static function getCurrency()
+    {
+        static $currency;
+        if ( $currency === null ) {
+            $currency = get_option( 'bookly_pmt_currency' );
+        }
+
+        return $currency;
+    }
+
+    /**
+     * @return bool
+     */
+    public static function isZeroDecimalsCurrency()
+    {
+        return in_array( self::getCurrency(), array( 'BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF', ) );
+    }
 }

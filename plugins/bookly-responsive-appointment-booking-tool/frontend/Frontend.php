@@ -32,14 +32,16 @@ abstract class Frontend
 
             if ( Lib\Cloud\API::getInstance()->account->productActive( 'stripe' ) ) {
                 switch ( $_REQUEST['bookly_action'] ) {
-                    case 'stripe-cloud-checkout':
-                        Stripe::createSession();
+                    case 'cloud_stripe-checkout':
+                        Stripe::checkout();
                         break;
-                    case 'stripe-cloud-success':
+                    case 'stripe-cloud-success':  // <- deprecated
+                    case 'cloud_stripe-success':
                         Stripe::success();
                         break;
-                    case 'stripe-cloud-cancel':
-                        Stripe::cancelSession();
+                    case 'stripe-cloud-cancel': // <- deprecated
+                    case 'cloud_stripe-cancel':
+                        Stripe::cancel();
                         break;
                     /**
                      * Stripe Cloud notify

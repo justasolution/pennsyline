@@ -222,6 +222,8 @@ class Notification extends Lib\Base\Entity
     {
         if ( self::$type_ids === null ) {
             self::$type_ids = array(
+                /** @see \Bookly\Lib\Cloud\Account::sendLowBalanceNotification */
+                'low_balance'                                  => -1,
                 /** @see \Bookly\Backend\Modules\CloudSms\Ajax::sendTestSms */
                 'test_message'                                 => 0,
                 self::TYPE_STAFF_NEW_WP_USER                   => 4,

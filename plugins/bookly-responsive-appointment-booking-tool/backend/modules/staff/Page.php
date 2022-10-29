@@ -33,6 +33,9 @@ class Page extends Lib\Base\Component
         Proxy\Shared::renderStaffPage( self::parameters() );
 
         $categories = Proxy\Pro::getCategoriesList() ?: array();
+        foreach ( $categories as &$category ) {
+            $category['attachment'] = Lib\Utils\Common::getAttachmentUrl( $category['attachment_id'], 'thumbnail' ) ?: null;
+        }
 
         $datatables = Lib\Utils\Tables::getSettings( 'staff_members' );
 

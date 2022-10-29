@@ -299,7 +299,6 @@ class Cart
                     ->setUnits( $cart_item->getUnits() )
                     ->setNotes( $this->userData->getNotes() )
                     ->setExtras( json_encode( $extras[ $key ] ) )
-                    ->setExtrasConsiderDuration( Proxy\ServiceExtras::considerDuration( true ) )
                     ->setCustomFields( json_encode( $service_custom_fields ) )
                     ->setStatus( $put_on_waiting_list
                         ? CustomerAppointment::STATUS_WAITLISTED
@@ -447,21 +446,27 @@ class Cart
 
                     if ( $bound_end->lte( $max_date ) ) {
                         $query = Entities\CustomerAppointment::query( 'ca' )
-                            ->select( sprintf( 'ss.capacity_max, SUM(ca.number_of_persons) AS total_number_of_persons,
+                            ->select(
+                                sprintf(
+                                    'ss.capacity_max, SUM(ca.number_of_persons) AS total_number_of_persons, s.one_booking_per_slot,
                                 DATE_SUB(a.start_date, INTERVAL %s SECOND) AS bound_left,
-                                DATE_ADD(a.end_date,   INTERVAL (%s + IF(ca.extras_consider_duration, a.extras_duration, 0)) SECOND) AS bound_right',
-                                Proxy\Shared::prepareStatement( 0, 'COALESCE(s.padding_left,0)', 'Service' ),
-                                Proxy\Shared::prepareStatement( 0, 'COALESCE(s.padding_right,0)', 'Service' ) ) )
+                                DATE_ADD(a.end_date, INTERVAL (%s + a.extras_duration) SECOND) AS bound_right',
+                                    Proxy\Shared::prepareStatement( 0, 'COALESCE(s.padding_left,0)', 'Service' ),
+                                    Proxy\Shared::prepareStatement( 0, 'COALESCE(s.padding_right,0)', 'Service' )
+                                )
+                            )
                             ->leftJoin( 'Appointment', 'a', 'a.id = ca.appointment_id' )
                             ->leftJoin( 'StaffService', 'ss', 'ss.staff_id = a.staff_id AND ss.service_id = a.service_id' )
                             ->leftJoin( 'Service', 's', 's.id = a.service_id' )
                             ->where( 'a.staff_id', $staff_id )
-                            ->whereIn( 'ca.status', Proxy\CustomStatuses::prepareBusyStatuses( array(
+                            ->whereIn(
+                                'ca.status', Proxy\CustomStatuses::prepareBusyStatuses( array(
                                 Entities\CustomerAppointment::STATUS_PENDING,
-                                Entities\CustomerAppointment::STATUS_APPROVED
-                            ) ) )
+                                Entities\CustomerAppointment::STATUS_APPROVED,
+                            ) )
+                            )
                             ->groupBy( 'a.service_id, a.start_date' )
-                            ->havingRaw( '%s > bound_left AND bound_right > %s AND ( total_number_of_persons + %d ) > ss.capacity_max',
+                            ->havingRaw( '%s > bound_left AND bound_right > %s AND IF ( one_booking_per_slot = 0, ( total_number_of_persons + %d ) > ss.capacity_max, total_number_of_persons > 0 )',
                                 array( $bound_end->format( 'Y-m-d H:i:s' ), $bound_start->format( 'Y-m-d H:i:s' ), $cart_item->getNumberOfPersons() ) )
                             ->limit( 1 );
                         if ( Config::locationsActive() && get_option( 'bookly_locations_allow_services_per_location' ) ) {

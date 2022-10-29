@@ -23,6 +23,7 @@ jQuery(function ($) {
         $delete
             .one('click', function () {
                 let ladda = Ladda.create(this);
+                ladda.start();
                 deleteCustomerAppointments(options)
                     .then(function (response) {
                         if (typeof onDone == 'function') {

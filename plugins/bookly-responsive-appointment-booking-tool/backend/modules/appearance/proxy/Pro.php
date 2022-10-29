@@ -7,7 +7,7 @@ use Bookly\Lib;
  * Class Pro
  *
  * @package Bookly\Backend\Modules\Appearance\Proxy
- *
+ * @method static void renderModernAppearance() Render modern appearance
  * @method static void renderAddress() Render inputs for address fields in appearance.
  * @method static void renderBirthday() Render inputs for birthday fields in appearance.
  * @method static void renderBookingStatesSelector() Render single/multiple/100% off booking selector on Payment step.

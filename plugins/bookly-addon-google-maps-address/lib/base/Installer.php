@@ -37,8 +37,10 @@ abstract class Installer
      */
     public function uninstall()
     {
-        $this->removeData();
-        $this->dropTables();
+        if ( get_option( 'bookly_gen_delete_data_on_uninstall', '1' ) ) {
+            $this->removeData();
+            $this->dropTables();
+        }
     }
 
     /**
@@ -60,7 +62,7 @@ abstract class Installer
     }
 
     /**
-     * Drop tables (@see \Bookly\Backend\Modules\Debug\Ajax ).
+     * Drop tables
      */
     public function dropTables()
     {
@@ -84,7 +86,7 @@ abstract class Installer
         // Add plugin options.
         foreach ( $this->options as $name => $value ) {
             add_option( $name, $value );
-            if ( strpos( $name, 'bookly_l10n_' ) === 0 ) {
+            if ( strncmp( $name, 'bookly_l10n_', 12 ) === 0 ) {
                 do_action( 'wpml_register_single_string', 'bookly', $name, $value );
             }
         }
@@ -151,14 +153,14 @@ abstract class Installer
             global $wpdb;
 
             $query_foreign_keys = sprintf(
-                'SELECT table_name, constraint_name FROM information_schema.key_column_usage
+                'SELECT TABLE_NAME, CONSTRAINT_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
                 WHERE REFERENCED_TABLE_SCHEMA = SCHEMA() AND REFERENCED_TABLE_NAME IN (%s)',
                 implode( ', ', array_fill( 0, count( $tables ), '%s' ) )
             );
 
             $schema = $wpdb->get_results( $wpdb->prepare( $query_foreign_keys, $tables ) );
             foreach ( $schema as $foreign_key ) {
-                $wpdb->query( "ALTER TABLE `$foreign_key->table_name` DROP FOREIGN KEY `$foreign_key->constraint_name`" );
+                $wpdb->query( "ALTER TABLE `$foreign_key->TABLE_NAME` DROP FOREIGN KEY `$foreign_key->CONSTRAINT_NAME`" );
             }
 
             $wpdb->query( 'DROP TABLE IF EXISTS `' . implode( '`, `', $tables ) . '` CASCADE;' );
@@ -237,9 +239,16 @@ abstract class Installer
      */
     private static function getFilesystem()
     {
+        global $wp_filesystem;
+
+        require_once ABSPATH . 'wp-admin/includes/file.php';
+
+        if ( ! $wp_filesystem ) {
+            WP_Filesystem();
+        }
+
         // Emulate WP_Filesystem to avoid FS_METHOD and filters overriding "direct" type
         if ( ! class_exists( 'WP_Filesystem_Direct', false ) ) {
-            require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
             require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-direct.php';
         }
 

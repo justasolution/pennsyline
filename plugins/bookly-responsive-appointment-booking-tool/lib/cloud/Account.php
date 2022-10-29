@@ -5,6 +5,7 @@ use Bookly\Backend\Modules;
 use Bookly\Lib\Config;
 use Bookly\Lib\Utils;
 use Bookly\Lib\Slots\DatePoint;
+use Bookly\Lib\Proxy;
 
 /**
  * Class Account
@@ -31,10 +32,12 @@ class Account extends Base
     const RESEND_CONFIRMATION            = '/1.3/users/%token%/resend-confirmation';      //GET
     const SET_INVOICE_DATA               = '/1.1/users/%token%/invoice';                  //POST
     const SEND_WEEKLY_SUMMARY            = '/1.0/users/%token%/weekly-summary/send';      //POST || DELETE
+    const PRODUCTS                       = '/1.0/users/%token%/products';                 //GET
 
     const PRODUCT_SMS_NOTIFICATIONS = 'sms';
     const PRODUCT_STRIPE            = 'stripe';
     const PRODUCT_ZAPIER            = 'zapier';
+    const PRODUCT_CRON              = 'cron';
 
     /** @var string */
     protected $username;
@@ -645,6 +648,19 @@ class Account extends Base
     }
 
     /**
+     * @return array
+     */
+    public function getEndPoints()
+    {
+        $response = $this->api->sendGetRequest( self::PRODUCTS );
+        if ( $response ) {
+            return $response['endpoints'];
+        }
+
+        return array();
+    }
+
+    /**
      * Gets notify_summary
      *
      * @return bool
@@ -764,14 +780,15 @@ class Account extends Base
     {
         $add_money_url = admin_url( 'admin.php?' . build_query( array( 'page' => Modules\CloudSms\Page::pageSlug() ) ) ) . '#recharge';
         $message = sprintf( __( "Dear Bookly Cloud customer.\nWe would like to notify you that your Bookly Cloud balance fell below 5 USD. To use our service without interruptions please recharge your balance by visiting Bookly Cloud page <a href='%s'>here</a>.\n\nIf you want to stop receiving these notifications, please update your settings <a href='%s'>here</a>.", 'bookly' ), $add_money_url, $add_money_url );
+        if ( get_option( 'bookly_email_send_as' ) == 'html' ) {
+            $message = wpautop( $message );
+        }
+        $headers = Utils\Common::getEmailHeaders();
+        $subject = __( 'Bookly Cloud - Low Balance', 'bookly' );
 
         foreach ( Utils\Common::getAdminEmails() as $email ) {
-            wp_mail(
-                $email,
-                __( 'Bookly Cloud - Low Balance', 'bookly' ),
-                get_option( 'bookly_email_send_as' ) == 'html' ? wpautop( $message ) : $message,
-                Utils\Common::getEmailHeaders()
-            );
+            Proxy\Pro::logEmail( $email, $subject, $message, $headers, array(), '-1' );
+            wp_mail( $email, $subject, $message, $headers );
         }
     }
 

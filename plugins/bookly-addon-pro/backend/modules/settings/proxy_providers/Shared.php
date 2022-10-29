@@ -23,6 +23,7 @@ class Shared extends Proxy\Shared
 
         wp_localize_script( 'bookly-settings-pro.js', 'BooklyProSettings10n', array(
             'zoomFailed' => esc_html__( 'Zoom connection failed', 'bookly' ),
+            'wcSelectBookingProduct' => esc_html__( 'Please select a Booking product', 'bookly' ),
         ) );
     }
 
@@ -63,14 +64,17 @@ class Shared extends Proxy\Shared
             case 'woocommerce':
                 $codes = array_merge( $codes, array(
                     'appointment_date' => array( 'description' => __( 'Date of appointment', 'bookly' ), 'if' => true ),
-                    'appointment_time' => array( 'description' => __( 'Time of appointment', 'bookly' ), 'if' => true ),
                     'appointment_end_date' => array( 'description' => __( 'End date of appointment', 'bookly' ), 'if' => true ),
                     'appointment_end_time' => array( 'description' => __( 'End time of appointment', 'bookly' ), 'if' => true ),
+                    'appointment_time' => array( 'description' => __( 'Time of appointment', 'bookly' ), 'if' => true ),
+                    'category_info' => array( 'description' => __( 'Info of category', 'bookly' ), 'if' => true ),
                     'category_name' => array( 'description' => __( 'Name of category', 'bookly' ) ),
                     'number_of_persons' => array( 'description' => __( 'Number of persons', 'bookly' ) ),
                     'service_info' => array( 'description' => __( 'Info of service', 'bookly' ), 'if' => true ),
                     'service_name' => array( 'description' => __( 'Name of service', 'bookly' ) ),
                     'service_price' => array( 'description' => __( 'Price of service', 'bookly' ) ),
+                    'staff_category_info' => array( 'description' => __( 'Info of staff category', 'bookly' ), 'if' => true ),
+                    'staff_category_name' => array( 'description' => __( 'Name of staff category', 'bookly' ) ),
                     'staff_info' => array( 'description' => __( 'Info of staff', 'bookly' ), 'if' => true ),
                     'staff_name' => array( 'description' => __( 'Name of staff', 'bookly' ) ),
                 ) );
@@ -83,27 +87,31 @@ class Shared extends Proxy\Shared
             case 'google_calendar':
             case 'outlook_calendar':
                 $codes = array_merge_recursive( $codes, array(
+                    'appointment_id' => array( 'description' => __( 'Appointment ID', 'bookly' ) ),
                     'appointment_date' => array( 'description' => __( 'Date of appointment', 'bookly' ) ),
                     'appointment_notes' => array( 'description' => __( 'Customer notes for appointment', 'bookly' ), 'if' => true ),
                     'appointment_time' => array( 'description' => __( 'Time of appointment', 'bookly' ) ),
                     'booking_number' => array( 'description' => __( 'Booking number', 'bookly' ) ),
+                    'category_info' => array( 'description' => __( 'Info of category', 'bookly' ), 'if' => true ),
                     'category_name' => array( 'description' => __( 'Name of category', 'bookly' ) ),
                     'company_address' => array( 'description' => __( 'Address of company', 'bookly' ) ),
                     'company_name' => array( 'description' => __( 'Name of company', 'bookly' ) ),
                     'company_phone' => array( 'description' => __( 'Company phone', 'bookly' ) ),
                     'company_website' => array( 'description' => __( 'Company web-site address', 'bookly' ) ),
+                    'internal_note' => array( 'description' => __( 'Internal note', 'bookly' ) ),
                     'online_meeting_password' => array( 'description' => __( 'Online meeting password', 'bookly' ), 'if' => true ),
                     'online_meeting_start_url' => array( 'description' => __( 'Online meeting start URL', 'bookly' ), 'if' => true ),
                     'online_meeting_url' => array( 'description' => __( 'Online meeting URL', 'bookly' ), 'if' => true ),
-                    'service_info' => array( 'description' => __( 'Info of service', 'bookly' ), 'if' => true ),
                     'service_duration' => array( 'description' => __( 'Duration of service', 'bookly' ) ),
+                    'service_info' => array( 'description' => __( 'Info of service', 'bookly' ), 'if' => true ),
                     'service_name' => array( 'description' => __( 'Name of service', 'bookly' ) ),
                     'service_price' => array( 'description' => __( 'Price of service', 'bookly' ) ),
+                    'staff_category_info' => array( 'description' => __( 'Info of staff category', 'bookly' ), 'if' => true ),
+                    'staff_category_name' => array( 'description' => __( 'Name of staff category', 'bookly' ) ),
                     'staff_email' => array( 'description' => __( 'Email of staff', 'bookly' ) ),
                     'staff_info' => array( 'description' => __( 'Info of staff', 'bookly' ), 'if' => true ),
                     'staff_name' => array( 'description' => __( 'Name of staff', 'bookly' ) ),
                     'staff_phone' => array( 'description' => __( 'Phone of staff', 'bookly' ) ),
-                    'internal_note' => array( 'description' => __( 'Internal note', 'bookly' ) ),
                     'participants' => array(
                         'description' => array(
                             __( 'Loop over clients list', 'bookly' ),
@@ -112,6 +120,7 @@ class Shared extends Proxy\Shared
                         'loop' => array(
                             'item' => 'participant',
                             'codes' => array(
+                                'appointment_id' => array( 'description' => __( 'Appointment ID', 'bookly' ) ),
                                 'appointment_notes' => array( 'description' => __( 'Customer notes for appointment', 'bookly' ), 'if' => true ),
                                 'booking_number' => array( 'description' => __( 'Booking number', 'bookly' ) ),
                                 'client_address' => array( 'description' => __( 'Address of client', 'bookly' ) ),
@@ -171,19 +180,25 @@ class Shared extends Proxy\Shared
         /** @global \wpdb $wpdb */
         global $wpdb;
 
-        $query = 'SELECT ID AS id, post_title AS name FROM ' . $wpdb->posts . ' WHERE post_type = \'product\' AND post_status = \'publish\' ORDER BY post_title';
-        $goods = array_merge( array( array( 'id' => 0, 'name' => __( 'Select product', 'bookly' ) ) ), $wpdb->get_results( $query, ARRAY_A ) );
+        $query = 'SELECT ID, post_title FROM ' . $wpdb->posts . ' WHERE post_type = \'product\' AND post_status = \'publish\' ORDER BY post_title';
+        $products = array_merge( array( array( 0, __( 'Select product', 'bookly' ) ) ), $wpdb->get_results( $query, ARRAY_N ) );
         $wc_warning = false;
-        if ( get_option( 'bookly_wc_enabled' ) && class_exists( 'WooCommerce', false ) ) {
-            $post = get_post( wc_get_page_id( 'cart' ) );
-            if ( $post === null || $post->post_status != 'publish' ) {
-                $wc_warning = sprintf(
-                    __( 'WooCommerce cart is not set up. Follow the <a href="%s">link</a> to correct this problem.', 'bookly' ),
-                    BooklyLib\Utils\Common::escAdminUrl( 'wc-status', array( 'tab' => 'tools' ) )
-                );
+        $order_statuses = array();
+        if ( class_exists( 'WooCommerce', false ) ) {
+            if( get_option( 'bookly_wc_enabled' ) ) {
+                $post = get_post( wc_get_page_id( 'cart' ) );
+                if ( $post === null || $post->post_status != 'publish' ) {
+                    $wc_warning = sprintf(
+                        __( 'WooCommerce cart is not set up. Follow the <a href="%s">link</a> to correct this problem.', 'bookly' ),
+                        BooklyLib\Utils\Common::escAdminUrl( 'wc-status', array( 'tab' => 'tools' ) )
+                    );
+                }
+            }
+            foreach ( wc_get_order_statuses() as $status => $title ) {
+                $order_statuses[] = array( $status, $title );
             }
         }
-        self::renderTemplate( 'wc_tab', compact( 'goods', 'wc_warning' ) );
+        self::renderTemplate( 'wc_tab', compact( 'products', 'wc_warning', 'order_statuses' ) );
 
         self::renderTemplate( 'fb_tab' );
 
@@ -285,8 +300,12 @@ class Shared extends Proxy\Shared
                     'bookly_l10n_wc_cart_info_value',
                     'bookly_wc_enabled',
                     'bookly_wc_product',
-                    'bookly_wc_create_order_at_zero_cost'
+                    'bookly_wc_create_order_at_zero_cost',
+                    'bookly_wc_create_order_via_backend',
                 );
+                if ( class_exists( 'WooCommerce', false ) ) {
+                    $options[] = 'bookly_wc_default_order_status';
+                }
                 $alert['success'][] = __( 'Settings saved.', 'bookly' );
                 break;
             case 'cart':
@@ -300,6 +319,8 @@ class Shared extends Proxy\Shared
                     'bookly_zoom_jwt_api_secret',
                     'bookly_zoom_oauth_client_id',
                     'bookly_zoom_oauth_client_secret',
+                    'bookly_bbb_server_end_point',
+                    'bookly_bbb_shared_secret',
                 );
                 // Check current zoom authorization value
                 if ( Lib\Config::zoomAuthentication() !== $params['bookly_zoom_authentication'] ) {

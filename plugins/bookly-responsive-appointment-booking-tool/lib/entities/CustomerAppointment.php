@@ -39,8 +39,6 @@ class CustomerAppointment extends Lib\Base\Entity
     protected $extras = '[]';
     /** @var  int */
     protected $extras_multiply_nop;
-    /** @var  int */
-    protected $extras_consider_duration = 1;
     /** @var  string */
     protected $custom_fields = '[]';
     /** @var  string */
@@ -89,7 +87,6 @@ class CustomerAppointment extends Lib\Base\Entity
         'notes'                    => array( 'format' => '%s' ),
         'extras'                   => array( 'format' => '%s' ),
         'extras_multiply_nop'      => array( 'format' => '%d' ),
-        'extras_consider_duration' => array( 'format' => '%d' ),
         'custom_fields'            => array( 'format' => '%s' ),
         'status'                   => array( 'format' => '%s' ),
         'status_changed_at'        => array( 'format' => '%s' ),
@@ -226,6 +223,7 @@ class CustomerAppointment extends Lib\Base\Entity
                     $this->deleteCascade( true );
                 } else {
                     foreach ( $item->getItems() as $i ) {
+                        Lib\Utils\Log::updateEntity( $i->getCA(), __METHOD__, 'Cancel appointment' );
                         if ( $i->getCA()->save() ) {
                             $appointment = $i->getAppointment();
                             if ( $i->getExtras() != '[]' ) {
@@ -321,9 +319,8 @@ class CustomerAppointment extends Lib\Base\Entity
             if ( Lib\Config::waitingListActive() ) {
                 $statuses[] = self::STATUS_WAITLISTED;
             }
-            if ( Lib\Config::tasksActive() ) {
-                $statuses[] = self::STATUS_DONE;
-            }
+            $statuses[] = self::STATUS_DONE;
+
             $statuses = Lib\Proxy\CustomStatuses::prepareAllStatuses( $statuses );
             self::putInCache( __FUNCTION__, $statuses );
         }
@@ -601,29 +598,6 @@ class CustomerAppointment extends Lib\Base\Entity
     public function setExtras( $extras )
     {
         $this->extras = $extras;
-
-        return $this;
-    }
-
-    /**
-     * Gets extras_consider_duration
-     *
-     * @return bool
-     */
-    public function getExtrasConsiderDuration()
-    {
-        return $this->extras_consider_duration;
-    }
-
-    /**
-     * Sets extras_consider_duration
-     *
-     * @param int $extras_consider_duration
-     * @return $this
-     */
-    public function setExtrasConsiderDuration( $extras_consider_duration )
-    {
-        $this->extras_consider_duration = $extras_consider_duration;
 
         return $this;
     }

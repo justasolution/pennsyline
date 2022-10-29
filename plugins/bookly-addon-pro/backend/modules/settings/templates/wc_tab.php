@@ -25,23 +25,19 @@ use Bookly\Backend\Modules\Settings\Codes;
                 </p>
             </div>
 
-            <?php Selects::renderSingle( 'bookly_wc_enabled', 'WooCommerce' ) ?>
+            <?php Selects::renderSingle( 'bookly_wc_enabled', 'WooCommerce', null, array(), array( 'data-expand' => '1' ) ) ?>
             <?php if ( $wc_warning ): ?>
                 <div class='alert alert-danger form-group my-n2 p-1'><i class='fas pl-1 fa-times'></i> <?php echo $wc_warning ?></div>
             <?php endif ?>
-            <div class="form-group border-left mt-3 ml-4 pl-3 bookly_wc_enabled-related">
+            <div class="form-group border-left mt-3 ml-4 pl-3 bookly_wc_enabled-expander">
+                <?php Selects::renderSingle( 'bookly_wc_product', __( 'Booking product', 'bookly' ), null, $products ) ?>
+                <?php Selects::renderSingle( 'bookly_wc_create_order_via_backend', __( 'Create a WooCommerce order from backend', 'bookly' ), __( 'If enabled, a WooCommerce order will be created for appointment when a payment is attached in backend', 'bookly' ), array(), array( 'data-expand' => '1' ) ) ?>
+                <?php if ( $order_statuses ) : ?>
+                    <div class='form-group border-left mt-3 ml-4 pl-3 bookly_wc_create_order_via_backend-expander'>
+                        <?php Selects::renderSingle( 'bookly_wc_default_order_status', __( 'Default status of WooCommerce order', 'bookly' ), __( 'Status of WooCommerce order created from backend', 'bookly' ), $order_statuses ) ?>
+                    </div>
+                <?php endif ?>
                 <?php Selects::renderSingle( 'bookly_wc_create_order_at_zero_cost', __( 'Create a WooCommerce order if the cost of the service is zero', 'bookly' ), __( 'If enabled, a WooCommerce order will be created for services with 0 (zero) price. Please note that if the order contains at least one service with a price other than 0, the WooCommerce order will still be created', 'bookly' ) ) ?>
-                <div class="form-group">
-                    <label for="bookly_wc_product"><?php esc_html_e( 'Booking product', 'bookly' ) ?></label>
-                    <select id="bookly_wc_product" class="form-control custom-select" name="bookly_wc_product">
-                        <?php foreach ( $goods as $item ) : ?>
-                            <option value="<?php echo $item['id'] ?>" <?php selected( get_option( 'bookly_wc_product' ), $item['id'] ) ?>>
-                                <?php echo $item['name'] ?>
-                            </option>
-                        <?php endforeach ?>
-                    </select>
-                </div>
-
                 <?php Inputs::renderText( 'bookly_l10n_wc_cart_info_name', __( 'Cart item data', 'bookly' ) ) ?>
                 <?php Ace\Editor::render( 'bookly-settings-woo-commerce', 'bookly_wc_cart_info', Codes::getJson( 'woocommerce' ), get_option( 'bookly_l10n_wc_cart_info_value', '' ) ) ?>
                 <input type="hidden" name="bookly_l10n_wc_cart_info_value" value="<?php echo esc_attr( get_option( 'bookly_l10n_wc_cart_info_value', '' ) ) ?>">

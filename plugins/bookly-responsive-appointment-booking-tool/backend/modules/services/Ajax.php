@@ -227,7 +227,7 @@ class Ajax extends Page
      */
     public static function updateServiceCategories()
     {
-        $categories          = self::parameter( 'categories', array() );
+        $categories = self::parameter( 'categories', array() );
         $existing_categories = array();
         foreach ( $categories as $category ) {
             if ( strpos( $category['id'], 'new' ) === false ) {
@@ -235,20 +235,25 @@ class Ajax extends Page
             }
         }
         // Delete categories
-        Lib\Entities\Category::query( 'c' )->delete()->whereNotIn( 'c.id', $existing_categories )->execute();
+        Lib\Entities\Category::query()->delete()->whereNotIn( 'id', $existing_categories )->execute();
         foreach ( $categories as $position => $category_data ) {
-            if ( strpos( $category_data['id'], 'new' ) === false ) {
-                $category = Lib\Entities\Category::find( $category_data['id'] );
-            } else {
+            if ( strpos( $category_data['id'], 'new' ) !== false ) {
                 $category = new Lib\Entities\Category();
+            } else {
+                $category = Lib\Entities\Category::find( $category_data['id'] );
             }
             $category
                 ->setPosition( $position )
                 ->setName( $category_data['name'] )
+                ->setAttachmentId( $category_data['attachment_id'] ?: null )
+                ->setInfo( $category_data['info'] )
                 ->save();
         }
-
-        wp_send_json_success( Lib\Entities\Category::query()->sortBy( 'position' )->fetchArray() );
+        $categories = Lib\Entities\Category::query()->sortBy( 'position' )->fetchArray();
+        foreach ( $categories as &$category ) {
+            $category['attachment'] = Lib\Utils\Common::getAttachmentUrl( $category['attachment_id'], 'thumbnail' ) ?: null;
+        }
+        wp_send_json_success( $categories );
     }
 
     /**

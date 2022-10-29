@@ -12,7 +12,7 @@ jQuery(function ($) {
         return option.id && option.element.dataset.icon ? '<i class="far fa-fw ' + option.element.dataset.icon + '"></i> ' + option.text : option.text;
     }
 
-    $serviceType.select2({
+    $serviceType.booklySelect2({
         minimumResultsForSearch: -1,
         width: '100%',
         theme: 'bootstrap4',

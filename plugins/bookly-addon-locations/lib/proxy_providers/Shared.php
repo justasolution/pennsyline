@@ -6,13 +6,13 @@ use Bookly\Lib as BooklyLib;
 
 /**
  * Class Shared
+ *
  * @package BooklyLocations\Lib\ProxyProviders
  */
 class Shared extends BooklyLib\Proxy\Shared
 {
     /**
      * @param BooklyLib\Query $query
-     *
      * @return BooklyLib\Query
      */
     public static function prepareCaSeStQuery( BooklyLib\Query $query )
@@ -73,12 +73,12 @@ class Shared extends BooklyLib\Proxy\Shared
         foreach ( $rows as $row ) {
             if ( ! isset ( $result['locations'][ $row['id'] ] ) ) {
                 $result['locations'][ $row['id'] ] = array(
-                    'id'    => (int) $row['id'],
-                    'name'  => empty( $row['name'] )
+                    'id' => (int) $row['id'],
+                    'name' => empty( $row['name'] )
                         ? __( 'Untitled', 'bookly' )
                         : BooklyLib\Utils\Common::getTranslatedString( 'location_' . $row['id'], $row['name'] ),
                     'staff' => array(),
-                    'pos'   => (int) $row['position'],
+                    'pos' => (int) $row['position'],
                 );
             }
             if ( $row['staff_id'] != null && $row['qnt'] > 0 ) {
@@ -116,8 +116,8 @@ class Shared extends BooklyLib\Proxy\Shared
 
             case BooklyLib\Utils\Tables::LOCATIONS:
                 $columns = array_merge( $columns, array(
-                    'id'        => esc_html__( 'ID', 'bookly' ),
-                    'name'      => esc_html__( 'Name', 'bookly' ),
+                    'id' => esc_html__( 'ID', 'bookly' ),
+                    'name' => esc_html__( 'Name', 'bookly' ),
                     'staff_ids' => esc_html__( 'Staff members', 'bookly' ),
                 ) );
                 break;
@@ -165,5 +165,18 @@ class Shared extends BooklyLib\Proxy\Shared
         }
 
         return $template;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function prepareGlobalSetting( $obj, $token )
+    {
+        if ( $token === 'custom_location_settings' ) {
+
+            return (bool) Local::servicesPerLocationAllowed();
+        }
+
+        return $obj;
     }
 }

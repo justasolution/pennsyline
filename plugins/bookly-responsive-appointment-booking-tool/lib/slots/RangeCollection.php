@@ -206,6 +206,7 @@ class RangeCollection implements \IteratorAggregate
      * @inheritDoc
      * @return \ArrayIterator
      */
+    #[\ReturnTypeWillChange]
     public function getIterator()
     {
         return new \ArrayIterator( $this->ranges );

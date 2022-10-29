@@ -7,7 +7,7 @@ use Bookly\Backend\Components\Dialogs\Staff\Edit\Proxy;
  * @var array $gateways
  * @var BooklyLib\Entities\Staff $staff
  */
-$accepted_gateways = json_decode( $staff->getGateways(), true );
+$accepted_gateways = $staff->getGateways() ? json_decode( $staff->getGateways(), true ) : null;
 ?>
 <div class="form-group">
     <label for="bookly-category"><?php esc_html_e( 'Category', 'bookly' ) ?></label>

@@ -44,6 +44,8 @@ class CartInfo
 
     /** @var \BooklyCoupons\Lib\Entities\Coupon|null */
     private $coupon;
+    /** @var \BooklyGiftCards\Lib\Entities\GiftCard|null */
+    private $gift_card;
     /** @var bool */
     private $tax_included = true;
     /** @var bool */
@@ -62,6 +64,8 @@ class CartInfo
         if ( $apply_coupon ) {
             $this->coupon = $userData->getCoupon();
         }
+
+        $this->gift_card = $userData->getGiftCard();
 
         if ( Config::taxesActive() ) {
             $this->tax_included = get_option( 'bookly_taxes_in_price' ) != 'excluded';
@@ -124,6 +128,16 @@ class CartInfo
     public function getCoupon()
     {
         return $this->coupon;
+    }
+
+    /**
+     * Gets gift card.
+     *
+     * @return \BooklyGiftCards\Lib\Entities\GiftCard
+     */
+    public function getGiftCard()
+    {
+        return $this->gift_card;
     }
 
     /**

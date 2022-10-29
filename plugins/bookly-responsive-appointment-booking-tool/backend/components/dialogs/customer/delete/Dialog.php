@@ -2,7 +2,6 @@
 namespace Bookly\Backend\Components\Dialogs\Customer\Delete;
 
 use Bookly\Lib;
-use Bookly\Backend\Components\Controls\Buttons;
 
 /**
  * Class Dialog

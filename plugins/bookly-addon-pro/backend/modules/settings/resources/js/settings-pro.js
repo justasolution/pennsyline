@@ -5,6 +5,12 @@ jQuery(function ($) {
             $authentication: $('#bookly_zoom_authentication'),
             $credentials: $('.bookly-js-zoom-credentials')
         },
+        $wc_tab = $('#bookly_settings_woo_commerce'),
+        wc = {
+            $enabled: $('#bookly_wc_enabled', $wc_tab),
+            $product: $('#bookly_wc_product', $wc_tab),
+            $save: $('#bookly-save', $wc_tab)
+        },
         hash = window.location.href.split('#')
     ;
 
@@ -62,13 +68,10 @@ jQuery(function ($) {
 
     zoom.$authentication.trigger('change');
 
-    $('#bookly_wc_enabled').on('change', function () {
-        this.value == '1'
-            ? $('.bookly_wc_enabled-related').show()
-            : $('.bookly_wc_enabled-related').hide();
-    }).trigger('change');
-
-    $('#bookly_auto_change_status').on('change', function () {
-        $('.bookly-js-auto-change-status').toggle(this.value != '0')
-    }).trigger('change');
+    wc.$save.on('click', function(e) {
+        if (wc.$enabled.val() == '1' && wc.$product.val() == '0') {
+            e.preventDefault();
+            booklyAlert({error: [BooklyProSettings10n.wcSelectBookingProduct]});
+        }
+    })
 });

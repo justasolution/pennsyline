@@ -5,7 +5,7 @@ jQuery(function($) {
             var ladda;
             $('.bookly-js-file', $container).trigger('change');
             $('.bookly-js-upload', $container)
-                .on('click', function(){
+                .on('click', function () {
                     $(this).siblings('.bookly-js-file-upload').trigger('click');
                     ladda = Ladda.create(this);
                 });
@@ -13,12 +13,16 @@ jQuery(function($) {
                 url: BooklyFilesL10n.ajaxurl,
                 dataType: 'json',
                 done: function (e, data) {
+                    let $errors = $(this).closest('.bookly-custom-field-row').find('.bookly-custom-field-error');
                     if (data.result.success) {
+                        $errors.html('');
                         var $div = $(e.target).closest('div.bookly-row');
                         $('.bookly-js-file', $div).val(data.result.data.slug)
                             .trigger('change');
                         $('[data-action=drop]', $div).attr('data-file', 'new');
                         $('span.bookly-js-file-name', $div).html(data.result.data.name);
+                    } else {
+                        $errors.html(data.result.data.error);
                     }
                     if (typeof ladda != 'undefined') {
                         ladda.stop();

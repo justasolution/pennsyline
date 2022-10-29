@@ -1,5 +1,5 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
-/** @var \Bookly\Lib\Cloud\API $cloud */
+/** @var Bookly\Lib\Cloud\API $cloud */
 $balance = $cloud->account->getBalance();
 if ( $balance <= 10 ) {
     $txt_class = 'text-danger';

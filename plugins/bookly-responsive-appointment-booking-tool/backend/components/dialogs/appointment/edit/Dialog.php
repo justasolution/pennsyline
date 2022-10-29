@@ -6,12 +6,14 @@ use Bookly\Lib\Entities\CustomerAppointment;
 
 /**
  * Class Dialog
+ *
  * @package Bookly\Backend\Components\Dialogs\Appointment\Edit
  */
 class Dialog extends Lib\Base\Component
 {
     /**
      * Render create/edit appointment dialog.
+     *
      * @param bool $show_wp_users
      */
     public static function render( $show_wp_users = true )
@@ -24,24 +26,27 @@ class Dialog extends Lib\Base\Component
             'module' => array( 'js/appointment.js' => array( 'bookly-backend-globals' ) ),
         ) );
 
+        self::enqueueData( array(
+            'extras_list',
+            'extras_multiply_nop',
+        ) );
+
         $statuses = array();
         foreach ( CustomerAppointment::getStatuses() as $status ) {
             $statuses[] = array(
                 'id' => $status,
                 'title' => CustomerAppointment::statusToString( $status ),
-                'icon' => CustomerAppointment::statusToIcon( $status )
+                'icon' => CustomerAppointment::statusToIcon( $status ),
             );
         }
 
         wp_localize_script( 'bookly-appointment.js', 'BooklyL10nAppDialog', Proxy\Shared::prepareL10n( array(
-            'datePicker' => Lib\Utils\DateTime::datePickerOptions(),
             'statuses' => $statuses,
             'freeStatuses' => Lib\Proxy\CustomStatuses::prepareFreeStatuses( array(
                 CustomerAppointment::STATUS_CANCELLED,
                 CustomerAppointment::STATUS_REJECTED,
                 CustomerAppointment::STATUS_WAITLISTED,
             ) ),
-            'addons' => array(),
             'send_notifications' => (int) get_user_meta( get_current_user_id(), 'bookly_appointment_form_send_notifications', true ),
             'appropriate_slots' => get_option( 'bookly_appointments_displayed_time_slots', 'all' ) === 'appropriate',
             'service_main' => get_option( 'bookly_appointments_main_value', 'all' ) === 'service',
@@ -75,6 +80,7 @@ class Dialog extends Lib\Base\Component
                 'send_if_new_or_status_changed' => __( 'Send if new or status changed', 'bookly' ),
                 'send_as_for_new' => __( 'Send as for new', 'bookly' ),
                 'send' => __( 'Send', 'bookly' ),
+                'view' => __( 'View', 'bookly' ),
                 'notices' => array(
                     'service_required' => __( 'Please select a service', 'bookly' ),
                     'provider_required' => __( 'Please select a provider', 'bookly' ),

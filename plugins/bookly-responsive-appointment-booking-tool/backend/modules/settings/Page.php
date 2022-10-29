@@ -98,6 +98,7 @@ class Page extends Lib\Base\Ajax
                     if ( in_array( $bookly_gen_time_slot_length, array( 2, 4, 5, 10, 12, 15, 20, 30, 45, 60, 90, 120, 180, 240, 360 ) ) ) {
                         update_option( 'bookly_gen_time_slot_length', $bookly_gen_time_slot_length );
                     }
+                    update_option( 'bookly_gen_delete_data_on_uninstall', self::parameter( 'bookly_gen_delete_data_on_uninstall' ) );
                     update_option( 'bookly_gen_service_duration_as_slot_length', (int) self::parameter( 'bookly_gen_service_duration_as_slot_length' ) );
                     update_option( 'bookly_gen_allow_staff_edit_profile', (int) self::parameter( 'bookly_gen_allow_staff_edit_profile' ) );
                     update_option( 'bookly_gen_link_assets_method', self::parameter( 'bookly_gen_link_assets_method' ) );
@@ -135,6 +136,9 @@ class Page extends Lib\Base\Ajax
                     $alert['success'][] = __( 'Settings saved.', 'bookly' );
                     break;
                 case 'appointments':
+                    update_option( 'bookly_l10n_ics_customer_template', self::parameter( 'bookly_l10n_ics_customer_template' ) );
+                    do_action( 'wpml_register_single_string', 'bookly', 'bookly_l10n_ics_customer_template', self::parameter( 'bookly_l10n_ics_customer_template' ) );
+                    update_option( 'bookly_ics_staff_template', self::parameter( 'bookly_ics_staff_template' ) );
                     update_option( 'bookly_appointment_default_status', self::parameter( 'bookly_appointment_default_status' ) );
                     $alert['success'][] = __( 'Settings saved.', 'bookly' );
                     break;

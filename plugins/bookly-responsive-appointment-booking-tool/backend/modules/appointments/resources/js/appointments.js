@@ -1,56 +1,57 @@
 jQuery(function($) {
     'use strict';
     let
-        $appointmentsList   = $('#bookly-appointments-list'),
-        $checkAllButton     = $('#bookly-check-all'),
-        $idFilter           = $('#bookly-filter-id'),
+        $appointmentsList = $('#bookly-appointments-list'),
+        $checkAllButton = $('#bookly-check-all'),
+        $idFilter = $('#bookly-filter-id'),
         $appointmentDateFilter = $('#bookly-filter-date'),
         $creationDateFilter = $('#bookly-filter-creation-date'),
-        $staffFilter        = $('#bookly-filter-staff'),
-        $customerFilter     = $('#bookly-filter-customer'),
-        $serviceFilter      = $('#bookly-filter-service'),
-        $statusFilter       = $('#bookly-filter-status'),
-        $locationFilter     = $('#bookly-filter-location'),
-        $newAppointmentBtn  = $('#bookly-new-appointment'),
-        $printDialog        = $('#bookly-print-dialog'),
-        $printSelectAll     = $('#bookly-js-print-select-all', $printDialog),
-        $printButton        = $(':submit',$printDialog),
-        $exportDialog       = $('#bookly-export-dialog'),
-        $exportSelectAll    = $('#bookly-js-export-select-all', $exportDialog),
-        $exportForm         = $('form', $exportDialog),
+        $staffFilter = $('#bookly-filter-staff'),
+        $customerFilter = $('#bookly-filter-customer'),
+        $serviceFilter = $('#bookly-filter-service'),
+        $statusFilter = $('#bookly-filter-status'),
+        $locationFilter = $('#bookly-filter-location'),
+        $newAppointmentBtn = $('#bookly-new-appointment'),
+        $printDialog = $('#bookly-print-dialog'),
+        $printSelectAll = $('#bookly-js-print-select-all', $printDialog),
+        $printButton = $(':submit', $printDialog),
+        $exportDialog = $('#bookly-export-dialog'),
+        $exportSelectAll = $('#bookly-js-export-select-all', $exportDialog),
+        $exportForm = $('form', $exportDialog),
         $showDeleteConfirmation = $('#bookly-js-show-confirm-deletion'),
-        isMobile            = false,
-        urlParts            = document.URL.split('#'),
-        columns             = [],
-        order               = [],
+        isMobile = false,
+        urlParts = document.URL.split('#'),
+        columns = [],
+        order = [],
         pickers = {
-            dateFormat:       'YYYY-MM-DD',
+            dateFormat: 'YYYY-MM-DD',
             appointmentDate: {
                 startDate: moment().startOf('month'),
-                endDate  : moment().endOf('month'),
+                endDate: moment().endOf('month'),
             },
             creationDate: {
                 startDate: moment(),
-                endDate  : moment().add(100, 'years'),
+                endDate: moment().add(100, 'years'),
             },
-        }
+        },
+        status_filtered = false
     ;
 
     try {
-        document.createEvent("TouchEvent");
+        document.createEvent('TouchEvent');
         isMobile = true;
-    } catch (e) {
+    } catch (e) {}
 
-    }
+    $statusFilter.booklyDropdown({onChange: function() { dt.ajax.reload(); }});
 
     $('.bookly-js-select').val(null);
 
     // Apply filter from anchor
     if (urlParts.length > 1) {
-        urlParts[1].split('&').forEach(function (part) {
+        urlParts[1].split('&').forEach(function(part) {
             var params = part.split('=');
-            if (params[0] == 'appointment-date') {
-                if (params['1'] == 'any') {
+            if (params[0] === 'appointment-date') {
+                if (params['1'] === 'any') {
                     $appointmentDateFilter
                         .data('date', 'any').find('span')
                         .html(BooklyL10n.dateRange.anyTime);
@@ -62,33 +63,50 @@ jQuery(function($) {
                         .find('span')
                         .html(pickers.appointmentDate.startDate.format(BooklyL10n.dateRange.format) + ' - ' + pickers.appointmentDate.endDate.format(BooklyL10n.dateRange.format));
                 }
-            } else if (params[0] == 'tasks') {
+            } else if (params[0] === 'tasks') {
                 $appointmentDateFilter
                     .data('date', 'null').find('span')
                     .html(BooklyL10n.tasks.title);
-            } else if (params[0] == 'created-date') {
+            } else if (params[0] === 'created-date') {
                 pickers.creationDate.startDate = moment(params['1'].substring(0, 10));
                 pickers.creationDate.endDate = moment(params['1'].substring(11));
                 $creationDateFilter
                     .data('date', pickers.creationDate.startDate.format(pickers.dateFormat) + ' - ' + pickers.creationDate.endDate.format(pickers.dateFormat))
                     .find('span')
                     .html(pickers.creationDate.startDate.format(BooklyL10n.dateRange.format) + ' - ' + pickers.creationDate.endDate.format(BooklyL10n.dateRange.format));
+            } else if (params[0] === 'status') {
+                status_filtered = true;
+                if (params[1] == 'any') {
+                    $statusFilter.booklyDropdown('selectAll');
+                } else {
+                    $statusFilter.booklyDropdown('setSelected', params[1].split(','));
+                }
             } else {
                 $('#bookly-filter-' + params[0]).val(params[1]);
             }
         });
     } else {
-        $.each(BooklyL10n.datatables.appointments.settings.filter, function (field, value) {
-            if (value != '') {
-                $('#bookly-filter-' + field).val(value);
-            }
-            // check if select has correct values
-            if ($('#bookly-filter-' + field).prop('type') == 'select-one') {
-                if ($('#bookly-filter-' + field + ' option[value="' + value + '"]').length == 0) {
-                    $('#bookly-filter-' + field).val(null);
+        $.each(BooklyL10n.datatables.appointments.settings.filter, function(field, value) {
+            if (field !== 'status') {
+                if (value != '') {
+                    $('#bookly-filter-' + field).val(value);
+                }
+                // check if select has correct values
+                if ($('#bookly-filter-' + field).prop('type') == 'select-one') {
+                    if ($('#bookly-filter-' + field + ' option[value="' + value + '"]').length == 0) {
+                        $('#bookly-filter-' + field).val(null);
+                    }
                 }
             }
         });
+    }
+
+    if (!status_filtered) {
+        if (BooklyL10n.datatables.appointments.settings.filter.status) {
+            $statusFilter.booklyDropdown('setSelected', BooklyL10n.datatables.appointments.settings.filter.status);
+        } else {
+            $statusFilter.booklyDropdown('selectAll');
+        }
     }
 
     Ladda.bind($('button[type=submit]', $exportForm).get(0), {timeout: 2000});
@@ -96,7 +114,7 @@ jQuery(function($) {
     /**
      * Init table columns.
      */
-    $.each(BooklyL10n.datatables.appointments.settings.columns, function (column, show) {
+    $.each(BooklyL10n.datatables.appointments.settings.columns, function(column, show) {
         if (show) {
             switch (column) {
                 case 'customer_full_name':
@@ -105,7 +123,7 @@ jQuery(function($) {
                 case 'customer_phone':
                     columns.push({
                         data: 'customer.phone',
-                        render: function (data, type, row, meta) {
+                        render: function(data, type, row, meta) {
                             if (isMobile) {
                                 return '<a href="tel:' + $.fn.dataTable.render.text().display(data) + '">' + $.fn.dataTable.render.text().display(data) + '</a>';
                             } else {
@@ -118,7 +136,7 @@ jQuery(function($) {
                     columns.push({data: 'customer.email', render: $.fn.dataTable.render.text()});
                     break;
                 case 'customer_address':
-                    columns.push({data: 'customer.address', render: $.fn.dataTable.render.text()});
+                    columns.push({data: 'customer.address', render: $.fn.dataTable.render.text(), orderable: false});
                     break;
                 case 'customer_birthday':
                     columns.push({data: 'customer.birthday', render: $.fn.dataTable.render.text()});
@@ -129,17 +147,16 @@ jQuery(function($) {
                 case 'service_title':
                     columns.push({
                         data: 'service.title',
-                        render: function ( data, type, row, meta ) {
+                        render: function(data, type, row, meta) {
                             data = $.fn.dataTable.render.text().display(data);
                             if (row.service.extras.length) {
                                 var extras = '<ul class="bookly-list list-dots">';
-                                $.each(row.service.extras, function (key, item) {
+                                $.each(row.service.extras, function(key, item) {
                                     extras += '<li><nobr>' + item.title + '</nobr></li>';
                                 });
                                 extras += '</ul>';
                                 return data + extras;
-                            }
-                            else {
+                            } else {
                                 return data;
                             }
                         }
@@ -148,7 +165,7 @@ jQuery(function($) {
                 case 'payment':
                     columns.push({
                         data: 'payment',
-                        render: function ( data, type, row, meta ) {
+                        render: function(data, type, row, meta) {
                             if (row.payment_id) {
                                 return '<a type="button" data-action="show-payment" class="text-primary" data-payment_id="' + row.payment_id + '">' + data + '</a>';
                             }
@@ -162,7 +179,7 @@ jQuery(function($) {
                 case 'attachments':
                     columns.push({
                         data: 'attachment',
-                        render: function (data, type, row, meta) {
+                        render: function(data, type, row, meta) {
                             if (data == '1') {
                                 return '<button type="button" class="btn btn-link" data-action="show-attachments" title="' + BooklyL10n.attachments + '"><i class="fas fa-fw fa-paperclip"></i></button>';
                             }
@@ -173,7 +190,7 @@ jQuery(function($) {
                 case 'rating':
                     columns.push({
                         data: 'rating',
-                        render: function ( data, type, row, meta ) {
+                        render: function(data, type, row, meta) {
                             if (row.rating_comment == null) {
                                 return row.rating;
                             } else {
@@ -201,7 +218,7 @@ jQuery(function($) {
                 case 'online_meeting':
                     columns.push({
                         data: 'online_meeting_provider',
-                        render: function ( data, type, row, meta ) {
+                        render: function(data, type, row, meta) {
                             switch (data) {
                                 case 'zoom':
                                     return '<a class="badge badge-primary" href="https://zoom.us/j/' + $.fn.dataTable.render.text().display(row.online_meeting_id) + '" target="_blank"><i class="fas fa-video fa-fw"></i> Zoom <i class="fas fa-external-link-alt fa-fw"></i></a>';
@@ -209,6 +226,8 @@ jQuery(function($) {
                                     return '<a class="badge badge-primary" href="' + $.fn.dataTable.render.text().display(row.online_meeting_id) + '" target="_blank"><i class="fas fa-video fa-fw"></i> Google Meet <i class="fas fa-external-link-alt fa-fw"></i></a>';
                                 case 'jitsi':
                                     return '<a class="badge badge-primary" href="' + $.fn.dataTable.render.text().display(row.online_meeting_id) + '" target="_blank"><i class="fas fa-video fa-fw"></i> Jitsi Meet <i class="fas fa-external-link-alt fa-fw"></i></a>';
+                                case 'bbb':
+                                    return '<a class="badge badge-primary" href="' + $.fn.dataTable.render.text().display(row.online_meeting_id) + '" target="_blank"><i class="fas fa-video fa-fw"></i> BigBlueButton <i class="fas fa-external-link-alt fa-fw"></i></a>';
                                 default:
                                     return '';
                             }
@@ -230,17 +249,19 @@ jQuery(function($) {
         }
     });
     columns.push({
+        data: null,
         responsivePriority: 1,
-        orderable : false,
-        width     : 120,
-        render    : function (data, type, row, meta) {
+        orderable: false,
+        width: 120,
+        render: function(data, type, row, meta) {
             return '<button type="button" class="btn btn-default" data-action="edit"><i class="far fa-fw fa-edit mr-lg-1"></i><span class="d-none d-lg-inline">' + BooklyL10n.edit + '…</span></button>';
         }
     });
     columns.push({
+        data: null,
         responsivePriority: 1,
-        orderable         : false,
-        render            : function (data, type, row, meta) {
+        orderable: false,
+        render: function(data, type, row, meta) {
             const cb_id = row.ca_id === null ? 'bookly-dt-a-' + row.id : 'bookly-dt-ca-' + row.ca_id;
             return '<div class="custom-control custom-checkbox">' +
                 '<input value="' + row.ca_id + '" data-appointment="' + row.id + '" id="' + cb_id + '" type="checkbox" class="custom-control-input">' +
@@ -251,8 +272,8 @@ jQuery(function($) {
 
     columns[0].responsivePriority = 0;
 
-    $.each(BooklyL10n.datatables.appointments.settings.order, function (_, value) {
-        const index = columns.findIndex(function (c) { return c.data === value.column; });
+    $.each(BooklyL10n.datatables.appointments.settings.order, function(_, value) {
+        const index = columns.findIndex(function(c) { return c.data === value.column; });
         if (index !== -1) {
             order.push([index, value.order]);
         }
@@ -261,25 +282,25 @@ jQuery(function($) {
      * Init DataTables.
      */
     var dt = $appointmentsList.DataTable({
-        order       : order,
-        info        : false,
-        searching   : false,
+        order: order,
+        info: false,
+        searching: false,
         lengthChange: false,
-        processing  : true,
-        responsive  : true,
-        pageLength  : 25,
-        pagingType  : 'numbers',
-        serverSide  : true,
-        drawCallback: function( settings ) {
-            $('[data-toggle="bookly-popover"]', $appointmentsList).on('click', function (e) {
+        processing: true,
+        responsive: true,
+        pageLength: 25,
+        pagingType: 'numbers',
+        serverSide: true,
+        drawCallback: function(settings) {
+            $('[data-toggle="bookly-popover"]', $appointmentsList).on('click', function(e) {
                 e.preventDefault();
             }).booklyPopover();
             dt.responsive.recalc();
         },
         ajax: {
-            url : ajaxurl,
+            url: ajaxurl,
             type: 'POST',
-            data: function (d) {
+            data: function(d) {
                 return $.extend({action: 'bookly_get_appointments', csrf_token: BooklyL10nGlobal.csrf_token}, {
                     filter: {
                         id: $idFilter.val(),
@@ -288,24 +309,24 @@ jQuery(function($) {
                         staff: $staffFilter.val(),
                         customer: $customerFilter.val(),
                         service: $serviceFilter.val(),
-                        status: $statusFilter.val(),
+                        status: $statusFilter.booklyDropdown('getSelected'),
                         location: $locationFilter.val()
                     }
                 }, d);
             }
         },
         columns: columns,
-        dom       : "<'row'<'col-sm-12'tr>><'row float-left mt-3'<'col-sm-12'p>>",
+        dom: "<'row'<'col-sm-12'tr>><'row float-left mt-3'<'col-sm-12'p>>",
         language: {
             zeroRecords: BooklyL10n.zeroRecords,
-            processing:  BooklyL10n.processing
+            processing: BooklyL10n.processing
         }
     });
 
     // Show ratings in expanded rows.
-    dt.on( 'responsive-display', function (e, datatable, row, showHide, update) {
+    dt.on('responsive-display', function(e, datatable, row, showHide, update) {
         if (showHide) {
-            $('[data-toggle="bookly-popover"]', row.child()).on('click', function (e) {
+            $('[data-toggle="bookly-popover"]', row.child()).on('click', function(e) {
                 e.preventDefault();
             }).booklyPopover();
         }
@@ -314,7 +335,7 @@ jQuery(function($) {
     /**
      * Add appointment.
      */
-    $newAppointmentBtn.on('click', function () {
+    $newAppointmentBtn.on('click', function() {
         BooklyAppointmentDialog.showDialog(
             null,
             null,
@@ -328,16 +349,16 @@ jQuery(function($) {
     /**
      * Export.
      */
-    $exportForm.on('submit', function () {
+    $exportForm.on('submit', function() {
         $('[name="filter"]', $exportDialog).val(JSON.stringify({
-            id          : $idFilter.val(),
-            date        : $appointmentDateFilter.data('date'),
+            id: $idFilter.val(),
+            date: $appointmentDateFilter.data('date'),
             created_date: $creationDateFilter.data('date'),
-            staff       : $staffFilter.val(),
-            customer    : $customerFilter.val(),
-            service     : $serviceFilter.val(),
-            status      : $statusFilter.val(),
-            location    : $locationFilter.val(),
+            staff: $staffFilter.val(),
+            customer: $customerFilter.val(),
+            service: $serviceFilter.val(),
+            status: $statusFilter.booklyDropdown('getSelected'),
+            location: $locationFilter.val(),
         }));
         $exportDialog.booklyModal('hide');
 
@@ -345,24 +366,24 @@ jQuery(function($) {
     });
 
     $exportSelectAll
-        .on('click', function () {
+        .on('click', function() {
             let checked = this.checked;
-            $('.bookly-js-columns input', $exportDialog).each(function () {
+            $('.bookly-js-columns input', $exportDialog).each(function() {
                 $(this).prop('checked', checked);
             });
         });
 
     $('.bookly-js-columns input', $exportDialog)
-        .on('change', function () {
+        .on('change', function() {
             $exportSelectAll.prop('checked', $('.bookly-js-columns input:checked', $exportDialog).length == $('.bookly-js-columns input', $exportDialog).length);
         });
 
     /**
      * Print.
      */
-    $printButton.on('click', function () {
+    $printButton.on('click', function() {
         let columns = [];
-        $('input:checked', $printDialog).each(function () {
+        $('input:checked', $printDialog).each(function() {
             columns.push(this.value);
         });
         let config = {
@@ -370,67 +391,67 @@ jQuery(function($) {
             exportOptions: {
                 columns: columns
             },
-            customize: function (win) {
+            customize: function(win) {
                 win.document.firstChild.style.backgroundColor = '#fff';
                 win.document.body.id = 'bookly-tbs';
-                $(win.document.body).find('table').removeClass('collapsed');
+                $(win.document.body).find('table').removeClass('bookly-collapsed');
             }
         };
         $.fn.dataTable.ext.buttons.print.action(null, dt, null, $.extend({}, $.fn.dataTable.ext.buttons.print, config));
     });
 
     $printSelectAll
-        .on('click', function () {
+        .on('click', function() {
             let checked = this.checked;
-            $('.bookly-js-columns input', $printDialog).each(function () {
+            $('.bookly-js-columns input', $printDialog).each(function() {
                 $(this).prop('checked', checked);
             });
         });
 
     $('.bookly-js-columns input', $printDialog)
-        .on('change', function () {
+        .on('change', function() {
             $printSelectAll.prop('checked', $('.bookly-js-columns input:checked', $printDialog).length == $('.bookly-js-columns input', $printDialog).length);
         });
 
     /**
      * Select all appointments.
      */
-    $checkAllButton.on('change', function () {
+    $checkAllButton.on('change', function() {
         $appointmentsList.find('tbody input:checkbox').prop('checked', this.checked);
     });
 
     $appointmentsList
         // On appointment select.
-        .on('change', 'tbody input:checkbox', function () {
+        .on('change', 'tbody input:checkbox', function() {
             $checkAllButton.prop('checked', $appointmentsList.find('tbody input:not(:checked)').length == 0);
         })
         // Show payment details
-        .on('click', '[data-action=show-payment]', function () {
+        .on('click', '[data-action=show-payment]', function() {
             BooklyPaymentDetailsDialog.showDialog({
                 payment_id: getDTRowData(this).payment_id,
-                done: function (event) {
+                done: function(event) {
                     dt.ajax.reload();
                 }
             });
         })
         // Edit appointment.
-        .on('click', '[data-action=edit]', function (e) {
+        .on('click', '[data-action=edit]', function(e) {
             e.preventDefault();
             BooklyAppointmentDialog.showDialog(
                 getDTRowData(this).id,
                 null,
                 null,
-                function (event) {
+                function(event) {
                     dt.ajax.reload();
                 }
             )
         });
 
-    $showDeleteConfirmation.on('click', function () {
+    $showDeleteConfirmation.on('click', function() {
         let data = [],
             $checkboxes = $appointmentsList.find('tbody input:checked');
 
-        $checkboxes.each(function () {
+        $checkboxes.each(function() {
             data.push({ca_id: this.value, id: $(this).data('appointment')});
         });
 
@@ -451,29 +472,38 @@ jQuery(function($) {
         pickerRanges1 = {},
         pickerRanges2 = {}
     ;
-    pickerRanges1[BooklyL10n.dateRange.anyTime]   = [moment(), moment().add(100, 'years')];
+    pickerRanges1[BooklyL10n.dateRange.anyTime] = [moment(), moment().add(100, 'years')];
     pickerRanges1[BooklyL10n.dateRange.yesterday] = [moment().subtract(1, 'days'), moment().subtract(1, 'days')];
-    pickerRanges1[BooklyL10n.dateRange.today]     = [moment(), moment()];
-    pickerRanges1[BooklyL10n.dateRange.tomorrow]  = [moment().add(1, 'days'), moment().add(1, 'days')];
-    pickerRanges1[BooklyL10n.dateRange.last_7]    = [moment().subtract(7, 'days'), moment()];
-    pickerRanges1[BooklyL10n.dateRange.last_30]   = [moment().subtract(30, 'days'), moment()];
+    pickerRanges1[BooklyL10n.dateRange.today] = [moment(), moment()];
+    pickerRanges1[BooklyL10n.dateRange.tomorrow] = [moment().add(1, 'days'), moment().add(1, 'days')];
+    pickerRanges1[BooklyL10n.dateRange.last_7] = [moment().subtract(7, 'days'), moment()];
+    pickerRanges1[BooklyL10n.dateRange.last_30] = [moment().subtract(30, 'days'), moment()];
+    pickerRanges1[BooklyL10n.dateRange.next_7] = [moment(), moment().add(7, 'days')];
+    pickerRanges1[BooklyL10n.dateRange.next_30] = [moment(), moment().add(30, 'days')];
     pickerRanges1[BooklyL10n.dateRange.thisMonth] = [moment().startOf('month'), moment().endOf('month')];
     pickerRanges1[BooklyL10n.dateRange.nextMonth] = [moment().add(1, 'month').startOf('month'), moment().add(1, 'month').endOf('month')];
-    $.extend(pickerRanges2, pickerRanges1);
+
+    pickerRanges2[BooklyL10n.dateRange.anyTime] = pickerRanges1[BooklyL10n.dateRange.anyTime];
+    pickerRanges2[BooklyL10n.dateRange.yesterday] = pickerRanges1[BooklyL10n.dateRange.yesterday];
+    pickerRanges2[BooklyL10n.dateRange.today] = pickerRanges1[BooklyL10n.dateRange.today];
+    pickerRanges2[BooklyL10n.dateRange.last_7] = pickerRanges1[BooklyL10n.dateRange.last_7];
+    pickerRanges2[BooklyL10n.dateRange.last_30] = pickerRanges1[BooklyL10n.dateRange.last_30];
+    pickerRanges2[BooklyL10n.dateRange.thisMonth] = pickerRanges1[BooklyL10n.dateRange.thisMonth];
+
     if (BooklyL10n.tasks.enabled) {
         pickerRanges1[BooklyL10n.tasks.title] = [moment(), moment().add(1, 'days')];
     }
 
     $appointmentDateFilter.daterangepicker(
         {
-            parentEl : $appointmentDateFilter.parent(),
+            parentEl: $appointmentDateFilter.parent(),
             startDate: pickers.appointmentDate.startDate,
-            endDate  : pickers.appointmentDate.endDate,
-            ranges   : pickerRanges1,
-            showDropdowns  : true,
+            endDate: pickers.appointmentDate.endDate,
+            ranges: pickerRanges1,
+            showDropdowns: true,
             linkedCalendars: false,
             autoUpdateInput: false,
-            locale: $.extend({},BooklyL10n.dateRange, BooklyL10n.datePicker)
+            locale: $.extend({}, BooklyL10n.dateRange, BooklyL10n.datePicker)
         },
         function(start, end, label) {
             switch (label) {
@@ -500,11 +530,11 @@ jQuery(function($) {
 
     $creationDateFilter.daterangepicker(
         {
-            parentEl : $creationDateFilter.parent(),
+            parentEl: $creationDateFilter.parent(),
             startDate: pickers.creationDate.startDate,
-            endDate  : pickers.creationDate.endDate,
+            endDate: pickers.creationDate.endDate,
             ranges: pickerRanges2,
-            showDropdowns  : true,
+            showDropdowns: true,
             linkedCalendars: false,
             autoUpdateInput: false,
             locale: $.extend(BooklyL10n.dateRange, BooklyL10n.datePicker)
@@ -536,16 +566,18 @@ jQuery(function($) {
      * On filters change.
      */
     $('.bookly-js-select')
-        .select2({
+        .booklySelect2({
             width: '100%',
             theme: 'bootstrap4',
             dropdownParent: '#bookly-tbs',
             allowClear: true,
             placeholder: '',
             language: {
-                noResults: function() { return BooklyL10n.no_result_found; }
+                noResults: function() {
+                    return BooklyL10n.no_result_found;
+                }
             },
-            matcher: function (params, data) {
+            matcher: function(params, data) {
                 const term = $.trim(params.term).toLowerCase();
                 if (term === '' || data.text.toLowerCase().indexOf(term) !== -1) {
                     return data;
@@ -554,7 +586,7 @@ jQuery(function($) {
                 let result = null;
                 const search = $(data.element).data('search');
                 search &&
-                search.find(function (text) {
+                search.find(function(text) {
                     if (result === null && text.toLowerCase().indexOf(term) !== -1) {
                         result = data;
                     }
@@ -564,22 +596,27 @@ jQuery(function($) {
             }
         });
 
+
     $('.bookly-js-select-ajax')
-        .select2({
+        .booklySelect2({
             width: '100%',
             theme: 'bootstrap4',
             dropdownParent: '#bookly-tbs',
             allowClear: true,
             placeholder: '',
-            language  : {
-                noResults: function () { return BooklyL10n.no_result_found; },
-                searching: function () { return BooklyL10n.searching; }
+            language: {
+                noResults: function() {
+                    return BooklyL10n.no_result_found;
+                },
+                searching: function() {
+                    return BooklyL10n.searching;
+                }
             },
             ajax: {
                 url: ajaxurl,
                 dataType: 'json',
                 delay: 250,
-                data: function (params) {
+                data: function(params) {
                     params.page = params.page || 1;
                     return {
                         action: this.action === undefined ? $(this).data('ajax--action') : this.action,
@@ -599,12 +636,12 @@ jQuery(function($) {
         return dt.row($el).data();
     }
 
-    $idFilter.on('keyup', function () { dt.ajax.reload(); });
-    $appointmentDateFilter.on('apply.daterangepicker', function () { dt.ajax.reload(); });
-    $creationDateFilter.on('apply.daterangepicker', function () { dt.ajax.reload(); });
-    $staffFilter.on('change', function () { dt.ajax.reload(); });
-    $customerFilter.on('change', function () { dt.ajax.reload(); });
-    $serviceFilter.on('change', function () { dt.ajax.reload(); });
+    $idFilter.on('keyup', function() { dt.ajax.reload(); });
+    $appointmentDateFilter.on('apply.daterangepicker', function() { dt.ajax.reload(); });
+    $creationDateFilter.on('apply.daterangepicker', function() { dt.ajax.reload(); });
+    $staffFilter.on('change', function() { dt.ajax.reload(); });
+    $customerFilter.on('change', function() { dt.ajax.reload(); });
+    $serviceFilter.on('change', function() { dt.ajax.reload(); });
     $statusFilter.on('change', function () { dt.ajax.reload(); });
-    $locationFilter.on('change', function () { dt.ajax.reload(); });
+    $locationFilter.on('change', function() { dt.ajax.reload(); });
 });

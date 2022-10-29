@@ -9,6 +9,7 @@ use Bookly\Frontend\Modules\Booking\Proxy;
 
 /**
  * Class Local
+ *
  * @package BooklyPro\Frontend\Modules\Booking\ProxyProviders
  */
 class Local extends Proxy\Pro
@@ -21,7 +22,7 @@ class Local extends Proxy\Pro
         if ( get_option( 'bookly_app_show_time_zone_switcher' ) ) {
             $time_zone = BooklyLib\Slots\DatePoint::$client_timezone;
             if ( $time_zone[0] == '+' || $time_zone[0] == '-' ) {
-                $parts     = explode( ':', $time_zone );
+                $parts = explode( ':', $time_zone );
                 $time_zone = sprintf(
                     'UTC%s%d%s',
                     $time_zone[0],
@@ -92,7 +93,7 @@ class Local extends Proxy\Pro
                         if ( ! isset( $counter[ $gateway_name ] ) ) {
                             $counter[ $gateway_name ] = 0;
                         }
-                        $counter[ $gateway_name ] ++;
+                        $counter[ $gateway_name ]++;
                     }
                 }
             }
@@ -131,21 +132,17 @@ class Local extends Proxy\Pro
     /**
      * @inheritDoc
      */
-    public static function renderDoneStep( $content, $state )
+    public static function prepareHtmlContentDoneStep( $userData, $codes )
     {
-        if ( $state !== 'appointments_limit_reached' ) {
-            if ( get_option( 'bookly_app_show_appointment_qr' ) ) {
-                $userData = new BooklyLib\UserBookingData( self::parameter( 'form_id' ) );
-                $ics = BooklyLib\Utils\Ics\Feed::createFromBookingData( $userData );
-                if ( count( $ics->getEvents() ) == 1 ) {
-                    $content .= '<div class="bookly-js-qr bookly-image-box bookly-loading">
-                    <img src="' . add_query_arg( array(
-                        'cht' => 'qr',
-                        'chs' => '298x298',
-                        'chl' => urlencode( $ics->render() )
-                    ), 'https://chart.googleapis.com/chart' ) . '"></div>';
-                }
-            }
+        $content = '';
+        if ( get_option( 'bookly_app_show_appointment_qr' ) && count( $userData->cart->getItems() ) === 1 ) {
+            $ics = BooklyLib\Utils\Ics\Feed::createFromBookingData( $userData );
+            $content .= '<div class="bookly-js-qr bookly-image-box bookly-loading">
+                <img src="' . add_query_arg( array(
+                    'cht' => 'qr',
+                    'chs' => '298x298',
+                    'chl' => urlencode( $ics->render() ),
+                ), 'https://chart.googleapis.com/chart' ) . '"></div>';
         }
 
         return $content;

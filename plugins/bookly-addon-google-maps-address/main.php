@@ -3,7 +3,7 @@
 Plugin Name: Bookly Google Maps Address (Add-on)
 Plugin URI: https://www.booking-wp-plugin.com/?utm_source=bookly_admin&utm_medium=plugins_page&utm_campaign=plugins_page
 Description: Bookly Google Maps Address add-on allows to automatically fill out the address field in the booking form using Google Maps autocomplete service.
-Version: 1.6
+Version: 1.7
 Author: Bookly
 Author URI: https://www.booking-wp-plugin.com/?utm_source=bookly_admin&utm_medium=plugins_page&utm_campaign=plugins_page
 Text Domain: bookly

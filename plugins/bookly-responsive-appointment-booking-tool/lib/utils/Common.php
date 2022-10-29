@@ -7,7 +7,7 @@ use Bookly\Lib;
  * Class Common
  * @package Bookly\Lib\Utils
  */
-abstract class Common
+abstract class Common extends Lib\Base\Cache
 {
     /** @var string CSRF token */
     private static $csrf;
@@ -154,14 +154,60 @@ abstract class Common
      */
     public static function postsHaveShortCode( $short_code )
     {
-        /** @global \WP_Query $wp_query */
-        global $wp_query;
+        $key = __FUNCTION__ . '-' . $short_code;
+        if ( ! self::hasInCache( $key ) ) {
+            /** @global \WP_Query $wp_query */
+            global $wp_query;
+            $result = false;
+            if ( $wp_query && $wp_query->posts !== null ) {
+                foreach ( $wp_query->posts as $post ) {
+                    if ( has_shortcode( $post->post_content, $short_code ) || ( function_exists( 'parse_blocks' ) && self::hasBooklyShortCode( parse_blocks( $post->post_content ), $short_code ) ) ) {
+                        $result = true;
+                        break;
+                    }
+                    // Fusion builder
+                    if ( strpos( $post->post_content, '[fusion' ) !== false ) {
+                        $content = apply_filters( 'fusion_add_globals', $post->post_content, $post->guid );
+                        if ( has_shortcode( apply_filters( 'fusion_add_globals', $post->post_content, $post->guid ), $short_code ) ) {
+                            $result = true;
+                            break;
+                        }
 
-        if ( $wp_query && $wp_query->posts !== null ) {
-            foreach ( $wp_query->posts as $post ) {
-                if ( has_shortcode( $post->post_content, $short_code ) ) {
-                    return true;
+                        try {
+                            if ( preg_match_all( '/' . get_shortcode_regex( array( 'fusion_code' ) ) . '/s', $content, $matches ) ) {
+                                foreach ( $matches[5] as $code ) {
+                                    if ( has_shortcode( base64_decode( $code ), $short_code ) ) {
+                                        $result = true;
+                                        break 2;
+                                    }
+                                }
+                            }
+                        } catch ( \Exception $e ) {
+                        }
+                    }
                 }
+            }
+
+            self::putInCache( $key, $result );
+        }
+
+        return self::getFromCache( $key );
+    }
+
+    /**
+     * @param array $blocks
+     * @param string $short_code
+     * @return bool
+     */
+    private static function hasBooklyShortCode( $blocks, $short_code )
+    {
+        foreach ( $blocks as $block ) {
+            if ( isset( $block['innerBlocks'] ) && ! empty( $block['innerBlocks'] ) ) {
+                return self::hasBooklyShortCode( $block['innerBlocks'], $short_code );
+            }
+
+            if ( $block['blockName'] === 'core/block' && ! empty( $block['attrs']['ref'] ) && has_shortcode( get_post( $block['attrs']['ref'] )->post_content, $short_code ) ) {
+                return true;
             }
         }
 
@@ -474,9 +520,16 @@ abstract class Common
      */
     public static function getFilesystem()
     {
+        global $wp_filesystem;
+
+        require_once ABSPATH . 'wp-admin/includes/file.php';
+
+        if ( ! $wp_filesystem ) {
+            WP_Filesystem();
+        }
+
         // Emulate WP_Filesystem to avoid FS_METHOD and filters overriding "direct" type
         if ( ! class_exists( 'WP_Filesystem_Direct', false ) ) {
-            require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
             require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-direct.php';
         }
 
@@ -728,5 +781,31 @@ abstract class Common
         } else {
             $wpdb->update( $wpdb->usermeta, compact( 'meta_value' ), compact( 'meta_key' ) );
         }
+    }
+
+    /**
+     * @param $attachment_id
+     * @param $size
+     * @return string
+     */
+    public static function getAttachmentUrl( $attachment_id, $size = 'full' )
+    {
+        if ( $attachment_id && $img = wp_get_attachment_image_src( $attachment_id, $size ) ) {
+            return $img[0];
+        }
+
+        return '';
+    }
+
+    /**
+     * @param string $url
+     * @param string $alt
+     * @return string
+     */
+    public static function getImageTag( $url, $alt )
+    {
+        return $url
+            ? sprintf( '<img src="%s" alt="%s" />', esc_attr( $url ), esc_attr( $alt ) )
+            : '';
     }
 }

@@ -21,26 +21,24 @@ class Page extends BooklyLib\Base\Component
 
         $staff_collection = BooklyLib\Entities\Staff::query()->select( 'id, full_name' )->indexBy( 'id' )->fetchArray();
 
-        $datatables = BooklyLib\Utils\Tables::getSettings( 'locations' );
+        $datatables = BooklyLib\Utils\Tables::getSettings( BooklyLib\Utils\Tables::LOCATIONS );
 
         wp_localize_script( 'bookly-locations.js', 'BooklyL10n', array(
             'csrfToken'   => BooklyLib\Utils\Common::getCsrfToken(),
-            'edit'        => esc_attr__( 'Edit', 'bookly' ),
-            'areYouSure'  => esc_attr__( 'Are you sure?', 'bookly' ),
+            'edit' => esc_attr__( 'Edit', 'bookly' ),
+            'areYouSure' => esc_attr__( 'Are you sure?', 'bookly' ),
             'zeroRecords' => esc_attr__( 'No locations found.', 'bookly' ),
-            'processing'  => esc_attr__( 'Processing...', 'bookly' ),
-            'reorder'     => esc_attr__( 'Reorder', 'bookly' ),
-            'staff'       => array(
-                'allSelected'     => esc_attr__( 'All staff', 'bookly' ),
+            'processing' => esc_attr__( 'Processing...', 'bookly' ),
+            'reorder' => esc_attr__( 'Reorder', 'bookly' ),
+            'staff' => array(
+                'allSelected' => esc_attr__( 'All staff', 'bookly' ),
                 'nothingSelected' => esc_attr__( 'No staff selected', 'bookly' ),
-                'collection'      => $staff_collection,
+                'collection' => $staff_collection,
             ),
-            'datatables'  => $datatables,
+            'datatables' => $datatables,
         ) );
 
-        $staff_dropdown_data = BooklyLib\Proxy\Pro::getStaffDataForDropDown();
-
-        self::renderTemplate( 'index', compact( 'staff_dropdown_data', 'datatables' ) );
+        self::renderTemplate( 'index', array( 'staff_dropdown_data' => BooklyLib\Proxy\Pro::getStaffDataForDropDown(), 'datatable' => $datatables[ BooklyLib\Utils\Tables::LOCATIONS ] ) );
     }
 
 }

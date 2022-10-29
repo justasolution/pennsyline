@@ -25,6 +25,7 @@ export default function stepComplete(params) {
                         .on('load', function () {$qc.removeClass('bookly-loading')});
                     scrollTo($container, params.form_id);
                     $('.bookly-js-start-over', $container).on('click', function (e) {
+                        e.stopPropagation();
                         e.preventDefault();
                         laddaStart(this);
                         stepService({form_id: params.form_id, reset_form: true, new_chain: true});

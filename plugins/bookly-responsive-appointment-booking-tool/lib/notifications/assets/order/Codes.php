@@ -6,6 +6,7 @@ use Bookly\Lib\DataHolders\Booking\Order;
 use Bookly\Lib\Config;
 use Bookly\Lib\Entities;
 use Bookly\Lib\Notifications\Assets\Base;
+use Bookly\Lib\Slots\DatePoint;
 use Bookly\Lib\Utils;
 
 /**
@@ -34,6 +35,7 @@ class Codes extends Base\Codes
     public $total_price;
     public $total_tax;
     public $coupon;
+    public $gift_card;
     // Invoices
     public $invoice_date;
     public $invoice_due_date;
@@ -104,7 +106,7 @@ class Codes extends Base\Codes
      *
      * @param string $datetime
      * @param Item $item
-     * @return mixed
+     * @return string
      */
     public function applyItemTz( $datetime, Item $item )
     {
@@ -113,9 +115,9 @@ class Codes extends Base\Codes
             $time_zone_offset = $item->getCA()->getTimeZoneOffset();
 
             if ( $time_zone !== null ) {
-                $datetime = date_create( $datetime . ' ' . Config::getWPTimeZone() );
+                $datetime = DatePoint::fromStrInTz( $datetime, Config::getWPTimeZone() );
 
-                return date_format( date_timestamp_set( date_create( $time_zone ), $datetime->getTimestamp() ), 'Y-m-d H:i:s' );
+                return date_format( date_timestamp_set( date_create( $time_zone ), $datetime->value()->getTimestamp() ), 'Y-m-d H:i:s' );
             } else if ( $time_zone_offset !== null ) {
                 return Utils\DateTime::applyTimeZoneOffset( $datetime, $time_zone_offset );
             }

@@ -10,6 +10,7 @@ use Bookly\Backend\Modules\Settings\Proxy;
 <form method="post" action="<?php echo esc_url( add_query_arg( 'tab', 'general' ) ) ?>">
     <div class="card-body">
     <?php
+        Selects::renderSingle( 'bookly_gen_delete_data_on_uninstall', __( 'Bookly data upon deleting Bookly items', 'bookly' ), __( 'If you choose Delete, all data associated with Bookly will be permanently deleted when deleting Bookly items (Bookly, Bookly Pro, or any Bookly add-on)', 'bookly' ), array( array( 0, __( 'Don\'t delete', 'bookly' ) ), array( 1, __( 'Delete', 'bookly' ) ), ) );
         Selects::renderSingle( 'bookly_gen_time_slot_length', __( 'Time slot length', 'bookly' ), __( 'Select a time interval which will be used as a step when building all time slots in the system.', 'bookly' ), $bookly_gen_time_slot_length );
         Selects::renderSingle( 'bookly_gen_service_duration_as_slot_length', __( 'Set slot length as service duration', 'bookly' ), __( 'Enable this option to make slot length equal to service duration at the Time step of booking form.', 'bookly' ) );
         Proxy\Pro::renderMinimumTimeRequirement();

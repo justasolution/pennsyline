@@ -3,7 +3,6 @@ namespace BooklyFiles\Backend\Modules\Settings\ProxyProviders;
 
 use Bookly\Backend\Modules\Settings\Proxy;
 use Bookly\Backend\Components\Settings\Menu;
-use Bookly\Lib\Utils\Common;
 
 /**
  * Class Shared
@@ -32,8 +31,8 @@ class Shared extends Proxy\Shared
      */
     public static function saveSettings( array $alert, $tab, array $params )
     {
-        if ( $tab == 'files' ) {
-            $options = array( 'bookly_files_directory' );
+        if ( $tab === 'files' ) {
+            $options = array( 'bookly_files_directory', 'bookly_files_extensions' );
             foreach ( $options as $option_name ) {
                 if ( array_key_exists( $option_name, $params ) ) {
                     update_option( $option_name, $params[ $option_name ] );

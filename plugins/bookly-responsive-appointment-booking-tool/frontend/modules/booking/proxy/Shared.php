@@ -8,7 +8,7 @@ use Bookly\Lib;
  *
  * @package Bookly\Frontend\Modules\Booking\Proxy
  *
- * @method static array  booklyFormOptions( array $options ) Modify Bookly form options.
+ * @method static array  booklyFormOptions( array $bookly_options ) Modify Bookly form options.
  * @method static array  stepOptions( array $options, string $step, Lib\UserBookingData $userData ) Modify options for given step.
  * @method static array  enqueueBookingScripts( array $depends ) Enqueue scripts for booking form. @params $depends as array of registered script handles this script depends on.
  * @method static array  prepareCartItemInfoText( array $data, Lib\CartItem $cart_item, Lib\UserBookingData $userData ) Prepare array for replacing in Cart items.

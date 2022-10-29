@@ -194,7 +194,7 @@ class Local extends Proxy\Pro
     {
         global $wp_roles;
         $all_roles = $wp_roles->roles;
-        $roles = apply_filters('editable_roles', $all_roles);
+        $roles = apply_filters( 'editable_roles', $all_roles );
 
         self::renderTemplate( 'user_permissions', compact( 'roles' ) );
     }

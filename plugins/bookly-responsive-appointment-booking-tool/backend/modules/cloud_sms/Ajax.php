@@ -232,7 +232,7 @@ class Ajax extends Lib\Base\Ajax
                 ->order( $sort_by['dir'] == 'desc' ? Lib\Query::ORDER_DESCENDING : Lib\Query::ORDER_ASCENDING );
         }
 
-        $total = $query->count();
+        $filtered = $total = Lib\Entities\MailingList::query()->count();
 
         if ( $filter['search'] != '' ) {
             $fields = array();
@@ -250,10 +250,9 @@ class Ajax extends Lib\Base\Ajax
             }
             if ( ! empty( $search_columns ) ) {
                 $query->whereRaw( implode( ' OR ', $search_columns ), array_fill( 0, count( $search_columns ), $wpdb->esc_like( $filter['search'] ) ) );
+                $filtered = Lib\Entities\MailingList::query()->whereRaw( implode( ' OR ', $search_columns ), array_fill( 0, count( $search_columns ), $wpdb->esc_like( $filter['search'] ) ) )->count();
             }
         }
-
-        $filtered = $query->count();
 
         if ( ! empty( $limits ) ) {
             $query->limit( $limits['length'] )->offset( $limits['start'] );
@@ -341,10 +340,16 @@ class Ajax extends Lib\Base\Ajax
     /**
      * Delete mailing lists
      */
-    public function deleteMailingLists()
+    public static function deleteMailingLists()
     {
         $ids = array_map( 'intval', self::parameter( 'ids', array() ) );
         Lib\Entities\MailingList::query()->delete()->whereIn( 'id', $ids )->execute();
+
+        Lib\Entities\MailingQueue::query()
+            ->delete()
+            ->whereIn( 'campaign_id', $ids )
+            ->where( 'sent', '0' )
+            ->execute();
 
         wp_send_json_success();
     }
@@ -352,7 +357,7 @@ class Ajax extends Lib\Base\Ajax
     /**
      * Delete recipients from mailing list
      */
-    public function deleteMailingRecipients()
+    public static function deleteMailingRecipients()
     {
         $ids = array_map( 'intval', self::parameter( 'ids', array() ) );
         Lib\Entities\MailingListRecipient::query()->delete()->whereIn( 'id', $ids )->execute();
@@ -427,7 +432,7 @@ class Ajax extends Lib\Base\Ajax
     /**
      * Delete mailing lists
      */
-    public function deleteCampaigns()
+    public static function deleteCampaigns()
     {
         $ids = array_map( 'intval', self::parameter( 'ids', array() ) );
         Lib\Entities\MailingCampaign::query()->delete()->whereIn( 'id', $ids )->execute();

@@ -70,6 +70,8 @@ class UserBookingData
     // Step payment
     /** @var string */
     protected $coupon_code;
+    /** @var string */
+    protected $gift_code;
     /** @var bool */
     protected $deposit_full = 0;
     /** @var float */
@@ -131,6 +133,7 @@ class UserBookingData
         'info_fields',
         // Step payment
         'coupon_code',
+        'gift_code',
         'tips',
         'deposit_full',
         // Cart item keys being edited
@@ -143,6 +146,8 @@ class UserBookingData
     private $customer;
     /** @var \BooklyCoupons\Lib\Entities\Coupon|null */
     private $coupon;
+    /** @var \BooklyGiftCards\Lib\Entities\GiftCard|null */
+    private $gift_card;
     /** @var integer|null */
     private $payment_id;
     /** @var string */
@@ -174,12 +179,14 @@ class UserBookingData
         if ( $current_user && $current_user->ID ) {
             $customer = new Entities\Customer();
             if ( $customer->loadBy( array( 'wp_user_id' => $current_user->ID ) ) ) {
-                $date = explode( '-', $customer->getBirthday() );
-                $birthday = array(
-                    'year'  => $date[0],
-                    'month' => isset( $date[1] ) ? (int) $date[1] : 0,
-                    'day'   => isset( $date[2] ) ? (int) $date[2] : 0,
-                );
+                if ( $customer->getBirthday() ) {
+                    $date = explode( '-', $customer->getBirthday() );
+                    $this->setBirthday( array(
+                        'year' => $date[0],
+                        'month' => isset( $date[1] ) ? (int) $date[1] : 0,
+                        'day' => isset( $date[2] ) ? (int) $date[2] : 0,
+                    ) );
+                }
                 $this
                     ->setFullName( $customer->getFullName() )
                     ->setFirstName( $customer->getFirstName() )
@@ -187,7 +194,6 @@ class UserBookingData
                     ->setEmail( $customer->getEmail() )
                     ->setEmailConfirm( $customer->getEmail() )
                     ->setPhone( $customer->getPhone() )
-                    ->setBirthday( $birthday )
                     ->setCountry( $customer->getCountry() )
                     ->setState( $customer->getState() )
                     ->setPostcode( $customer->getPostcode() )
@@ -241,7 +247,7 @@ class UserBookingData
         // Set up default parameters.
         $this
             ->setDateFrom( Slots\DatePoint::now()
-                ->modify( Proxy\Pro::getMinimumTimePriorBooking() )
+                ->modify( Proxy\Pro::getMinimumTimePriorBooking( null ) )
                 ->toClientTz()
                 ->format( 'Y-m-d' )
             )
@@ -632,7 +638,7 @@ class UserBookingData
             setcookie( 'bookly-cst-last-name',          $customer->getLastName(), $expire );
             setcookie( 'bookly-cst-phone',              $customer->getPhone(), $expire );
             setcookie( 'bookly-cst-email',              $customer->getEmail(), $expire );
-            setcookie( 'bookly-cst-birthday',           $customer->getBirthday(), $expire );
+            setcookie( 'bookly-cst-birthday',           $customer->getBirthday() ?: '', $expire );
             setcookie( 'bookly-cst-country',            $customer->getCountry(), $expire );
             setcookie( 'bookly-cst-state',              $customer->getState(), $expire );
             setcookie( 'bookly-cst-postcode',           $customer->getPostcode(), $expire );
@@ -672,11 +678,11 @@ class UserBookingData
      * @return Entities\Customer
      */
     public function getCustomer()
-    {   $this->customer = null;
+    {
         if ( $this->customer === null ) {
             // Find or create customer.
             $this->customer = new Entities\Customer();
-            $user_id = 0;
+            $user_id = get_current_user_id();
             if ( $user_id > 0 ) {
                 // Try to find customer by WP user ID.
                 $this->customer->loadBy( array( 'wp_user_id' => $user_id ) );
@@ -748,6 +754,25 @@ class UserBookingData
     }
 
     /**
+     * Get gift card.
+     *
+     * @return \BooklyGiftCards\Lib\Entities\GiftCard|false
+     */
+    public function getGiftCard()
+    {
+        if ( $this->gift_card === null ) {
+            $gift = Proxy\GiftCards::findOneByCode( $this->getGiftCode() );
+            if ( $gift ) {
+                $this->gift_card = $gift;
+            } else {
+                $this->gift_card = false;
+            }
+        }
+
+        return $this->gift_card;
+    }
+
+    /**
      * Delete coupon.
      *
      * @return $this
@@ -806,13 +831,16 @@ class UserBookingData
     }
 
     /**
-     * Get and clear ( PayPal, 2Checkout, PayU Latam, Payson ) transaction status.
+     * Get and clear ( PayPal, 2Checkout, PayU Latam, Payson, ... ) transaction status.
      *
+     * @param string $gateway
      * @return array|false
      */
-    public function extractPaymentStatus()
+    public function extractPaymentStatus( $gateway )
     {
-        if ( $status = Session::getFormVar( $this->form_id, 'payment' ) ) {
+        $status = Session::getFormVar( $this->form_id, 'payment' );
+
+        if ( isset( $status['gateway'] ) && ( $gateway === null || $status['gateway'] === $gateway ) ) {
             Session::destroyFormVar( $this->form_id, 'payment' );
 
             return $status;
@@ -1461,6 +1489,29 @@ class UserBookingData
     }
 
     /**
+     * Gets gift_code
+     *
+     * @return string
+     */
+    public function getGiftCode()
+    {
+        return $this->gift_code;
+    }
+
+    /**
+     * Sets gift_code
+     *
+     * @param string $gift_code
+     * @return $this
+     */
+    public function setGiftCode( $gift_code )
+    {
+        $this->gift_code = $gift_code;
+
+        return $this;
+    }
+
+    /**
      * Gets deposit_full
      *
      * @return string
@@ -1595,7 +1646,7 @@ class UserBookingData
     }
 
     /**
-     * @return $bool
+     * @return bool
      */
     public function getVerificationCodeSent()
     {

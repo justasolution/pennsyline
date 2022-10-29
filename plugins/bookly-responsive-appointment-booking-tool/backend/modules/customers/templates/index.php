@@ -4,7 +4,7 @@ use Bookly\Backend\Components\Controls\Inputs;
 use Bookly\Backend\Components\Dialogs;
 use Bookly\Backend\Components\Support;
 use Bookly\Backend\Modules\Customers\Proxy;
-/** @var array $datatables */
+/** @var array $datatable */
 ?>
 <div id="bookly-tbs" class="wrap">
     <div class="form-row align-items-center mb-3">
@@ -33,9 +33,9 @@ use Bookly\Backend\Modules\Customers\Proxy;
                     <table id="bookly-customers-list" class="table table-striped w-100">
                         <thead>
                         <tr>
-                            <?php foreach ( $datatables['customers']['settings']['columns'] as $column => $show ) : ?>
+                            <?php foreach ( $datatable['settings']['columns'] as $column => $show ) : ?>
                                 <?php if ( $show ) : ?>
-                                    <th><?php echo esc_html( $datatables['customers']['titles'][ $column ] ) ?></th>
+                                    <th><?php echo esc_html( $datatable['titles'][ $column ] ) ?></th>
                                 <?php endif ?>
                             <?php endforeach ?>
                             <th></th>
@@ -64,7 +64,7 @@ use Bookly\Backend\Modules\Customers\Proxy;
         </div>
 
         <?php Proxy\Pro::renderImportDialog() ?>
-        <?php Proxy\Pro::renderExportDialog( $datatables['customers']['settings'], $datatables['customers']['titles'] ) ?>
+        <?php Proxy\Pro::renderExportDialog( $datatable['settings'], $datatable['titles'] ) ?>
         <?php Dialogs\Customer\Delete\Dialog::render() ?>
 
         <div id="bookly-merge-dialog" class="bookly-modal bookly-fade" tabindex=-1 role="dialog">

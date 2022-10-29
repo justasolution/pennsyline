@@ -1,5 +1,6 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 use Bookly\Lib\Utils\Common;
+
 ?>
 <div id="bookly-tinymce-appointment-popup" style="display: none">
     <form id="bookly-appointment-list-shortcode-form">
@@ -13,55 +14,61 @@ use Bookly\Lib\Utils\Common;
             <tr>
                 <th class="bookly-title-col"><?php esc_html_e( 'Columns', 'bookly' ) ?></th>
                 <td>
-                    <label><input type="checkbox" data-column="category" /><?php esc_html_e( 'Category', 'bookly' ) ?></label>
+                    <label><input type="checkbox" data-column="category"/><?php esc_html_e( 'Category', 'bookly' ) ?></label>
                 </td>
             </tr>
             <tr>
                 <td></td>
                 <td>
-                    <label><input type="checkbox" data-column="service" /><?php esc_html_e( 'Service', 'bookly' ) ?></label>
+                    <label><input type="checkbox" data-column="service"/><?php esc_html_e( 'Service', 'bookly' ) ?></label>
                 </td>
             </tr>
             <tr>
                 <td></td>
                 <td>
-                    <label><input type="checkbox" data-column="staff" /><?php esc_html_e( 'Staff', 'bookly' ) ?></label>
+                    <label><input type="checkbox" data-column="staff"/><?php esc_html_e( 'Staff', 'bookly' ) ?></label>
                 </td>
             </tr>
             <tr>
                 <td></td>
                 <td>
-                    <label><input type="checkbox" data-column="date" /><?php esc_html_e( 'Date', 'bookly' ) ?></label>
+                    <label><input type="checkbox" data-column="date"/><?php esc_html_e( 'Date', 'bookly' ) ?></label>
                 </td>
             </tr>
             <tr>
                 <td></td>
                 <td>
-                    <label><input type="checkbox" data-column="time" /><?php esc_html_e( 'Time', 'bookly' ) ?></label>
+                    <label><input type="checkbox" data-column="time"/><?php esc_html_e( 'Time', 'bookly' ) ?></label>
                 </td>
             </tr>
             <tr>
                 <td></td>
                 <td>
-                    <label><input type="checkbox" data-column="price" /><?php esc_html_e( 'Price', 'bookly' ) ?></label>
+                    <label><input type="checkbox" data-column="time_zone"/><?php esc_html_e( 'Timezone', 'bookly' ) ?></label>
                 </td>
             </tr>
             <tr>
                 <td></td>
                 <td>
-                    <label><input type="checkbox" data-column="online_meeting" /><?php esc_html_e( 'Online meeting', 'bookly' ) ?></label>
+                    <label><input type="checkbox" data-column="price"/><?php esc_html_e( 'Price', 'bookly' ) ?></label>
                 </td>
             </tr>
             <tr>
                 <td></td>
                 <td>
-                    <label><input type="checkbox" data-column="status" /><?php esc_html_e( 'Status', 'bookly' ) ?></label>
+                    <label><input type="checkbox" data-column="online_meeting"/><?php esc_html_e( 'Online meeting', 'bookly' ) ?></label>
                 </td>
             </tr>
             <tr>
                 <td></td>
                 <td>
-                    <label><input type="checkbox" data-column="cancel" /><?php esc_html_e( 'Cancel', 'bookly' ) ?></label>
+                    <label><input type="checkbox" data-column="status"/><?php esc_html_e( 'Status', 'bookly' ) ?></label>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <label><input type="checkbox" data-column="cancel"/><?php esc_html_e( 'Cancel', 'bookly' ) ?></label>
                 </td>
             </tr>
             <tr>
@@ -88,24 +95,30 @@ use Bookly\Lib\Utils\Common;
 </div>
 
 <style type="text/css">
-    #bookly-short-code-form table td { padding: 5px; vertical-align: 0; }
-    #bookly-short-code-form table th.bookly-title-col { width: 80px; }
+    #bookly-short-code-form table td {
+        padding: 5px;
+        vertical-align: 0;
+    }
+
+    #bookly-short-code-form table th.bookly-title-col {
+        width: 80px;
+    }
 </style>
 
 <script type="text/javascript">
     jQuery(function ($) {
         var $form = $('#bookly-appointment-list-shortcode-form'),
             $add_button_appointment = $('#add-ap-appointment'),
-            $insert                 = $('button.bookly-js-insert-shortcode', $form);
+            $insert = $('button.bookly-js-insert-shortcode', $form);
 
         $add_button_appointment.on('click', function () {
             window.parent.tb_show(<?php echo json_encode( __( 'Add Bookly appointments list', 'bookly' ) ) ?>, this.href);
-            window.setTimeout(function(){
+            window.setTimeout(function () {
                 $('#TB_window').css({
                     'overflow-x': 'auto',
                     'overflow-y': 'hidden'
                 });
-            },100);
+            }, 100);
         });
 
         $insert.on('click', function (e) {
@@ -118,7 +131,7 @@ use Bookly\Lib\Utils\Common;
             var columns = $('[data-column]:checked');
             if (columns.length) {
                 column = [];
-                $.each(columns, function() {
+                $.each(columns, function () {
                     column.push($(this).data('column'));
                 });
                 shortcode += ' columns="' + column.join(',') + '"';
@@ -127,7 +140,7 @@ use Bookly\Lib\Utils\Common;
             var custom_fields = $('[data-custom_field]:checked');
             if (custom_fields.length) {
                 column = [];
-                $.each(custom_fields, function() {
+                $.each(custom_fields, function () {
                     column.push($(this).data('custom_field'));
                 });
                 shortcode += ' custom_fields="' + column.join(',') + '"';
