@@ -12,7 +12,7 @@ use BooklyPro\Lib\Google;
 class Local extends BooklyLib\Proxy\AdvancedGoogleCalendar
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public static function createApiCalendar( Google\Client $client )
     {
@@ -20,7 +20,7 @@ class Local extends BooklyLib\Proxy\AdvancedGoogleCalendar
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public static function reSync()
     {

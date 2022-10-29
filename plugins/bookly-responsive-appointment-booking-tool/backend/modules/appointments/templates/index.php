@@ -81,11 +81,19 @@ use Bookly\Lib\Config;
                 <?php Proxy\Locations::renderFilter() ?>
                 <div class="col-md-1">
                     <div class="form-group">
-                        <select class="form-control bookly-js-select" id="bookly-filter-status" data-placeholder="<?php esc_attr_e( 'Status', 'bookly' ) ?>">
+                        <ul id="bookly-filter-status"
+                            data-txt-select-all="<?php esc_attr_e( 'All statuses', 'bookly' ) ?>"
+                            data-txt-all-selected="<?php esc_attr_e( 'All statuses', 'bookly' ) ?>"
+                            data-txt-nothing-selected="<?php esc_attr_e( 'No status selected', 'bookly' ) ?>"
+                            data-hide-icon
+                            data-align="right"
+                        >
                             <?php foreach ( CustomerAppointment::getStatuses() as $status ): ?>
-                                <option value="<?php echo esc_attr( $status ) ?>"><?php echo esc_html( CustomerAppointment::statusToString( $status ) ) ?></option>
+                                <li data-value="<?php echo esc_attr( $status ) ?>">
+                                    <?php echo esc_html( CustomerAppointment::statusToString( $status ) ) ?>
+                                </li>
                             <?php endforeach ?>
-                        </select>
+                        </ul>
                     </div>
                 </div>
             </div>

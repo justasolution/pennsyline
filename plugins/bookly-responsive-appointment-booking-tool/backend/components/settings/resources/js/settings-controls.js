@@ -11,7 +11,7 @@ jQuery(function ($) {
         }).end()
         .find('a').on('click', function (e) {
             e.preventDefault();
-            const text = $($(this).attr('href')).html();
+            const text = $(this).prev('span').html();
             const $temp = $('<input/>');
             const $button = $(this);
             const $copied = $button.next('small');

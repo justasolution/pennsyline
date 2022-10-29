@@ -7,6 +7,7 @@ use BooklyLocations\Backend\Modules\Locations\Page;
 
 /**
  * Class Local
+ *
  * @package BooklyLocations\Lib\ProxyProviders
  */
 abstract class Local extends BooklyLib\Proxy\Locations
@@ -22,7 +23,7 @@ abstract class Local extends BooklyLib\Proxy\Locations
             __( 'Locations', 'bookly' ),
             BooklyLib\Utils\Common::getRequiredCapability(),
             Page::pageSlug(),
-            function () { Page::render(); }
+            function() { Page::render(); }
         );
     }
 
@@ -89,17 +90,19 @@ abstract class Local extends BooklyLib\Proxy\Locations
     {
         $key = 'staff_location_' . $staff_id . '_' . $location_id;
         if ( ! self::hasInCache( $key ) ) {
-            $custom_services = Lib\Entities\StaffLocation::query()
-                ->select( 'custom_services' )
-                ->where( 'staff_id', $staff_id )
-                ->where( 'location_id', $location_id )
-                ->limit( 1 )
-                ->fetchRow();
-
-            if ( $custom_services && $custom_services['custom_services'] ) {
-                self::putInCache( $key, $location_id );
-            } else {
+            if ( ! self::servicesPerLocationAllowed() ) {
                 self::putInCache( $key, 0 );
+            } else {
+                $custom_services = Lib\Entities\StaffLocation::query()
+                    ->where( 'staff_id', $staff_id )
+                    ->where( 'location_id', $location_id )
+                    ->fetchVar( 'custom_services' );
+
+                if ( $custom_services ) {
+                    self::putInCache( $key, $location_id );
+                } else {
+                    self::putInCache( $key, 0 );
+                }
             }
         }
 
@@ -111,48 +114,79 @@ abstract class Local extends BooklyLib\Proxy\Locations
      */
     public static function prepareStaffScheduleLocationId( $location_id, $staff_id )
     {
-        $custom_services = Lib\Entities\StaffLocation::query()
-            ->select( 'custom_schedule' )
-            ->where( 'staff_id', $staff_id )
-            ->where( 'location_id', $location_id )
-            ->limit( 1 )
-            ->fetchRow();
+        $key = 'staff_location_' . $staff_id . '_' . $location_id;
+        if ( ! self::hasInCache( $key ) ) {
+            if ( ! self::servicesPerLocationAllowed() ) {
+                self::putInCache( $key, 0 );
+            } else {
+                $custom_schedule = Lib\Entities\StaffLocation::query()
+                    ->where( 'staff_id', $staff_id )
+                    ->where( 'location_id', $location_id )
+                    ->fetchVar( 'custom_schedule' );
 
-        if ( $custom_services && $custom_services['custom_schedule'] ) {
-            return $location_id;
+                if ( $custom_schedule ) {
+                    self::putInCache( $key, $location_id );
+                } else {
+                    self::putInCache( $key, 0 );
+                }
+            }
         }
 
-        return false;
+        return self::getFromCache( $key );
     }
 
     /**
      * @inheritDoc
      */
-    public static function prepareStaffScheduleQuery( $query, $location_id, $staff_id )
+    public static function prepareStaffSpecialDaysLocationId( $location_id, $staff_id )
     {
-        $query->where( 'location_id', $location_id );
-        if ( ! $query->count() ) {
-            foreach ( array( 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday' ) as $day_index => $week_day ) {
-                $item = new BooklyLib\Entities\StaffScheduleItem();
-                $item
-                    ->setStaffId( $staff_id )
-                    ->setLocationId( $location_id )
-                    ->setDayIndex( $day_index + 1 )
-                    ->setStartTime( null )
-                    ->setEndTime( null )
-                    ->save();
+        if ( ! self::servicesPerLocationAllowed() ) {
+            return 0;
+        }
+        $key = 'staff_special_days_' . $staff_id . '_' . $location_id;
+        if ( ! self::hasInCache( $key ) ) {
+            if ( ! self::servicesPerLocationAllowed() ) {
+                self::putInCache( $key, 0 );
+            } else {
+                $custom_special_days = Lib\Entities\StaffLocation::query()
+                    ->where( 'staff_id', $staff_id )
+                    ->where( 'location_id', $location_id )
+                    ->fetchVar( 'custom_special_days' );
+
+                if ( $custom_special_days ) {
+                    self::putInCache( $key, $location_id );
+                } else {
+                    self::putInCache( $key, 0 );
+                }
             }
         }
 
-        return $query;
+        return self::getFromCache( $key );
     }
 
-    /** @inheritDoc */
+    /**
+     * @inheritDoc
+     */
     public static function prepareAppointmentsQuery( $query )
     {
         $query
-            ->addSelect( 'l.name AS location')
+            ->addSelect( 'l.name AS location' )
             ->leftJoin( 'Location', 'l', 'l.id = a.location_id', '\BooklyLocations\Lib\Entities' );
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public static function prepareStaffServiceQuery( $query )
+    {
+        if ( self::servicesPerLocationAllowed() ) {
+            $query
+                ->addSelect( 'sl.location_id' )
+                ->leftJoin( 'StaffLocation', 'sl', 'sl.staff_id = ss.staff_id', '\BooklyLocations\Lib\Entities' )
+                ->whereRaw( '( ss.location_id IS NULL AND sl.custom_services = 0 ) OR ( ss.location_id IS NOT NULL AND sl.custom_services = 1 AND sl.location_id = ss.location_id )', array() );
+        }
+
+        return $query;
     }
 
     /**

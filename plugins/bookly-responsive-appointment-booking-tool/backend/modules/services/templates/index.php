@@ -3,6 +3,7 @@ use Bookly\Backend\Components\Controls;
 use Bookly\Backend\Components\Support;
 use Bookly\Backend\Modules\Services\Proxy;
 use Bookly\Backend\Components\Dialogs;
+
 /**
  * @var array $categories
  * @var array $datatables
@@ -18,10 +19,10 @@ use Bookly\Backend\Components\Dialogs;
         <div class="card-body">
             <div class="form-row justify-content-end">
                 <div class="col-12 col-sm-auto">
-                    <?php Controls\Buttons::renderDefault( null, 'w-100 mb-3', __( 'Services order', 'bookly' ), array( 'data-toggle' => 'bookly-modal', 'data-target' => '#bookly-service-order-modal' ), true ) ?>
+                    <?php Controls\Buttons::renderDefault( null, 'w-100 mb-3', __( 'Services order', 'bookly' ), array( 'data-toggle' => 'bookly-modal', 'data-target' => '#bookly-service-order-modal', 'disabled' => 'disabled' ), true ) ?>
                 </div>
                 <div class="col-12 col-sm-auto">
-                    <?php Controls\Buttons::renderDefault( null, 'w-100 mb-3', __( 'Categories', 'bookly' ), array( 'data-toggle' => 'bookly-modal', 'data-target' => '#bookly-service-categories-modal' ), true ) ?>
+                    <?php Controls\Buttons::renderDefault( null, 'w-100 mb-3', __( 'Categories', 'bookly' ), array( 'data-toggle' => 'bookly-modal', 'data-target' => '#bookly-service-categories-modal', 'disabled' => 'disabled' ), true ) ?>
                 </div>
                 <div class="col-auto">
                     <?php Controls\Buttons::renderAdd( null, 'w-100 mb-3', __( 'Add service', 'bookly' ), array( 'data-toggle' => 'bookly-modal', 'data-target' => '#bookly-create-service-modal' ) ) ?>
@@ -84,7 +85,7 @@ use Bookly\Backend\Components\Dialogs;
                 <div class="modal-body">
                     <p><?php esc_html_e( 'You are about to change a service setting which is also configured separately for each staff member. Do you want to update it in staff settings too?', 'bookly' ) ?></p>
                     <div class="custom-control custom-checkbox">
-                        <input class="custom-control-input" id="bookly-remember-my-choice" type="checkbox" />
+                        <input class="custom-control-input" id="bookly-remember-my-choice" type="checkbox"/>
                         <label class="custom-control-label" for="bookly-remember-my-choice"><?php esc_html_e( 'Remember my choice', 'bookly' ) ?></label>
                     </div>
                 </div>

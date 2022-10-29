@@ -151,6 +151,10 @@ class SMS extends Base
                             $item['status'] = __( 'Country out of service', 'bookly' );
                             $item['charge'] = '';
                             break;
+                        case 5:
+                            $item['status'] = __( 'Blocked', 'bookly' );
+                            $item['charge'] = '';
+                            break;
                         case 11:
                             $item['status'] = __( 'Sending', 'bookly' );
                             $item['charge'] = '$' . $item['charge'];
@@ -215,9 +219,6 @@ class SMS extends Base
             $response['pending'] = null;
             foreach ( $response['list'] as &$item ) {
                 $item['date'] = Utils\DateTime::formatDate( Utils\DateTime::UTCToWPTimeZone( $item['date'] ) );
-                if ( $item['name'] == '' ) {
-                    $item['name'] = '<i>' . __( 'Default', 'bookly' ) . '</i>';
-                }
                 $item['status_date'] = $item['status_date'] ? Utils\DateTime::formatDate( Utils\DateTime::UTCToWPTimeZone( $item['status_date'] ) ) : '';
                 switch ( $item['status'] ) {
                     case 0:

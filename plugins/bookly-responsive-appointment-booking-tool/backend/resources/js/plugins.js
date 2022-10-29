@@ -49,7 +49,14 @@ jQuery(function ($) {
                     }
                 }
             }
-        );
+        )
+        .on('click', '[id^="deactivate-bookly-"]', function (e) {
+            if (BooklyPluginsPageL10n.deleteData == '1') {
+                if (!confirm(BooklyPluginsPageL10n.deletingInfo)) {
+                    e.preventDefault();
+                }
+            }
+        });
 
     function processUpdatesForPro() {
         if (BooklyPluginsPageL10n.addons.length > 0) {

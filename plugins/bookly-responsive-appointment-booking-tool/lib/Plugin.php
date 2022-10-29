@@ -26,6 +26,8 @@ abstract class Plugin extends Base\Plugin
      */
     public static function init()
     {
+        Backend\Modules\Settings\Ajax::init();
+
         // Init ajax.
         Backend\Components\Cloud\Account\Ajax::init();
         Backend\Components\Cloud\Recharge\Ajax::init();
@@ -67,12 +69,11 @@ abstract class Plugin extends Base\Plugin
         Backend\Modules\CloudSms\Ajax::init();
         Backend\Modules\CloudZapier\Ajax::init();
         Backend\Modules\Customers\Ajax::init();
-        Backend\Modules\Debug\Ajax::init();
+        Backend\Modules\Diagnostics\Ajax::init();
         Backend\Modules\News\Ajax::init();
         Backend\Modules\Notifications\Ajax::init();
         Backend\Modules\Payments\Ajax::init();
         Backend\Modules\Services\Ajax::init();
-        Backend\Modules\Settings\Ajax::init();
         Backend\Modules\Setup\Ajax::init();
         Backend\Modules\Shop\Ajax::init();
         Backend\Modules\Staff\Ajax::init();
@@ -80,6 +81,7 @@ abstract class Plugin extends Base\Plugin
         Frontend\Modules\Booking\Proxy\Invoices::init();
         Frontend\Modules\Stripe\Ajax::init();
         Frontend\Modules\Zapier\Ajax::init();
+        Frontend\Modules\Cron\Ajax::init();
 
         add_action( 'elementor/widgets/widgets_registered', function ( $widgets_manager ) {
             Backend\Components\Elementor\Widgets\BooklyForm\Widget::register( $widgets_manager );

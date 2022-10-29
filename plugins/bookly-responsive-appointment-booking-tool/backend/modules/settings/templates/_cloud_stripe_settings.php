@@ -7,18 +7,18 @@ use Bookly\Backend\Components\Controls\Elements;
 use Bookly\Lib\Entities\Payment;
 use Bookly\Backend\Modules\Appearance\Codes;
 ?>
-<div class="card bookly-collapse" data-slug="cloud_stripe">
+<div class="card bookly-collapse-with-arrow" data-slug="cloud_stripe">
     <div class="card-header d-flex align-items-center">
         <?php Elements::renderReorder() ?>
-        <a href="#bookly_pmt_cloud_stripe" class="ml-2" role="button" data-toggle="collapse">
+        <a href="#bookly_pmt_cloud_stripe" class="ml-2" role="button" data-toggle="bookly-collapse">
             Stripe Cloud
         </a>
         <img class="ml-auto" src="<?php echo plugins_url( 'frontend/modules/stripe/resources/images/stripe.png', Plugin::getMainFile() ) ?>"/>
     </div>
-    <div id="bookly_pmt_cloud_stripe" class="collapse show">
+    <div id="bookly_pmt_cloud_stripe" class="bookly-collapse bookly-show">
         <div class="card-body">
-            <?php Selects::renderSingle( 'bookly_cloud_stripe_enabled' ) ?>
-            <div class="bookly-cloud_stripe">
+            <?php Selects::renderSingle( 'bookly_cloud_stripe_enabled', null, null, array(), array( 'data-expand' => '1' ) ) ?>
+            <div class="bookly_cloud_stripe_enabled-expander">
                 <?php Components\Settings\Payments::renderPriceCorrection( Payment::TYPE_CLOUD_STRIPE ) ?>
                 <?php
                 $values = array( array( '0', __( 'OFF', 'bookly' ) ) );
@@ -27,8 +27,8 @@ use Bookly\Backend\Modules\Appearance\Codes;
                 }
                 Selects::renderSingle( 'bookly_cloud_stripe_timeout', __( 'Time interval of payment gateway', 'bookly' ), __( 'This setting determines the time limit after which the payment made via the payment gateway is considered to be incomplete. This functionality requires a scheduled cron job.', 'bookly' ), $values );
                 ?>
-                <?php Selects::renderSingle( 'bookly_cloud_stripe_custom_metadata', __( 'Add custom metadata to payment', 'bookly' ), __( 'You can specify up to 50 keys, with key names up to 40 characters long and values up to 500 characters long. Key names can contain only letters, digits and spaces.', 'bookly' ) ) ?>
-                <div class="form-group border-left mt-3 ml-4 pl-3" id="bookly-cloud-stripe-metadata-wrap">
+                <?php Selects::renderSingle( 'bookly_cloud_stripe_custom_metadata', __( 'Add custom metadata to payment', 'bookly' ), __( 'You can specify up to 50 keys, with key names up to 40 characters long and values up to 500 characters long. Key names can contain only letters, digits and spaces.', 'bookly' ), array(), array( 'data-expand' => '1' ) ) ?>
+                <div class="form-group border-left mt-3 ml-4 pl-3 bookly_cloud_stripe_custom_metadata-expander">
                     <div id="bookly-cloud-stripe-metadata"></div>
                     <?php Components\Controls\Buttons::renderAdd( 'bookly-cloud-stripe-add-metadata', null, __( 'Add metadata', 'bookly' ) ) ?>
                     <div class="mt-3">

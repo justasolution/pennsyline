@@ -1,7 +1,6 @@
 <?php
 namespace Bookly\Lib\Notifications\Base;
 
-use Bookly\Lib\Config;
 use Bookly\Lib\Entities\Notification;
 
 /**

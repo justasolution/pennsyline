@@ -45,7 +45,7 @@ Proxy\DepositPayments::renderPaymentStep( $userData );
     </div>
 
     <?php if ( isset( $payment_options['cloud_stripe'] ) ) : ?>
-        <?php self::renderTemplate( '_cloud_stripe_form', compact( 'form_id', 'page_url' ) ) ?>
+        <?php \Bookly\Frontend\Components\Payment\Gateway::renderForm( $form_id, \Bookly\Lib\Entities\Payment::TYPE_CLOUD_STRIPE, $page_url ) ?>
     <?php endif ?>
 
     <?php Proxy\Shared::renderPaymentForms( $form_id, $page_url ) ?>

@@ -20,7 +20,7 @@ use Bookly\Backend\Components\Controls\Elements;
         </div>
     </div>
 </form>
-<div class="collapse" id="bookly-staff-template">
+<div class="bookly-collapse" id="bookly-staff-template">
     <li class="form-group">
         <div class="row align-items-center">
             <input type="hidden" name="id" value="{{id}}"/>

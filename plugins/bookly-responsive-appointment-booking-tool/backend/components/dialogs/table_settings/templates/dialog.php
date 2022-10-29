@@ -12,8 +12,8 @@ use Bookly\Backend\Components\Controls\Elements;
             <div class="modal-body">
                 <div class="row font-weight-bold mb-2">
                     <div class="col-1"></div>
-                    <div class="col-9"><?php esc_html_e( 'Column', 'bookly' ) ?></div>
-                    <div class="col-2"><?php esc_html_e( 'Show', 'bookly' ) ?></div>
+                    <div class="col"><?php esc_html_e( 'Column', 'bookly' ) ?></div>
+                    <div class="col text-right mr-2"><?php esc_html_e( 'Show', 'bookly' ) ?></div>
                 </div>
                 <ul class="list-unstyled bookly-js-table-columns"></ul>
             </div>

@@ -36,6 +36,28 @@ class Ajax extends Lib\Base\Ajax
     }
 
     /**
+     * Cancel campaign.
+     */
+    public static function cancelCampaign()
+    {
+        $campaign_id = self::parameter( 'id' );
+
+        Lib\Entities\MailingQueue::query()
+            ->delete()
+            ->where( 'campaign_id', $campaign_id )
+            ->where( 'sent', '0' )
+            ->execute();
+
+        Lib\Entities\MailingCampaign::query()
+            ->update()
+            ->set( 'state', Lib\Entities\MailingCampaign::STATE_CANCELED )
+            ->where( 'id', $campaign_id )
+            ->execute();
+
+        wp_send_json_success();
+    }
+
+    /**
      * Get campaign data
      */
     public static function getCampaignData()

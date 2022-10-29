@@ -2,8 +2,8 @@
 use Bookly\Backend\Components\Controls\Buttons;
 use Bookly\Backend\Components\Controls\Inputs;
 use Bookly\Backend\Components\Dialogs;
+use Bookly\Backend\Components\Notices;
 use Bookly\Backend\Modules\Notifications;
-use Bookly\Lib\Utils\Common;
 use Bookly\Lib\Config;
 
 /** @var array $datatables */
@@ -50,19 +50,6 @@ use Bookly\Lib\Config;
         <?php Buttons::renderDelete( 'bookly-js-delete-notifications' ) ?>
     </div>
 </div>
-<?php if ( Config::proActive() ) : ?>
-    <div class="alert alert-info">
-        <div class="row">
-            <div class="col-md-12">
-                <?php if ( is_multisite() ) : ?>
-                    <p><?php printf( __( 'To send scheduled notifications please refer to <a href="%1$s">Bookly Multisite</a> add-on <a href="%2$s">message</a>.', 'bookly' ), Common::prepareUrlReferrers( 'https://codecanyon.net/item/bookly-multisite-addon/13903524?ref=ladela', 'cron_setup' ), network_admin_url( 'admin.php?page=bookly-multisite-network' ) ) ?></p>
-                <?php else : ?>
-                    <p><?php esc_html_e( 'To send scheduled notifications please execute the following command hourly with your cron:', 'bookly' ) ?></p>
-                    <code>wget -q -O - <?php echo site_url( 'wp-cron.php' ) ?></code>
-                <?php endif ?>
-            </div>
-        </div>
-    </div>
-<?php endif ?>
+<?php Config::proActive() && Notices\Cron\Notice::render() ?>
 <?php $self::renderTemplate( '_test_email_modal' ) ?>
 

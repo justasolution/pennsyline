@@ -1,16 +1,16 @@
 jQuery(function($) {
 
     let
-        $list            = $('#bookly-custom-statuses'),
-        $checkAllButton  = $('#bookly-custom-statuses-check-all'),
-        $modal           = $('#bookly-custom-statuses-modal'),
-        $newStatusTitle  = $('#bookly-custom-statuses-new-title'),
+        $list = $('#bookly-custom-statuses'),
+        $checkAllButton = $('#bookly-custom-statuses-check-all'),
+        $modal = $('#bookly-custom-statuses-modal'),
+        $newStatusTitle = $('#bookly-custom-statuses-new-title'),
         $editStatusTitle = $('#bookly-custom-statuses-edit-title'),
-        $statusName      = $('#bookly-custom-statuses-name'),
-        $statusBusy      = $('#bookly-custom-statuses-busy'),
-        $saveButton      = $('#bookly-custom-statuses-save'),
-        $deleteButton    = $('#bookly-custom-statuses-delete'),
-        $defaultStatus   = $('#bookly_gen_default_appointment_status'),
+        $statusName = $('#bookly-custom-statuses-name'),
+        $statusBusy = $('#bookly-custom-statuses-busy'),
+        $saveButton = $('#bookly-custom-statuses-save'),
+        $deleteButton = $('#bookly-custom-statuses-delete'),
+        $defaultStatus = $('#bookly_gen_default_appointment_status'),
         columns,
         row
     ;
@@ -23,7 +23,8 @@ jQuery(function($) {
             data: 'position'
         },
         {
-            render: function (data, type, row, meta) {
+            data: null,
+            render: function(data, type, row, meta) {
                 var $i = $('<i class="fas fa-fw fa-bars text-muted bookly-cursor-move bookly-js-draghandle" />');
                 $i.attr('title', BooklyCustomStatusesL10n.reorder);
 
@@ -33,12 +34,12 @@ jQuery(function($) {
         }
     ];
 
-    $.each(BooklyCustomStatusesL10n.datatables.custom_statuses.settings.columns, function (column, show) {
+    $.each(BooklyCustomStatusesL10n.datatables.custom_statuses.settings.columns, function(column, show) {
         if (show) {
             switch (column) {
                 case 'busy':
                     columns.push({
-                        data: column, render: function (data, type, row, meta) {
+                        data: column, render: function(data, type, row, meta) {
                             return data === '1' ? BooklyCustomStatusesL10n.busy : BooklyCustomStatusesL10n.free;
                         }
                     });
@@ -50,8 +51,9 @@ jQuery(function($) {
         }
     });
     columns.push({
+        data: null,
         responsivePriority: 1,
-        render: function (data, type, row, meta) {
+        render: function(data, type, row, meta) {
             var $btn = $('<button type="button" class="btn btn-default" data-action="edit" />');
             $btn.html('<span class="d-none d-lg-inline">' + BooklyCustomStatusesL10n.edit + '…</span>');
             $btn.prepend('<i class="far fa-fw fa-edit mr-lg-1"/> ');
@@ -60,8 +62,9 @@ jQuery(function($) {
         }
     });
     columns.push({
+        data: null,
         responsivePriority: 1,
-        render: function (data, type, row, meta) {
+        render: function(data, type, row, meta) {
             return '<div class="custom-control custom-checkbox">' +
                 '<input value="' + row.id + '" id="bookly-cs-' + row.id + '" type="checkbox" class="custom-control-input">' +
                 '<label for="bookly-cs-' + row.id + '" class="custom-control-label"></label>' +
@@ -92,58 +95,58 @@ jQuery(function($) {
         },
         order: [0, 'asc'],
         columnDefs: [
-            { visible: false, targets: 0 },
-            { orderable: false, targets: '_all' }
+            {visible: false, targets: 0},
+            {orderable: false, targets: '_all'}
         ],
         columns: columns,
         language: {
             zeroRecords: BooklyCustomStatusesL10n.zeroRecords,
-            processing:  BooklyCustomStatusesL10n.processing
+            processing: BooklyCustomStatusesL10n.processing
         }
-    }).on( 'row-reordered', function ( e, diff, edit ) {
+    }).on('row-reordered', function(e, diff, edit) {
         let positions = [];
-        dt.data().each(function (item) {
+        dt.data().each(function(item) {
             positions.push({position: parseInt(item.position), id: item.id});
         });
         $.ajax({
-            url  : ajaxurl,
-            type : 'POST',
-            data : {
+            url: ajaxurl,
+            type: 'POST',
+            data: {
                 action: 'bookly_custom_statuses_update_statuses_position',
                 csrf_token: BooklyL10nGlobal.csrf_token,
-                positions: (positions.sort(function (a, b) {
+                positions: (positions.sort(function(a, b) {
                     return a.position - b.position
                 }))
-                .map(function (value) {
-                    return value.id;
-                })
+                    .map(function(value) {
+                        return value.id;
+                    })
             },
             dataType: 'json',
-            success: function (response) {}
+            success: function(response) {}
         });
     });
 
     /**
      * Fix datatables layout.
      */
-    $('a[href="#bookly_settings_custom_statuses"]').on('shown.bs.tab', function (e) {
+    $('a[href="#bookly_settings_custom_statuses"]').on('shown.bs.tab', function(e) {
         dt.columns.adjust().responsive.recalc();
     });
 
     /**
      * Select all statuses.
      */
-    $checkAllButton.on('change', function () {
+    $checkAllButton.on('change', function() {
         $list.find('tbody input:checkbox').prop('checked', this.checked);
     });
 
     $list
         // On status select.
-        .on('change', 'tbody input:checkbox', function () {
+        .on('change', 'tbody input:checkbox', function() {
             $checkAllButton.prop('checked', $list.find('tbody input:not(:checked)').length === 0);
         })
         // Edit status.
-        .on('click', '[data-action=edit]', function () {
+        .on('click', '[data-action=edit]', function() {
             row = dt.row($(this).closest('td'));
             $modal.booklyModal('show');
         });
@@ -152,7 +155,7 @@ jQuery(function($) {
      * On show modal.
      */
     $modal
-        .on('show.bs.modal', function (e) {
+        .on('show.bs.modal', function(e) {
             var data;
             if (row) {
                 data = row.data();
@@ -171,12 +174,12 @@ jQuery(function($) {
     /**
      * Save status.
      */
-    $saveButton.on('click', function (e) {
+    $saveButton.on('click', function(e) {
         e.preventDefault();
         var $form = $(this).closest('form');
         var data = $form.serializeArray();
         data.push({name: 'action', value: 'bookly_custom_statuses_save_status'});
-        if (row){
+        if (row) {
             data.push({name: 'id', value: row.data().id});
         }
         var ladda = Ladda.create(this, {timeout: 2000});
@@ -194,7 +197,7 @@ jQuery(function($) {
                         dt.row.add(response.data).draw();
                     }
                     $modal.booklyModal('hide');
-                    if ($defaultStatus.length > 0 && $('option[value=' + response.data.slug + ']',$defaultStatus).length === 0) {
+                    if ($defaultStatus.length > 0 && $('option[value=' + response.data.slug + ']', $defaultStatus).length === 0) {
                         $defaultStatus.append($('<option/>', {value: response.data.slug, text: response.data.name}));
                     }
                 } else {
@@ -209,13 +212,13 @@ jQuery(function($) {
     /**
      * Delete statuses.
      */
-    $deleteButton.on('click', function () {
+    $deleteButton.on('click', function() {
         if (confirm(BooklyCustomStatusesL10n.areYouSure)) {
             let ladda = Ladda.create(this),
                 ids = [];
             ladda.start();
 
-            $('tbody input:checked', $list).each(function () {
+            $('tbody input:checked', $list).each(function() {
                 ids.push(this.value);
             });
 
@@ -231,7 +234,7 @@ jQuery(function($) {
                 success: function(response) {
                     ladda.stop();
                     if (response.success) {
-                        $('tbody input:checked', $list).closest('td').each(function () {
+                        $('tbody input:checked', $list).closest('td').each(function() {
                             if ($defaultStatus.length > 0) {
                                 let slug = dt.row(this).data().slug
                                 $('option[value="' + slug + '"]', $defaultStatus).remove();

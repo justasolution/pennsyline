@@ -22,16 +22,17 @@ abstract class API extends BooklyLib\API
         $url = add_query_arg(
             array(
                 'purchase_code' => $purchase_code,
-                'site_url'      => get_site_url( $blog_id ),
+                'site_url' => get_site_url( $blog_id ),
             ),
             self::API_URL . '/1.0/plugins/' . $plugin_class::getSlug() . '/purchase-code'
         );
         $response = wp_remote_get( $url, array(
             'sslverify' => false,
-            'timeout'   => 25,
+            'timeout' => 25,
         ) );
 
         if ( ! is_wp_error( $response ) && isset( $response['body'] ) ) {
+            update_option( 'bookly_api_server_error_time', '0' );
             $json = json_decode( $response['body'], true );
             if ( isset( $json['success'] ) ) {
                 if ( (bool) $json['success'] ) {
@@ -143,7 +144,6 @@ abstract class API extends BooklyLib\API
                                     : ''
                             ),
                         );
-                        break;
                 }
             }
         }

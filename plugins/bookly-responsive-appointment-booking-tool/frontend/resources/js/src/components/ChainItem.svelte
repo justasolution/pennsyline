@@ -13,8 +13,10 @@
     export let defaults = {};
     export let required = {};
     export let servicesPerLocation = false;
+    export let staffNameWithPrice = false;
     export let collaborativeHideStaff = false;
     export let showRatings = false;
+    export let showCategoryInfo = false;
     export let showServiceInfo = false;
     export let showStaffInfo = false;
     export let maxQuantity = 1;
@@ -93,7 +95,7 @@
                         srvMaxCapacity = srvMaxCapacity ? Math.max(srvMaxCapacity, locSrv.max_capacity) : locSrv.max_capacity;
                         staffItems[id] = jQuery.extend({}, staffMember, {
                             name: staffMember.name + (
-                                locSrv.price !== null && (lookupLocationId || !servicesPerLocation)
+                                staffNameWithPrice && locSrv.price !== null && (lookupLocationId || !servicesPerLocation)
                                     ? ' (' + locSrv.price + ')'
                                     : ''
                             ),
@@ -493,6 +495,11 @@
                     on:change="{onCategoryChange}"
             />
         </div>
+        {#if showCategoryInfo && categoryId && categories[categoryId].hasOwnProperty('info') && categories[categoryId].info !== ''}
+            <div class="bookly-box bookly-visible-sm bookly-category-info" transition:slide>
+                {@html categories[categoryId].info}
+            </div>
+        {/if}
     {/if}
     {#if hasServiceSelect}
         <div class="bookly-form-group" data-type="service">
@@ -571,6 +578,11 @@
         </div>
     {/if}
 </div>
+{#if showCategoryInfo && categoryId && categories[categoryId].hasOwnProperty('info') && categories[categoryId].info !== ''}
+    <div class="bookly-box bookly-visible-md bookly-category-info" transition:slide>
+        {@html categories[categoryId].info}
+    </div>
+{/if}
 {#if showServiceInfo && serviceId && services[serviceId].hasOwnProperty('info') && services[serviceId].info !== ''}
     <div class="bookly-box bookly-visible-md bookly-service-info" transition:slide>
         {@html services[serviceId].info}

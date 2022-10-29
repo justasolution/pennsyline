@@ -93,7 +93,7 @@ class Ajax extends BooklyLib\Base\Ajax
         exit();
     }
 
-    public static function paymentComplete() // TODO
+    public static function paymentComplete() // Mady M TODO
     {
         $fs = BooklyLib\Utils\Common::getFilesystem();
         $payment_ids = explode( ',', self::parameter( 'invoices' ) );

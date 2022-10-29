@@ -1,5 +1,6 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 use Bookly\Lib\Utils\Common;
+
 $color = get_option( 'bookly_app_color', '#f4662f' );
 $checkbox_img = plugins_url( 'frontend/resources/images/checkbox.png', \Bookly\Lib\Plugin::getMainFile() );
 $custom_css = trim( get_option( 'bookly_app_custom_styles' ) );
@@ -25,7 +26,7 @@ $custom_css = trim( get_option( 'bookly_app_custom_styles' ) );
         .bookly-form .picker__frame,
         .bookly-form .bookly-service-step .bookly-week-days label,
         .bookly-form .bookly-repeat-step .bookly-week-days label,
-        .bookly-form .bookly-columnizer .bookly-hour:hover .bookly-hour-icon span,
+        .bookly-form .bookly-columnizer .bookly-hour:active .bookly-hour-icon span,
         .bookly-form .bookly-btn,
         .bookly-form .bookly-btn:active,
         .bookly-form .bookly-btn:focus,
@@ -46,6 +47,7 @@ $custom_css = trim( get_option( 'bookly_app_custom_styles' ) );
         .bookly-form input[type="password"].bookly-error,
         .bookly-form select.bookly-error,
         .bookly-form textarea.bookly-error,
+        .bookly-form .bookly-week-days.bookly-error,
         .bookly-extra-step div.bookly-extras-thumb.bookly-extras-selected {
             border: 2px solid <?php echo esc_attr( $color ) ?> !important;
         }
@@ -76,15 +78,45 @@ $custom_css = trim( get_option( 'bookly_app_custom_styles' ) );
             border: 1px solid <?php echo esc_attr( $color ) ?> !important;
         }
 
-        .bookly-form .bookly-columnizer .bookly-hour:hover {
+        .bookly-form .bookly-columnizer .bookly-hour:active {
             border: 2px solid <?php echo esc_attr( $color ) ?> !important;
             color: <?php echo esc_attr( $color ) ?> !important;
         }
 
-        .bookly-form .bookly-columnizer .bookly-hour:hover .bookly-hour-icon {
+        .bookly-form .bookly-columnizer .bookly-hour:active .bookly-hour-icon {
             background: none;
             border: 2px solid <?php echo esc_attr( $color ) ?> !important;
             color: <?php echo esc_attr( $color ) ?> !important;
+            width: auto;
+            height: auto;
+            padding: 3px;
+            border-radius: 25px;
+            margin-right: 3px;
+        }
+
+        .bookly-form .bookly-columnizer .bookly-hour:active .bookly-hour-icon span {
+            background-color: <?php echo esc_attr( $color ) ?> !important;
+            width: 8px;
+            height: 8px;
+            border-radius: 10px;
+            display: block;
+        }
+
+        @media (hover) {
+            .bookly-form .bookly-columnizer .bookly-hour:hover {
+                border: 2px solid <?php echo esc_attr( $color ) ?> !important;
+                color: <?php echo esc_attr( $color ) ?> !important;
+            }
+
+            .bookly-form .bookly-columnizer .bookly-hour:hover .bookly-hour-icon {
+                background: none;
+                border: 2px solid <?php echo esc_attr( $color ) ?> !important;
+                color: <?php echo esc_attr( $color ) ?> !important;
+            }
+
+            .bookly-form .bookly-columnizer .bookly-hour:hover .bookly-hour-icon span {
+                background-color: <?php echo esc_attr( $color ) ?> !important;
+            }
         }
     </style>
 

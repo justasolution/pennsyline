@@ -47,19 +47,21 @@ class Elements extends Lib\Base\Component
      * @param string $placement
      * @param string $title
      */
-    public static function renderText( $option_name, $codes = null, $placement = 'bottom', $title = '' )
+    public static function renderText( $option_name, $codes = null, $placement = 'bottom', $title = '', $permanent_title = false )
     {
         $option_value = get_option( $option_name );
 
-        printf( '<span class="bookly-editable bookly-js-editable %s text-pre-wrap" data-type="%s" data-fieldType="textarea" data-values="%s" data-codes="%s" data-title="%s" data-placement="%s" data-option="%s">%s</span>',
+        printf(
+            '<span class="bookly-editable bookly-js-editable %s text-pre-wrap %s" data-type="%s" data-fieldType="textarea" data-values="%s" data-codes="%s" data-title="%s" data-placement="%s" data-option="%s">%s</span>',
             $option_name,
+            $permanent_title === false ? '' : 'bookly-js-permanent-title',
             $codes === null ? 'popover' : 'ace',
             esc_attr( json_encode( array( $option_name => $option_value ?: '' ) ) ),
             esc_attr( $codes ),
             esc_attr( $title ),
             $placement,
             $option_name,
-            esc_html( $option_value )
+            esc_html( $permanent_title === false ? $option_value : $permanent_title )
         );
     }
 

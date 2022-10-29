@@ -29,6 +29,11 @@ use Bookly\Backend\Components\TinyMce\Proxy;
                                 <label><input type="checkbox" data-hide="wp_users"> <?php esc_html_e( 'Hide this field if you want to hide the list of WP users from your staff members.', 'bookly' ) ?></label>
                             </td>
                         </tr>
+                        <tr>
+                            <td>
+                                <label><input type="checkbox" data-read-only> <?php esc_html_e( 'Read only', 'bookly' ) ?></label>
+                            </td>
+                        </tr>
                     </table>
                 </td>
             </tr>
@@ -50,12 +55,12 @@ use Bookly\Backend\Components\TinyMce\Proxy;
                     <table>
                         <tr>
                             <td>
-                                <label><input type="checkbox" data-read-only="services"> <?php esc_html_e( 'Disable services update', 'bookly' ) ?></label>
+                                <label><input type="checkbox" data-read-only-value="services"> <?php esc_html_e( 'Disable services update', 'bookly' ) ?></label>
                             </td>
                         </tr>
                         <tr>
                             <td>
-                                <label><input type="checkbox" data-read-only="price"> <?php esc_html_e( 'Disable price update', 'bookly' ) ?></label>
+                                <label><input type="checkbox" data-read-only-value="price"> <?php esc_html_e( 'Disable price update', 'bookly' ) ?></label>
                             </td>
                         </tr>
                         <?php Proxy\GroupBooking::renderStaffCabinetSettings() ?>
@@ -108,12 +113,15 @@ use Bookly\Backend\Components\TinyMce\Proxy;
                     case 'bookly-staff-calendar':
                     case 'bookly-staff-details':
                     case 'bookly-staff-services':
-                        $('[data-read-only]:checked', $container).each(function () {
+                        $('[data-read-only-value]:checked', $container).each(function () {
                             attributes['read-only'].push($(this).data('read-only'));
                         });
                         $('[data-hide]:checked', $container).each(function () {
                             attributes['hide'].push($(this).data('hide'));
                         });
+                        if ($('[data-read-only]:checked', $container).length > 0) {
+                            attributes['read-only'] = ['true'];
+                        }
                         break;
                 }
                 $.each(attributes, function (item, arr) {

@@ -70,14 +70,14 @@ class Block extends BooklyLib\Base\Block
             ),
             'hideVisibilityField' => __( 'Hide visibility field', 'bookly' ),
             'capacity' => __( 'Capacity', 'bookly' ),
-            'deposit'  => __( 'Deposit', 'bookly' ),
+            'deposit' => __( 'Deposit', 'bookly' ),
             'wp_users' => __( 'Hide WordPress users', 'bookly' ),
             'wp_users_help' => __( 'Hide this field if you want to hide the list of WP users from your staff members.' , 'bookly' ),
-            'specialHours'  => __( 'Special hours', 'bookly' ),
-            'fields'   => __( 'Fields', 'bookly' ),
-            'readOnly' => __( 'read only', 'bookly' ),
+            'specialHours' => __( 'Special hours', 'bookly' ),
+            'fields' => __( 'Fields', 'bookly' ),
+            'readOnly' => __( 'Read only', 'bookly' ),
             'services' => __( 'Services', 'bookly' ),
-            'price'    => __( 'Price', 'bookly' ),
+            'price' => __( 'Price', 'bookly' ),
         ) );
 
         register_block_type( 'bookly/staff-cabinet-block', array(

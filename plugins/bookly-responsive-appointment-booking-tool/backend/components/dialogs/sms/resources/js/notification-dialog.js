@@ -45,7 +45,7 @@ jQuery(function ($) {
             if (useTinyMCE) {
                 tinymce.init(tinyMCEPreInit);
             }
-            containers.message.siblings('a[data-toggle=collapse]').html(BooklyNotificationDialogL10n.title.container);
+            containers.message.siblings('a[data-toggle=bookly-collapse]').html(BooklyNotificationDialogL10n.title.container);
             $('.bookly-js-services', containers.settings).booklyDropdown();
             $('.modal-title', $modalNotification).html(BooklyNotificationDialogL10n.title.edit);
         });
@@ -154,17 +154,17 @@ jQuery(function ($) {
             $codes.filter('.bookly-js-codes-' + notification_type).show();
             editor.booklyAceEditor('setCodes', BooklyNotificationDialogL10n.codes[notification_type]);
         })
-        .select2({
-            minimumResultsForSearch: -1,
-            width: '100%',
-            theme: 'bootstrap4',
-            dropdownParent: '#bookly-tbs',
-            allowClear: false,
-            templateResult: format,
-            templateSelection: format,
-            escapeMarkup: function (m) {
-                return m;
-            }
+            .booklySelect2({
+                minimumResultsForSearch: -1,
+                width: '100%',
+                theme: 'bootstrap4',
+                dropdownParent: '#bookly-tbs',
+                allowClear: false,
+                templateResult: format,
+                templateSelection: format,
+                escapeMarkup: function (m) {
+                    return m;
+                }
         });
 
         $('.bookly-js-services', $modalNotification).booklyDropdown({});
@@ -209,8 +209,8 @@ jQuery(function ($) {
         });
 
         function showNotificationDialog(id) {
-            $('.bookly-js-loading:first-child', $modalNotification).addClass('bookly-loading').removeClass('collapse');
-            $('.bookly-js-loading:last-child', $modalNotification).addClass('collapse');
+            $('.bookly-js-loading:first-child', $modalNotification).addClass('bookly-loading').removeClass('bookly-collapse');
+            $('.bookly-js-loading:last-child', $modalNotification).addClass('bookly-collapse');
             $modalNotification.booklyModal('show');
             if (id === undefined) {
                 setNotificationData(BooklyNotificationDialogL10n.defaultNotification);
@@ -282,18 +282,18 @@ jQuery(function ($) {
 
             if (data.hasOwnProperty('id')) {
                 $('.modal-title', $modalNotification).html(BooklyNotificationDialogL10n.title.edit);
-                containers.settings.collapse('hide');
-                containers.message.collapse('show');
+                containers.settings.booklyCollapse('hide');
+                containers.message.booklyCollapse('show');
                 $('.bookly-js-save > span.ladda-label', $modalNotification).text(BooklyNotificationDialogL10n.title.save);
             } else {
                 $('.modal-title', $modalNotification).html(BooklyNotificationDialogL10n.title.new);
-                containers.settings.collapse('show');
+                containers.settings.booklyCollapse('show');
                 $('.bookly-js-save > span.ladda-label', $modalNotification).text(BooklyNotificationDialogL10n.title.create);
             }
 
             $notificationType.val(data.type).trigger('change');
 
-            $('.bookly-js-loading', $modalNotification).toggleClass('collapse');
+            $('.bookly-js-loading', $modalNotification).toggleClass('bookly-collapse');
 
             $('a[href="#bookly-wp-editor-pane"]').click();
         }

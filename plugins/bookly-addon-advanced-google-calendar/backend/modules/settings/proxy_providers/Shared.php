@@ -13,7 +13,7 @@ use BooklyPro\Lib\Google;
 class Shared extends Proxy\Shared
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public static function saveSettings( array $alert, $tab, array $params )
     {

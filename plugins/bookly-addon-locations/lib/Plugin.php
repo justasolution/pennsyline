@@ -6,6 +6,7 @@ use BooklyLocations\Frontend;
 
 /**
  * Class Plugin
+ *
  * @package BooklyLocations\Lib
  */
 abstract class Plugin extends \Bookly\Lib\Base\Plugin
@@ -41,7 +42,7 @@ abstract class Plugin extends \Bookly\Lib\Base\Plugin
         Backend\Modules\Notifications\ProxyProviders\Shared::init();
         Backend\Modules\Settings\ProxyProviders\Shared::init();
         Frontend\Modules\Booking\ProxyProviders\Shared::init();
-
+        Frontend\Modules\ModernBookingForm\ProxyProviders\Shared::init();
         Notifications\Assets\Item\ProxyProviders\Shared::init();
         ProxyProviders\Local::init();
         ProxyProviders\Shared::init();

@@ -11,8 +11,7 @@
             $staff_locations = $('#bookly-js-locations', $container),
             $staff_gateways_list = $('#bookly-js-gateways-list', $form),
             $staff_gateways = $('#bookly-gateways', $container),
-            $staff_color = $('.bookly-js-color-picker', $container)
-        ;
+            $staff_color = $('.bookly-js-color-picker', $container);
 
         if (obj.options.intlTelInput.enabled) {
             $staff_phone.intlTelInput({
@@ -60,23 +59,24 @@
                             } else {
                                 img_src = selection[0].url;
                             }
-                            $container.find('[name=attachment_id]').val(selection[0].id).trigger('change');
-                            $('#bookly-js-staff-avatar').find('.bookly-js-image').css({'background-image': 'url(' + img_src + ')', 'background-size': 'cover'});
-                            $('.bookly-thumb-delete').show();
-                            $('.bookly-thumb').addClass('bookly-thumb-with-image');
+                            $('[name=attachment_id]',$form).val(selection[0].id).trigger('change');
+                            $('#bookly-js-staff-avatar', $form).find('.bookly-js-image').css({'background-image': 'url(' + img_src + ')', 'background-size': 'cover'});
+                            $('.bookly-thumb-delete', $form).show();
+                            $('.bookly-thumb', $form).addClass('bookly-thumb-with-image');
                             $(this).hide();
                         }
                     });
 
                 frame.open();
+                $(document).off('focusin.modal');
             })
             // Delete staff avatar
             .on('click', '.bookly-thumb-delete', function () {
                 var $thumb = $(this).parents('.bookly-js-image');
                 $thumb.attr('style', '');
-                $container.find('[name=attachment_id]').val('').trigger('change');
-                $('.bookly-thumb').removeClass('bookly-thumb-with-image');
-                $('.bookly-thumb-delete').hide();
+                $('[name=attachment_id]',$form).val('').trigger('change');
+                $('.bookly-thumb',$form).removeClass('bookly-thumb-with-image');
+                $('.bookly-thumb-delete',$form).hide();
             })
             // Save staff member details.
             .on('click', '#bookly-details-save', function (e) {

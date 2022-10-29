@@ -33,14 +33,13 @@ class Updater extends Lib\Base\Updater
                     $key = substr( sprintf( $name, $title ), 0, 160 );
                     $new_name = 'custom_field_' . $custom_field['id'] . '_%s_descr';
                     $names[ $key ] = sprintf( $new_name, substr( $title, 0, 160 + 1 - strlen( $new_name ) ) );
-                case 'checkboxes':
-                case 'radio-buttons':
-                case 'drop-down':
-                    $name = 'custom_field_' . $custom_field['id'] . '_%s=%s';
-                    foreach ( $custom_field['items'] as $label ) {
-                        $label = sanitize_title( $label );
-                        $key = substr( sprintf( $name, $title, $label ), 0, 160 );
-                        $names[ $key ] = sprintf( $name, substr( $title, 0, 32 ), substr( $label, 0, 160 + 2 - 32 - strlen( $name ) ) );
+                    if ( in_array( $custom_field['type'], array( 'checkboxes', 'radio-buttons', 'drop-down' ) ) ) {
+                        $name = 'custom_field_' . $custom_field['id'] . '_%s=%s';
+                        foreach ( $custom_field['items'] as $label ) {
+                            $label = sanitize_title( $label );
+                            $key = substr( sprintf( $name, $title, $label ), 0, 160 );
+                            $names[ $key ] = sprintf( $name, substr( $title, 0, 32 ), substr( $label, 0, 160 + 2 - 32 - strlen( $name ) ) );
+                        }
                     }
                     break;
             }

@@ -129,10 +129,19 @@ class CartItem
         if ( $service->withSubServices() ) {
             $service_price = $service->getPrice();
         } else {
-            list ( $service_id, $staff_id, , $location_id ) = $this->slots[0];
+            $date_time = null;
+            if ( $this->slots === null ) {
+                $service_id = $this->service_id;
+                $staff_id = current( $this->staff_ids );
+                $location_id = $this->location_id;
+            } else {
+                list ( $service_id, $staff_id, $date_time, $location_id ) = $this->slots[0];
+            }
 
             if ( Config::specialHoursActive() ) {
-                $service_start = date( 'H:i:s', strtotime( $this->slots[0][2] ) );
+                $service_start = $this->slots === null
+                    ? 'unused'
+                    : date( 'H:i:s', strtotime( $date_time ) );
             } else {
                 $service_start = 'unused'; //the price is the same for all services in day
             }
@@ -146,10 +155,11 @@ class CartItem
                     $staff_service->loadBy( array( 'staff_id' => $staff_id, 'service_id' => $service_id, 'location_id' => null ) );
                 }
                 $service_price = $staff_service->getPrice() * $this->getUnits();
-                $service_price = Proxy\SpecialHours::adjustPrice( $service_price, $staff_id, $service_id, $location_id, $service_start, $this->getUnits(), date( 'w', strtotime( $this->slots[0][2] ) ) + 1 );
+                if ( $this->slots ) {
+                    $service_price = Proxy\SpecialHours::adjustPrice( $service_price, $staff_id, $service_id, $location_id, $service_start, $this->getUnits(), date( 'w', strtotime( $date_time ) ) + 1 );
+                }
                 $service_prices_cache[ $staff_id ][ $service_id ][ $location_id ][ $service_start ][ $this->getUnits() ] = $service_price;
             }
-
         }
 
         return $service_price;

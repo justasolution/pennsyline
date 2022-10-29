@@ -6,13 +6,14 @@ use Bookly\Lib\CartInfo;
 use Bookly\Lib\Entities\Appointment;
 use Bookly\Lib\Entities\Notification;
 use Bookly\Lib\Entities\Payment;
-use Bookly\Lib\Entities\Service;
 use Bookly\Lib\Slots\DatePoint;
 use Bookly\Lib\Utils\Common;
 use BooklyPro\Backend\Components\License;
 use BooklyPro\Frontend\Modules\Paypal;
+use BooklyPro\Lib\Bbb\BigBlueButton;
 use BooklyPro\Lib\Config;
 use BooklyPro\Lib\Zoom;
+use BooklyPro\Lib\Entities;
 
 /**
  * Class Shared
@@ -108,16 +109,16 @@ class Shared extends BooklyLib\Proxy\Shared
     {
         switch ( $action ) {
             // PayPal Express Checkout.
-            case 'paypal-ec-init':
+            case 'paypal-express-checkout':
                 Paypal\Controller::ecInit();
                 break;
-            case 'paypal-ec-return':
+            case 'paypal-express-checkout-return':
                 Paypal\Controller::ecReturn();
                 break;
-            case 'paypal-ec-cancel':
+            case 'paypal-express-checkout-cancel':
                 Paypal\Controller::ecCancel();
                 break;
-            case 'paypal-ec-error':
+            case 'paypal-express-checkout-error':
                 Paypal\Controller::ecError();
                 break;
         }
@@ -229,8 +230,8 @@ class Shared extends BooklyLib\Proxy\Shared
     {
         switch ( $table ) {
             case BooklyLib\Utils\Tables::APPOINTMENTS:
-                $columns['customer_address' ] = esc_attr__( 'Customer address', 'bookly' );
-                $columns['customer_birthday' ] = esc_attr__( 'Customer birthday', 'bookly' );
+                $columns['customer_address'] = esc_attr__( 'Customer address', 'bookly' );
+                $columns['customer_birthday'] = esc_attr__( 'Customer birthday', 'bookly' );
                 $columns['online_meeting'] = esc_attr__( 'Online meeting', 'bookly' );
                 break;
 
@@ -254,12 +255,20 @@ class Shared extends BooklyLib\Proxy\Shared
     /**
      * @inheritDoc
      */
-    public static function buildOnlineMeetingUrl( $default, Appointment $appointment)
+    public static function buildOnlineMeetingUrl( $default, Appointment $appointment, $customer = null )
     {
-        if ( $appointment->getOnlineMeetingProvider() == 'zoom' ) {
-            return 'https://zoom.us/j/' . $appointment->getOnlineMeetingId();
-        } elseif ( $appointment->getOnlineMeetingProvider() == 'google_meet' || $appointment->getOnlineMeetingProvider() == 'jitsi' ) {
-            return $appointment->getOnlineMeetingId();
+        switch ( $appointment->getOnlineMeetingProvider() ) {
+            case 'zoom':
+                $default = 'https://zoom.us/j/' . $appointment->getOnlineMeetingId();
+                break;
+            case 'google_meet':
+            case 'jitsi':
+                $default = $appointment->getOnlineMeetingId();
+                break;
+            case 'bbb':
+                $bbb = new BigBlueButton( $appointment->getOnlineMeetingId() );
+                $default = $bbb->getJoinMeetingClientUrl( $customer );
+                break;
         }
 
         return $default;
@@ -284,12 +293,20 @@ class Shared extends BooklyLib\Proxy\Shared
      */
     public static function buildOnlineMeetingStartUrl( $default, Appointment $appointment )
     {
-        if ( $appointment->getOnlineMeetingProvider() == 'zoom' ) {
-            $options = json_decode( $appointment->getOnlineMeetingData() ?: '{}', true );
+        switch ( $appointment->getOnlineMeetingProvider() ) {
+            case 'zoom':
+                $options = json_decode( $appointment->getOnlineMeetingData() ?: '{}', true );
 
-            return isset( $options['start_url'] ) ? $options['start_url'] : self::buildOnlineMeetingUrl( $default, $appointment );
-        } elseif ( $appointment->getOnlineMeetingProvider() == 'google_meet' || $appointment->getOnlineMeetingProvider() == 'jitsi' ) {
-            return $appointment->getOnlineMeetingId();
+                $default = isset( $options['start_url'] ) ? $options['start_url'] : self::buildOnlineMeetingUrl( $default, $appointment, null );
+                break;
+            case 'google_meet':
+            case 'jitsi':
+                $default = self::buildOnlineMeetingUrl( $default, $appointment, null );
+                break;
+            case 'bbb':
+                $bbb = new BigBlueButton( $appointment->getOnlineMeetingId() );
+                $default = $bbb->getCreateMeetingStaffUrl( json_decode( $appointment->getOnlineMeetingData(), true ) );
+                break;
         }
 
         return $default;
@@ -298,14 +315,22 @@ class Shared extends BooklyLib\Proxy\Shared
     /**
      * @inheritDoc
      */
-    public static function buildOnlineMeetingJoinUrl( $default, Appointment $appointment )
+    public static function buildOnlineMeetingJoinUrl( $default, Appointment $appointment, $customer )
     {
-        if ( $appointment->getOnlineMeetingProvider() == 'zoom' ) {
-            $options = json_decode( $appointment->getOnlineMeetingData() ?: '{}', true );
+        switch ( $appointment->getOnlineMeetingProvider() ) {
+            case 'zoom':
+                $options = json_decode( $appointment->getOnlineMeetingData() ?: '{}', true );
 
-            return isset( $options['join_url'] ) ? $options['join_url'] : self::buildOnlineMeetingUrl( $default, $appointment );
-        } elseif ( $appointment->getOnlineMeetingProvider() == 'google_meet' || $appointment->getOnlineMeetingProvider() == 'jitsi' ) {
-            return $appointment->getOnlineMeetingId();
+                $default = isset( $options['join_url'] ) ? $options['join_url'] : self::buildOnlineMeetingUrl( $default, $appointment, null );
+                break;
+            case 'google_meet':
+            case 'jitsi':
+                $default = $appointment->getOnlineMeetingId();
+                break;
+            case 'bbb':
+                $bbb = new BigBlueButton( $appointment->getOnlineMeetingId() );
+                $default = $bbb->getJoinMeetingClientUrl( $customer );
+                break;
         }
 
         return $default;
@@ -348,17 +373,30 @@ class Shared extends BooklyLib\Proxy\Shared
                     }, $zoom->errors() ) );
                 }
             } elseif ( $service->getOnlineMeetings() == 'jitsi' ) {
-                $token = md5( uniqid( time(), true ) );
-                $token = sprintf(
-                    'https://meet.jit.si/%s-%s-%s',
-                    substr( $token, 0, 3 ),
-                    substr( $token, 3, 4 ),
-                    substr( $token, 7, 3 )
-                );
-                $appointment
-                    ->setOnlineMeetingProvider( 'jitsi' )
-                    ->setOnlineMeetingId( $token )
-                    ->save();
+                if ( ! $appointment->getOnlineMeetingId() ) {
+                    $token = md5( uniqid( time(), true ) );
+                    $url = sprintf(
+                        'https://meet.jit.si/%s-%s-%s',
+                        substr( $token, 0, 3 ),
+                        substr( $token, 3, 4 ),
+                        substr( $token, 7, 3 )
+                    );
+                    $appointment
+                        ->setOnlineMeetingProvider( 'jitsi' )
+                        ->setOnlineMeetingId( $url )
+                        ->save();
+                }
+            } elseif ( $service->getOnlineMeetings() == 'bbb' ) {
+                if ( ! $appointment->getOnlineMeetingId() ) {
+                        $appointment
+                            ->setOnlineMeetingProvider( 'bbb' )
+                            ->setOnlineMeetingId( BooklyLib\Utils\Common::generateToken( get_class( $appointment ), 'online_meeting_id' ) )
+                            ->setOnlineMeetingData( json_encode( array(
+                                'staff_pw' => wp_generate_password( 8, false ),
+                                'client_pw' => wp_generate_password( 8, false ),
+                            ) ) )
+                            ->save();
+                }
             }
         }
 
@@ -370,16 +408,24 @@ class Shared extends BooklyLib\Proxy\Shared
      */
     public static function prepareAppointmentCodes( $codes, $appointment )
     {
-        $codes['online_meeting_url'] = BooklyLib\Proxy\Shared::buildOnlineMeetingUrl( '', $appointment );
+        $customer = new BooklyLib\Entities\Customer();
+        $customer->setFullName( 'Client' );
+        $codes['online_meeting_url'] = BooklyLib\Proxy\Shared::buildOnlineMeetingUrl( '', $appointment, $customer );
         $codes['online_meeting_password'] = BooklyLib\Proxy\Shared::buildOnlineMeetingPassword( '', $appointment );
         $codes['online_meeting_start_url'] = BooklyLib\Proxy\Shared::buildOnlineMeetingStartUrl( '', $appointment );
-        $codes['online_meeting_join_url'] = BooklyLib\Proxy\Shared::buildOnlineMeetingJoinUrl( '', $appointment );
+        $codes['online_meeting_join_url'] = BooklyLib\Proxy\Shared::buildOnlineMeetingJoinUrl( '', $appointment, $customer );
         $codes['on_waiting_list'] = BooklyLib\Config::waitingListActive()
             ? BooklyLib\Entities\CustomerAppointment::query( 'ca' )
                 ->where( 'ca.appointment_id', $appointment->getId() )
                 ->where( 'status', BooklyLib\Entities\CustomerAppointment::STATUS_WAITLISTED )
                 ->count()
             : 0;
+
+        $staff = BooklyLib\Entities\Staff::find( $appointment->getStaffId() );
+        $staff_category = $staff->getCategoryId() ? Entities\StaffCategory::find( $staff->getCategoryId() ) : null;
+        $codes['staff_category_name'] = $staff_category ? $staff_category->getTranslatedName() : '';
+        $codes['staff_category_info'] = $staff_category ? $staff_category->getTranslatedInfo() : '';
+        $codes['staff_category_image'] = ( $staff_category && ( $url = $staff_category->getImageUrl() ) ) ? '<img src="' . $url . '"/>' : '';
 
         return $codes;
     }

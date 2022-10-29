@@ -16,11 +16,11 @@ $amounts = Amounts::getInstance();
     <?php endif ?>
     <div class="mb-3 mt-4">
         <div class="text-center">
-            <a class="text-muted" style="text-decoration:underline dotted" data-toggle="collapse" href="#how-auto-recharge-works">
+            <a class="text-muted" style="text-decoration:underline dotted" data-toggle="bookly-collapse" href="#how-auto-recharge-works">
                 <?php esc_html_e( 'How it works', 'bookly' ) ?> <i class="fas fa-question-circle"></i>
             </a>
         </div>
-        <div class="collapse alert alert-info text-justify mx-5" id="how-auto-recharge-works">
+        <div class="bookly-collapse alert alert-info text-justify mx-5" id="how-auto-recharge-works">
             <?php printf( __( 'Your account will be topped up with the selected amount <b>now</b> if your balance is less than %1$s, and <b>automatically later</b> when the balance falls below %1$s.', 'bookly' ), '$10' ) ?>
         </div>
     </div>

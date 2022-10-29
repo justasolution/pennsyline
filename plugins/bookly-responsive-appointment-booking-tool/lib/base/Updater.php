@@ -125,7 +125,7 @@ abstract class Updater extends Schema
     /**
      * Delete user meta.
      *
-     * @param array $meta
+     * @param array $meta_names
      */
     protected function deleteUserMeta( array $meta_names )
     {
@@ -250,10 +250,10 @@ abstract class Updater extends Schema
                     $params[] = $wpdb->collate;
                     $alter .= ' COLLATE ' . $wpdb->collate;
                 }
-
-                $records = $wpdb->get_results( $wpdb->prepare( $query, $params ) );
-                foreach ( $records as $record ) {
-                    $wpdb->query( sprintf( $alter, $record->TABLE_NAME ) );
+                $query .= ' GROUP BY TABLE_NAME';
+                $records = $wpdb->get_col( $wpdb->prepare( $query, $params ) );
+                foreach ( $records as $table ) {
+                    $wpdb->query( sprintf( $alter, $table ) );
                 }
             }
         }

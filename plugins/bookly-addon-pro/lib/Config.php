@@ -2,13 +2,14 @@
 namespace BooklyPro\Lib;
 
 use Bookly\Lib as BooklyLib;
+use Bookly\Lib\Base\Cache;
 use BooklyPro\Lib\Zoom\Authentication;
 
 /**
  * Class Config
  * @package BooklyPro\Lib
  */
-abstract class Config
+abstract class Config extends Cache
 {
     /** @var int|bool */
     protected static $grace_remaining_days;
@@ -94,9 +95,14 @@ abstract class Config
      */
     public static function getMinimumTimePriorBooking( $service_id = null )
     {
-        $service = BooklyLib\Entities\Service::find( $service_id );
+        $key = __FUNCTION__ . ( $service_id ?: '' );
+        if ( ! self::hasInCache( $key ) ) {
+            $service = self::getServiceForTimePrior( $service_id );
 
-        return $service && ! $service->withSubServices() && $service->getMinTimePriorBooking() !== null ? $service->getMinTimePriorBooking() : get_option( 'bookly_gen_min_time_prior_booking' ) * 3600;
+            self::putInCache( $key, $service && $service->getMinTimePriorBooking() !== null ? $service->getMinTimePriorBooking() : get_option( 'bookly_gen_min_time_prior_booking' ) * 3600 );
+        }
+
+        return self::getFromCache( $key );
     }
 
     /**
@@ -108,9 +114,9 @@ abstract class Config
      */
     public static function getMinimumTimePriorCancel( $service_id = null )
     {
-        $service = BooklyLib\Entities\Service::find( $service_id );
+        $service = self::getServiceForTimePrior( $service_id );
 
-        return $service && ! $service->withSubServices() && $service->getMinTimePriorCancel() !== null ? $service->getMinTimePriorCancel() : get_option( 'bookly_gen_min_time_prior_cancel' ) * 3600;
+        return $service && $service->getMinTimePriorCancel() !== null ? $service->getMinTimePriorCancel() : get_option( 'bookly_gen_min_time_prior_cancel' ) * 3600;
     }
 
     /**
@@ -191,5 +197,35 @@ abstract class Config
     public static function zoomOAuthToken()
     {
         return get_option( 'bookly_zoom_oauth_token' );
+    }
+
+    /**
+     * Check if need create WooCommerce order
+     *
+     * @return bool
+     */
+    public static function needCreateWCOrder( $total )
+    {
+        return get_option( 'bookly_wc_enabled' )
+            && get_option( 'bookly_wc_create_order_via_backend' )
+            && get_option( 'bookly_wc_product' )
+            && ( get_option( 'bookly_wc_create_order_at_zero_cost' ) || $total > 0 )
+            && class_exists( 'WooCommerce', false );
+    }
+
+    /**
+     * @param int|null $service_id
+     * @return BooklyLib\Entities\Service|null
+     */
+    private static function getServiceForTimePrior( $service_id )
+    {
+        $service = BooklyLib\Entities\Service::find( $service_id );
+
+        if ( $service && ( $service->getType() === BooklyLib\Entities\Service::TYPE_PACKAGE ) ) {
+            $sub_services = $service->getSubServices();
+            $service = isset( $sub_services[0] ) ? $sub_services[0] : null;
+        }
+
+        return $service;
     }
 }

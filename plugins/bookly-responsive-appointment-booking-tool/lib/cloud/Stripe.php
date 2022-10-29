@@ -2,6 +2,7 @@
 namespace Bookly\Lib\Cloud;
 
 use Bookly\Backend\Modules\CloudProducts;
+use Bookly\Lib\Config;
 
 /**
  * Class Stripe
@@ -12,7 +13,9 @@ class Stripe extends Base
     const CONNECT        = '/1.0/users/%token%/products/stripe/connect';            //POST|DELETE
     const CREATE_SESSION = '/1.0/users/%token%/products/stripe/checkout/sessions';  //POST
     const RETRIEVE_EVENT = '/1.0/users/%token%/products/stripe/events/%event_id%';  //GET
+    const RETRIEVE_PAYMENT_INTENT = '/1.0/users/%token%/products/stripe/payment-intents/%payment_intent_id%';  //GET
     const REFUND         = '/1.0/users/%token%/products/stripe/refund';             //POST
+    const ENDPOINT       = '/1.0/users/%token%/products/stripe/endpoint';           //POST
 
     /**
      * @param array  $info
@@ -22,7 +25,7 @@ class Stripe extends Base
      */
     public function createSession( $info, $success_url, $cancel_url )
     {
-        $info['currency'] = get_option( 'bookly_pmt_currency' );
+        $info['currency'] = Config::getCurrency();
         $info = array(
             'order_data'  => $info,
             'success_url' => $success_url,
@@ -40,7 +43,7 @@ class Stripe extends Base
     public function connect()
     {
         $data = array(
-            'notify_url'  => add_query_arg( array( 'action' => 'bookly_cloud_stripe_notify' ), admin_url( 'admin-ajax.php' ) ),
+            'notify_url'  => $this->getEndPoint(),
             'success_url' => add_query_arg( array( 'page' => CloudProducts\Page::pageSlug() ), admin_url( 'admin.php' ) ) . '#cloud-product=stripe&status=activated',
             'cancel_url'  => add_query_arg( array( 'page' => CloudProducts\Page::pageSlug() ), admin_url( 'admin.php' ) ) . '#cloud-product=stripe&status=cancelled'
         );
@@ -50,6 +53,24 @@ class Stripe extends Base
         }
 
         return false;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEndPoint()
+    {
+        return add_query_arg( array( 'action' => 'bookly_cloud_stripe_notify' ), admin_url( 'admin-ajax.php' ) );
+    }
+
+    /**
+     * @return bool
+     */
+    public function updateEndPoint()
+    {
+        $endpoint = $this->getEndPoint();
+
+        return $this->api->sendPostRequest( self::ENDPOINT, compact( 'endpoint' ) );
     }
 
     /**
@@ -73,7 +94,7 @@ class Stripe extends Base
     }
 
     /**
-     * Retriev event
+     * Retrieve event
      *
      * @param string $event_id
      * @return array
@@ -83,6 +104,25 @@ class Stripe extends Base
     {
         $data     = array( '%event_id%' => $event_id );
         $response = $this->api->sendGetRequest( self::RETRIEVE_EVENT, $data );
+
+        if ( $response ) {
+            return $response['data'];
+        } else {
+            throw new \Exception();
+        }
+    }
+
+    /**
+     * Retrieve payment_intent
+     *
+     * @param string $payment_intent_id
+     * @return array
+     * @throws \Exception
+     */
+    public function retrievePaymentIntent( $payment_intent_id )
+    {
+        $data     = array( '%payment_intent_id%' => $payment_intent_id );
+        $response = $this->api->sendGetRequest( self::RETRIEVE_PAYMENT_INTENT, $data );
 
         if ( $response ) {
             return $response['data'];

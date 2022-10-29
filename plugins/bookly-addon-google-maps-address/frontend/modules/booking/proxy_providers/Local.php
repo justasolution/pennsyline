@@ -11,7 +11,7 @@ use BooklyGoogleMapsAddress\Frontend\Components;
 class Local extends Proxy\GoogleMapsAddress
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public static function renderAutocompleter()
     {

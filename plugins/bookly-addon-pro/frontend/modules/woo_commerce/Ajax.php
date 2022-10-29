@@ -36,7 +36,9 @@ class Ajax extends Controller
             if ( $session instanceof \WC_Session_Handler && $session->get_session_cookie() === false ) {
                 $session->set_customer_session_cookie( true );
             }
-            if ( $userData->cart->getFailedKey() === null ) {
+            if ( count( $userData->cart->getItems() ) === 0 ) {
+                $response = array( 'success' => true );
+            } elseif ( $userData->cart->getFailedKey() === null ) {
                 $cart_item  = self::_getIntersectedItem( $userData->cart->getItems() );
                 if ( $cart_item === null ) {
                     if ( get_option( 'bookly_cst_first_last_name' ) ) {

@@ -34,6 +34,7 @@ abstract class Plugin extends BooklyLib\Base\Plugin
             Frontend\Modules\Booking\Ajax::init();
 
             // Init proxy.
+            Backend\Components\Dialogs\Appointment\CustomerDetails\ProxyProviders\Shared::init();
             Backend\Modules\Appearance\ProxyProviders\Local::init();
             Backend\Modules\Appearance\ProxyProviders\Shared::init();
             Backend\Modules\Appointments\ProxyProviders\Local::init();

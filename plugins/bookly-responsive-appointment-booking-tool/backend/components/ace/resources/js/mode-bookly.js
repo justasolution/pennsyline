@@ -38,7 +38,7 @@ define('ace/mode/bookly_highlight_rules', function(require, exports, module) {
         // Start if
         this.$rules['start'].push({
             token: 'bookly_if',
-            regex: '{#if (\\w+(?:\\.\\w+)*)(.+?)}',
+            regex: '{#if (\\w+(?:\\.\\w+)*)}',
             merge: false,
         });
         // End if

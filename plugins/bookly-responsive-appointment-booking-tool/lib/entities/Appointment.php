@@ -130,6 +130,7 @@ class Appointment extends Lib\Base\Entity
                 $data['id'] = $data['customer_id'];
                 $ca->customer
                     ->setFullName( $data['full_name'] )
+                    ->setFirstName( $data['first_name'] )
                     ->setLastName( $data['last_name'] )
                     ->setPhone( $data['phone'] )
                     ->setEmail( $data['email'] )
@@ -198,7 +199,6 @@ class Appointment extends Lib\Base\Entity
                 ->setCreatedAt( current_time( 'mysql' ) )
                 ->setTimeZone( is_array( $time_zone ) ? $time_zone['time_zone'] : $time_zone )
                 ->setTimeZoneOffset( is_array( $time_zone ) ? $time_zone['time_zone_offset'] : $time_zone )
-                ->setExtrasConsiderDuration( $ca_data[ $id ]['extras_consider_duration'] )
                 ->save();
             Lib\Utils\Log::createEntity( $customer_appointment, __METHOD__ );
             Lib\Proxy\Files::attachFiles( $ca_data[ $id ]['custom_fields'], $customer_appointment );
@@ -269,22 +269,19 @@ class Appointment extends Lib\Base\Entity
     {
         $duration = 0;
         // Calculate extras duration for appointments with duration < 1 day.
-        if ( Lib\Config::serviceExtrasActive() && ( strtotime( $this->getEndDate() ) - strtotime( $this->getStartDate() ) < DAY_IN_SECONDS ) ) {
-            $customer_appointments = CustomerAppointment::query()
-                ->select( 'extras' )
+        if ( Lib\Proxy\ServiceExtras::considerDuration( false ) && ( strtotime( $this->getEndDate() ) - strtotime( $this->getStartDate() ) < DAY_IN_SECONDS ) ) {
+            $records = CustomerAppointment::query()
                 ->where( 'appointment_id', $this->getId() )
+                ->whereNot( 'extras', '[]' )
                 ->whereIn( 'status', Lib\Proxy\CustomStatuses::prepareBusyStatuses( array(
                     CustomerAppointment::STATUS_PENDING,
                     CustomerAppointment::STATUS_APPROVED
                 ) ) )
-                ->where( 'extras_consider_duration', 1 )
-                ->fetchArray();
-            foreach ( $customer_appointments as $customer_appointment ) {
-                if ( $customer_appointment['extras'] != '[]' ) {
-                    $extras_duration = Lib\Proxy\ServiceExtras::getTotalDuration( (array) json_decode( $customer_appointment['extras'], true ) );
-                    if ( $extras_duration > $duration ) {
-                        $duration = $extras_duration;
-                    }
+                ->fetchCol( 'extras' );
+            foreach ( $records as $extras ) {
+                $extras_duration = Lib\Proxy\ServiceExtras::getTotalDuration( (array) json_decode( $extras, true ) );
+                if ( $extras_duration > $duration ) {
+                    $duration = $extras_duration;
                 }
             }
         }

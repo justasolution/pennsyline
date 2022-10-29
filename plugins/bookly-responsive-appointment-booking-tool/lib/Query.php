@@ -30,7 +30,7 @@ class Query
     protected $type = self::TYPE_SELECT;
 
     /** @var null|string  */
-    protected $target = null;
+    protected $target;
 
     /** @var array JOINs of query */
     protected $joins = array();
@@ -215,7 +215,7 @@ class Query
      */
     public function joinSelect( Query $query, $alias, $on, $join = null )
     {
-        return $this->joinRaw( $query->composeQuery(), $alias, $on, $join );
+        return $this->joinRaw( $query, $alias, $on, $join );
     }
 
     /**
@@ -759,7 +759,11 @@ class Query
             $join .= " {$t['type']} JOIN `{$t['table']}` AS `{$alias}` ON {$t['on']}";
         }
         foreach ( $this->join_selects as $alias => $q ) {
-            $join .= " {$q['type']} JOIN ( {$q['query']} ) AS `{$alias}` ON {$q['on']}";
+            $query = $q['query'] instanceof self
+                ? $q['query']->composeQuery()
+                : $q['query'];
+
+            $join .= " {$q['type']} JOIN ( {$query} ) AS `{$alias}` ON {$q['on']}";
         }
 
         // SET for UPDATE

@@ -61,10 +61,10 @@ class Shared extends Proxy\Shared
      */
     public static function updateStaffServices( array $_post )
     {
-        $location_id = $_post['location_id'];
+        $location_id = array_key_exists( 'location_id', $_post ) ? $_post['location_id'] : null;
         $staff_id    = $_post['staff_id'];
-        $custom_settings = isset ( $_post['custom_location_settings'] ) ? $_post['custom_location_settings'] : 0;
         if ( $location_id && $staff_id ) {
+            $custom_settings = $_post['custom_location_settings'];
             Lib\Entities\StaffLocation::query()
                 ->update()
                 ->set( 'custom_services', $custom_settings )
@@ -80,9 +80,9 @@ class Shared extends Proxy\Shared
     public static function updateStaffSchedule( array $_post )
     {
         $location_id = $_post['location_id'];
-        $staff_id    = $_post['staff_id'];
-        $custom_settings = $_post['custom_location_settings'];
+        $staff_id = $_post['staff_id'];
         if ( $location_id && $staff_id ) {
+            $custom_settings = $_post['custom_location_settings'];
             Lib\Entities\StaffLocation::query()
                 ->update()
                 ->set( 'custom_schedule', $custom_settings )
@@ -97,10 +97,10 @@ class Shared extends Proxy\Shared
      */
     public static function updateStaffSpecialDays( array $_post )
     {
-        $location_id = $_post['location_id'];
-        $staff_id    = $_post['staff_id'];
-        $custom_settings = $_post['custom_location_settings'];
+        $location_id = array_key_exists( 'location_id', $_post ) ? $_post['location_id'] : null;
+        $staff_id = $_post['staff_id'];
         if ( $location_id && $staff_id ) {
+            $custom_settings = $_post['custom_location_settings'];
             Lib\Entities\StaffLocation::query()
                 ->update()
                 ->set( 'custom_special_days', $custom_settings )

@@ -4,13 +4,14 @@ use Bookly\Backend\Components\Controls\Inputs;
 use Bookly\Backend\Components\Dialogs\Appointment;
 use Bookly\Lib\Utils\Common;
 use Bookly\Lib\Config;
+
 /**
  * @var string $calendar_id
  * @var int $staff_id
  */
 ?>
 <script type="text/javascript">
-    (function (win, fn) {
+    (function(win, fn) {
         var done = false, top = true,
             doc = win.document,
             root = doc.documentElement,
@@ -18,7 +19,7 @@ use Bookly\Lib\Config;
             add = modern ? 'addEventListener' : 'attachEvent',
             rem = modern ? 'removeEventListener' : 'detachEvent',
             pre = modern ? '' : 'on',
-            init = function (e) {
+            init = function(e) {
                 if (e.type == 'readystatechange') if (doc.readyState != 'complete') return;
                 (e.type == 'load' ? win : doc)[rem](pre + e.type, init, false);
                 if (!done) {
@@ -26,7 +27,7 @@ use Bookly\Lib\Config;
                     fn.call(win, e.type || e);
                 }
             },
-            poll = function () {
+            poll = function() {
                 try {
                     root.doScroll('left');
                 } catch (e) {
@@ -48,7 +49,7 @@ use Bookly\Lib\Config;
             doc[add](pre + 'readystatechange', init, false);
             win[add](pre + 'load', init, false);
         }
-    })(window, function () {
+    })(window, function() {
         var a = document.getElementsByClassName("bookly-staff-cabinet")[0];
         while (a) {
             try {
@@ -72,11 +73,13 @@ use Bookly\Lib\Config;
             <div class="bookly-ec-loading-icon"></div>
         </div>
         <div class="bookly-js-calendar <?php echo $calendar_id ?>"></div>
-        <?php Appointment\Edit\Dialog::render( ! in_array( 'wp_users', $hide ) ) ?>
-        <?php Bookly\Backend\Modules\Calendar\Proxy\Shared::renderAddOnsComponents() ?>
-        <?php Bookly\Backend\Components\Dialogs\Queue\Dialog::render() ?>
+        <?php if ( ! $read_only ): ?>
+            <?php Appointment\Edit\Dialog::render( ! in_array( 'wp_users', $hide ) ) ?>
+            <?php Bookly\Backend\Modules\Calendar\Proxy\Shared::renderAddOnsComponents() ?>
+            <?php Bookly\Backend\Components\Dialogs\Queue\Dialog::render() ?>
+            <?php Appointment\Delete\Dialog::render() ?>
+        <?php endif ?>
     </div>
-    <?php Appointment\Delete\Dialog::render() ?>
     <div class="form-row justify-content-between bookly-js-calendar-footer">
         <div class="col-auto">
             <button type="button" class="btn btn-default bookly-js-export-btn"><i class="far fa-fw fa-share-square"></i><?php esc_html_e( 'Export to CSV', 'bookly' ) ?></button>
@@ -84,10 +87,10 @@ use Bookly\Lib\Config;
         <div class="col-auto">
             <div class="btn-group">
                 <button type="button" class="bookly-js-calendar-refresh btn <?php echo $refresh_rate > 0 ? 'btn-success' : 'btn-default' ?>"><i class="fas fa-sync-alt"></i></button>
-                <button type="button" class="btn <?php echo $refresh_rate > 0 ? 'btn-success' : 'btn-default' ?> dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
-                <div class="dropdown-menu pb-0 dropdown-menu-right">
-                    <h6 class="dropdown-header"><?php esc_html_e( 'Auto-refresh Calendar', 'bookly' ) ?></h6>
-                    <div class="dropdown-divider"></div>
+                <button type="button" class="btn <?php echo $refresh_rate > 0 ? 'btn-success' : 'btn-default' ?> bookly-dropdown-toggle bookly-dropdown-toggle-split" data-toggle="bookly-dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                <div class="bookly-dropdown-menu pb-0 dropdown-menu-right">
+                    <h6 class="bookly-dropdown-header"><?php esc_html_e( 'Auto-refresh Calendar', 'bookly' ) ?></h6>
+                    <div class="bookly-dropdown-divider"></div>
                     <?php Inputs::renderRadioGroup( null, null,
                         array(
                             '60' => array( 'title' => __( 'Every 1 minute', 'bookly' ) ),
@@ -126,7 +129,7 @@ use Bookly\Lib\Config;
                         </div>
                         <div class="form-group mb-0">
                             <div class="custom-control custom-checkbox">
-                                <input id="bookly-js-export-select-all" class="bookly-js-required custom-control-input" type="checkbox" checked />
+                                <input id="bookly-js-export-select-all" class="bookly-js-required custom-control-input" type="checkbox" checked/>
                                 <label class="custom-control-label" for="bookly-js-export-select-all"><?php esc_html_e( 'Select all', 'bookly' ) ?></label>
                             </div>
                         </div>

@@ -60,7 +60,7 @@ class Shared extends Proxy\Shared
             'module' => array( 'js/email-logs.js' => array( 'bookly-backend-globals' ) ),
         ) );
 
-        $datatables = BooklyLib\Utils\Tables::getSettings( 'email_logs' );
+        $datatables = BooklyLib\Utils\Tables::getSettings( BooklyLib\Utils\Tables::EMAIL_LOGS );
 
         wp_localize_script( 'bookly-email-logs.js', 'BooklyEmailLogsL10n', array(
             'datatables' => $datatables,

@@ -3,6 +3,7 @@ namespace BooklyCustomFields\Frontend\Modules\Booking\ProxyProviders;
 
 use Bookly\Lib as BooklyLib;
 use Bookly\Frontend\Modules\Booking\Proxy;
+use Bookly\Frontend\Components\Booking\InfoText;
 use BooklyCustomFields\Lib;
 use BooklyCustomFields\Lib\Captcha\Captcha;
 
@@ -35,9 +36,16 @@ class Shared extends Proxy\Shared
     public static function prepareCartItemInfoText( $data, BooklyLib\CartItem $cart_item )
     {
         if ( get_option( 'bookly_custom_fields_enabled' ) ) {
-            $data['custom_fields'] = Lib\ProxyProviders\Local::getForCartItem( $cart_item, true );
+            $last = count( $data['appointments'] ) - 1;
+            $custom_fields = Lib\ProxyProviders\Local::getForCartItem( $cart_item, true );
+            $data['appointments'][ $last ]['custom_fields'] = InfoText::implode( $custom_fields );
+            $data['custom_fields'] =  array_key_exists( 'custom_fields', $data )
+                ? array_merge( $data['custom_fields'], $custom_fields )
+                : $custom_fields;
             foreach ( $cart_item->getCustomFields() as $custom_field ) {
-                $data[ 'custom_field#' . $custom_field['id'] ] = is_array( $custom_field['value'] ) ? implode( ',', $custom_field['value'] ) : $custom_field['value'];
+                $value = is_array( $custom_field['value'] ) ? implode( ',', $custom_field['value'] ) : $custom_field['value'];
+                $data[ 'custom_field#' . $custom_field['id'] ] = $value;
+                $data['appointments'][ $last ][ 'custom_field#' . $custom_field['id'] ] = $value;
             }
         }
 
@@ -66,16 +74,21 @@ class Shared extends Proxy\Shared
                             }
                         }
                         if ( $cart_item->getService()->withSubServices() ) {
-                            $custom_fields = array();
+                            $cf_list = array();
                             // Collect custom fields for compound service.
                             foreach ( $cart_item->getService()->getSubServices() as $sub_service ) {
                                 foreach ( Lib\ProxyProviders\Local::getTranslated( $sub_service->getId() ) as $field ) {
-                                    if ( ! array_key_exists( $field->id, $custom_fields ) && property_exists( $field, 'visible' ) && $field->visible ) {
-                                        $custom_fields[ $field->id ] = $field;
+                                    if ( ! array_key_exists( $field->id, $cf_list ) && property_exists( $field, 'visible' ) && $field->visible ) {
+                                        $cf_list[ $field->id ] = $field;
                                     }
                                 }
                             }
-                            $custom_fields = array_values( $custom_fields );
+                            $custom_fields = array();
+                            foreach ( Lib\ProxyProviders\Local::getAll() as $cf ) {
+                                if ( isset( $cf_list[ $cf->id ] ) ) {
+                                    $custom_fields[] = $cf_list[ $cf->id ];
+                                }
+                            }
                         } else {
                             $custom_fields = Lib\ProxyProviders\Local::getTranslated( $service_id );
                         }

@@ -6,6 +6,7 @@ use Bookly\Lib\Config;
 use Bookly\Lib\Entities\Payment;
 use Bookly\Lib\UserBookingData;
 use Bookly\Frontend\Modules\Booking\Lib\Errors;
+use BooklyPro\Lib\Bbb\BigBlueButton;
 use BooklyPro\Lib\Payment\PayPal;
 
 /**
@@ -191,6 +192,62 @@ class Ajax extends BooklyLib\Base\Ajax
     }
 
     /**
+     * Create BigBlueButton online meeting
+     *
+     * @return void
+     */
+    public static function bbb()
+    {
+        $meeting_id = self::parameter( 'meeting_id' );
+        $token = self::parameter( 'token' );
+        $errors = array();
+        if ( $meeting_id ) {
+            $row = BooklyLib\Entities\Appointment::query( 'a' )
+                ->select( 'a.online_meeting_data, st.full_name AS moderator_name, s.title AS service_name' )
+                ->leftJoin( 'Staff', 'st', 'st.id = a.staff_id' )
+                ->leftJoin( 'Service', 's', 's.id = a.service_id' )
+                ->where( 'a.online_meeting_provider', 'bbb' )
+                ->where( 'a.online_meeting_id', $meeting_id )
+                ->fetchRow();
+            if ( $row ) {
+                $data = json_decode( $row['online_meeting_data'], true );
+                $moderator_pw = isset( $data['staff_pw'] ) ? $data['staff_pw'] : '';
+                $attendee_pw = isset( $data['client_pw'] ) ? $data['client_pw'] : '';
+                $bbb = new BigBlueButton( $meeting_id );
+                if ( $bbb->create( $row['service_name'], $moderator_pw, $attendee_pw ) ) {
+                    if ( $token == $moderator_pw ) {
+                        // Staff
+                        $name = $row['moderator_name'];
+                        $password = $moderator_pw;
+                    } else {
+                        // Client
+                        /** @var BooklyLib\Entities\Customer $customer */
+                        $customer = BooklyLib\Entities\Customer::query()
+                            ->where( 'email', self::parameter( 'email' ) )
+                            ->findOne();
+                        $name = $customer ? $customer->getFullName() : 'User-' . mt_rand( 100, 999 );
+                        $password = $attendee_pw;
+                    }
+
+                    $url = $bbb->getJoinMeetingRedirectUrl( $name, $password );
+                    wp_redirect( $url );
+                    BooklyLib\Utils\Common::redirect( $url );
+                    exit;
+                } else {
+                    $errors = $bbb->errors();
+                }
+            } else {
+                $errors[] = __( 'Invalid online meeting url', 'bookly' );
+            }
+        } else {
+            $errors[] = __( 'Invalid online meeting url', 'bookly' );
+        }
+
+        echo implode( '<br>', $errors );
+        exit;
+    }
+
+    /**
      * Override parent method to exclude actions from CSRF token verification.
      *
      * @param string $action
@@ -199,7 +256,8 @@ class Ajax extends BooklyLib\Base\Ajax
     protected static function csrfTokenValid( $action = null )
     {
         $excluded_actions = array(
-            'cancelAppointments'
+            'cancelAppointments',
+            'bbb',
         );
 
         return in_array( $action, $excluded_actions ) || parent::csrfTokenValid( $action );

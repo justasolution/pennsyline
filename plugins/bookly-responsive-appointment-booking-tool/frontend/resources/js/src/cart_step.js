@@ -27,16 +27,18 @@ export default function stepCart(params, error) {
             success: function (response) {
                 if (response.success) {
                     $container.html(response.html);
-                    if (error){
+                    if (error) {
                         $('.bookly-label-error', $container).html(error.message);
-                        $('tr[data-cart-key="'+ error.failed_key +'"]', $container).addClass('bookly-label-error');
+                        $('tr[data-cart-key="' + error.failed_key + '"]', $container).addClass('bookly-label-error');
                     } else {
                         $('.bookly-label-error', $container).hide();
                     }
                     scrollTo($container, params.form_id);
 
                     const customJS = response.custom_js;
-                    $('.bookly-js-next-step', $container).on('click', function () {
+                    $('.bookly-js-next-step', $container).on('click', function (e) {
+                        e.stopPropagation();
+                        e.preventDefault();
                         laddaStart(this);
 
                         // Execute custom JavaScript
@@ -50,16 +52,21 @@ export default function stepCart(params, error) {
 
                         stepDetails({form_id: params.form_id});
                     });
-                    $('.bookly-add-item', $container).on('click', function () {
+                    $('.bookly-add-item', $container).on('click', function (e) {
+                        e.stopPropagation();
+                        e.preventDefault();
                         laddaStart(this);
-                        stepService({form_id: params.form_id, new_chain : true});
+                        stepService({form_id: params.form_id, new_chain: true});
                     });
                     // 'BACK' button.
                     $('.bookly-js-back-step', $container).on('click', function (e) {
+                        e.stopPropagation();
                         e.preventDefault();
                         laddaStart(this);
                         switch (opt[params.form_id].cart_prev_step) {
-                            case 'service': stepService({form_id: params.form_id}); break;
+                            case 'service':
+                                stepService({form_id: params.form_id});
+                                break;
                             case 'extras':  stepExtras({form_id: params.form_id});  break;
                             case 'time':    stepTime({form_id: params.form_id});    break;
                             case 'repeat':  stepRepeat({form_id: params.form_id});  break;

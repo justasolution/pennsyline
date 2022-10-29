@@ -7,6 +7,7 @@ use Bookly\Backend\Components\Dialogs\Appointment\CustomerDetails\Proxy;
 
 /**
  * Class Dialog
+ *
  * @package Bookly\Backend\Components\Dialogs\Appointment\CustomerDetails
  */
 class Dialog extends Lib\Base\Component
@@ -18,6 +19,10 @@ class Dialog extends Lib\Base\Component
     {
         self::enqueueScripts( array(
             'module' => array( 'js/customer_details.js' => array( 'bookly-backend-globals' ), ),
+        ) );
+
+        self::enqueueData( array(
+            'extras_list',
         ) );
 
         $statuses = array();

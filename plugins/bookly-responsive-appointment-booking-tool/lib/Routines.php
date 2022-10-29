@@ -9,6 +9,7 @@ use Bookly\Lib\Entities\Payment;
 
 /**
  * Class Routines
+ *
  * @package Bookly\Lib
  */
 abstract class Routines
@@ -19,30 +20,10 @@ abstract class Routines
     public static function init()
     {
         // Register daily routine.
-        add_action( 'bookly_daily_routine', function () {
-            // Daily info routine.
-            Routines::handleDailyInfo();
-            // Cloud routine.
-            Routines::loadCloudInfo();
-            // Statistics routine.
-            Routines::sendDailyStatistics();
-            // Calculate goal by number of customer appointments achieved
-            Routines::calculateGoalOfCA();
-            // Let add-ons do their daily routines.
-            Proxy\Shared::doDailyRoutine();
-        }, 10, 0 );
+        add_action( 'bookly_daily_routine', array( __CLASS__, 'doDailyRoutine' ), 10, 0 );
 
         // Register hourly routine.
-        add_action( 'bookly_hourly_routine', function () {
-            // Email and SMS notifications routine.
-            Notifications\Routine::sendNotifications();
-            // Handle outdated unpaid payments
-            Routines::handleUnpaidPayments();
-            // Handle mailing campaigns
-            Routines::mailing();
-            // Let add-ons do their hourly routines.
-            Proxy\Shared::doHourlyRoutine();
-        }, 10, 0 );
+        add_action( 'bookly_hourly_routine', array( __CLASS__, 'doRoutine' ), 10, 0 );
 
         // Schedule daily routine.
         if ( ! wp_next_scheduled( 'bookly_daily_routine' ) ) {
@@ -52,6 +33,45 @@ abstract class Routines
         // Schedule hourly routine.
         if ( ! wp_next_scheduled( 'bookly_hourly_routine' ) ) {
             wp_schedule_event( current_time( 'timestamp' ), 'hourly', 'bookly_hourly_routine' );
+        }
+    }
+
+    public static function doRoutine()
+    {
+        $transient_name = 'bookly_do_routine';
+        $lock = (int) get_transient( $transient_name );
+        if ( $lock + 120 < time() ) {
+            set_transient( $transient_name, time(), 120 );
+            set_time_limit( 120 );
+            // Email and SMS notifications routine.
+            Notifications\Routine::sendNotifications();
+            // Handle outdated unpaid payments
+            self::handleUnpaidPayments();
+            // Let add-ons do their hourly routines.
+            Proxy\Shared::doHourlyRoutine();
+            // Handle mailing campaigns
+            self::mailing();
+        }
+
+        self::doDailyRoutine();
+    }
+
+    public static function doDailyRoutine()
+    {
+        $transient_name = 'bookly_do_daily_routine';
+        $lock = (int) get_transient( $transient_name );
+        if ( $lock + DAY_IN_SECONDS <= time() ) {
+            set_transient( $transient_name, time(), DAY_IN_SECONDS );
+            // Daily info routine.
+            self::handleDailyInfo();
+            // Cloud routine.
+            self::loadCloudInfo();
+            // Statistics routine.
+            self::sendDailyStatistics();
+            // Calculate goal by number of customer appointments achieved
+            self::calculateGoalOfCA();
+            // Let add-ons do their daily routines.
+            Proxy\Shared::doDailyRoutine();
         }
     }
 
@@ -98,6 +118,7 @@ abstract class Routines
                     ->whereIn( 'series_id', $series )
                     ->execute();
             }
+            Proxy\Shared::unpaidPayments( $payments );
         }
     }
 
@@ -130,6 +151,7 @@ abstract class Routines
                             ->setDescription( $plugin['envatoDescription'] )
                             ->setUrl( $plugin['envatoUrl'] )
                             ->setIcon( $plugin['envatoIcon'] )
+                            ->setImage( $plugin['envatoImage'] )
                             ->setPrice( $plugin['envatoPrice'] )
                             ->setSales( $plugin['envatoSales'] )
                             ->setRating( $plugin['envatoRating'] )
@@ -220,24 +242,38 @@ abstract class Routines
                 ->whereLte( 'send_at', current_time( 'mysql' ) )
                 ->find();
             foreach ( $mc_list as $mc ) {
-                $mc->setState( MailingCampaign::STATE_COMPLETED )->save();
-                $query = 'INSERT INTO `' . MailingQueue::getTableName() . '` (phone, text, sent, created_at)
-                          SELECT mlr.phone, %s, 0, %s
+                $mc->setState( MailingCampaign::STATE_IN_PROGRESS )->save();
+                $query = 'INSERT INTO `' . MailingQueue::getTableName() . '` (phone, text, sent, campaign_id, created_at)
+                          SELECT mlr.phone, %s, 0, %d, %s
                             FROM `' . MailingListRecipient::getTableName() . '` AS mlr
                            WHERE mlr.mailing_list_id = %s';
-                $wpdb->query( $wpdb->prepare( $query, $mc->getText(), current_time( 'mysql' ), $mc->getMailingListId() ) );
+                $wpdb->query( $wpdb->prepare( $query, $mc->getText(), $mc->getId(), current_time( 'mysql' ), $mc->getMailingListId() ) );
             }
 
-            $lock = (int) get_transient( 'bookly_mailing_campaign' );
-            if ( $lock + 120 < time() ) {
-                set_transient( 'bookly_mailing_campaign', time(), 120 );
-                set_time_limit( 0 );
-                /** @var MailingQueue[] $sms_items */
-                $sms_items = MailingQueue::query()->where( 'sent', '0' )->find();
+            /** @var MailingQueue[] $sms_items */
+            $sms_items = MailingQueue::query()->where( 'sent', '0' )->sortBy( 'campaign_id' )->find();
+            if ( $sms_items ) {
                 $notification_type_id = 60;
+                $init_campaign_id = $campaign_id = $sms_items[0]->getCampaignId();
                 foreach ( $sms_items as $sms ) {
                     $sms->setSent( 1 )->save();
                     $cloud->sms->sendSms( $sms->getPhone(), $sms->getText(), $sms->getText(), $notification_type_id );
+                    if ( $campaign_id != $sms->getCampaignId() ) {
+                        MailingCampaign::query()
+                            ->update()
+                            ->set( 'state', MailingCampaign::STATE_COMPLETED )
+                            ->where( 'id', $campaign_id )
+                            ->execute();
+                        $campaign_id = $sms->getCampaignId();
+                    }
+                }
+
+                if ( $init_campaign_id === $campaign_id ) {
+                    MailingCampaign::query()
+                        ->update()
+                        ->set( 'state', MailingCampaign::STATE_COMPLETED )
+                        ->where( 'id', $campaign_id )
+                        ->execute();
                 }
             }
         }

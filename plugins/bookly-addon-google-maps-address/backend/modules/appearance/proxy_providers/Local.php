@@ -10,7 +10,7 @@ use Bookly\Backend\Modules\Appearance\Proxy;
 class Local extends Proxy\GoogleMapsAddress
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public static function renderGoogleMaps()
     {
@@ -18,7 +18,7 @@ class Local extends Proxy\GoogleMapsAddress
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public static function renderShowGoogleMaps()
     {

@@ -5,10 +5,59 @@ use Bookly\Lib as BooklyLib;
 
 /**
  * Class Updates
+ *
  * @package BooklyPro\Lib
  */
 class Updater extends BooklyLib\Base\Updater
 {
+    public function update_5_4()
+    {
+        $this->alterTables( array(
+            'bookly_staff_categories' => array(
+                'ALTER TABLE `%s` ADD COLUMN `info` TEXT DEFAULT NULL AFTER `name`',
+                'ALTER TABLE `%s` ADD COLUMN `attachment_id` INT UNSIGNED DEFAULT NULL AFTER `name`',
+            ),
+            'bookly_forms' => array(
+                'ALTER TABLE `%s` CHANGE `type` `type` ENUM("search-form","services-form","cancellation-confirmation") NOT NULL DEFAULT "search-form"',
+            ),
+        ) );
+    }
+
+    public function update_5_3()
+    {
+        global $wpdb;
+
+        $charset_collate = $wpdb->has_cap( 'collation' )
+            ? $wpdb->get_charset_collate()
+            : 'DEFAULT CHARACTER SET = utf8 COLLATE = utf8_general_ci';
+
+        $wpdb->query(
+            'CREATE TABLE IF NOT EXISTS `' . $this->getTableName( 'bookly_forms' ) . '` (
+                `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                `type` ENUM("search-form","services-form") NOT NULL DEFAULT "search-form",
+                `name` VARCHAR(255) NOT NULL,
+                `token` VARCHAR(255) NOT NULL,
+                `settings` TEXT DEFAULT NULL,
+                `custom_css` TEXT DEFAULT NULL,
+                `created_at` DATETIME NOT NULL
+            ) ENGINE = INNODB
+            ' . $charset_collate
+        );
+    }
+
+    public function update_4_9()
+    {
+        add_option( 'bookly_bbb_server_end_point', '' );
+        add_option( 'bookly_bbb_shared_secret', '' );
+    }
+
+    public function update_4_8()
+    {
+        add_option( 'bookly_wc_create_order_via_backend', '0' );
+        add_option( 'bookly_wc_default_order_status', 'wc-pending' );
+        $this->addL10nOptions( array( 'bookly_l10n_qr_code_description' => "{service_name}\n{staff_name}" ) );
+    }
+
     public function update_4_7()
     {
         add_option( 'bookly_auto_change_status', '0' );
@@ -233,13 +282,13 @@ class Updater extends BooklyLib\Base\Updater
         $notifications_table = $this->getTableName( 'bookly_notifications' );
         $notifications = array(
             'client_new_wp_user' => array( 'type' => 'customer_new_wp_user', 'name' => __( 'New customer\'s WordPress user login details', 'bookly' ) ),
-            'customer_birthday'  => array( 'type' => 'customer_birthday', 'name' => __( 'Customer\'s birthday', 'bookly' ) ),
+            'customer_birthday' => array( 'type' => 'customer_birthday', 'name' => __( 'Customer\'s birthday', 'bookly' ) ),
             'client_approved_appointment_cart' => array( 'type' => 'new_booking_combined', 'name' => __( 'Notification to customer about approved appointments', 'bookly' ) ),
-            'client_pending_appointment_cart'  => array( 'type' => 'new_booking_combined', 'name' => __( 'Notification to customer about pending appointments', 'bookly' ) ),
+            'client_pending_appointment_cart' => array( 'type' => 'new_booking_combined', 'name' => __( 'Notification to customer about pending appointments', 'bookly' ) ),
         );
 
         // Changes in schema
-        $disposable_options[] = $this->disposable( __FUNCTION__ . '-1', function () use ( $self, $wpdb, $notifications_table, $notifications ) {
+        $disposable_options[] = $this->disposable( __FUNCTION__ . '-1', function() use ( $self, $wpdb, $notifications_table, $notifications ) {
             if ( ! $self->existsColumn( 'bookly_notifications', 'name' ) ) {
                 $self->alterTables( array(
                     'bookly_notifications' => array(
@@ -264,13 +313,13 @@ class Updater extends BooklyLib\Base\Updater
         } );
 
         // WPML
-        $disposable_options[] = $this->disposable( __FUNCTION__ . '-2', function () use ( $self, $wpdb, $notifications_table, $notifications ) {
+        $disposable_options[] = $this->disposable( __FUNCTION__ . '-2', function() use ( $self, $wpdb, $notifications_table, $notifications ) {
             $records = $wpdb->get_results( $wpdb->prepare( 'SELECT id, `type`, `gateway` FROM `' . $notifications_table . '` WHERE COALESCE( `settings`, \'[]\' ) = \'[]\' AND `type` IN (' . implode( ', ', array_fill( 0, count( $notifications ), '%s' ) ) . ')', array_keys( $notifications ) ), ARRAY_A );
             $strings = array();
             foreach ( $records as $record ) {
                 $type = $record['type'];
                 if ( isset( $notifications[ $type ]['type'] ) && $type != $notifications[ $type ]['type'] ) {
-                    $key   = sprintf( '%s_%s_%d', $record['gateway'], $type, $record['id'] );
+                    $key = sprintf( '%s_%s_%d', $record['gateway'], $type, $record['id'] );
                     $value = sprintf( '%s_%s_%d', $record['gateway'], $notifications[ $type ]['type'], $record['id'] );
                     $strings[ $key ] = $value;
                     if ( $record['gateway'] == 'email' ) {
@@ -282,8 +331,8 @@ class Updater extends BooklyLib\Base\Updater
         } );
 
         // Add settings for notifications
-        $disposable_options[] = $this->disposable( __FUNCTION__ . '-3', function () use ( $wpdb, $notifications_table, $notifications ) {
-            $update_settings  = 'UPDATE `' . $notifications_table . '` SET `type` = %s, `settings` = %s, `active` = %d WHERE id = %d';
+        $disposable_options[] = $this->disposable( __FUNCTION__ . '-3', function() use ( $wpdb, $notifications_table, $notifications ) {
+            $update_settings = 'UPDATE `' . $notifications_table . '` SET `type` = %s, `settings` = %s, `active` = %d WHERE id = %d';
             $default_settings = '{"status":"any","option":2,"services":{"any":"any","ids":[]},"offset_hours":2,"perform":"before","at_hour":9,"before_at_hour":18,"offset_before_hours":-24,"offset_bidirectional_hours":0}';
             $records = $wpdb->get_results( $wpdb->prepare( 'SELECT id, `type`, `gateway`, `message`, `active`, `subject` FROM `' . $notifications_table . '` WHERE COALESCE( `settings`, \'[]\' ) = \'[]\' AND `type` IN (' . implode( ', ', array_fill( 0, count( $notifications ), '%s' ) ) . ')', array_keys( $notifications ) ), ARRAY_A );
             foreach ( $records as $record ) {

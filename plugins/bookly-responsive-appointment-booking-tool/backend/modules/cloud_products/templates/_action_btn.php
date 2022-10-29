@@ -10,8 +10,8 @@ use Bookly\Backend\Components\Controls\Buttons;
         <?php if ( isset( $product['cancel_on_renewal'] ) && $product['cancel_on_renewal'] === true ) : ?>
             <?php Buttons::render( null, 'bookly-js-product-revert-cancel btn-success', $product['texts']['action-revert-cancel'] ) ?>
         <?php else : ?>
-            <?php Buttons::render( null, 'bookly-js-product-enable btn-success collapse', $product['texts']['action-on'] ) ?>
-            <?php Buttons::render( null, 'bookly-js-product-disable btn-danger collapse', $product['texts']['action-off'] ) ?>
+            <?php Buttons::render( null, 'bookly-js-product-enable btn-success bookly-collapse', $product['texts']['action-on'] ) ?>
+            <?php Buttons::render( null, 'bookly-js-product-disable btn-danger bookly-collapse', $product['texts']['action-off'] ) ?>
         <?php endif ?>
     <?php else: ?>
         <?php Buttons::render( null, 'bookly-js-product-login-button btn-success', $product['texts']['action-on'] ) ?>

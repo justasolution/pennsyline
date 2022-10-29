@@ -9,10 +9,10 @@ $hide  = isset ( $attributes['hide'] ) ? explode( ',', $attributes['hide'] ) : a
     <div class="col-md-auto">
         <div id="bookly-js-staff-avatar">
             <div class="form-group">
-                <?php $img = wp_get_attachment_image_src( $staff->getAttachmentId(), 'thumbnail' ) ?>
+                <?php $img = $staff->getImageUrl( 'thumbnail' ) ?>
 
                 <div class="bookly-js-image bookly-thumb<?php echo $img ? ' bookly-thumb-with-image' : '' ?>"
-                    <?php echo $img ? 'style="background-image: url(' . $img[0] . '); background-size: cover;"' : '' ?>
+                    <?php echo $img ? 'style="background-image: url(' . $img . '); background-size: cover;"' : '' ?>
                 >
                     <i class="fas fa-fw fa-4x fa-camera mt-2 text-white w-100"></i>
                 </div>

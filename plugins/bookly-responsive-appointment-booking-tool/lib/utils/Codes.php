@@ -6,6 +6,7 @@ use Bookly\Lib\Entities;
 
 /**
  * Class Codes
+ *
  * @package Bookly\Lib\Utils
  */
 abstract class Codes
@@ -23,12 +24,13 @@ abstract class Codes
      *
      * @param string $text
      * @param array $codes
-     * @param false|array $bold array of excludes
+     * @param bool $bold
+     * @param array $exclude
      * @return string
      */
-    public static function replace( $text, $codes, $bold = true )
+    public static function replace( $text, $codes, $bold = true, $exclude = array() )
     {
-        return self::stringify( self::tokenize( $text ), $codes, $bold );
+        return self::stringify( self::tokenize( $text ), $codes, $bold, $exclude );
     }
 
     /**
@@ -37,9 +39,10 @@ abstract class Codes
      * @param array $tokens
      * @param array $codes
      * @param bool $bold
+     * @param array $exclude
      * @return string
      */
-    public static function stringify( $tokens, $codes, $bold )
+    public static function stringify( $tokens, $codes, $bold, $exclude = array() )
     {
         $output = '';
 
@@ -51,7 +54,7 @@ abstract class Codes
                 case 'T_CODE':
                     $data = self::get( $token[1], $codes );
                     if ( $data !== null ) {
-                        if ( $bold !== false && ! in_array( $token[1], $bold ) ) {
+                        if ( $bold !== false && ! in_array( $token[1], $exclude ) ) {
                             $output .= '<b>' . $data . '</b>';
                         } else {
                             $output .= $data;
@@ -100,7 +103,7 @@ abstract class Codes
                             }
                             break;
                         default :
-                            if ( !empty( $data ) ) {
+                            if ( ! empty( $data ) ) {
                                 $if = true;
                             }
                             break;
@@ -181,7 +184,7 @@ abstract class Codes
                     // Raw text started
                     $text_start = $offset;
                 }
-                ++ $offset;
+                ++$offset;
             }
         }
         if ( $text_start !== null ) {
@@ -281,35 +284,34 @@ abstract class Codes
         $appointment_end = $appointment->getStartDate() ? Lib\Utils\DateTime::convertTimeZone( Lib\Slots\DatePoint::fromStr( $appointment->getEndDate() )->modify( $appointment->getExtrasDuration() )
             ->format( 'Y-m-d H:i:s' ), Lib\Config::getWPTimeZone(), $timezone ) : null;
         $service_name = $appointment->getServiceId() === null ? $appointment->getCustomServiceName() : $service->getTranslatedTitle();
-        $staff_photo = wp_get_attachment_image_src( $staff->getAttachmentId(), 'full' );
+        $staff_photo = $staff->getImageUrl();
+        $category = $service->getCategoryId() ? Entities\Category::find( $service->getCategoryId() ) : false;
+        $category_image = $category ? $category->getImageUrl() : '';
 
         $company_logo = '';
         if ( $format == 'html' ) {
-            $img = wp_get_attachment_image_src( get_option( 'bookly_co_logo_attachment_id' ), 'full' );
-            // Company logo as <img> tag.
-            if ( $img ) {
-                $company_logo = sprintf(
-                    '<img src="%s" alt="%s" />',
-                    esc_attr( $img[0] ),
-                    esc_attr( get_option( 'bookly_co_name' ) )
-                );
-            }
+            $company_logo = Common::getImageTag( Common::getAttachmentUrl( get_option( 'bookly_co_logo_attachment_id' ), 'full' ), get_option( 'bookly_co_name' ) );
+            $staff_photo = Common::getImageTag( $staff_photo, $staff->getFullName() );
+            $category_image = Common::getImageTag( $category_image, $category->getName() );
         }
 
         $codes = array(
             'signed_up' => 0,
             'number_of_persons' => 0,
             'participants' => array(),
+            'appointment_id' => $appointment->getId(),
             'appointment_date' => $appointment_start === null ? __( 'N/A', 'bookly' ) : Lib\Utils\DateTime::formatDate( $appointment_start ),
             'appointment_time' => $appointment_start === null ? __( 'N/A', 'bookly' ) : ( $service->getDuration() < DAY_IN_SECONDS ? Lib\Utils\DateTime::formatTime( $appointment_start ) : $service->getStartTimeInfo() ),
             'appointment_end_date' => $appointment_end === null ? __( 'N/A', 'bookly' ) : Lib\Utils\DateTime::formatDate( $appointment_end ),
             'appointment_end_time' => $appointment_end === null ? __( 'N/A', 'bookly' ) : ( $service->getDuration() < DAY_IN_SECONDS ? Lib\Utils\DateTime::formatTime( $appointment_end ) : $service->getEndTimeInfo() ),
             'booking_number' => $appointment->getId(),
             'category_name' => $service->getTranslatedCategoryName(),
+            'category_info' => $category ? $category->getTranslatedInfo() : '',
+            'category_image' => $category_image,
             'company_address' => $format == 'html' ? nl2br( get_option( 'bookly_co_address' ) ) : get_option( 'bookly_co_address' ),
-            'company_logo'    => $company_logo,
-            'company_name'    => get_option( 'bookly_co_name' ),
-            'company_phone'   => get_option( 'bookly_co_phone' ),
+            'company_logo' => $company_logo,
+            'company_name' => get_option( 'bookly_co_name' ),
+            'company_phone' => get_option( 'bookly_co_phone' ),
             'company_website' => get_option( 'bookly_co_website' ),
             'google_calendar_url' => sprintf( 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=%s&dates=%s/%s&details=%s',
                 urlencode( $service_name ),
@@ -325,7 +327,7 @@ abstract class Codes
             'staff_info' => $format == 'html' ? nl2br( $staff->getTranslatedInfo() ) : $staff->getTranslatedInfo(),
             'staff_name' => $staff->getTranslatedName(),
             'staff_phone' => $staff->getPhone(),
-            'staff_photo' => $staff_photo ? $staff_photo[0] : '',
+            'staff_photo' => $staff_photo,
             'staff_timezone' => $staff->getTimeZone( false ) ?: '',
             'internal_note' => $appointment->getInternalNote(),
         );
@@ -377,6 +379,9 @@ abstract class Codes
         $cancel_appointment_url = admin_url( 'admin-ajax.php?action=bookly_cancel_appointment&token=' . $customer_appointment->getToken() );
 
         $codes = array(
+            'amount_due' => $payment ? Lib\Utils\Price::format( $payment->getTotal() - $payment->getPaid() ) : '',
+            'amount_paid' => $payment ? Lib\Utils\Price::format( $payment->getPaid() ) : '',
+            'appointment_id' => $customer_appointment->getAppointmentId(),
             'appointment_notes' => $customer_appointment->getNotes(),
             'client_name' => $customer->getFullName(),
             'client_note' => $customer->getNotes(),
@@ -396,8 +401,41 @@ abstract class Codes
             'cancel_appointment' => sprintf( '<a href="%s" target="_blank">%s</a>', $cancel_appointment_url, __( 'Cancel Appointment', 'bookly' ) ),
             'cancel_appointment_url' => $cancel_appointment_url,
             'booking_number' => Lib\Config::groupBookingActive() ? $customer_appointment->getAppointmentId() . '-' . $customer_appointment->getId() : $customer_appointment->getAppointmentId(),
+            'total_price' => $payment ? Lib\Utils\Price::format( $payment->getTotal() ) : ''
         );
 
         return Lib\Proxy\Shared::prepareCustomerAppointmentCodes( $codes, $customer_appointment, $format );
+    }
+
+    /**
+     * @param Lib\DataHolders\Booking\Item $item
+     * @return array
+     */
+    public static function getICSCodes( Lib\DataHolders\Booking\Item $item )
+    {
+        $customer = Lib\Entities\Customer::find( $item->getCA()->getCustomerId() );
+        $appointment_start_date = $item->getAppointment()->getStartDate() === null ? __( 'N/A', 'bookly' ) : Lib\Utils\DateTime::formatDate( $item->getAppointment()->getStartDate() );
+        $appointment_start_time = $item->getAppointment()->getStartDate() === null ? __( 'N/A', 'bookly' ) : Lib\Utils\DateTime::formatTime( $item->getAppointment()->getStartDate() );
+
+        return array(
+            'appointment_date' => $appointment_start_date,
+            'appointment_time' => $item->getService()->getDuration() > DAY_IN_SECONDS && $item->getService()->getStartTimeInfo() !== null ? $item->getService()->getStartTimeInfo() : $appointment_start_time,
+            'service_name' => $item->getService()->getTranslatedTitle(),
+            'service_price' => Lib\Utils\Price::format( $item->getServicePrice() ),
+            'staff_name' => $item->getStaff()->getTranslatedName(),
+            'client_name' => $customer->getFullName(),
+            'client_email' => $customer->getEmail(),
+            'client_phone' => $customer->getPhone(),
+            'status' => Entities\CustomerAppointment::statusToString( $item->getCA()->getStatus() ),
+        );
+    }
+
+    /**
+     * @param $recipient
+     * @return string
+     */
+    public static function getICSDescriptionTemplate( $recipient = 'client' )
+    {
+        return $recipient === 'client' ? Lib\Utils\Common::getTranslatedOption( 'bookly_l10n_ics_customer_template' ) : get_option( 'bookly_ics_staff_template', '' );
     }
 }

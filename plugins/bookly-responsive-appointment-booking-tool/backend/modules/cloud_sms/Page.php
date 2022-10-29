@@ -75,9 +75,14 @@ class Page extends Lib\Base\Component
                     'edit' => __( 'Edit', 'bookly' ),
                     'settingsSaved' => __( 'Settings saved.', 'bookly' ),
                     'na' => __( 'N/A', 'bookly' ),
-                    'pending' => __( 'Pending', 'bookly' ),
-                    'completed' => __( 'Completed', 'bookly' ),
+                    'campaign' => array(
+                        'pending' => __( 'Pending', 'bookly' ),
+                        'in_progress' => __( 'In progress', 'bookly' ),
+                        'completed' => __( 'Completed', 'bookly' ),
+                        'canceled' => __( 'Canceled', 'bookly' ),
+                    ),
                     'gateway' => 'sms',
+                    'default' => __( 'Default', 'bookly' ),
                     'datatables' => $datatables,
                 )
             );

@@ -2,6 +2,7 @@
 use Bookly\Backend\Components;
 use Bookly\Lib\Utils\Common;
 use Bookly\Backend\Components\Support;
+
 ?>
 <div id="bookly-tbs" class="wrap">
     <div class="form-row align-items-center mb-3">
@@ -24,42 +25,51 @@ use Bookly\Backend\Components\Support;
                     </div>
                 </div>
             </div>
-            <div id="bookly-shop" class="hidden"></div>
+            <div class="card-group justify-content-start" id="bookly-shop">
+            </div>
             <div id="bookly-shop-loading" class="bookly-loading"></div>
         </div>
     </div>
 </div>
-<div id="bookly-shop-template" class="hidden">
-    <div class="{{plugin_class}} card p-3 mb-3">
-        <div class="row">
-            <div class="col-lg-10 col-md-9 col-xs-7">
-                <div class="row">
-                    <div class="col-lg-4 col-md-6">
-                        <div class="d-flex">
-                            <div class="mr-4 mb-4">
-                                <a href="{{url}}" target="_blank">{{icon}}</a>
-                            </div>
-                            <div class="flex-fill">
-                                <div class="h5"><a href="{{url}}" target="_blank">{{title}}</a> <span class="badge badge-danger">{{new}}</span></div>
-                                <a class="" href="<?php echo Common::prepareUrlReferrers( 'https://codecanyon.net/user/ladela/portfolio?ref=ladela', 'shop' ) ?>" target="_blank">Ladela</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-8 col-md-6">{{description}}</div>
+<template id="bookly-shop-template" class="hidden">
+    <div class="{{plugin_class}} card mb-4 mr-4 border rounded">
+        <div class="card-header p-0">
+            <img class="card-img-top rounded-top" style="height: 250px;object-fit: cover;" loading="lazy" src="{{image}}" alt="{{title}}"/>
+        </div>
+        <div class="card-body">
+            <div class="d-flex mb-3">
+                <div class="flex-fill">
+                    <div class="h5 mb-0"><a href="{{url}}" target="_blank" class="text-bookly">{{title}}</a> <span class="badge badge-danger">{{new}}</span></div>
+                </div>
+                <div class="text-right">
+                    <div class="h5 mb-0">{{price}}</div>
                 </div>
             </div>
-            <div class="col-lg-2 col-md-3 col-xs-5">
-                <div class="text-center">
-                    <div class="h4 mb-0">{{price}}</div>
-                    <div>{{sales}}</div>
-                    <div class="text-warning {{rating_class}}">{{rating}}</div>
-                    <div class="mb-2">{{reviews}}</div>
+            <div class="d-flex mb-3">
+                <div class="flex-fill">
+                    <span class="text-warning {{rating_class}}">{{rating}}</span>
+                    <span>({{reviews}})</span>
+                </div>
+                <div class="text-right">
+                    <i class="fa fas fa-fw fa-shopping-cart mr-2"></i>{{sales}}
+                </div>
+            </div>
+            <hr/>
+            <div class="card-text">
+                {{description}}
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="d-flex">
+                <div class="flex-fill">
                     <div class="{{demo_url_class}}">
                         <a href="{{demo_url}}" class="btn btn-primary" target="_blank"><b><?php esc_html_e( 'Demo', 'bookly' ) ?></b></a>
                     </div>
-                    <a href="{{url}}" class="btn {{url_class}}" target="_blank">{{url_text}}</a><br/>
+                </div>
+                <div class="text-right">
+                    <a href="{{url}}" class="btn {{url_class}}" target="_blank">{{url_text}}</a>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</template>

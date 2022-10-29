@@ -1,4 +1,4 @@
-jQuery(function ($) {
+jQuery(function($) {
     let $staffList = $('#bookly-staff-list'),
         $checkAllButton = $('#bookly-check-all'),
         $deleteButton = $('#bookly-delete'),
@@ -15,7 +15,7 @@ jQuery(function ($) {
 
     $('.bookly-js-select').val(null);
 
-    $.each(BooklyL10n.datatables.staff_members.settings.filter, function (field, value) {
+    $.each(BooklyL10n.datatables.staff_members.settings.filter, function(field, value) {
         if (value != '') {
             let $elem = $('#bookly-filter-' + field);
             if ($elem.is(':checkbox')) {
@@ -36,21 +36,22 @@ jQuery(function ($) {
      * Init Columns.
      */
     let columns = [{
+        data: null,
         data: 'color',
         responsivePriority: 1,
         orderable: false,
         searchable: false,
-        render: function (data, type, row, meta) {
+        render: function(data, type, row, meta) {
             return '<i class="fas fa-fw fa-circle" style="color:' + data + ';">';
         }
     }];
 
-    $.each(BooklyL10n.datatables.staff_members.settings.columns, function (column, show) {
+    $.each(BooklyL10n.datatables.staff_members.settings.columns, function(column, show) {
         if (show) {
             switch (column) {
                 case 'category_name':
                     columns.push({
-                        data: column, render: function (data, type, row, meta) {
+                        data: column, render: function(data, type, row, meta) {
                             return data !== null ? $.fn.dataTable.render.text().display(data) : BooklyL10n.uncategorized;
                         }
                     });
@@ -62,19 +63,21 @@ jQuery(function ($) {
         }
     });
     columns.push({
+        data: null,
         responsivePriority: 1,
-        orderable         : false,
-        searchable        : false,
-        width             : 90,
-        render            : function (data, type, row, meta) {
+        orderable: false,
+        searchable: false,
+        width: 90,
+        render: function(data, type, row, meta) {
             return '<button type="button" class="btn btn-default" data-action="edit"><i class="far fa-fw fa-edit mr-lg-1"></i><span class="d-none d-lg-inline">' + BooklyL10n.edit + '…</span></button>';
         }
     });
     columns.push({
+        data: null,
         responsivePriority: 1,
-        orderable         : false,
-        searchable        : false,
-        render: function (data, type, row, meta) {
+        orderable: false,
+        searchable: false,
+        render: function(data, type, row, meta) {
             return '<div class="custom-control custom-checkbox mt-1">' +
                 '<input value="' + row.id + '" id="bookly-dt-' + row.id + '" type="checkbox" class="custom-control-input">' +
                 '<label for="bookly-dt-' + row.id + '" class="custom-control-label"></label>' +
@@ -85,8 +88,8 @@ jQuery(function ($) {
     columns[0].responsivePriority = 0;
 
     let order = [];
-    $.each(BooklyL10n.datatables.staff_members.settings.order, function (key, value) {
-        const index = columns.findIndex(function (c) { return c.data === value.column; });
+    $.each(BooklyL10n.datatables.staff_members.settings.order, function(key, value) {
+        const index = columns.findIndex(function(c) { return c.data === value.column; });
         if (index !== -1) {
             order.push([index, value.order]);
         }
@@ -96,19 +99,19 @@ jQuery(function ($) {
      * Init DataTables.
      */
     var dt = $staffList.DataTable({
-        order       : order,
-        info        : false,
-        searching   : false,
+        order: order,
+        info: false,
+        searching: false,
         lengthChange: false,
-        processing  : true,
-        responsive  : true,
-        pageLength  : 25,
-        pagingType  : 'numbers',
-        serverSide  : true,
-        ajax        : {
-            url : ajaxurl,
+        processing: true,
+        responsive: true,
+        pageLength: 25,
+        pagingType: 'numbers',
+        serverSide: true,
+        ajax: {
+            url: ajaxurl,
             type: 'POST',
-            data: function (d) {
+            data: function(d) {
                 let data = $.extend({action: 'bookly_get_staff_list', csrf_token: BooklyL10nGlobal.csrf_token, filter: {}}, d);
 
                 Object.keys(filters).map(function(filter) {
@@ -121,40 +124,40 @@ jQuery(function ($) {
 
                 return data;
             },
-            dataSrc: function (json) {
+            dataSrc: function(json) {
                 $staffCount.html(json.recordsFiltered);
                 return json.data;
             }
         },
-        columns   : columns,
-        rowCallback: function (row, data) {
-            if ( data.visibility == 'archive' ) {
+        columns: columns,
+        rowCallback: function(row, data) {
+            if (data.visibility == 'archive') {
                 $(row).addClass('text-muted');
             }
         },
-        dom       : "<'row'<'col-sm-12'tr>><'row float-left mt-3'<'col-sm-12'p>>",
-        language  : {
+        dom: "<'row'<'col-sm-12'tr>><'row float-left mt-3'<'col-sm-12'p>>",
+        language: {
             zeroRecords: BooklyL10n.zeroRecords,
-            processing : BooklyL10n.processing
+            processing: BooklyL10n.processing
         }
     });
 
     /**
      * Select all appointments.
      */
-    $checkAllButton.on('change', function () {
+    $checkAllButton.on('change', function() {
         $staffList.find('tbody input:checkbox').prop('checked', this.checked);
     });
 
     /**
      * On appointment select.
      */
-    $staffList.on('change', 'tbody input:checkbox', function () {
+    $staffList.on('change', 'tbody input:checkbox', function() {
         $checkAllButton.prop('checked', $staffList.find('tbody input:not(:checked)').length == 0);
     });
 
     $deleteButton
-        .on('click', function (e) {
+        .on('click', function(e) {
             e.preventDefault();
             var data = {
                     action: 'bookly_remove_staff',
@@ -163,27 +166,27 @@ jQuery(function ($) {
                 staff = [],
                 button = this;
 
-            var delete_staff = function (ajaxurl, data) {
+            var delete_staff = function(ajaxurl, data) {
                 var ladda = rangeTools.ladda(button),
                     staff_ids = [],
                     $checkboxes = $staffList.find('tbody input:checked');
 
-                $checkboxes.each(function () {
+                $checkboxes.each(function() {
                     staff_ids.push(dt.row($(this).closest('td')).data().id);
                 });
                 data['staff_ids[]'] = staff_ids;
 
-                $.post(ajaxurl, data, function (response) {
+                $.post(ajaxurl, data, function(response) {
                     if (!response.success) {
                         switch (response.data.action) {
                             case 'show_modal':
                                 $deleteModal
                                     .booklyModal('show');
-                                $('.bookly-js-delete', $deleteModal).off().on('click', function () {
+                                $('.bookly-js-delete', $deleteModal).off().on('click', function() {
                                     delete_staff(ajaxurl, $.extend(data, {force_delete: true}));
                                     $deleteModal.booklyModal('hide');
                                 });
-                                $('.bookly-js-edit', $deleteModal).off().on('click', function () {
+                                $('.bookly-js-edit', $deleteModal).off().on('click', function() {
                                     rangeTools.ladda(this);
                                     window.location.href = response.data.filter_url;
                                 });
@@ -207,14 +210,16 @@ jQuery(function ($) {
         });
 
     $('.bookly-js-select')
-        .select2({
+        .booklySelect2({
             width: '100%',
             theme: 'bootstrap4',
             dropdownParent: '#bookly-tbs',
             allowClear: true,
             placeholder: '',
-            language  : {
-                noResults: function() { return BooklyL10n.noResultFound; }
+            language: {
+                noResults: function() {
+                    return BooklyL10n.noResultFound;
+                }
             }
         });
 
@@ -222,17 +227,17 @@ jQuery(function ($) {
      * On filters change.
      */
     filters.search
-        .on('keyup', function () {
+        .on('keyup', function() {
             dt.search(this.value).draw();
         })
-        .on('keydown', function (e) {
+        .on('keydown', function(e) {
             if (e.keyCode == 13) {
                 e.preventDefault();
                 return false;
             }
         })
     ;
-    filters.visibility.on('change', function () {dt.ajax.reload();});
-    filters.archived.on('change', function () {dt.ajax.reload();});
-    filters.category.on('change', function () {dt.ajax.reload();});
+    filters.visibility.on('change', function() {dt.ajax.reload();});
+    filters.archived.on('change', function() {dt.ajax.reload();});
+    filters.category.on('change', function() {dt.ajax.reload();});
 });

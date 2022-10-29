@@ -62,7 +62,7 @@ class Widget extends Lib\Base\Component
             'csrfToken'    => Lib\Utils\Common::getCsrfToken(),
             'appointments' => __( 'Appointments', 'bookly' ),
             'revenue'      => __( 'Revenue', 'bookly' ),
-            'currency'     => $currencies[ get_option( 'bookly_pmt_currency' ) ]['symbol'],
+            'currency'     => $currencies[ Lib\Config::getCurrency() ]['symbol'],
         ) );
     }
 }

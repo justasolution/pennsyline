@@ -58,6 +58,10 @@ class ShortCode extends Lib\Base\Component
         /** @global \WP_Locale $wp_locale */
         global $wp_locale, $sitepress;
 
+        if ( ! $wp_locale ) {
+            $wp_locale = new \WP_Locale();
+        }
+
         // Disable emoji in IE11
         if ( strpos( $_SERVER['HTTP_USER_AGENT'], 'Trident/7.0' ) !== false ) {
             if ( self::postsHaveShortCode() ) {
@@ -158,6 +162,10 @@ class ShortCode extends Lib\Base\Component
         $category_id = (int) ( isset( $_GET['cat_id'] ) ? $_GET['cat_id'] : ( isset( $attributes['category_id'] ) ? $attributes['category_id'] : 0 ) );
         $service_id = (int) ( isset( $_GET['service_id'] ) ? $_GET['service_id'] : ( isset( $attributes['service_id'] ) ? $attributes['service_id'] : 0 ) );
         $staff_id = (int) ( isset( $_GET['staff_id'] ) ? $_GET['staff_id'] : ( isset( $attributes['staff_member_id'] ) ? $attributes['staff_member_id'] : 0 ) );
+        $units = (int) ( isset( $_GET['units'] ) ? $_GET['units'] : ( isset( $attributes['units'] ) ? $attributes['units'] : 0 ) );
+        $date_from = isset( $_GET['date_from'] ) ? $_GET['date_from'] : ( isset( $attributes['date_from'] ) ? $attributes['date_from'] : 0 );
+        $time_from = isset( $_GET['time_from'] ) ? $_GET['time_from'] : ( isset( $attributes['time_from'] ) ? $attributes['time_from'] : 0 );
+        $time_to = isset( $_GET['time_to'] ) ? $_GET['time_to'] : ( isset( $attributes['time_to'] ) ? $attributes['time_to'] : 0 );
         $hide_service_part2 = (bool) get_option( 'bookly_app_show_single_slot' );
 
         $form_attributes = array(
@@ -202,11 +210,17 @@ class ShortCode extends Lib\Base\Component
 
         $hide_service_part2 = $hide_service_part2 ?: ! array_diff( array( 'date', 'week_days', 'time_range' ), $fields_to_hide );
 
+        // Check if defaults parameters exists
+        if ( $form_attributes['hide_services'] && $service_id && ! Lib\Entities\Service::find( $service_id ) ) {
+            return esc_html( 'The preselected service for shortcode is not available anymore. Please check your shortcode settings.' );
+        }
+
         if ( $hide_service_part1 && $hide_service_part2 ) {
             Lib\Session::setFormVar( $form_id, 'skip_service_step', true );
         }
+
         // Store parameters in session for later use.
-        Lib\Session::setFormVar( $form_id, 'defaults', compact( 'service_id', 'staff_id', 'location_id', 'category_id' ) );
+        Lib\Session::setFormVar( $form_id, 'defaults', compact( 'service_id', 'staff_id', 'location_id', 'category_id', 'units', 'date_from', 'time_from', 'time_to' ) );
         Lib\Session::setFormVar( $form_id, 'last_touched', time() );
 
         // Errors.
@@ -231,8 +245,8 @@ class ShortCode extends Lib\Base\Component
                  */
                 'service_part1' => (int) $hide_service_part1,
                 'service_part2' => (int) $hide_service_part2,
-                'extras' => (int) true,
-                'time' => (int) false,
+                'extras' => 1,
+                'time' => 0,
                 'repeat' => (int) ( ! Lib\Config::recurringAppointmentsActive() || ! get_option( 'bookly_recurring_appointments_enabled' ) || Lib\Config::showSingleTimeSlot() ),
                 'cart' => (int) ! Lib\Config::showStepCart(),
             ),

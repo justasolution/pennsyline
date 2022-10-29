@@ -26,7 +26,7 @@ class Widget extends Base\Widget
     /**
      * @inheritDoc
      */
-    protected function _register_controls()
+    protected function register_controls()
     {
         $this->start_controls_section(
             'bookly_booking_section',
@@ -74,7 +74,7 @@ class Widget extends Base\Widget
                 'default' => false,
             )
         );
-        $this->add_control( 'hr-catogory', array( 'type' => Controls_Manager::DIVIDER, ) );
+        $this->add_control( 'hr-category', array( 'type' => Controls_Manager::DIVIDER, ) );
 
         $this->add_control(
             'service_id',

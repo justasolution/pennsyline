@@ -2,10 +2,12 @@
 <div id="bookly-js-<?php echo esc_attr( $option_name ) ?>">
     <input type="hidden" name="<?php echo esc_attr( $option_name ) ?>" data-default="<?php echo esc_attr( $option_value ) ?>" value="<?php echo esc_attr( $option_value ) ?>">
     <div class="bookly-js-image bookly-thumb <?php echo esc_attr( $class ) ?>" style="<?php echo esc_attr( $img_style ) ?>" data-style="<?php echo esc_attr( $img_style ) ?>">
-        <a class="far fa-fw fa-trash-alt text-danger bookly-thumb-delete" href="javascript:void(0)" style="<?php echo esc_attr( $delete_style ) ?>" title="<?php esc_attr_e( 'Delete', 'bookly' ) ?>"></a>
-        <div class="bookly-thumb-edit">
-            <label class="bookly-thumb-edit-btn"><?php esc_html_e( 'Image', 'bookly' ) ?></label>
-        </div>
+        <?php if ( current_user_can( 'upload_files' ) ) : ?>
+            <a class="far fa-fw fa-trash-alt text-danger bookly-thumb-delete" href="javascript:void(0)" style="<?php echo esc_attr( $delete_style ) ?>" title="<?php esc_attr_e( 'Delete', 'bookly' ) ?>"></a>
+            <div class="bookly-thumb-edit">
+                <label class="bookly-thumb-edit-btn"><?php esc_html_e( 'Image', 'bookly' ) ?></label>
+            </div>
+        <?php endif ?>
     </div>
 </div>
 <script type="text/javascript">

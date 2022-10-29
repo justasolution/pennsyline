@@ -5,7 +5,7 @@ use Bookly\Lib\Entities\Payment;
 ?>
 <div class="bookly-box bookly-list">
     <label>
-        <input type="radio" class="bookly-payment" name="payment-method-<?php echo $form_id ?>" value="paypal"/>
+        <input type="radio" class="bookly-payment bookly-js-checkout" name="payment-method-<?php echo $form_id ?>" value="paypal"/>
         <span><?php echo Common::getTranslatedOption( 'bookly_l10n_label_pay_paypal' ) ?>
             <?php if ( $show_price ) : ?>
                 <span class="bookly-js-pay"><?php echo Price::format( $cart_info->getPayNow() ) ?></span>

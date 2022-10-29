@@ -10,6 +10,7 @@ use Bookly\Lib\Utils;
 
 /**
  * Class Codes
+ *
  * @package BooklyPro\Lib\Notifications\Assets\Combined
  */
 class Codes extends Item\Codes
@@ -31,6 +32,8 @@ class Codes extends Item\Codes
         $first = current( $order->getItems() );
         $this->prepareForItem( $first, 'client' );
 
+        $taxes_active = Config::taxesActive();
+        $rates = $taxes_active ? BooklyLib\Proxy\Taxes::getServiceTaxRates() : array();
         foreach ( $order->getItems() as $item ) {
             $sub_items = array();
             if ( $item->isSeries() ) {
@@ -52,32 +55,34 @@ class Codes extends Item\Codes
                 if ( $sub_item->getCA()->getLastStatus() !== 'waitlisted' ) {
                     // Sub-item price.
                     $price = $sub_item->getTotalPrice();
-
+                    $nop = $sub_item->getCA()->getNumberOfPersons();
                     $deposit_price = Config::depositPaymentsActive()
-                        ? BooklyLib\Proxy\DepositPayments::prepareAmount( $price, $sub_item->getDeposit(), $sub_item->getCA()->getNumberOfPersons() )
+                        ? BooklyLib\Proxy\DepositPayments::prepareAmount( $price, $sub_item->getDeposit(), $nop )
                         : 0;
                     $location = Config::locationsActive() && $sub_item->getAppointment()->getLocationId()
                         ? BooklyLib\Proxy\Locations::findById( $sub_item->getAppointment()->getLocationId() )
                         : null;
 
+                    $extras = BooklyLib\Proxy\ServiceExtras::getInfo( $sub_item->getExtras(), true ) ?: array();
+                    if ( $taxes_active && $extras ) {
+                        foreach ( $extras as &$extra ) {
+                            $extra['tax'] = BooklyLib\Proxy\ServiceExtras::getTax( $extra['price'], $nop, $rates[ $sub_item->getService()->getId() ] );
+                        }
+                    }
                     // Prepare data for {cart_info} || {cart_info_c}.
                     $this->cart_info[] = array(
                         'appointment_price' => $price,
                         'appointment_start' => $this->applyItemTz( $sub_item->getAppointment()->getStartDate(), $sub_item ),
-                        'appointment_end'   => $this->applyItemTz( $sub_item->getAppointment()->getEndDate(), $sub_item ),
-                        'cancel_url'        => admin_url( 'admin-ajax.php?action=bookly_cancel_appointment&token=' . $sub_item->getCA()->getToken() ),
-                        'service_name'      => $sub_item->getService()->getTranslatedTitle(),
-                        'staff_name'        => $sub_item->getStaff()->getTranslatedName(),
-                        'extras'            => (array) BooklyLib\Proxy\ServiceExtras::getInfo( $sub_item->getExtras(), true ),
-                        'location'          => $location ? $location->getTranslatedName() : '',
-                        'tax'               => Config::taxesActive() ? $sub_item->getTax() : null,
-                        'deposit'           => Config::depositPaymentsActive()
-                            ? BooklyLib\Proxy\DepositPayments::formatDeposit( $deposit_price, $sub_item->getDeposit() )
-                            : null,
-                        'appointment_start_info' => $sub_item->getService()->getDuration() < DAY_IN_SECONDS
-                            ? null
-                            : $sub_item->getService()->getStartTimeInfo(),
-                        'item'              => $sub_item
+                        'appointment_end' => $this->applyItemTz( $sub_item->getAppointment()->getEndDate(), $sub_item ),
+                        'cancel_url' => admin_url( 'admin-ajax.php?action=bookly_cancel_appointment&token=' . $sub_item->getCA()->getToken() ),
+                        'service_name' => $sub_item->getService()->getTranslatedTitle(),
+                        'staff_name' => $sub_item->getStaff()->getTranslatedName(),
+                        'extras' => $extras,
+                        'location' => $location ? $location->getTranslatedName() : '',
+                        'tax' => $taxes_active ? $sub_item->getTax() : null,
+                        'deposit' => Config::depositPaymentsActive() ? BooklyLib\Proxy\DepositPayments::formatDeposit( $deposit_price, $sub_item->getDeposit() ) : null,
+                        'appointment_start_info' => $sub_item->getService()->getDuration() < DAY_IN_SECONDS ? null : $sub_item->getService()->getStartTimeInfo(),
+                        'item' => $sub_item,
                     );
 
                     // Total price.
@@ -107,13 +112,13 @@ class Codes extends Item\Codes
             $cart_columns = get_option( 'bookly_cart_show_columns', array() );
             if ( empty( $cart_columns ) ) {
                 $cart_columns = array(
-                    'service'  => array( 'show' => '1', ),
-                    'date'     => array( 'show' => '1', ),
-                    'time'     => array( 'show' => '1', ),
+                    'service' => array( 'show' => '1', ),
+                    'date' => array( 'show' => '1', ),
+                    'time' => array( 'show' => '1', ),
                     'employee' => array( 'show' => '1', ),
-                    'price'    => array( 'show' => '1', ),
-                    'deposit'  => array( 'show' => (int) Config::depositPaymentsActive() ),
-                    'tax'      => array( 'show' => (int) Config::taxesActive(), ),
+                    'price' => array( 'show' => '1', ),
+                    'deposit' => array( 'show' => (int) Config::depositPaymentsActive() ),
+                    'tax' => array( 'show' => (int) Config::taxesActive(), ),
                 );
             }
             if ( ! Proxy\Taxes::showTaxColumn() ) {
@@ -164,7 +169,7 @@ class Codes extends Item\Codes
                                 $service_name = $data['service_name'];
                                 if ( ! empty ( $data['extras'] ) ) {
                                     $extras = '';
-                                    if ( $format == 'html' ) {
+                                    if ( $format === 'html' ) {
                                         foreach ( $data['extras'] as $extra ) {
                                             $extras .= '<li>' . $extra['title'] . '</li>';
                                         }
@@ -189,13 +194,41 @@ class Codes extends Item\Codes
                                 }
                                 break;
                             case 'tax':
-                                $tds[] = Utils\Price::format( $data['tax'] );
+                                $tax = Utils\Price::format( $data['tax'] );
+                                if ( isset ( $data['extras'][0]['tax'] ) ) {
+                                    if ( $format === 'html' ) {
+                                        $li = array();
+                                        foreach ( $data['extras'] as $extra ) {
+                                            $li[] = Utils\Price::format( $extra['tax'] );
+                                        }
+                                        $tax .= '<ul><li>' . implode( '</li><li>', $li ) . '</li></ul>';
+                                    } else {
+                                        foreach ( $data['extras'] as $extra ) {
+                                            $tax .= ', ' . Utils\Price::format( $extra['tax'] );
+                                        }
+                                    }
+                                }
+                                $tds[] = $tax;
                                 break;
                             case 'employee':
                                 $tds[] = $data['staff_name'];
                                 break;
                             case 'price':
-                                $tds[] = Utils\Price::format( $data['appointment_price'] );
+                                $price = Utils\Price::format( $data['appointment_price'] );
+                                if ( isset ( $data['extras'][0]['price'] ) ) {
+                                    if ( $format === 'html' ) {
+                                        $li = array();
+                                        foreach ( $data['extras'] as $extra ) {
+                                            $li[] = Utils\Price::format( $extra['price'] );
+                                        }
+                                        $price .= '<ul><li>' . implode( '</li><li>', $li ) . '</li></ul>';
+                                    } else {
+                                        foreach ( $data['extras'] as $extra ) {
+                                            $price .= ', ' . Utils\Price::format( $extra['price'] );
+                                        }
+                                    }
+                                }
+                                $tds[] = $price;
                                 break;
                             case 'deposit':
                                 $tds[] = $data['deposit'];
@@ -206,25 +239,25 @@ class Codes extends Item\Codes
                 $tds[] = $data['cancel_url'];
                 $trs[] = $tds;
             }
-            if ( $format == 'html' ) {
-                $cart_info   = '<table cellspacing="1" border="1" cellpadding="5"><thead><tr><th>' . implode( '</th><th>', $ths ) . '</th></tr></thead><tbody>';
+            if ( $format === 'html' ) {
+                $cart_info = '<table cellspacing="1" border="1" cellpadding="5"><thead><tr><th>' . implode( '</th><th>', $ths ) . '</th></tr></thead><tbody>';
                 $cart_info_c = '<table cellspacing="1" border="1" cellpadding="5"><thead><tr><th>' . implode( '</th><th>', $ths ) . '</th><th>' . __( 'Cancel', 'bookly' ) . '</th></tr></thead><tbody>';
                 foreach ( $trs as $tr ) {
-                    $cancel_url   = array_pop( $tr );
-                    $cart_info   .= '<tr><td>' . implode( '</td><td>', $tr ) . '</td></tr>';
-                    $cart_info_c .= '<tr><td>' . implode( '</td><td>', $tr ) . '</td><td><a href="' . $cancel_url . '">' . __( 'Cancel', 'bookly' ) . '</a></td></tr>';
+                    $cancel_url = array_pop( $tr );
+                    $cart_info .= '<tr style="vertical-align: top;"><td>' . implode( '</td><td>', $tr ) . '</td></tr>';
+                    $cart_info_c .= '<tr style="vertical-align: top;"><td>' . implode( '</td><td>', $tr ) . '</td><td><a href="' . $cancel_url . '">' . __( 'Cancel', 'bookly' ) . '</a></td></tr>';
                 }
-                $cart_info   .= '</tbody></table>';
+                $cart_info .= '</tbody></table>';
                 $cart_info_c .= '</tbody></table>';
             } else {
                 foreach ( $trs as $tr ) {
                     $cancel_url = array_pop( $tr );
                     foreach ( $ths as $position => $column ) {
-                        $cart_info   .= $column . ' ' . $tr[ $position ] . "\r\n";
+                        $cart_info .= $column . ' ' . $tr[ $position ] . "\r\n";
                         $cart_info_c .= $column . ' ' . $tr[ $position ] . "\r\n";
                     }
                     $cart_info .= "\r\n";
-                    $cart_info_c .= __( 'Cancel', 'bookly' )  . ' ' . $cancel_url . "\r\n\r\n";
+                    $cart_info_c .= __( 'Cancel', 'bookly' ) . ' ' . $cancel_url . "\r\n\r\n";
                 }
             }
         }

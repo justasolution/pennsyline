@@ -20,7 +20,7 @@ jQuery(function ($) {
                 action    : 'bookly_update_table_settings',
                 table     : $modal.find('[name="bookly-table-name"]').val(),
                 columns   : columns,
-                csrf_token: BooklyTableSettingsDialogL10n.csrfToken
+                csrf_token: BooklyL10nGlobal.csrf_token
             },
             function (response) {
                 if ($modal.data('location').length !== '') {

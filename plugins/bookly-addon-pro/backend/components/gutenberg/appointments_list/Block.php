@@ -35,6 +35,7 @@ class Block extends BooklyLib\Base\Block
                 'staff' => __( 'Employee', 'bookly' ),
                 'date' => __( 'Date', 'bookly' ),
                 'time' => __( 'Time', 'bookly' ),
+                'time_zone' => __( 'Timezone', 'bookly' ),
                 'price' => __( 'Price', 'bookly' ),
                 'status' => __( 'Status', 'bookly' ),
                 'cancel' => __( 'Cancel', 'bookly' ),

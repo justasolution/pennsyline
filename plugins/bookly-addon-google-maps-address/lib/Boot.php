@@ -7,9 +7,9 @@ namespace BooklyGoogleMapsAddress\Lib;
  */
 class Boot
 {
-    public static $plugin_title     = 'Bookly Google Maps Address (Add-on)';
+    public static $plugin_title = 'Bookly Google Maps Address (Add-on)';
     public static $req_plugin_class = 'BooklyPro\Lib\Plugin';
-    public static $req_version      = '3.4';
+    public static $req_version = '5.0';
 
     /**
      * Boot up.

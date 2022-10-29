@@ -26,23 +26,23 @@ class Page extends Lib\Base\Component
             'module' => array( 'js/customers.js' => array( 'bookly-backend-globals' ), ),
         ) );
 
-        $datatables = Lib\Utils\Tables::getSettings( 'customers' );
+        $datatables = Lib\Utils\Tables::getSettings( Lib\Utils\Tables::CUSTOMERS );
 
         wp_localize_script( 'bookly-customers.js', 'BooklyL10n', array(
-            'infoFields'      => (array) Lib\Proxy\CustomerInformation::getFieldsWhichMayHaveData(),
-            'edit'            => __( 'Edit', 'bookly' ),
-            'are_you_sure'    => __( 'Are you sure?', 'bookly' ),
-            'wp_users'        => get_users( array( 'fields' => array( 'ID', 'display_name' ), 'orderby' => 'display_name' ) ),
-            'zeroRecords'     => __( 'No customers found.', 'bookly' ),
-            'processing'      => __( 'Processing...', 'bookly' ),
-            'edit_customer'   => __( 'Edit customer', 'bookly' ),
-            'new_customer'    => __( 'New customer', 'bookly' ),
+            'infoFields' => (array) Lib\Proxy\CustomerInformation::getFieldsWhichMayHaveData(),
+            'edit' => __( 'Edit', 'bookly' ),
+            'are_you_sure' => __( 'Are you sure?', 'bookly' ),
+            'wp_users' => get_users( array( 'fields' => array( 'ID', 'display_name' ), 'orderby' => 'display_name' ) ),
+            'zeroRecords' => __( 'No customers found.', 'bookly' ),
+            'processing' => __( 'Processing...', 'bookly' ),
+            'edit_customer' => __( 'Edit customer', 'bookly' ),
+            'new_customer' => __( 'New customer', 'bookly' ),
             'create_customer' => __( 'Create customer', 'bookly' ),
-            'save'            => __( 'Save', 'bookly' ),
-            'search'          => __( 'Quick search customer', 'bookly' ),
-            'datatables'      => $datatables,
+            'save' => __( 'Save', 'bookly' ),
+            'search' => __( 'Quick search customer', 'bookly' ),
+            'datatables' => $datatables,
         ) );
 
-        self::renderTemplate( 'index', compact( 'datatables' ) );
+        self::renderTemplate( 'index', array( 'datatable' => $datatables[ Lib\Utils\Tables::CUSTOMERS ] ) );
     }
 }

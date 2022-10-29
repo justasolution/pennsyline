@@ -6,11 +6,12 @@ use Bookly\Lib\DataHolders\Booking as DataHolders;
 
 /**
  * Class Payment
+ *
  * @package Bookly\Lib\Entities
  */
 class Payment extends Lib\Base\Entity
 {
-    const TYPE_LOCAL        = 'local';
+    const TYPE_LOCAL = 'local';
     /** @deprecated for compatibility with bookly-addon-taxes <= ver: 1.8 */
     const TYPE_COUPON       = 'free';
     const TYPE_FREE         = 'free';
@@ -23,7 +24,9 @@ class Payment extends Lib\Base\Entity
     const TYPE_PAYULATAM    = 'payu_latam';
     const TYPE_PAYSON       = 'payson';
     const TYPE_MOLLIE       = 'mollie';
+    const TYPE_SQUARE       = 'square';
     const TYPE_WOOCOMMERCE  = 'woocommerce';
+    const TYPE_GIFT_CARD    = 'gift_card';
 
     const STATUS_COMPLETED = 'completed';
     const STATUS_PENDING   = 'pending';
@@ -38,6 +41,8 @@ class Payment extends Lib\Base\Entity
 
     /** @var int */
     protected $coupon_id;
+    /** @var int */
+    protected $gift_card_id;
     /** @var string */
     protected $target = self::TARGET_APPOINTMENTS;
     /** @var string */
@@ -70,6 +75,7 @@ class Payment extends Lib\Base\Entity
     protected static $schema = array(
         'id' => array( 'format' => '%d' ),
         'coupon_id' => array( 'format' => '%d', 'reference' => array( 'entity' => 'Coupon', 'namespace' => '\BooklyCoupons\Lib\Entities', 'required' => 'bookly-addon-coupons' ) ),
+        'gift_card_id' => array( 'format' => '%d', 'reference' => array( 'entity' => 'GiftCard', 'namespace' => '\BooklyGiftCards\Lib\Entities', 'required' => 'bookly-addon-gift-cards' ) ),
         'target' => array( 'format' => '%s' ),
         'type' => array( 'format' => '%s' ),
         'total' => array( 'format' => '%f' ),
@@ -94,20 +100,80 @@ class Payment extends Lib\Base\Entity
     public static function typeToString( $type )
     {
         switch ( $type ) {
-            case self::TYPE_PAYPAL:       return 'PayPal';
-            case self::TYPE_LOCAL:        return __( 'Local', 'bookly' );
-            case self::TYPE_STRIPE:       return 'Stripe';
-            case self::TYPE_CLOUD_STRIPE: return 'Stripe Cloud';
-            case self::TYPE_AUTHORIZENET: return 'Authorize.Net';
-            case self::TYPE_2CHECKOUT:    return '2Checkout';
-            case self::TYPE_PAYUBIZ:      return 'PayUbiz';
-            case self::TYPE_PAYULATAM:    return 'PayU Latam';
-            case self::TYPE_PAYSON:       return 'Generated Invoice';
-            case self::TYPE_MOLLIE:       return 'Master Invoice';
-            case self::TYPE_FREE:         return __( 'Free', 'bookly' );
-            case self::TYPE_WOOCOMMERCE:  return 'WooCommerce';
-            default:                      return '';
+            case self::TYPE_PAYPAL:
+                return 'PayPal';
+            case self::TYPE_LOCAL:
+                return __( 'Local', 'bookly' );
+            case self::TYPE_STRIPE:
+                return 'Stripe';
+            case self::TYPE_CLOUD_STRIPE:
+                return 'Stripe Cloud';
+            case self::TYPE_AUTHORIZENET:
+                return 'Authorize.Net';
+            case self::TYPE_2CHECKOUT:
+                return '2Checkout';
+            case self::TYPE_PAYUBIZ:
+                return 'PayUbiz';
+            case self::TYPE_PAYULATAM:
+                return 'PayU Latam';
+            case self::TYPE_PAYSON:
+                return 'Generated Invoice';
+            case self::TYPE_MOLLIE:
+                return 'Master Invoice';
+            case self::TYPE_SQUARE:
+                return 'Square';
+            case self::TYPE_FREE:
+                return __( 'Free', 'bookly' );
+            case self::TYPE_GIFT_CARD:
+                return __( 'Gift Card', 'bookly' );
+            case self::TYPE_WOOCOMMERCE:
+                return 'WooCommerce';
+            default:
+                return '';
         }
+    }
+
+    /**
+     * Get image for given payment type.
+     *
+     * @param string $type
+     * @return string
+     */
+    public static function typeToImage( $type )
+    {
+        switch ( $type ) {
+            case self::TYPE_LOCAL:
+                return plugins_url( 'frontend/resources/images/wallet2.svg', Lib\Plugin::getMainFile() );
+            case self::TYPE_CLOUD_STRIPE:
+                return plugins_url( 'frontend/resources/images/stripe.svg', Lib\Plugin::getMainFile() );
+            default:
+                return '';
+        }
+    }
+
+    /**
+     * Get all types
+     *
+     * @return string[]
+     */
+    public static function getTypes()
+    {
+        return array(
+            self::TYPE_LOCAL,
+            self::TYPE_2CHECKOUT,
+            self::TYPE_PAYPAL,
+            self::TYPE_AUTHORIZENET,
+            self::TYPE_STRIPE,
+            self::TYPE_CLOUD_STRIPE,
+            self::TYPE_PAYUBIZ,
+            self::TYPE_PAYULATAM,
+            self::TYPE_PAYSON,
+            self::TYPE_MOLLIE,
+            self::TYPE_SQUARE,
+            self::TYPE_FREE,
+            self::TYPE_WOOCOMMERCE,
+            self::TYPE_GIFT_CARD,
+        );
     }
 
     /**
@@ -150,6 +216,7 @@ class Payment extends Lib\Base\Entity
         $details = array(
             'items' => array(),
             'coupon' => null,
+            'gift_card' => null,
             'subtotal' => array( 'price' => 0, 'deposit' => 0 ),
             'customer' => $order->getCustomer()->getFullName(),
             'tax_in_price' => 'excluded',
@@ -182,7 +249,7 @@ class Payment extends Lib\Base\Entity
                     if ( $item->getCA()->getExtras() != '[]' ) {
                         $_extras = json_decode( $item->getCA()->getExtras(), true );
                         $service_id = $item->getService()->getId();
-                        $rate  = array_key_exists( $service_id, $rates ) ? $rates[ $service_id ] : 0;
+                        $rate = array_key_exists( $service_id, $rates ) ? $rates[ $service_id ] : 0;
                         /** @var \BooklyServiceExtras\Lib\Entities\ServiceExtra $service_extra */
                         foreach ( Lib\Proxy\ServiceExtras::findByIds( array_keys( $_extras ) ) ?: array() as $service_extra ) {
                             $quantity = (int) $_extras[ $service_extra->getId() ];
@@ -198,7 +265,7 @@ class Payment extends Lib\Base\Entity
                                     ? Lib\Proxy\Taxes::calculateTax( $extras_amount, $rate )
                                     : null,
                             );
-                            $extras_price += $service_extra->getPrice();
+                            $extras_price += $service_extra->getPrice() * $quantity;
                         }
                     }
                 }
@@ -210,9 +277,9 @@ class Payment extends Lib\Base\Entity
                     $price = $sub_item->getServicePrice() * $sub_item->getCA()->getNumberOfPersons();
                     $price += Lib\Proxy\Discounts::prepareServicePrice( $extras_multiply_nop ? $extras_price * $sub_item->getCA()->getNumberOfPersons() : $extras_price, $sub_item->getService()->getId(), $sub_item->getCA()->getNumberOfPersons() );
 
-                    $details['subtotal']['price']   += $price;
+                    $details['subtotal']['price'] += $price;
                     if ( Lib\Config::depositPaymentsActive() ) {
-                        $deposit_price  = Lib\Proxy\DepositPayments::prepareAmount( $price, $sub_item->getDeposit(), $sub_item->getCA()->getNumberOfPersons() );
+                        $deposit_price = Lib\Proxy\DepositPayments::prepareAmount( $price, $sub_item->getDeposit(), $sub_item->getCA()->getNumberOfPersons() );
                         $deposit_format = Lib\Proxy\DepositPayments::formatDeposit( $deposit_price, $sub_item->getDeposit() );
                         $details['subtotal']['deposit'] += $deposit_price;
                     }
@@ -222,7 +289,7 @@ class Payment extends Lib\Base\Entity
                     array(
                         'ca_id' => $sub_item->getCA()->getId(),
                         'appointment_date' => $sub_item->getAppointment()->getStartDate(),
-                        'app_start_info' => $sub_item->getService()->getDuration() >= DAY_IN_SECONDS ? $sub_item->getService()->getStartTimeInfo(): null,
+                        'app_start_info' => $sub_item->getService()->getDuration() >= DAY_IN_SECONDS ? $sub_item->getService()->getStartTimeInfo() : null,
                         'service_name' => $sub_item->getService()->getTitle(),
                         'service_category'  => $sub_item->getService()->getTranslatedCategoryName(),
                         'service_price' => $sub_item->getServicePrice(),
@@ -244,6 +311,9 @@ class Payment extends Lib\Base\Entity
 
         if ( $cart_info->getCoupon() ) {
             $this->coupon_id = $cart_info->getCoupon()->getId();
+        }
+        if ( $cart_info->getGiftCard() ) {
+            $this->gift_card_id = $cart_info->getGiftCard()->getId();
         }
 
         $this->details = json_encode( $details );
@@ -289,6 +359,7 @@ class Payment extends Lib\Base\Entity
                 'group_discount' => isset ( $details['customer_group']['discount_format'] ) ? $details['customer_group']['discount_format'] : false,
                 'discounts' => isset ( $details['discounts'] ) ? $details['discounts'] : array(),
                 'coupon' => $details['coupon'],
+                'gift_card' => isset( $details['gift_card'] ) ? $details['gift_card'] : null,
                 'price_correction' => $this->gateway_price_correction,
                 'gateway' => $this->getType(),
                 'gateway_ref_id' => isset ( $details['gateway_ref_id'] ) ? $details['gateway_ref_id'] : null,
@@ -353,6 +424,25 @@ class Payment extends Lib\Base\Entity
     public function setCouponId( $coupon_id )
     {
         $this->coupon_id = $coupon_id;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getGiftCardId()
+    {
+        return $this->gift_card_id;
+    }
+
+    /**
+     * @param int $gift_card_id
+     * @return Payment
+     */
+    public function setGiftCardId( $gift_card_id )
+    {
+        $this->gift_card_id = $gift_card_id;
 
         return $this;
     }
@@ -682,13 +772,14 @@ class Payment extends Lib\Base\Entity
             $this
                 ->setCreatedAt( current_time( 'mysql' ) )
                 ->setUpdatedAt( current_time( 'mysql' ) );
-        } elseif ( $this->getModified() ){
+        } elseif ( $this->getModified() ) {
             $this->setUpdatedAt( current_time( 'mysql' ) );
         }
         // Generate new token if it is not set.
         if ( $this->getToken() == '' ) {
             $this->setToken( Lib\Utils\Common::generateToken( get_class( $this ), 'token' ) );
         }
+
         return parent::save();
     }
 }

@@ -215,7 +215,7 @@
                             $saveButton   = $('.bookly-js-save-break', $popover),
                             force_keep_values = false;
                         if ($button.hasClass('bookly-js-break-interval')) {
-                            let interval = $button.html().trim().split(' - ');
+                            let interval = $button.html().trim().split(/ [-–] /);
                             rangeTools.setVal($popoverStart, interval[0]);
                             rangeTools.setVal($popoverEnd, interval[1]);
                             force_keep_values = true;

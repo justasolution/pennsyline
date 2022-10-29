@@ -3,6 +3,7 @@ namespace BooklyPro\Lib\Notifications\Assets\NewWpUser\Staff;
 
 use Bookly\Lib\Entities\Staff;
 use Bookly\Lib\Notifications\Assets\Base;
+use Bookly\Lib\Utils\Common;
 
 /**
  * Class Codes
@@ -19,7 +20,6 @@ class Codes extends Base\Codes
     // Core
     public $new_username;
     public $new_password;
-    public $staff_photo;
 
     /** @var Staff */
     protected $staff;
@@ -33,21 +33,6 @@ class Codes extends Base\Codes
      */
     public function __construct( Staff $staff, $username, $password )
     {
-        $staff_photo  = '';
-        $photo = wp_get_attachment_image_src( $staff->getAttachmentId(), 'full' );
-        if ( $photo != '' ) {
-            if ( $format == 'html' ) {
-                // Staff photo as <img> tag.
-                $staff_photo = sprintf(
-                    '<img src="%s" alt="%s" />',
-                    esc_attr( $photo[0] ),
-                    esc_attr( $this->staff->getFullName() )
-                );
-            } else {
-                $staff_photo  = $photo[0];
-            }
-        }
-        $this->staff_photo  = $staff_photo;
         $this->staff = $staff;
         $this->new_username = $username;
         $this->new_password = $password;
@@ -59,6 +44,10 @@ class Codes extends Base\Codes
     protected function getReplaceCodes( $format )
     {
         $replace_codes = parent::getReplaceCodes( $format );
+        $staff_photo = $this->staff->getImageUrl();
+        if ( $format === 'html' ) {
+            $staff_photo = Common::getImageTag( $staff_photo, $this->staff->getFullName() );
+        }
 
         // Add replace codes.
         $replace_codes += array(
@@ -69,7 +58,7 @@ class Codes extends Base\Codes
             'staff_info' => $format == 'html' ? nl2br( $this->staff->getInfo() ) : $this->staff->getInfo(),
             'staff_name' => $this->staff->getFullName(),
             'staff_phone' => $this->staff->getPhone(),
-            'staff_photo' => $this->staff_photo,
+            'staff_photo' => $staff_photo,
         );
 
         return $replace_codes;

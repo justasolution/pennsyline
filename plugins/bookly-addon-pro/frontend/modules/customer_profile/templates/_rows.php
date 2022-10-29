@@ -6,7 +6,7 @@ use Bookly\Lib\Utils\DateTime;
 use Bookly\Lib\Utils\Price;
 use BooklyPro\Lib;
 ?>
-<?php foreach ( $all_appointments as $app ) : ?>
+<?php foreach ( $appointments as $app ) : ?>
     <?php
     $extras_total_price = 0;
     foreach ( $app['extras'] as $extra ) {
@@ -34,6 +34,9 @@ use BooklyPro\Lib;
                 case 'time' : ?>
                     <td><?php echo $app['start_date'] === null ? __( 'N/A', 'bookly' ) : DateTime::formatTime( $app['start_date'] ) ?></td><?php
                     break;
+                case 'time_zone' : ?>
+                    <td><?php echo $app['time_zone'] ?></td><?php
+                    break;
                 case 'price' : ?>
                     <td class="bookly-text-right"><?php echo Price::format( ( $app['price'] + $extras_total_price ) * $app['number_of_persons'] ) ?></td><?php
                     break;
@@ -41,7 +44,7 @@ use BooklyPro\Lib;
                     <td><?php echo esc_html( Entities\CustomerAppointment::statusToString( $app['appointment_status'] ) ) ?></td><?php
                     break;
                 case 'online_meeting' : ?>
-                    <?php $online_meeting_url = Proxy\Shared::buildOnlineMeetingJoinUrl( '', Entities\Appointment::find( $app['appointment_id'] ) ) ?>
+                    <?php $online_meeting_url = Proxy\Shared::buildOnlineMeetingJoinUrl( '', Entities\Appointment::find( $app['appointment_id'] ), $customer ) ?>
                     <td><?php if ( $online_meeting_url ) : ?><a href="<?php echo $online_meeting_url ?>" target="_blank"><?php esc_html_e( 'Join', 'bookly' ) ?></a><?php endif ?></td><?php
                     break;
                 case 'cancel' :
@@ -69,7 +72,7 @@ use BooklyPro\Lib;
                     <td><?php echo esc_html( $app[ $column ] ) ?></td>
                 <?php endswitch ?>
         <?php endforeach ?>
-        <?php if ( $with_cancel == false ) :
+        <?php if ( ! $with_cancel ) :
             CustomFieldsProxy::renderCustomerProfileRow( $custom_fields, $app );
         endif ?>
     </tr>

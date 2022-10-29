@@ -36,11 +36,11 @@ abstract class API
     {
         $response = wp_remote_post( self::API_URL . '/1.0/subscribers', array(
             'sslverify' => false,
-            'timeout'   => 25,
-            'body'      => array(
-                'email'    => $email,
+            'timeout' => 25,
+            'body' => array(
+                'email' => $email,
                 'site_url' => site_url(),
-                'src'      => Config::proActive() ? 'bookly_admin_pro' : 'bookly_admin_free'
+                'src' => Config::proActive() ? 'bookly_admin_pro' : 'bookly_admin_free',
             ),
         ) );
         $state = 'invalid';
@@ -62,19 +62,19 @@ abstract class API
      * Send Net Promoter Score.
      *
      * @param integer $rate
-     * @param string  $msg
-     * @param string  $email
+     * @param string $msg
+     * @param string $email
      * @return bool
      */
     public static function sendNps( $rate, $msg, $email )
     {
         $response = wp_remote_post( self::API_URL . '/1.0/nps', array(
             'sslverify' => false,
-            'timeout'   => 25,
-            'body'      => array(
-                'rate'     => $rate,
-                'msg'      => $msg,
-                'email'    => $email,
+            'timeout' => 25,
+            'body' => array(
+                'rate' => $rate,
+                'msg' => $msg,
+                'email' => $email,
                 'site_url' => site_url(),
             ),
         ) );
@@ -97,7 +97,7 @@ abstract class API
         /** @global \wpdb */
         global $wpdb;
 
-        $today      = substr( current_time( 'mysql' ), 0, 10 );
+        $today = substr( current_time( 'mysql' ), 0, 10 );
         $ago_10days = date_create( $today )->modify( '-10 days' )->format( 'Y-m-d H:i:s' );
         $ago_30days = date_create( $today )->modify( '-30 days' )->format( 'Y-m-d H:i:s' );
 
@@ -105,13 +105,13 @@ abstract class API
         $staff = array( 'total' => 0, 'admins' => 0, 'non_admins' => 0 );
         /** @var \Bookly\Lib\Entities\Staff $staff_member */
         foreach ( Entities\Staff::query()->find() as $staff_member ) {
-            ++ $staff['total'];
+            ++$staff['total'];
             $wp_user_id = $staff_member->getWpUserId();
             if ( $wp_user_id && $user = get_user_by( 'id', $wp_user_id ) ) {
                 if ( $user->has_cap( 'manage_options' ) ) {
-                    ++ $staff['admins'];
+                    ++$staff['admins'];
                 } else {
-                    ++ $staff['non_admins'];
+                    ++$staff['non_admins'];
                 }
             }
         }
@@ -157,9 +157,9 @@ abstract class API
 
         // Payments completed.
         $completed_payments = Entities\Payment::query()
-              ->whereGt( 'created_at', $ago_30days )
-              ->where( 'status', Entities\Payment::STATUS_COMPLETED )
-              ->count();
+            ->whereGt( 'created_at', $ago_30days )
+            ->where( 'status', Entities\Payment::STATUS_COMPLETED )
+            ->count();
 
         // Extras quantity.
         $extras_quantity = Config::serviceExtrasActive() && get_option( 'bookly_service_extras_enabled' ) ? count( Proxy\ServiceExtras::findAll() ) : null;
@@ -201,17 +201,17 @@ abstract class API
         $history_schema[ 'bookings_payment_' . Entities\Payment::TYPE_WOOCOMMERCE ] = get_option( 'bookly_wc_enabled' ) ? 0 : null;
 
         if ( Config::serviceExtrasActive() && get_option( 'bookly_service_extras_enabled' ) ) {
-            $history_schema['bookings_with_extras']    = 0;
+            $history_schema['bookings_with_extras'] = 0;
             $history_schema['bookings_without_extras'] = 0;
         }
 
         if ( Config::couponsActive() && get_option( 'bookly_coupons_enabled' ) ) {
-            $history_schema['bookings_with_coupon']    = 0;
+            $history_schema['bookings_with_coupon'] = 0;
             $history_schema['bookings_without_coupon'] = 0;
         }
 
         if ( Config::recurringAppointmentsActive() && get_option( 'bookly_recurring_appointments_enabled' ) ) {
-            $history_schema['bookings_in_series']     = 0;
+            $history_schema['bookings_in_series'] = 0;
             $history_schema['bookings_not_in_series'] = 0;
         }
 
@@ -245,9 +245,9 @@ abstract class API
             foreach ( $rows as $record ) {
                 $details = json_decode( $record['details'], true );
                 if ( $details['coupon'] ) {
-                    $history[ $record['cur_date'] ]['bookings_with_coupon'] ++;
+                    $history[ $record['cur_date'] ]['bookings_with_coupon']++;
                 } else {
-                    $history[ $record['cur_date'] ]['bookings_without_coupon'] ++;
+                    $history[ $record['cur_date'] ]['bookings_without_coupon']++;
                 }
             }
         }
@@ -364,5 +364,26 @@ abstract class API
                 'source' => Config::proActive() ? 'bookly-pro' : 'bookly',
             ),
         ) );
+    }
+
+    /**
+     * Get info.
+     *
+     * @return array|false
+     */
+    public static function getRequiredAddonsVersions( $bookly_version )
+    {
+        $url = add_query_arg( array( 'site_url' => site_url(), 'bookly_version' => $bookly_version ), self::API_URL . '/1.0/addons' );
+        $response = wp_remote_get( $url, array(
+            'sslverify' => false,
+            'timeout' => 25,
+        ) );
+
+        if ( ! is_wp_error( $response ) && isset ( $response['body'] ) ) {
+
+            return json_decode( $response['body'], true );
+        }
+
+        return false;
     }
 }

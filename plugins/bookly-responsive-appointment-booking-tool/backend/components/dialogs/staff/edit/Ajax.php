@@ -8,6 +8,7 @@ use Bookly\Lib;
 
 /**
  * Class Ajax
+ *
  * @package Bookly\Backend\Components\Dialogs\Staff\Edit
  */
 class Ajax extends Lib\Base\Ajax
@@ -54,17 +55,17 @@ class Ajax extends Lib\Base\Ajax
 
         $response = array(
             'html' => array(
-                'edit'    => self::renderTemplate( 'dialog_body', array( 'staff' => self::$staff ), false ),
+                'edit' => self::renderTemplate( 'dialog_body', array( 'staff' => self::$staff ), false ),
                 'details' => self::renderTemplate( 'details', array( 'staff' => self::$staff, 'users_for_staff' => $users_for_staff ), false ),
             ),
         );
         if ( self::$staff->getId() ) {
             $response['holidays'] = self::$staff->getHolidays();
-            $response['html']['advanced']     = Proxy\Pro::getAdvancedHtml( self::$staff, $data['tpl'], true );
-            $response['html']['services']     = self::_getStaffServices( self::$staff->getId(), null );
-            $response['html']['schedule']     = self::_getStaffSchedule( self::$staff->getId(), null );
+            $response['html']['advanced'] = Proxy\Pro::getAdvancedHtml( self::$staff, $data['tpl'], true );
+            $response['html']['services'] = self::_getStaffServices( self::$staff->getId(), null );
+            $response['html']['schedule'] = self::_getStaffSchedule( self::$staff->getId(), null );
             $response['html']['special_days'] = Proxy\SpecialDays::getStaffSpecialDaysHtml( '', self::$staff->getId(), null );
-            $response['html']['holidays']     = self::renderTemplate( 'holidays', array( 'holidays' => $response['holidays'] ), false );
+            $response['html']['holidays'] = self::renderTemplate( 'holidays', array( 'holidays' => $response['holidays'] ), false );
             $response['staff'] = $staff_fields;
             $response['alert'] = $data['alert'];
         }
@@ -101,15 +102,15 @@ class Ajax extends Lib\Base\Ajax
                 wp_die( 'Bookly: ' . __( 'You do not have sufficient permissions to access this page.' ) );
             } while ( 0 );
         } elseif ( self::parameter( 'id' ) == 0
-                && ! Lib\Config::proActive()
-                && Lib\Entities\Staff::query()->count() > 0
+            && ! Lib\Config::proActive()
+            && Lib\Entities\Staff::query()->count() > 0
         ) {
             do_action( 'admin_page_access_denied' );
             wp_die( 'Bookly: ' . __( 'You do not have sufficient permissions to access this page.' ) );
         }
 
         $params = self::postParameters();
-        if ( ! $params['category_id'] ) {
+        if ( ! isset( $params['category_id'] ) || ! $params['category_id'] ) {
             $params['category_id'] = null;
         }
         self::$staff->setFields( $params );
@@ -132,8 +133,8 @@ class Ajax extends Lib\Base\Ajax
      */
     public static function getStaffServices()
     {
-        $form        = new Forms\StaffServices();
-        $staff_id    = self::parameter( 'staff_id' );
+        $form = new Forms\StaffServices();
+        $staff_id = self::parameter( 'staff_id' );
         $location_id = self::parameter( 'location_id' );
 
         $form->load( $staff_id, $location_id );
@@ -161,9 +162,9 @@ class Ajax extends Lib\Base\Ajax
      */
     public static function getStaffSchedule()
     {
-        $staff_id    = self::parameter( 'staff_id' );
+        $staff_id = self::parameter( 'staff_id' );
         $location_id = self::parameter( 'location_id' );
-        $html        = self::_getStaffSchedule( $staff_id, $location_id );
+        $html = self::_getStaffSchedule( $staff_id, $location_id );
         wp_send_json_success( compact( 'html' ) );
     }
 
@@ -187,10 +188,10 @@ class Ajax extends Lib\Base\Ajax
     public static function updateStaffHolidays()
     {
         $interval = self::parameter( 'range', array() );
-        $range    = new Lib\Slots\Range( Lib\Slots\DatePoint::fromStr( $interval[0] ), Lib\Slots\DatePoint::fromStr( $interval[1] )->modify( 1 ) );
+        $range = new Lib\Slots\Range( Lib\Slots\DatePoint::fromStr( $interval[0] ), Lib\Slots\DatePoint::fromStr( $interval[1] )->modify( 1 ) );
         if ( self::$staff ) {
             if ( self::parameter( 'holiday' ) == 'true' ) {
-                $repeat   = (int) ( self::parameter( 'repeat' ) == 'true' );
+                $repeat = (int) ( self::parameter( 'repeat' ) == 'true' );
                 if ( ! $repeat ) {
                     Lib\Entities\Holiday::query( 'h' )
                         ->update()
@@ -244,11 +245,11 @@ class Ajax extends Lib\Base\Ajax
      */
     public static function staffScheduleHandleBreak()
     {
-        $start_time    = self::parameter( 'start_time' );
-        $end_time      = self::parameter( 'end_time' );
+        $start_time = self::parameter( 'start_time' );
+        $end_time = self::parameter( 'end_time' );
         $working_start = self::parameter( 'working_start' );
-        $working_end   = self::parameter( 'working_end' );
-        $break_id      = self::parameter( 'id', 0 );
+        $working_end = self::parameter( 'working_end' );
+        $break_id = self::parameter( 'id', 0 );
 
         if ( Lib\Utils\DateTime::timeToSeconds( $start_time ) >= Lib\Utils\DateTime::timeToSeconds( $end_time ) ) {
             wp_send_json_error( array( 'message' => __( 'The start time must be less than the end one', 'bookly' ), ) );
@@ -276,7 +277,7 @@ class Ajax extends Lib\Base\Ajax
         if ( $schedule_item_break ) {
             $break = new BreakItem( $schedule_item_break->getId(), $schedule_item_break->getStartTime(), $schedule_item_break->getEndTime() );
             wp_send_json_success( array(
-                'html'     => $break->render( false ),
+                'html' => $break->render( false ),
                 'interval' => $break->getFormatedInterval(),
             ) );
         } else {
@@ -327,7 +328,7 @@ class Ajax extends Lib\Base\Ajax
                 $exclude_wp_users[] = $staff['wp_user_id'];
             }
             $users = array_map(
-                function ( \WP_User $wp_user ) {
+                function( \WP_User $wp_user ) {
                     $obj = new \stdClass();
                     $obj->ID = $wp_user->ID;
                     $obj->user_email = $wp_user->data->user_email;
@@ -343,7 +344,7 @@ class Ajax extends Lib\Base\Ajax
     }
 
     /**
-     * @param int      $staff_id
+     * @param int $staff_id
      * @param int|null $location_id
      * @return string
      */
@@ -359,7 +360,7 @@ class Ajax extends Lib\Base\Ajax
     /**
      * Get staff schedule.
      *
-     * @param int      $staff_id
+     * @param int $staff_id
      * @param int|null $location_id
      * @return string|void
      */
@@ -379,7 +380,7 @@ class Ajax extends Lib\Base\Ajax
 
         foreach (
             Lib\Entities\ScheduleItemBreak::query()
-                ->whereIn( 'staff_schedule_item_id', array_keys( $ss_ids) )
+                ->whereIn( 'staff_schedule_item_id', array_keys( $ss_ids ) )
                 ->sortBy( 'start_time, end_time' )
                 ->fetchArray() as $break
         ) {
@@ -415,12 +416,14 @@ class Ajax extends Lib\Base\Ajax
                     case 'staffScheduleHandleBreak':
                         $res_schedule = new Lib\Entities\StaffScheduleItem();
                         $res_schedule->load( self::parameter( 'ss_id' ) );
+
                         return self::$staff->getId() == $res_schedule->getStaffId();
                     case 'deleteStaffScheduleBreak':
                         $break = new Lib\Entities\ScheduleItemBreak();
                         $break->load( self::parameter( 'id' ) );
                         $res_schedule = new Lib\Entities\StaffScheduleItem();
                         $res_schedule->load( $break->getStaffScheduleItemId() );
+
                         return self::$staff->getId() == $res_schedule->getStaffId();
                     case 'updateStaffSchedule':
                         if ( self::hasParameter( 'ssi' ) ) {
@@ -434,6 +437,7 @@ class Ajax extends Lib\Base\Ajax
                                 }
                             }
                         }
+
                         return true;
                     default:
                         return false;

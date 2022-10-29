@@ -9,7 +9,7 @@ class Boot
 {
     public static $plugin_title = 'Bookly Locations (Add-on)';
     public static $req_plugin_class = 'BooklyPro\Lib\Plugin';
-    public static $req_version = '4.7';
+    public static $req_version = '5.4';
 
     /**
      * Boot up.

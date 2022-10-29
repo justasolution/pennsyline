@@ -55,7 +55,7 @@ class Ajax extends BooklyLib\Base\Ajax
     /**
      * Support until date verification.
      */
-    public function reCheckSupport()
+    public static function reCheckSupport()
     {
         /** @var BooklyLib\Base\Plugin $plugin_class */
         $plugin_class  = self::parameter( 'plugin' ) . '\Lib\Plugin';

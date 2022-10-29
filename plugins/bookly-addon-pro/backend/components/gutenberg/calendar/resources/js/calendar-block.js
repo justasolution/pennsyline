@@ -1,9 +1,9 @@
-(function (wp, $) {
+(function(wp, $) {
     let el = wp.element.createElement,
         components = wp.components,
         blockControls = wp.editor.BlockControls,
         inspectorControls = wp.editor.InspectorControls,
-        htmlToElem = function (html) {
+        htmlToElem = function(html) {
             return wp.element.RawHTML({children: html});
         }
     ;
@@ -11,7 +11,7 @@
     wp.blocks.registerBlockType('bookly/calendar', {
         title: BooklyL10nCalendar.block.title,
         description: BooklyL10nCalendar.block.description,
-        icon: el('svg', { width: '20', height: '20', viewBox: "0 0 64 64" },
+        icon: el('svg', {width: '20', height: '20', viewBox: "0 0 64 64"},
             el('path', {style: {fill: "rgb(0, 0, 0)"}, d: "M 8 0 H 56 A 8 8 0 0 1 64 8 V 22 H 0 V 8 A 8 8 0 0 1 8 0 Z"}),
             el('path', {style: {fill: "rgb(244, 102, 47)"}, d: "M 0 22 H 64 V 56 A 8 8 0 0 1 56 64 H 8 A 8 8 0 0 1 0 56 V 22 Z"}),
             el('rect', {style: {fill: "rgb(98, 86, 86)"}, x: 6, y: 6, width: 52, height: 10}),
@@ -31,28 +31,28 @@
                 type: 'string',
                 default: '[bookly-calendar]'
             },
-            location:{
+            location: {
                 type: 'string',
                 default: ''
             },
-            service:{
+            service: {
                 type: 'string',
                 default: ''
             },
-            staff:{
+            staff: {
                 type: 'string',
                 default: ''
             }
         },
-        edit: function (props) {
+        edit: function(props) {
             let inspectorElements = [],
                 $select_location = $('#bookly-js-select-location'),
                 $select_service = $('#bookly-js-select-service'),
                 $select_employee = $('#bookly-js-select-staff'),
                 attributes = props.attributes,
-                staff = BooklyL10nCalendar.casest.staff,
-                services = BooklyL10nCalendar.casest.services,
-                locations = BooklyL10nCalendar.casest.locations,
+                staff = BooklyL10nGlobal.casest.staff,
+                services = BooklyL10nGlobal.casest.services,
+                locations = BooklyL10nGlobal.casest.locations,
                 options = []
             ;
             options['locations'] = [{value: '', label: BooklyL10nCalendar.any}];
@@ -61,9 +61,9 @@
 
             function getOptions(data) {
                 let options = [];
-                data = Object.keys(data).map(function (key) { return data[key]; });
+                data = Object.keys(data).map(function(key) { return data[key]; });
 
-                data.sort(function (a, b) {
+                data.sort(function(a, b) {
                     if (parseInt(a.pos) < parseInt(b.pos))
                         return -1;
                     if (parseInt(a.pos) > parseInt(b.pos))
@@ -71,7 +71,7 @@
                     return 0;
                 });
 
-                data.forEach(function (element) {
+                data.forEach(function(element) {
                     options.push({value: element.id, label: element.name});
                 });
 
@@ -85,7 +85,7 @@
                 let docFragment = document.createDocumentFragment();
 
                 function valuesToArray(obj) {
-                    return Object.keys(obj).map(function (key) { return obj[key]; });
+                    return Object.keys(obj).map(function(key) { return obj[key]; });
                 }
 
                 function compare(a, b) {
@@ -111,14 +111,14 @@
             }
 
             function setSelects(location_id, service_id, staff_id) {
-                let _location_id = (BooklyL10nCalendar.locationCustom == 1 && location_id) ? location_id : 0,
+                let _location_id = (BooklyL10nCalendar.custom_location_settings && location_id) ? location_id : 0,
                     _staff = {},
                     _services = {}
                 ;
-                $.each(BooklyL10nCalendar.casest.staff, function (id, staff_member) {
-                    if (!location_id || BooklyL10nCalendar.casest.locations[location_id].staff.hasOwnProperty(id)) {
+                $.each(BooklyL10nGlobal.casest.staff, function(id, staff_member) {
+                    if (!location_id || BooklyL10nGlobal.casest.locations[location_id].staff.hasOwnProperty(id)) {
                         if (!service_id) {
-                            $.each(staff_member.services, function (s_id) {
+                            $.each(staff_member.services, function(s_id) {
                                 _staff[id] = staff_member;
                                 return false;
                             });
@@ -142,23 +142,23 @@
                     }
                 });
                 if (!location_id) {
-                    $.each(BooklyL10nCalendar.casest.services, function (id, service) {
-                        if (!staff_id || BooklyL10nCalendar.casest.staff[staff_id].services.hasOwnProperty(id)) {
+                    $.each(BooklyL10nGlobal.casest.services, function(id, service) {
+                        if (!staff_id || BooklyL10nGlobal.casest.staff[staff_id].services.hasOwnProperty(id)) {
                             _services[id] = service;
                         }
                     });
                 } else {
                     let service_ids = [];
-                    $.each(BooklyL10nCalendar.casest.staff, function (st_id) {
-                        $.each(BooklyL10nCalendar.casest.staff[st_id].services, function (s_id) {
-                            if (BooklyL10nCalendar.casest.staff[st_id].services[s_id].locations.hasOwnProperty(_location_id)) {
+                    $.each(BooklyL10nGlobal.casest.staff, function(st_id) {
+                        $.each(BooklyL10nGlobal.casest.staff[st_id].services, function(s_id) {
+                            if (BooklyL10nGlobal.casest.staff[st_id].services[s_id].locations.hasOwnProperty(_location_id)) {
                                 service_ids.push(s_id);
                             }
                         });
                     });
-                    $.each(BooklyL10nCalendar.casest.services, function (id, service) {
+                    $.each(BooklyL10nGlobal.casest.services, function(id, service) {
                         if ($.inArray(id, service_ids) > -1) {
-                            if (!staff_id || BooklyL10nCalendar.casest.staff[staff_id].services.hasOwnProperty(id)) {
+                            if (!staff_id || BooklyL10nGlobal.casest.staff[staff_id].services.hasOwnProperty(id)) {
                                 _services[id] = service;
                             }
                         }
@@ -189,27 +189,27 @@
             }
 
             getOptions(services)
-                .forEach(function (element) {
+                .forEach(function(element) {
                     options['services'].push(element)
                 });
 
             getOptions(staff)
-                .forEach(function (element) {
+                .forEach(function(element) {
                     options['staff'].push(element)
                 });
 
             // Add Locations
-            if (BooklyL10nCalendar.addons.locations == '1') {
+            if (BooklyL10nGlobal.addons.includes('locations')) {
                 getOptions(locations)
-                    .forEach(function (element) {
+                    .forEach(function(element) {
                         options['locations'].push(element);
                     });
                 inspectorElements.push(el(components.SelectControl, {
-                    id: 'bookly-js-select-location',
+                        id: 'bookly-js-select-location',
                         label: BooklyL10nCalendar.location,
                         value: attributes.location,
                         options: options.locations,
-                        onChange: function (selectControl) {
+                        onChange: function(selectControl) {
                             let location_id = selectControl,
                                 service_id = $select_service.val() || '',
                                 staff_id = $select_employee.val() || ''
@@ -245,18 +245,18 @@
 
             // Add service
             inspectorElements.push(el(components.SelectControl, {
-                id   : 'bookly-js-select-service',
+                id: 'bookly-js-select-service',
                 label: BooklyL10nCalendar.service,
                 value: attributes.service,
                 options: options.services,
-                onChange: function (selectControl) {
-                    let location_id = $select_location.val()||'',
-                        service_id  = selectControl,
-                        staff_id    = $select_employee.val()||''
+                onChange: function(selectControl) {
+                    let location_id = $select_location.val() || '',
+                        service_id = selectControl,
+                        staff_id = $select_employee.val() || ''
                     ;
                     // Validate selected values.
                     if (service_id != '') {
-                        if (staff_id != '' && !BooklyL10nCalendar.casest.staff[staff_id].services.hasOwnProperty(service_id)) {
+                        if (staff_id != '' && !BooklyL10nGlobal.casest.staff[staff_id].services.hasOwnProperty(service_id)) {
                             staff_id = '';
                         }
                     }
@@ -271,11 +271,11 @@
                 label: BooklyL10nCalendar.staff,
                 value: attributes.staff,
                 options: options.staff,
-                onChange: function (selectControl) {
+                onChange: function(selectControl) {
                     var location_id = $select_location.val() || '',
                         service_id = $select_service.val() || '',
                         staff_id = selectControl
-                     ;
+                    ;
 
                     setSelects(location_id, service_id, staff_id);
                     return props.setAttributes({staff: selectControl})
@@ -297,7 +297,7 @@
             ]
         },
 
-        save: function (props) {
+        save: function(props) {
             return (
                 el('div', {},
                     props.attributes.short_code
@@ -306,6 +306,6 @@
         }
     })
 })(
-  window.wp,
-  jQuery
+    window.wp,
+    jQuery
 );

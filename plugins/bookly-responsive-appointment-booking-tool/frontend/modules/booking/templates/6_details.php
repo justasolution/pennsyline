@@ -3,10 +3,8 @@ use Bookly\Lib;
 use Bookly\Lib\Utils\Common;
 use Bookly\Frontend\Modules\Booking\Proxy;
 use Bookly\Frontend\Components;
-use Bookly\Backend\Components\Dialogs\Appointment\AttachPayment\Proxy as AttachPaymentProxy;
-use Bookly\Backend\Components\Dialogs;
-/** @var bool $show_wp_users */
-/** @var \Bookly\Lib\UserBookingData $userData */
+
+/** @var Lib\UserBookingData $userData */
 echo Common::stripScripts( $progress_tracker );
 ?>
 
@@ -14,8 +12,7 @@ echo Common::stripScripts( $progress_tracker );
 <?php if ( $info_text_guest ) : ?>
     <div class="bookly-box bookly-js-guest"><?php echo Common::html( $info_text_guest ) ?></div>
 <?php endif ?>
-<?php if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly ?>
-<?php if (! get_current_user_id() && ! $userData->getFacebookId() && ( Lib\Config::showLoginButton() || Lib\Proxy\Pro::showFacebookLoginButton() ) ) : ?>
+<?php if ( ! get_current_user_id() && ! $userData->getFacebookId() && ( Lib\Config::showLoginButton() || Lib\Proxy\Pro::showFacebookLoginButton() ) ) : ?>
 <div class="bookly-box bookly-guest bookly-js-guest">
     <?php if ( Lib\Config::showLoginButton() ) : ?>
         <button class="bookly-btn bookly-js-login-show ladda-button"><?php echo Common::getTranslatedOption( 'bookly_l10n_step_details_button_login' ) ?></button>
@@ -38,6 +35,7 @@ echo Common::stripScripts( $progress_tracker );
                     $result['customers'][] = array(
                         'id'            => (int) $customer->getId(),
                         'name'          => $name,
+                        'full_name'     => $customer->getFullName(),
                         'email'         => $customer->getEmail(),
                         'group_id'      => $customer->getGroupId(),
                         'timezone'      => Lib\Proxy\Pro::getLastCustomerTimezone( $customer->getId() ),
@@ -50,7 +48,7 @@ echo Common::stripScripts( $progress_tracker );
              echo '<select class="form-control bookly-js-select" id="mady_users_list">';
              echo '<option value="">Select</option>';
              foreach ($result['customers'] as $user) {
-                echo '<option value="'.$user['email'] .'">' . $user['name'].'</option>';
+                echo '<option value="'.$user['full_name'] .'">' . $user['name'].'</option>';
              }
             echo '</select>';
             //echo "<pre>".print_r(($result['customers']),true)."</pre>";
@@ -60,6 +58,12 @@ echo Common::stripScripts( $progress_tracker );
         <label></label>
         <button class="form-control" style="padding: 5px" id="load_customer_profile" data-spinner-size="40" data-style="zoom-in">
             <span class="ladda-label"><?php esc_html_e( 'Load User' ) ?></span>
+        </button>
+    </div>
+    <div class="bookly-form-group" style="padding-left: 20px">
+        <label></label>
+        <button class="form-control" style="padding: 5px" id="clear_user_form" data-spinner-size="40" data-style="zoom-in">
+            <span class="ladda-label"><?php esc_html_e( 'Clear Form' ) ?></span>
         </button>
     </div>
 </div>

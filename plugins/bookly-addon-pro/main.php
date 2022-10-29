@@ -3,7 +3,7 @@
 Plugin Name: Bookly Pro (Add-on)
 Plugin URI: https://www.booking-wp-plugin.com/?utm_source=bookly_admin&utm_medium=plugins_page&utm_campaign=plugins_page
 Description: Bookly Pro add-on allows you to use additional features and settings, and install other add-ons for Bookly plugin.
-Version: 4.7
+Version: 5.5
 Author: Bookly
 Author URI: https://www.booking-wp-plugin.com/?utm_source=bookly_admin&utm_medium=plugins_page&utm_campaign=plugins_page
 Text Domain: bookly

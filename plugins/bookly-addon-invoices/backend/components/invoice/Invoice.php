@@ -187,7 +187,7 @@ class Invoice extends BooklyLib\Base\Component
         //echo "<pre>".print_r($ca,true)."</pre>";
         if($ca){
         	$custom_fields = json_decode( $ca->getCustomFields(), true );
-        
+
         //echo "<pre>".print_r($catemp,true)."</pre>";
         //echo "<pre>".print_r('Custom Fields',true)."</pre>";
         //echo "<pre>".print_r($custom_fields,true)."</pre>";

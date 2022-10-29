@@ -45,7 +45,7 @@ class Installer extends Base\Installer
         $settings['offset_hours'] = 1;
         $settings['perform'] = 'before';
         $settings['at_hour'] = 18;
-        $settings['offset_bidirectional_hours'] = - 24;
+        $settings['offset_bidirectional_hours'] = -24;
         $this->notifications[] = array(
             'gateway' => 'email',
             'type' => 'appointment_reminder',
@@ -81,7 +81,7 @@ class Installer extends Base\Installer
         $settings = $default_settings;
         $settings['option'] = 3;
         $settings['before_at_hour'] = 18;
-        $settings['offset_before_hours'] = - 24;
+        $settings['offset_before_hours'] = -24;
         $this->notifications[] = array(
             'gateway' => 'email',
             'type' => 'staff_day_agenda',
@@ -210,7 +210,7 @@ class Installer extends Base\Installer
             // Payment.
             'bookly_l10n_info_payment_step_several_apps' => __( 'Please tell us how you would like to pay: ', 'bookly' ),
             'bookly_l10n_info_payment_step_with_100percents_off_price' => __( 'You are not required to pay for the booked services, click Next to complete the booking process.', 'bookly' ),
-            'bookly_l10n_info_payment_step_without_intersected_gateways' =>  __( 'No payment methods available for one or more staff. Please contact service provider.', 'bookly' ),
+            'bookly_l10n_info_payment_step_without_intersected_gateways' => __( 'No payment methods available for one or more staff. Please contact service provider.', 'bookly' ),
             // Address.
             'bookly_l10n_info_address' => __( 'Address', 'bookly' ),
             'bookly_l10n_label_country' => __( 'Country', 'bookly' ),
@@ -247,6 +247,8 @@ class Installer extends Base\Installer
             'bookly_wc_enabled' => '0',
             'bookly_wc_product' => '',
             'bookly_wc_create_order_at_zero_cost' => '1',
+            'bookly_wc_create_order_via_backend' => '0',
+            'bookly_wc_default_order_status' => 'wc-pending',
             'bookly_l10n_wc_cart_info_name' => __( 'Appointment', 'bookly' ),
             'bookly_l10n_wc_cart_info_value' => __( 'Date', 'bookly' ) . ": {appointment_date}\n" . __( 'Time', 'bookly' ) . ": {appointment_time}\n" . __( 'Service', 'bookly' ) . ': {service_name}',
             // Zoom.
@@ -258,6 +260,9 @@ class Installer extends Base\Installer
             'bookly_zoom_oauth_token' => '',
             // Calendar
             'bookly_cal_frontend_enabled' => '0',
+            // BigBlueButton
+            'bookly_bbb_server_end_point' => '',
+            'bookly_bbb_shared_secret' => '',
         );
     }
 
@@ -311,7 +316,7 @@ class Installer extends Base\Installer
         // Can't remove notifications.
 
         // Remove user meta.
-        $meta_names = array( 'bookly_grace_hide_admin_notice_time', 'bookly_show_purchase_reminder' );
+        $meta_names = array( 'bookly_grace_hide_admin_notice_time', 'bookly_show_purchase_reminder', 'bookly_dismiss_modern_appearance_notice' );
         $wpdb->query( $wpdb->prepare( sprintf( 'DELETE FROM `' . $wpdb->usermeta . '` WHERE meta_key IN (%s)',
             implode( ', ', array_fill( 0, count( $meta_names ), '%s' ) ) ), $meta_names ) );
 
@@ -348,8 +353,10 @@ class Installer extends Base\Installer
 
         $wpdb->query(
             'CREATE TABLE IF NOT EXISTS `' . Entities\StaffCategory::getTableName() . '` (
-                `id`       INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                `name`     VARCHAR(255) NOT NULL,
+                `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                `name` VARCHAR(255) NOT NULL,
+                `attachment_id` INT UNSIGNED DEFAULT NULL,
+                `info` TEXT DEFAULT NULL,
                 `position` INT NOT NULL DEFAULT 9999
              ) ENGINE = INNODB
              ' . $charset_collate
@@ -380,6 +387,19 @@ class Installer extends Base\Installer
                     REFERENCES ' . BooklyLib\Entities\Staff::getTableName() . '(id)
                     ON DELETE CASCADE
                     ON UPDATE CASCADE
+            ) ENGINE = INNODB
+            ' . $charset_collate
+        );
+
+        $wpdb->query(
+            'CREATE TABLE IF NOT EXISTS `' . Entities\Form::getTableName() . '` (
+                `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                `type` ENUM("search-form","services-form","cancellation-confirmation") NOT NULL DEFAULT "search-form",
+                `name` VARCHAR(255) NOT NULL,
+                `token` VARCHAR(255) NOT NULL,
+                `settings` TEXT DEFAULT NULL,
+                `custom_css` TEXT DEFAULT NULL,
+                `created_at` DATETIME NOT NULL
             ) ENGINE = INNODB
             ' . $charset_collate
         );

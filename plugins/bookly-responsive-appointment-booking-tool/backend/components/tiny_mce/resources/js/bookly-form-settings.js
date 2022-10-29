@@ -1,4 +1,4 @@
-jQuery(function ($) {
+jQuery(function($) {
     var $form = $('#bookly-short-code-form'),
         $select_location = $('#bookly-select-location', $form),
         $select_category = $('#bookly-select-category', $form),
@@ -18,9 +18,9 @@ jQuery(function ($) {
         $insert = $('button.bookly-js-insert-shortcode', $form)
     ;
 
-    $add_button.on('click', function () {
+    $add_button.on('click', function() {
         window.parent.tb_show(BooklyFormShortCodeL10n.title, this.href);
-        window.setTimeout(function () {
+        window.setTimeout(function() {
             $('#TB_window').css({
                 'overflow-x': 'auto',
                 'overflow-y': 'hidden'
@@ -36,7 +36,7 @@ jQuery(function ($) {
         var docFragment = document.createDocumentFragment();
 
         function valuesToArray(obj) {
-            return Object.keys(obj).map(function (key) {
+            return Object.keys(obj).map(function(key) {
                 return obj[key];
             });
         }
@@ -52,7 +52,7 @@ jQuery(function ($) {
         // sort select by position
         data = valuesToArray(data).sort(compare);
 
-        $.each(data, function (key, object) {
+        $.each(data, function(key, object) {
             var option = document.createElement('option');
             option.value = object.id;
             option.text = object.name;
@@ -64,16 +64,16 @@ jQuery(function ($) {
     }
 
     function setSelects(location_id, category_id, service_id, staff_id) {
-        var _location_id = (BooklyFormShortCodeL10n.locationCustom == '1' && location_id) ? location_id : 0;
+        var _location_id = (BooklyL10nGlobal.custom_location_settings == '1' && location_id) ? location_id : 0;
         var _staff = {}, _services = {}, _categories = {}, _nop = {}, _max_capacity = null, _min_capacity = null;
-        $.each(BooklyFormShortCodeL10n.staff, function (id, staff_member) {
-            if (!location_id || BooklyFormShortCodeL10n.locations[location_id].staff.hasOwnProperty(id)) {
+        $.each(BooklyL10nGlobal.casest.staff, function(id, staff_member) {
+            if (!location_id || BooklyL10nGlobal.casest.locations[location_id].staff.hasOwnProperty(id)) {
                 if (!service_id) {
                     if (!category_id) {
                         _staff[id] = staff_member;
                     } else {
-                        $.each(staff_member.services, function (s_id) {
-                            if (BooklyFormShortCodeL10n.services[s_id].category_id == category_id) {
+                        $.each(staff_member.services, function(s_id) {
+                            if (BooklyL10nGlobal.casest.services[s_id].category_id == category_id) {
                                 _staff[id] = staff_member;
                                 return false;
                             }
@@ -102,10 +102,10 @@ jQuery(function ($) {
             }
         });
         if (!location_id) {
-            _categories = BooklyFormShortCodeL10n.categories;
-            $.each(BooklyFormShortCodeL10n.services, function (id, service) {
+            _categories = BooklyL10nGlobal.casest.categories;
+            $.each(BooklyL10nGlobal.casest.services, function(id, service) {
                 if (!category_id || service.category_id == category_id) {
-                    if (!staff_id || BooklyFormShortCodeL10n.staff[staff_id].services.hasOwnProperty(id)) {
+                    if (!staff_id || BooklyL10nGlobal.casest.staff[staff_id].services.hasOwnProperty(id)) {
                         _services[id] = service;
                     }
                 }
@@ -113,23 +113,23 @@ jQuery(function ($) {
         } else {
             var category_ids = [],
                 service_ids = [];
-            $.each(BooklyFormShortCodeL10n.staff, function (st_id) {
-                $.each(BooklyFormShortCodeL10n.staff[st_id].services, function (s_id) {
-                    if (BooklyFormShortCodeL10n.staff[st_id].services[s_id].locations.hasOwnProperty(_location_id)) {
-                        category_ids.push(BooklyFormShortCodeL10n.services[s_id].category_id);
+            $.each(BooklyL10nGlobal.casest.staff, function(st_id) {
+                $.each(BooklyL10nGlobal.casest.staff[st_id].services, function(s_id) {
+                    if (BooklyL10nGlobal.casest.staff[st_id].services[s_id].locations.hasOwnProperty(_location_id)) {
+                        category_ids.push(BooklyL10nGlobal.casest.services[s_id].category_id);
                         service_ids.push(s_id);
                     }
                 });
             });
-            $.each(BooklyFormShortCodeL10n.categories, function (id, category) {
+            $.each(BooklyL10nGlobal.casest.categories, function(id, category) {
                 if ($.inArray(parseInt(id), category_ids) > -1) {
                     _categories[id] = category;
                 }
             });
-            $.each(BooklyFormShortCodeL10n.services, function (id, service) {
+            $.each(BooklyL10nGlobal.casest.services, function(id, service) {
                 if ($.inArray(id, service_ids) > -1) {
                     if (!category_id || service.category_id == category_id) {
-                        if (!staff_id || BooklyFormShortCodeL10n.staff[staff_id].services.hasOwnProperty(id)) {
+                        if (!staff_id || BooklyL10nGlobal.casest.staff[staff_id].services.hasOwnProperty(id)) {
                             _services[id] = service;
                         }
                     }
@@ -143,22 +143,22 @@ jQuery(function ($) {
     }
 
     // Location select change
-    $select_location.on('change', function () {
+    $select_location.on('change', function() {
         var location_id = this.value,
-            category_id = $select_category.val()||'',
-            service_id  = $select_service.val()||'',
-            staff_id    = $select_employee.val()||''
+            category_id = $select_category.val() || '',
+            service_id = $select_service.val() || '',
+            staff_id = $select_employee.val() || ''
         ;
 
         // Validate selected values.
         if (location_id != '') {
-            if (staff_id != '' && !BooklyFormShortCodeL10n.locations[location_id].staff.hasOwnProperty(staff_id)) {
+            if (staff_id != '' && !BooklyL10nGlobal.casest.locations[location_id].staff.hasOwnProperty(staff_id)) {
                 staff_id = '';
             }
             if (service_id != '') {
                 var valid = false;
-                $.each(BooklyFormShortCodeL10n.locations[location_id].staff, function (id) {
-                    if (BooklyFormShortCodeL10n.staff[id].services.hasOwnProperty(service_id)) {
+                $.each(BooklyL10nGlobal.casest.locations[location_id].staff, function(id) {
+                    if (BooklyL10nGlobal.casest.staff[id].services.hasOwnProperty(service_id)) {
                         valid = true;
                         return false;
                     }
@@ -169,9 +169,9 @@ jQuery(function ($) {
             }
             if (category_id != '') {
                 var valid = false;
-                $.each(BooklyFormShortCodeL10n.locations[location_id].staff, function (id) {
-                    $.each(BooklyFormShortCodeL10n.staff[id].services, function (s_id) {
-                        if (BooklyFormShortCodeL10n.services[s_id].category_id == category_id) {
+                $.each(BooklyL10nGlobal.casest.locations[location_id].staff, function(id) {
+                    $.each(BooklyL10nGlobal.casest.staff[id].services, function(s_id) {
+                        if (BooklyL10nGlobal.casest.services[s_id].category_id == category_id) {
                             valid = true;
                             return false;
                         }
@@ -189,24 +189,24 @@ jQuery(function ($) {
     });
 
     // Category select change
-    $select_category.on('change', function () {
-        var location_id = $select_location.val()||'',
+    $select_category.on('change', function() {
+        var location_id = $select_location.val() || '',
             category_id = this.value,
-            service_id  = $select_service.val()||'',
-            staff_id    = $select_employee.val()||''
+            service_id = $select_service.val() || '',
+            staff_id = $select_employee.val() || ''
         ;
 
         // Validate selected values.
         if (category_id != '') {
             if (service_id != '') {
-                if (BooklyFormShortCodeL10n.services[service_id].category_id != category_id) {
+                if (BooklyL10nGlobal.casest.services[service_id].category_id != category_id) {
                     service_id = '';
                 }
             }
             if (staff_id != '') {
                 var valid = false;
-                $.each(BooklyFormShortCodeL10n.staff[staff_id].services, function (id) {
-                    if (BooklyFormShortCodeL10n.services[id].category_id == category_id) {
+                $.each(BooklyL10nGlobal.casest.staff[staff_id].services, function(id) {
+                    if (BooklyL10nGlobal.casest.services[id].category_id == category_id) {
                         valid = true;
                         return false;
                     }
@@ -220,22 +220,22 @@ jQuery(function ($) {
     });
 
     // Service select change
-    $select_service.on('change', function () {
-        var location_id = $select_location.val()||'',
+    $select_service.on('change', function() {
+        var location_id = $select_location.val() || '',
             category_id = '',
-            service_id  = this.value,
-            staff_id    = $select_employee.val()||''
+            service_id = this.value,
+            staff_id = $select_employee.val() || ''
         ;
 
         // Validate selected values.
         if (service_id != '') {
-            if (staff_id != '' && !BooklyFormShortCodeL10n.staff[staff_id].services.hasOwnProperty(service_id)) {
+            if (staff_id != '' && !BooklyL10nGlobal.casest.staff[staff_id].services.hasOwnProperty(service_id)) {
                 staff_id = '';
             }
         }
         setSelects(location_id, category_id, service_id, staff_id);
         if (service_id) {
-            $select_category.val(BooklyFormShortCodeL10n.services[service_id].category_id);
+            $select_category.val(BooklyL10nGlobal.casest.services[service_id].category_id);
         }
     });
 
@@ -293,24 +293,24 @@ jQuery(function ($) {
     };
 
     // Staff select change
-    $select_employee.on('change', function () {
-         var location_id = $select_location.val()||'',
-             category_id = $select_category.val()||'',
-             service_id  = $select_service.val()||'',
-             staff_id    = this.value
+    $select_employee.on('change', function() {
+        var location_id = $select_location.val() || '',
+            category_id = $select_category.val() || '',
+            service_id = $select_service.val() || '',
+            staff_id = this.value
         ;
 
         setSelects(location_id, category_id, service_id, staff_id);
     });
 
     // Set up draft selects.
-    setSelect($select_location, BooklyFormShortCodeL10n.locations);
-    setSelect($select_category, BooklyFormShortCodeL10n.categories);
-    setSelect($select_service,  BooklyFormShortCodeL10n.services);
-    setSelect($select_employee, BooklyFormShortCodeL10n.staff);
+    setSelect($select_location, BooklyL10nGlobal.casest.locations);
+    setSelect($select_category, BooklyL10nGlobal.casest.categories);
+    setSelect($select_service, BooklyL10nGlobal.casest.services);
+    setSelect($select_employee, BooklyL10nGlobal.casest.staff);
 
     $insert
-        .on('click', function (e) {
+        .on('click', function(e) {
             e.preventDefault();
 
             window.send_to_editor(window.getBooklyShortCode());

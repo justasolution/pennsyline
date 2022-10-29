@@ -2,7 +2,6 @@
 namespace BooklyGoogleMapsAddress\Frontend\Modules\Booking\ProxyProviders;
 
 use Bookly\Frontend\Modules\Booking\Proxy;
-use BooklyGoogleMapsAddress\Lib\Plugin;
 
 /**
  * Class Shared
@@ -11,7 +10,7 @@ use BooklyGoogleMapsAddress\Lib\Plugin;
 class Shared extends Proxy\Shared
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public static function booklyFormOptions( array $bookly_options )
     {

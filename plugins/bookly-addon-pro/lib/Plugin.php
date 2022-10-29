@@ -7,6 +7,7 @@ use BooklyPro\Frontend;
 
 /**
  * Class Plugin
+ *
  * @package BooklyPro\Lib
  */
 abstract class Plugin extends BooklyLib\Base\Plugin
@@ -29,13 +30,15 @@ abstract class Plugin extends BooklyLib\Base\Plugin
     {
         // Init ajax.
         Backend\Components\Dialogs\Payment\Ajax::init();
+        Backend\Components\Dialogs\Service\Edit\Ajax::init();
         Backend\Components\Dialogs\Staff\Categories\Ajax::init();
         Backend\Components\Dialogs\Staff\Edit\Ajax::init();
         Backend\Components\Gutenberg\AppointmentsList\Block::init();
         Backend\Components\Gutenberg\Calendar\Block::init();
-        Backend\Components\Gutenberg\CancellationConfirmation\Block::init();
+        Backend\Components\Gutenberg\Shortcodes\Block::init();
         Backend\Components\License\Ajax::init();
         Backend\Components\Settings\Ajax::init();
+        Backend\Modules\Appearance\Ajax::init();
         Backend\Modules\Appointments\Ajax::init();
         Backend\Modules\Customers\Ajax::init();
         Backend\Modules\Dashboard\Ajax::init();
@@ -45,6 +48,7 @@ abstract class Plugin extends BooklyLib\Base\Plugin
         Frontend\Modules\Booking\Ajax::init();
         Frontend\Modules\CustomerProfile\Ajax::init();
         Frontend\Modules\Icalendar\Ajax::init();
+        Frontend\Modules\ModernBookingForm\Ajax::init();
         Frontend\Modules\WooCommerce\Ajax::init();
 
         // Init proxy.
@@ -53,6 +57,7 @@ abstract class Plugin extends BooklyLib\Base\Plugin
         Backend\Components\Dialogs\Appointment\Edit\ProxyProviders\Local::init();
         Backend\Components\Dialogs\Appointment\Edit\ProxyProviders\Shared::init();
         Backend\Components\Dialogs\Customer\ProxyProviders\Shared::init();
+        Backend\Components\Dialogs\Payment\ProxyProviders\Shared::init();
         Backend\Components\Dialogs\Service\Edit\ProxyProviders\Local::init();
         Backend\Components\Dialogs\Service\Edit\ProxyProviders\Shared::init();
         Backend\Components\Dialogs\Staff\Categories\ProxyProviders\Local::init();
@@ -95,6 +100,8 @@ abstract class Plugin extends BooklyLib\Base\Plugin
             // Init short code.
             Frontend\Modules\CancellationConfirmation\ShortCode::init();
             Frontend\Modules\CustomerProfile\ShortCode::init();
+            Frontend\Modules\SearchForm\ShortCode::init();
+            Frontend\Modules\ServicesForm\ShortCode::init();
         }
     }
 
@@ -153,7 +160,7 @@ abstract class Plugin extends BooklyLib\Base\Plugin
             foreach ( glob( $dir . 'bookly-addon-*', GLOB_ONLYDIR ) as $path ) {
                 include_once $path . '/autoload.php';
                 $namespace = implode( '', array_map( 'ucfirst', explode( '-', str_replace( '-addon-', '-', basename( $path ) ) ) ) );
-                $result[]  = '\\' . $namespace . '\Lib\Plugin';
+                $result[] = '\\' . $namespace . '\Lib\Plugin';
             }
         }
 

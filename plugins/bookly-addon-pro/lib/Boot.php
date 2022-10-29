@@ -3,13 +3,14 @@ namespace BooklyPro\Lib;
 
 /**
  * Class Boot
+ *
  * @package BooklyPro\Lib
  */
 class Boot
 {
     public static $plugin_title = 'Bookly Pro (Add-on)';
     public static $req_plugin_class = 'Bookly\Lib\Plugin';
-    public static $req_version = '20.7';
+    public static $req_version = '21.2';
 
     const ENV_OK              = 0;
     const ENV_NO_BOOKLY       = 1;
@@ -23,10 +24,10 @@ class Boot
     public static function up()
     {
         $main_file = self::mainFile();
-        $plugin    = self::pluginClass();
+        $plugin = self::pluginClass();
 
         // Register activation/deactivation hooks.
-        register_activation_hook( $main_file, function ( $network_wide ) use ( $plugin ) {
+        register_activation_hook( $main_file, function( $network_wide ) use ( $plugin ) {
             // Enable collecting stats if Pro installed earlier than Bookly.
             if ( get_option( 'bookly_gen_collect_stats' ) === false ) {
                 add_option( 'bookly_gen_collect_stats', '1' );
@@ -49,7 +50,7 @@ class Boot
                 $plugin::activate( $network_wide );
             }
         } );
-        register_deactivation_hook( $main_file, function ( $network_wide ) use ( $plugin ) {
+        register_deactivation_hook( $main_file, function( $network_wide ) use ( $plugin ) {
             if ( Boot::checkEnv() == Boot::ENV_OK ) {
                 $plugin::deactivate( $network_wide );
             }
@@ -57,18 +58,18 @@ class Boot
         register_uninstall_hook( $main_file, array( __CLASS__, 'uninstall' ) );
 
         // Run plugin.
-        add_action( 'plugins_loaded', function () use ( $plugin, $main_file ) {
+        add_action( 'plugins_loaded', function() use ( $plugin, $main_file ) {
             $env = Boot::checkEnv();
             if ( $env == Boot::ENV_OK ) {
                 $plugin::run();
             } else {
                 // Deactivate plugin.
-                add_action( 'init', function () use ( $main_file, $env ) {
+                add_action( 'init', function() use ( $main_file, $env ) {
                     if ( current_user_can( 'activate_plugins' ) ) {
-                        add_action( 'admin_init', function () use ( $main_file ) {
+                        add_action( 'admin_init', function() use ( $main_file ) {
                             deactivate_plugins( $main_file, false, is_network_admin() );
                         } );
-                        add_action( is_network_admin() ? 'network_admin_notices' : 'admin_notices', function () use ( $env ) {
+                        add_action( is_network_admin() ? 'network_admin_notices' : 'admin_notices', function() use ( $env ) {
                             if ( $env == Boot::ENV_LEGACY_BOOKLY ) {
                                 printf( '<div class="updated"><h3>%s</h3><p>The plugin has been <strong>deactivated</strong>.</p><p>It seems you have an outdated version of Bookly. We\'ve changed the plugin\'s architecture to improve its quality and stability (read more <a href="https://www.booking-wp-plugin.com/bookly-major-update/" target="_blank">here</a>).</p><p>Please update Bookly in Plugins section of your WordPress Dashboard.</p></div>',
                                     Boot::$plugin_title
@@ -101,7 +102,7 @@ class Boot
         $response = plugins_api(
             'plugin_information',
             array(
-                'slug'   => 'bookly-responsive-appointment-booking-tool',
+                'slug' => 'bookly-responsive-appointment-booking-tool',
                 'fields' => array(
                     'sections' => false,
                     'versions' => true,
@@ -113,7 +114,7 @@ class Boot
                 require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
             }
             $upgrader = new \Plugin_Upgrader( new \Automatic_Upgrader_Skin() );
-            $source   = array_key_exists( self::$req_version, $response->versions )
+            $source = array_key_exists( self::$req_version, $response->versions )
                 ? $response->versions[ self::$req_version ] // required version
                 : $response->download_link;                 // last version
             if ( $upgrader->install( $source ) === true ) {
@@ -153,9 +154,9 @@ class Boot
         return version_compare( call_user_func( array( self::$req_plugin_class, 'getVersion' ) ), self::$req_version, '>=' )
             ? self::ENV_OK
             : (
-                call_user_func( array( self::$req_plugin_class, 'getBasename' ) ) == 'appointment-booking/main.php'
-                    ? self::ENV_LEGACY_BOOKLY
-                    : self::ENV_OLD_BOOKLY
+            call_user_func( array( self::$req_plugin_class, 'getBasename' ) ) == 'appointment-booking/main.php'
+                ? self::ENV_LEGACY_BOOKLY
+                : self::ENV_OLD_BOOKLY
             );
     }
 

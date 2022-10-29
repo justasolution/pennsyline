@@ -9,10 +9,10 @@ use Bookly\Backend\Components\Editable\Elements;
         <?php Elements::renderText( 'bookly_l10n_info_complete_step', Codes::getJson( 8, true ) ) ?>
         <?php Proxy\Pro::renderQRCode() ?>
     </div>
-    <div class="bookly-box bookly-js-done-limit-error collapse">
+    <div class="bookly-box bookly-js-done-limit-error bookly-collapse">
         <?php Elements::renderText( 'bookly_l10n_info_complete_step_limit_error', Codes::getJson( 8 ) ) ?>
     </div>
-    <div class="bookly-box bookly-js-done-processing collapse">
+    <div class="bookly-box bookly-js-done-processing bookly-collapse">
         <?php Elements::renderText( 'bookly_l10n_info_complete_step_processing', Codes::getJson( 8, true ) ) ?>
         <?php Proxy\Pro::renderQRCode() ?>
     </div>

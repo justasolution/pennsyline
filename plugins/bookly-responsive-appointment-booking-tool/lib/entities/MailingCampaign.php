@@ -11,7 +11,9 @@ use Bookly\Lib;
 class MailingCampaign extends Lib\Base\Entity
 {
     const STATE_PENDING = 'pending';
+    const STATE_IN_PROGRESS = 'in-progress';
     const STATE_COMPLETED = 'completed';
+    const STATE_CANCELED  = 'canceled';
 
     /** @var int */
     protected $mailing_list_id;

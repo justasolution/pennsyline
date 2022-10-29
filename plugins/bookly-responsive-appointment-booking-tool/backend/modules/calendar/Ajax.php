@@ -31,7 +31,7 @@ class Ajax extends Page
         $one_day = new \DateInterval( 'P1D' );
         $start_date = new \DateTime( self::parameter( 'start' ) );
         $end_date = new \DateTime( self::parameter( 'end' ) );
-        $location_ids = explode( ',', self::parameter( 'location_ids', '' ) );
+        $location_ids = Config::locationsActive() && self::parameter( 'location_ids' ) !== '' ? explode( ',', self::parameter( 'location_ids', '' ) ) : array();
 
         // Determine display time zone
         $display_tz = Common::getCurrentUserTimeZone();
@@ -47,7 +47,7 @@ class Ajax extends Page
         $query = Staff::query()->whereNot( 'visibility', 'archive' );
         if ( Config::proActive() ) {
             if ( Common::isCurrentUserSupervisor() ) {
-                $query->whereIn( 'id', $staff_members );
+                $query->whereIn( 'id', explode( ',', self::parameter( 'staff_ids' ) ) );
             } else {
                 $query->where( 'wp_user_id', get_current_user_id() );
             }
@@ -97,7 +97,7 @@ class Ajax extends Page
         $query = Lib\Entities\Appointment::query( 'a' )
             ->whereIn( 'st.id', $staff_ids )
             ->whereLt( 'a.start_date', $end_date->format( 'Y-m-d H:i:s' ) )
-            ->whereRaw( 'DATE_ADD(a.end_date, INTERVAL IF(ca.extras_consider_duration, a.extras_duration, 0) SECOND) >= \'%s\'', array( $start_date->format( 'Y-m-d H:i:s' ) ) );
+            ->whereRaw( 'DATE_ADD(a.end_date, INTERVAL a.extras_duration SECOND) >= \'%s\'', array( $start_date->format( 'Y-m-d H:i:s' ) ) );
 
         $service_ids = array_filter( explode( ',', self::parameter( 'service_ids' ) ) );
 
@@ -147,10 +147,10 @@ class Ajax extends Page
         foreach ( $schedule as $day ) {
             $staff_location_ids = array_unique(
                 array_map( function ( $l ) use ( $day ) {
-                    return Lib\Proxy\Locations::prepareStaffLocationId( $l, $day['staff_id'] );
+                    return Lib\Proxy\Locations::prepareStaffSpecialDaysLocationId( $l, $day['staff_id'] ) ?: null;
                 }, $location_ids )
             );
-            if ( $location_ids === '' || $location_ids === 'all' || in_array( $day['location_id'], $staff_location_ids, true ) ) {
+            if ( ! $location_ids || in_array( 'all', $location_ids, false ) || in_array( Lib\Proxy\Locations::prepareStaffSpecialDaysLocationId( $day['location_id'], $day['staff_id'] ) ?: null, $staff_location_ids, true ) ) {
                 $special_days[ $day['staff_id'] ][ $day['date'] ][] = $day;
             }
         }

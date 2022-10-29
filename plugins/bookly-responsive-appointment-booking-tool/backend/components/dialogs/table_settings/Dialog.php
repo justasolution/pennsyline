@@ -23,10 +23,6 @@ class Dialog extends Lib\Base\Component
             'module' => array( 'js/table-settings-dialog.js' => array( 'bookly-sortable.min.js' ) ),
         ) );
 
-        wp_localize_script( 'bookly-table-settings-dialog.js', 'BooklyTableSettingsDialogL10n', array(
-            'csrfToken' => Lib\Utils\Common::getCsrfToken(),
-        ) );
-
         self::renderTemplate( 'dialog' );
     }
 

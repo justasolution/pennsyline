@@ -395,6 +395,7 @@ export default function stepDetails(params) {
                 }
 
                 $next_btn.on('click', function(e, force_update_customer) {
+                    e.stopPropagation();
                     e.preventDefault();
 
                     // Terms and conditions checkbox
@@ -765,6 +766,7 @@ export default function stepDetails(params) {
                 });
 
                 $('.bookly-js-back-step', $container).on('click', function (e) {
+                    e.stopPropagation();
                     e.preventDefault();
                     laddaStart(this);
                     if (!opt[params.form_id].skip_steps.cart) {
@@ -851,7 +853,7 @@ export default function stepDetails(params) {
                 {
                     selector: '.bookly-js-address-city',
                     val: function() {
-                        return getFieldValueByType('locality') || getFieldValueByType('administrative_area_level_3');
+                        return getFieldValueByType('locality') || getFieldValueByType('administrative_area_level_3') || getFieldValueByType('postal_town');
                     }
                 },
                 {

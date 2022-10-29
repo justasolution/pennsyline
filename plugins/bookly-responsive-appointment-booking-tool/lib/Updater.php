@@ -3,10 +3,90 @@ namespace Bookly\Lib;
 
 /**
  * Class Updater
+ *
  * @package Bookly
  */
 class Updater extends Base\Updater
 {
+    function update_21_2()
+    {
+        $currency = get_option( 'bookly_pmt_currency' );
+        if ( $currency === 'RMB' ) {
+            update_option( 'bookly_pmt_currency', 'CNY' );
+        }
+        $this->alterTables( array(
+            'bookly_payments' => array(
+                'ALTER TABLE `%s` ADD COLUMN `gift_card_id` INT UNSIGNED DEFAULT NULL AFTER `coupon_id`',
+                'ALTER TABLE `%s` CHANGE `type` `type` ENUM("local", "free", "paypal", "authorize_net", "stripe", "2checkout", "payu_biz", "payu_latam", "payson", "mollie", "woocommerce", "cloud_stripe", "square", "gift_card") NOT NULL DEFAULT "local"',
+            ),
+        ) );
+    }
+
+    function update_21_1()
+    {
+        $this->alterTables( array(
+            'bookly_shop' => array(
+                'TRUNCATE TABLE `%s`',
+                'ALTER TABLE `%s` ADD COLUMN `image` VARCHAR(255) NOT NULL AFTER `icon`',
+            ),
+        ) );
+    }
+
+    function update_21_0()
+    {
+        $this->alterTables( array(
+            'bookly_log' => array(
+                'ALTER TABLE `%s` CHANGE `action` `action` ENUM("create","update","delete","error") DEFAULT NULL',
+            ),
+            'bookly_categories' => array(
+                'ALTER TABLE `%s` ADD COLUMN `info` TEXT DEFAULT NULL AFTER `name`',
+                'ALTER TABLE `%s` ADD COLUMN `attachment_id` INT UNSIGNED DEFAULT NULL AFTER `name`',
+            ),
+            'bookly_payments' => array(
+                'ALTER TABLE `%s` CHANGE `type` `type` ENUM("local", "free", "paypal", "authorize_net", "stripe", "2checkout", "payu_biz", "payu_latam", "payson", "mollie", "woocommerce", "cloud_stripe", "square") NOT NULL DEFAULT "local"',
+            ),
+        ) );
+        add_option( 'bookly_gen_delete_data_on_uninstall', '0' );
+        add_option( 'bookly_app_show_category_info', '0' );
+    }
+
+    function update_20_9()
+    {
+        $this->alterTables( array(
+            'bookly_services' => array(
+                'ALTER TABLE `%s` CHANGE `online_meetings` `online_meetings` ENUM("off","zoom","google_meet","jitsi","bbb") NOT NULL DEFAULT "off"',
+            ),
+            'bookly_appointments' => array(
+                'ALTER TABLE `%s` CHANGE `online_meeting_provider` `online_meeting_provider` ENUM("zoom","google_meet","jitsi","bbb") DEFAULT NULL',
+            ),
+        ) );
+        add_option( 'bookly_cloud_cron_api_key', '' );
+        $options = array(
+            'bookly_l10n_qr_code_description' => 'bookly_l10n_ics_customer_template',
+        );
+
+        $this->renameL10nStrings( $options );
+        if ( ! get_option( 'bookly_l10n_ics_customer_template' ) ) {
+            update_option( 'bookly_l10n_ics_customer_template', "{service_name}\n{staff_name}" );
+        }
+
+        add_option( 'bookly_ics_staff_template', "{client_name}\n{client_phone}\n{status}" );
+    }
+
+    function update_20_8()
+    {
+        $this->alterTables( array(
+            'bookly_mailing_queue' => array(
+                'ALTER TABLE `%s` ADD COLUMN `campaign_id` INT NOT NULL DEFAULT 0 AFTER `sent`',
+            ),
+            'bookly_mailing_campaigns' => array(
+                'ALTER TABLE `%s` CHANGE COLUMN `state` `state` ENUM(\'pending\', \'in-progress\', \'completed\', \'canceled\') NOT NULL DEFAULT \'pending\'',
+            ),
+        ) );
+
+        $this->dropTableColumns( $this->getTableName( 'bookly_customer_appointments' ), array( 'extras_consider_duration' ) );
+    }
+
     function update_20_6()
     {
         $this->alterTables( array(
@@ -14,7 +94,7 @@ class Updater extends Base\Updater
                 'ALTER TABLE `%s` ADD COLUMN `target` ENUM("appointments","packages") NOT NULL DEFAULT "appointments" AFTER `id`',
                 'ALTER TABLE `%s` ADD COLUMN `ref_id` VARCHAR(255) DEFAULT NULL AFTER `details`',
                 'ALTER TABLE `%s` CHANGE COLUMN `status` `status` ENUM("pending","completed","rejected","refunded") NOT NULL DEFAULT "completed"',
-            )
+            ),
         ) );
 
         add_option( 'bookly_cloud_stripe_custom_metadata', '0' );
@@ -106,7 +186,7 @@ class Updater extends Base\Updater
     {
         $self = $this;
 
-        $disposable_options[] = $this->disposable( __FUNCTION__ . '-add-tokens-1', function () use ( $self ) {
+        $disposable_options[] = $this->disposable( __FUNCTION__ . '-add-tokens-1', function() use ( $self ) {
             $self->alterTables( array(
                 'bookly_staff' => array(
                     'ALTER TABLE `%s` ADD COLUMN `gateways` VARCHAR(255) DEFAULT NULL',
@@ -130,7 +210,7 @@ class Updater extends Base\Updater
             ) );
         } );
 
-        $disposable_options[] = $this->disposable( __FUNCTION__ . '-add-tokens-2', function () use ( $self ) {
+        $disposable_options[] = $this->disposable( __FUNCTION__ . '-add-tokens-2', function() use ( $self ) {
             /** @global \wpdb $wpdb */
             global $wpdb;
 
@@ -262,25 +342,25 @@ class Updater extends Base\Updater
         add_option( 'bookly_cst_verify_customer_details', '0' );
 
         $this->addNotifications( array(
-            array(
-                'gateway' => 'email',
-                'type' => 'verify_email',
-                'name' => __( 'Notification to customer with verification code', 'bookly' ),
-                'subject' => __( 'Bookly verification code', 'bookly' ),
-                'message' => '{verification_code}',
-                'active' => 1,
-                'to_customer' => 1,
-                'settings' => '[]',
-            ),
-            array(
-                'gateway' => 'sms',
-                'type' => 'verify_phone',
-                'name' => __( 'Notification to customer with verification code', 'bookly' ),
-                'message' => '{verification_code}',
-                'active' => 1,
-                'to_customer' => 1,
-                'settings' => '[]',
-            ), )
+                array(
+                    'gateway' => 'email',
+                    'type' => 'verify_email',
+                    'name' => __( 'Notification to customer with verification code', 'bookly' ),
+                    'subject' => __( 'Bookly verification code', 'bookly' ),
+                    'message' => '{verification_code}',
+                    'active' => 1,
+                    'to_customer' => 1,
+                    'settings' => '[]',
+                ),
+                array(
+                    'gateway' => 'sms',
+                    'type' => 'verify_phone',
+                    'name' => __( 'Notification to customer with verification code', 'bookly' ),
+                    'message' => '{verification_code}',
+                    'active' => 1,
+                    'to_customer' => 1,
+                    'settings' => '[]',
+                ), )
         );
     }
 
@@ -398,8 +478,8 @@ class Updater extends Base\Updater
         if ( get_option( 'bookly_cloud_notify_weekly_summary' ) && get_option( 'bookly_cloud_token' ) ) {
             wp_remote_post( 'https://cloud.bookly.pro/1.0/users/' . get_option( 'bookly_cloud_token' ) . '/weekly-summary/send', array(
                 'sslverify' => false,
-                'timeout'   => 10,
-                'body'      => array( 'site_url' => site_url(), 'bookly' => '18.9', ),
+                'timeout' => 10,
+                'body' => array( 'site_url' => site_url(), 'bookly' => '18.9', ),
             ) );
         }
         delete_option( 'bookly_cloud_notify_weekly_summary' );
@@ -412,7 +492,7 @@ class Updater extends Base\Updater
 
         $self = $this;
 
-        $disposable_options[] = $this->disposable( __FUNCTION__ . '-change-schema', function () use ( $self ) {
+        $disposable_options[] = $this->disposable( __FUNCTION__ . '-change-schema', function() use ( $self ) {
             $self->alterTables( array(
                 'bookly_appointments' => array(
                     'ALTER TABLE `%s` ADD COLUMN `updated_at` DATETIME DEFAULT NULL',
@@ -426,12 +506,12 @@ class Updater extends Base\Updater
             ) );
         } );
 
-        $disposable_options[] = $this->disposable( __FUNCTION__ . '-set-updated_at', function () use ( $self, $wpdb ) {
+        $disposable_options[] = $this->disposable( __FUNCTION__ . '-set-updated_at', function() use ( $self, $wpdb ) {
             foreach ( array( 'bookly_appointments', 'bookly_customer_appointments', 'bookly_payments' ) as $table ) {
                 $wpdb->query( 'UPDATE `' . $self->getTableName( $table ) . '` SET `updated_at` = `created` WHERE `updated_at` IS null' );
             }
         } );
-        $disposable_options[] = $this->disposable( __FUNCTION__ . '-rename', function () use ( $self ) {
+        $disposable_options[] = $this->disposable( __FUNCTION__ . '-rename', function() use ( $self ) {
             $self->alterTables( array(
                 'bookly_appointments' => array(
                     'ALTER TABLE `%s` CHANGE COLUMN `updated_at` `updated_at` DATETIME NOT NULL',
@@ -455,11 +535,11 @@ class Updater extends Base\Updater
                     'ALTER TABLE `%s` CHANGE COLUMN `created` `created_at` DATETIME NOT NULL',
                 ),
                 'bookly_shop' => array(
-                    'ALTER TABLE `%s` CHANGE COLUMN `created` `created_at` DATETIME NOT NULL'
+                    'ALTER TABLE `%s` CHANGE COLUMN `created` `created_at` DATETIME NOT NULL',
                 ),
                 'bookly_stats' => array(
-                    'ALTER TABLE `%s` CHANGE COLUMN `created` `created_at` DATETIME NOT NULL'
-                )
+                    'ALTER TABLE `%s` CHANGE COLUMN `created` `created_at` DATETIME NOT NULL',
+                ),
             ) );
         } );
 
@@ -479,8 +559,8 @@ class Updater extends Base\Updater
             'bookly_l10n_label_pay_cloud_stripe' => __( 'I will pay now with Credit Card', 'bookly' ),
         ) );
 
-        add_option( 'bookly_cloud_stripe_enabled',  '0' );
-        add_option( 'bookly_cloud_stripe_timeout',  '0' );
+        add_option( 'bookly_cloud_stripe_enabled', '0' );
+        add_option( 'bookly_cloud_stripe_timeout', '0' );
         add_option( 'bookly_cloud_stripe_increase', '0' );
         add_option( 'bookly_cloud_stripe_addition', '0' );
 
@@ -497,16 +577,16 @@ class Updater extends Base\Updater
         ) );
 
         $this->renameOptions( array(
-            'bookly_sms_notify_low_balance'         => 'bookly_cloud_notify_low_balance',
-            'bookly_sms_notify_weekly_summary'      => 'bookly_cloud_notify_weekly_summary',
+            'bookly_sms_notify_low_balance' => 'bookly_cloud_notify_low_balance',
+            'bookly_sms_notify_weekly_summary' => 'bookly_cloud_notify_weekly_summary',
             'bookly_sms_notify_weekly_summary_sent' => 'bookly_cloud_notify_weekly_summary_sent',
-            'bookly_sms_token'                      => 'bookly_cloud_token',
-            'bookly_sms_promotions'                 => 'bookly_cloud_promotions',
+            'bookly_sms_token' => 'bookly_cloud_token',
+            'bookly_sms_promotions' => 'bookly_cloud_promotions',
         ) );
         $this->renameUserMeta( array(
-            'bookly_dismiss_sms_confirm_email'     => 'bookly_dismiss_cloud_confirm_email',
+            'bookly_dismiss_sms_confirm_email' => 'bookly_dismiss_cloud_confirm_email',
             'bookly_dismiss_sms_promotion_notices' => 'bookly_dismiss_cloud_promotion_notices',
-            'bookly_sms_purchases_table_settings'  => 'bookly_cloud_purchases_table_settings',
+            'bookly_sms_purchases_table_settings' => 'bookly_cloud_purchases_table_settings',
         ) );
         $this->deleteUserMeta( array( 'bookly_dismiss_sms_account_settings_notice' ) );
     }
@@ -521,7 +601,7 @@ class Updater extends Base\Updater
     function update_18_3()
     {
         $self = $this;
-        $disposable_options[] = $this->disposable( __FUNCTION__ . '-add-tokens-1', function () use ( $self ) {
+        $disposable_options[] = $this->disposable( __FUNCTION__ . '-add-tokens-1', function() use ( $self ) {
             $self->alterTables( array(
                 'bookly_payments' => array(
                     'ALTER TABLE `%s` ADD COLUMN `token` VARCHAR(255) DEFAULT NULL AFTER `status`',
@@ -529,7 +609,7 @@ class Updater extends Base\Updater
             ) );
         } );
 
-        $disposable_options[] = $this->disposable( __FUNCTION__ . '-add-tokens-2', function () use ( $self ) {
+        $disposable_options[] = $this->disposable( __FUNCTION__ . '-add-tokens-2', function() use ( $self ) {
             /** @global \wpdb $wpdb */
             global $wpdb;
 
@@ -579,7 +659,7 @@ class Updater extends Base\Updater
         foreach ( array( 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday' ) as $day ) {
             foreach ( array( 'start', 'end' ) as $tail ) {
                 $option = sprintf( 'bookly_bh_%s_%s', $day, $tail );
-                $value  = get_option( $option );
+                $value = get_option( $option );
                 if ( $value != '' ) {
                     list( $hours, $minutes ) = explode( ':', $value );
 
@@ -600,8 +680,14 @@ class Updater extends Base\Updater
             'bookly_filter_staff_categories',
             'bookly_filter_services_categories',
         );
-        $wpdb->query( $wpdb->prepare( sprintf( 'DELETE FROM `' . $wpdb->usermeta . '` WHERE meta_key IN (%s)',
-            implode( ', ', array_fill( 0, count( $meta_names ), '%s' ) ) ), $meta_names ) );
+        $wpdb->query(
+            $wpdb->prepare(
+                sprintf(
+                    'DELETE FROM `' . $wpdb->usermeta . '` WHERE meta_key IN (%s)',
+                    implode( ', ', array_fill( 0, count( $meta_names ), '%s' ) )
+                ), $meta_names
+            )
+        );
     }
 
     function update_17_7()
@@ -619,11 +705,11 @@ class Updater extends Base\Updater
 
         $payments_table = $this->getTableName( 'bookly_payments' );
 
-        $disposable_options[] = $this->disposable( __FUNCTION__ . '-add-gateway', function () use ( $payments_table ) {
+        $disposable_options[] = $this->disposable( __FUNCTION__ . '-add-gateway', function() use ( $payments_table ) {
             /** @global \wpdb $wpdb */
             global $wpdb;
 
-            $update  = 'UPDATE `' . $payments_table . '` SET `details` = %s WHERE id = %d';
+            $update = 'UPDATE `' . $payments_table . '` SET `details` = %s WHERE id = %d';
             $records = $wpdb->get_results( 'SELECT id, `type`, `details` FROM `' . $payments_table . '` WHERE `details` NOT LIKE \'%"gateway"%\'', ARRAY_A );
             foreach ( $records as $record ) {
                 $details = str_replace( '"extras_multiply_nop"', '"gateway":"' . $record['type'] . '","extras_multiply_nop"', $record['details'] );
@@ -692,33 +778,33 @@ class Updater extends Base\Updater
         global $wpdb;
 
         $self = $this;
-        $default_settings    = json_decode( '{"status":"any","option":2,"services":{"any":"any","ids":[]},"offset_hours":2,"perform":"before","at_hour":9,"before_at_hour":18,"offset_before_hours":-24,"offset_bidirectional_hours":0}', true );
+        $default_settings = json_decode( '{"status":"any","option":2,"services":{"any":"any","ids":[]},"offset_hours":2,"perform":"before","at_hour":9,"before_at_hour":18,"offset_before_hours":-24,"offset_bidirectional_hours":0}', true );
         $notifications_table = $this->getTableName( 'bookly_notifications' );
         $notifications = array(
-            'appointment_start_time'           => array( 'type' => 'appointment_reminder', 'name' => __( 'Custom notification', 'bookly' ) . ': ' . __( 'Appointment reminder', 'bookly' ) ),
-            'ca_created'                       => array( 'type' => 'new_booking', 'name' => __( 'Custom notification', 'bookly' ) . ': ' . __( 'New booking', 'bookly' ) ),
-            'ca_status_changed'                => array( 'type' => 'ca_status_changed', 'name' => __( 'Custom notification', 'bookly' ) . ': ' . __( 'Notification about customer\'s appointment status change', 'bookly' ) ),
-            'client_approved_appointment'      => array( 'type' => 'new_booking', 'name' => __( 'Notification to customer about approved appointment', 'bookly' ) ),
-            'client_birthday_greeting'         => array( 'type' => 'customer_birthday', 'name' => __( 'Customer birthday greeting (requires cron setup)', 'bookly' ) ),
-            'client_cancelled_appointment'     => array( 'type' => 'ca_status_changed', 'name' => __( 'Notification to customer about cancelled appointment', 'bookly' ) ),
-            'client_follow_up'                 => array( 'type' => 'appointment_reminder', 'name' => __( 'Follow-up message in the same day after appointment (requires cron setup)', 'bookly' ) ),
-            'client_pending_appointment'       => array( 'type' => 'new_booking', 'name' => __( 'Notification to customer about pending appointment', 'bookly' ) ),
-            'client_rejected_appointment'      => array( 'type' => 'ca_status_changed', 'name' => __( 'Notification to customer about rejected appointment', 'bookly' ) ),
-            'client_reminder'                  => array( 'type' => 'appointment_reminder', 'name' => __( 'Evening reminder to customer about next day appointment (requires cron setup)', 'bookly' ) ),
-            'client_reminder_1st'              => array( 'type' => 'appointment_reminder', 'name' => __( '1st reminder to customer about upcoming appointment (requires cron setup)', 'bookly' ) ),
-            'client_reminder_2nd'              => array( 'type' => 'appointment_reminder', 'name' => __( '2nd reminder to customer about upcoming appointment (requires cron setup)', 'bookly' ) ),
-            'client_reminder_3rd'              => array( 'type' => 'appointment_reminder', 'name' => __( '3rd reminder to customer about upcoming appointment (requires cron setup)', 'bookly' ) ),
-            'last_appointment'                 => array( 'type' => 'last_appointment', 'name' => __( 'Custom notification', 'bookly' ) . ': ' . __( 'Last client\'s appointment', 'bookly' ) ),
-            'staff_agenda'                     => array( 'type' => 'staff_day_agenda', 'name' => __( 'Evening notification with the next day agenda to staff member (requires cron setup)', 'bookly' ) ),
-            'staff_approved_appointment'       => array( 'type' => 'new_booking', 'name' => __( 'Notification to staff member about approved appointment', 'bookly' ) ),
-            'staff_cancelled_appointment'      => array( 'type' => 'ca_status_changed', 'name' => __( 'Notification to staff member about cancelled appointment', 'bookly' ) ),
-            'staff_day_agenda'                 => array( 'type' => 'staff_day_agenda', 'name' => __( 'Custom notification', 'bookly' ) . ': ' . __( 'Full day agenda', 'bookly' ) ),
-            'staff_pending_appointment'        => array( 'type' => 'new_booking', 'name' => __( 'Notification to staff member about pending appointment', 'bookly' ) ),
-            'staff_rejected_appointment'       => array( 'type' => 'ca_status_changed', 'name' => __( 'Notification to staff member about rejected appointment', 'bookly' ) ),
+            'appointment_start_time' => array( 'type' => 'appointment_reminder', 'name' => __( 'Custom notification', 'bookly' ) . ': ' . __( 'Appointment reminder', 'bookly' ) ),
+            'ca_created' => array( 'type' => 'new_booking', 'name' => __( 'Custom notification', 'bookly' ) . ': ' . __( 'New booking', 'bookly' ) ),
+            'ca_status_changed' => array( 'type' => 'ca_status_changed', 'name' => __( 'Custom notification', 'bookly' ) . ': ' . __( 'Notification about customer\'s appointment status change', 'bookly' ) ),
+            'client_approved_appointment' => array( 'type' => 'new_booking', 'name' => __( 'Notification to customer about approved appointment', 'bookly' ) ),
+            'client_birthday_greeting' => array( 'type' => 'customer_birthday', 'name' => __( 'Customer birthday greeting (requires cron setup)', 'bookly' ) ),
+            'client_cancelled_appointment' => array( 'type' => 'ca_status_changed', 'name' => __( 'Notification to customer about cancelled appointment', 'bookly' ) ),
+            'client_follow_up' => array( 'type' => 'appointment_reminder', 'name' => __( 'Follow-up message in the same day after appointment (requires cron setup)', 'bookly' ) ),
+            'client_pending_appointment' => array( 'type' => 'new_booking', 'name' => __( 'Notification to customer about pending appointment', 'bookly' ) ),
+            'client_rejected_appointment' => array( 'type' => 'ca_status_changed', 'name' => __( 'Notification to customer about rejected appointment', 'bookly' ) ),
+            'client_reminder' => array( 'type' => 'appointment_reminder', 'name' => __( 'Evening reminder to customer about next day appointment (requires cron setup)', 'bookly' ) ),
+            'client_reminder_1st' => array( 'type' => 'appointment_reminder', 'name' => __( '1st reminder to customer about upcoming appointment (requires cron setup)', 'bookly' ) ),
+            'client_reminder_2nd' => array( 'type' => 'appointment_reminder', 'name' => __( '2nd reminder to customer about upcoming appointment (requires cron setup)', 'bookly' ) ),
+            'client_reminder_3rd' => array( 'type' => 'appointment_reminder', 'name' => __( '3rd reminder to customer about upcoming appointment (requires cron setup)', 'bookly' ) ),
+            'last_appointment' => array( 'type' => 'last_appointment', 'name' => __( 'Custom notification', 'bookly' ) . ': ' . __( 'Last client\'s appointment', 'bookly' ) ),
+            'staff_agenda' => array( 'type' => 'staff_day_agenda', 'name' => __( 'Evening notification with the next day agenda to staff member (requires cron setup)', 'bookly' ) ),
+            'staff_approved_appointment' => array( 'type' => 'new_booking', 'name' => __( 'Notification to staff member about approved appointment', 'bookly' ) ),
+            'staff_cancelled_appointment' => array( 'type' => 'ca_status_changed', 'name' => __( 'Notification to staff member about cancelled appointment', 'bookly' ) ),
+            'staff_day_agenda' => array( 'type' => 'staff_day_agenda', 'name' => __( 'Custom notification', 'bookly' ) . ': ' . __( 'Full day agenda', 'bookly' ) ),
+            'staff_pending_appointment' => array( 'type' => 'new_booking', 'name' => __( 'Notification to staff member about pending appointment', 'bookly' ) ),
+            'staff_rejected_appointment' => array( 'type' => 'ca_status_changed', 'name' => __( 'Notification to staff member about rejected appointment', 'bookly' ) ),
         );
 
         // Changes in schema
-        $disposable_options[] = $this->disposable( __FUNCTION__ . '-1', function () use ( $self, $wpdb, $notifications_table, $notifications, $default_settings ) {
+        $disposable_options[] = $this->disposable( __FUNCTION__ . '-1', function() use ( $self, $wpdb, $notifications_table, $notifications, $default_settings ) {
             $wpdb->query( 'UPDATE `' . $wpdb->usermeta . '` SET meta_key = \'bookly_dismiss_feature_requests_description\' WHERE meta_key = \'bookly_feature_requests_rules_hide\'' );
             if ( ! $self->existsColumn( 'bookly_notifications', 'name' ) ) {
                 $self->alterTables( array(
@@ -731,7 +817,7 @@ class Updater extends Base\Updater
                 'bookly_customer_appointments' => array(
                     'ALTER TABLE `%s` CHANGE `status` `status` VARCHAR(255) NOT NULL DEFAULT "approved"',
                 ),
-                'bookly_shop'                  => array(
+                'bookly_shop' => array(
                     'ALTER TABLE `%s` ADD COLUMN `demo_url` VARCHAR(255) DEFAULT NULL AFTER `type`',
                     'ALTER TABLE `%s` ADD COLUMN `priority` INT UNSIGNED DEFAULT 0 AFTER `type`',
                     'ALTER TABLE `%s` ADD COLUMN `highlighted` TINYINT(1) NOT NULL DEFAULT 0 AFTER `type`',
@@ -762,9 +848,9 @@ class Updater extends Base\Updater
                         case 'appointment_start_time':
                         case 'last_appointment':
                             $set = $current_settings['existing_event_with_date_and_time'];
-                            $new_settings['option']       = $set['option'];
+                            $new_settings['option'] = $set['option'];
                             $new_settings['offset_hours'] = $set['offset_hours'];
-                            $new_settings['at_hour']      = $set['at_hour'];
+                            $new_settings['at_hour'] = $set['at_hour'];
                             $new_settings['offset_bidirectional_hours'] = $set['offset_bidirectional_hours'];
                             if ( $record['type'] !== 'last_appointment' ) {
                                 if ( isset( $set['services']['any'] ) && $set['services']['any'] ) {
@@ -774,7 +860,7 @@ class Updater extends Base\Updater
                                     $new_settings['services']['ids'] = $set['services']['ids'];
                                 }
                             } else {
-                                $new_settings['status']   = $set['status'];
+                                $new_settings['status'] = $set['status'];
                             }
                             break;
                         case 'staff_day_agenda':
@@ -790,10 +876,10 @@ class Updater extends Base\Updater
                         case 'ca_status_changed':
                         case 'ca_created':
                             $set = $current_settings['after_event'];
-                            $new_settings['status']       = $set['status'];
-                            $new_settings['option']       = $set['option'] - 1;
+                            $new_settings['status'] = $set['status'];
+                            $new_settings['option'] = $set['option'] - 1;
                             $new_settings['offset_hours'] = $set['offset_hours'];
-                            $new_settings['at_hour']      = $set['at_hour'];
+                            $new_settings['at_hour'] = $set['at_hour'];
                             $new_settings['offset_bidirectional_hours'] = $set['offset_bidirectional_hours'];
                             if ( isset( $set['services']['any'] ) && $set['services']['any'] ) {
                                 $new_settings['services']['any'] = 'any';
@@ -809,13 +895,13 @@ class Updater extends Base\Updater
         } );
 
         // WPML
-        $disposable_options[] = $this->disposable( __FUNCTION__ . '-2', function () use ( $self, $wpdb, $notifications_table, $notifications ) {
+        $disposable_options[] = $this->disposable( __FUNCTION__ . '-2', function() use ( $self, $wpdb, $notifications_table, $notifications ) {
             $records = $wpdb->get_results( $wpdb->prepare( 'SELECT id, `type`, `gateway` FROM `' . $notifications_table . '` WHERE COALESCE( `settings`, \'[]\' ) = \'[]\' AND `type` IN (' . implode( ', ', array_fill( 0, count( $notifications ), '%s' ) ) . ')', array_keys( $notifications ) ), ARRAY_A );
             $strings = array();
             foreach ( $records as $record ) {
                 $type = $record['type'];
                 if ( isset( $notifications[ $type ]['type'] ) && $type != $notifications[ $type ]['type'] ) {
-                    $key   = sprintf( '%s_%s_%d', $record['gateway'], $type, $record['id'] );
+                    $key = sprintf( '%s_%s_%d', $record['gateway'], $type, $record['id'] );
                     $value = sprintf( '%s_%s_%d', $record['gateway'], $notifications[ $type ]['type'], $record['id'] );
                     $strings[ $key ] = $value;
                     if ( $record['gateway'] == 'email' ) {
@@ -827,17 +913,17 @@ class Updater extends Base\Updater
         } );
 
         // Add settings for notifications
-        $disposable_options[] = $this->disposable( __FUNCTION__ . '-3', function () use ( $wpdb, $notifications_table, $notifications, $default_settings ) {
+        $disposable_options[] = $this->disposable( __FUNCTION__ . '-3', function() use ( $wpdb, $notifications_table, $notifications, $default_settings ) {
             $combined_notifications = get_option( 'bookly_cst_combined_notifications', 'missing' );
             if ( $combined_notifications === 'missing' ) {
                 $combined_notifications = (bool) $wpdb->query( 'SELECT 1 FROM `' . $notifications_table . '` WHERE `type` = \'new_booking_combined\' AND `active` = 1 LIMIT 1' );
             }
             $combined_notifications_disabled = (int) ! $combined_notifications;
             $cron_reminder_times = get_option( 'bookly_cron_reminder_times' );
-            $insert_from_select  = 'INSERT INTO `' . $notifications_table . '` (`gateway`, `name`, `subject`, `message`, `to_staff`, `to_customer`, `to_admin`, `attach_ics`, `attach_invoice`, `active`,  `settings`, `type`) 
+            $insert_from_select = 'INSERT INTO `' . $notifications_table . '` (`gateway`, `name`, `subject`, `message`, `to_staff`, `to_customer`, `to_admin`, `attach_ics`, `attach_invoice`, `active`,  `settings`, `type`) 
                 SELECT `gateway`, `name`, `subject`, `message`, `to_staff`, `to_customer`, `to_admin`, `attach_ics`, `attach_invoice`, %d, %s, %s
                   FROM `' . $notifications_table . '` WHERE id = %d';
-            $update_settings     = 'UPDATE `' . $notifications_table . '` SET `type` = %s, `settings` = %s, `active` = %d WHERE id = %d';
+            $update_settings = 'UPDATE `' . $notifications_table . '` SET `type` = %s, `settings` = %s, `active` = %d WHERE id = %d';
 
             $records = $wpdb->get_results( $wpdb->prepare( 'SELECT id, `type`, `gateway`, `message`, `subject`, `active`, `settings` FROM `' . $notifications_table . '` WHERE `type` IN (' . implode( ', ', array_fill( 0, count( $notifications ), '%s' ) ) . ')', array_keys( $notifications ) ), ARRAY_A );
             foreach ( $records as $record ) {
@@ -854,7 +940,7 @@ class Updater extends Base\Updater
                     $settings['services']['ids'] = array();
                 }
                 $clone_type = null;
-                $new_type   = $notifications[ $record['type'] ]['type'];
+                $new_type = $notifications[ $record['type'] ]['type'];
                 $new_active = $record['active'];
                 if ( isset( $settings[ $new_type ]['services']['any'] ) && ! $settings[ $new_type ]['services']['any'] ) {
                     $settings['services']['ids'] = $settings[ $new_type ]['services']['ids'];
@@ -874,7 +960,7 @@ class Updater extends Base\Updater
                         $clone_type = ( $combined_notifications_disabled && $record['active'] ) ? 'new_booking' : null;
                         break;
                     case 'client_follow_up':
-                        $settings['option']  = 2;
+                        $settings['option'] = 2;
                         $settings['at_hour'] = (int) $cron_reminder_times['client_follow_up'];
                         break;
                     case 'client_pending_appointment':
@@ -891,33 +977,33 @@ class Updater extends Base\Updater
                         $settings['offset_hours'] = 1;
                         $settings['perform'] = 'before';
                         $settings['at_hour'] = (int) $cron_reminder_times['client_reminder'];
-                        $settings['offset_bidirectional_hours'] = - 24;
+                        $settings['offset_bidirectional_hours'] = -24;
                         break;
                     case 'client_reminder_1st':
                         $settings['option'] = 1;
                         $settings['offset_hours'] = (int) $cron_reminder_times['client_reminder_1st'];
                         $settings['perform'] = 'before';
                         $settings['at_hour'] = 18;
-                        $settings['offset_bidirectional_hours'] = - 24;
+                        $settings['offset_bidirectional_hours'] = -24;
                         break;
                     case 'client_reminder_2nd':
                         $settings['option'] = 1;
                         $settings['offset_hours'] = (int) $cron_reminder_times['client_reminder_2nd'];
                         $settings['perform'] = 'before';
                         $settings['at_hour'] = 18;
-                        $settings['offset_bidirectional_hours'] = - 24;
+                        $settings['offset_bidirectional_hours'] = -24;
                         break;
                     case 'client_reminder_3rd':
                         $settings['option'] = 1;
                         $settings['offset_hours'] = (int) $cron_reminder_times['client_reminder_3rd'];
                         $settings['perform'] = 'before';
                         $settings['at_hour'] = 18;
-                        $settings['offset_bidirectional_hours'] = - 24;
+                        $settings['offset_bidirectional_hours'] = -24;
                         break;
                     case 'staff_agenda':
                         $settings['option'] = 3;
                         $settings['before_at_hour'] = (int) $cron_reminder_times['staff_agenda'];
-                        $settings['offset_before_hours'] = - 24;
+                        $settings['offset_before_hours'] = -24;
                         break;
                     case 'staff_approved_appointment':
                         $settings['status'] = 'approved';
@@ -1002,10 +1088,12 @@ class Updater extends Base\Updater
         $this->dropTableColumns( $this->getTableName( 'bookly_appointments' ), array( 'series_id' ) );
 
         $notifications_table = $this->getTableName( 'bookly_notifications' );
-        $records = $wpdb->get_results( sprintf(
-            'SELECT id, `settings` FROM `%s` WHERE `type` IN (\'appointment_start_time\', \'customer_birthday\', \'last_appointment\', \'ca_status_changed\', \'ca_created\')',
-            $notifications_table
-        ), ARRAY_A );
+        $records = $wpdb->get_results(
+            sprintf(
+                'SELECT id, `settings` FROM `%s` WHERE `type` IN (\'appointment_start_time\', \'customer_birthday\', \'last_appointment\', \'ca_status_changed\', \'ca_created\')',
+                $notifications_table
+            ), ARRAY_A
+        );
 
         $for_any_services = array( 'services' => array( 'any' => 1, 'ids' => array() ) );
         foreach ( $records as $record ) {
@@ -1014,17 +1102,21 @@ class Updater extends Base\Updater
                 $result = array_merge( $for_any_services, $settings[ $set ] );
                 $settings[ $set ] = $result;
             }
-            $wpdb->query( sprintf( 'UPDATE `%s` SET `settings`= \'%s\' WHERE id = %d',
-                $notifications_table,
-                json_encode( $settings ),
-                $record['id'] ) );
+            $wpdb->query(
+                sprintf(
+                    'UPDATE `%s` SET `settings`= \'%s\' WHERE id = %d',
+                    $notifications_table,
+                    json_encode( $settings ),
+                    $record['id']
+                )
+            );
         }
 
         add_option( 'bookly_app_align_buttons_left', '0' );
         add_option( 'bookly_app_show_email_confirm', '0' );
 
         $this->addL10nOptions( array(
-            'bookly_l10n_label_email_confirm'     => __( 'Confirm email', 'bookly' ),
+            'bookly_l10n_label_email_confirm' => __( 'Confirm email', 'bookly' ),
             'bookly_l10n_email_confirm_not_match' => __( 'Email confirmation doesn\'t match', 'bookly' ),
         ) );
     }
@@ -1034,7 +1126,7 @@ class Updater extends Base\Updater
         global $wpdb;
 
         $this->alterTables( array(
-            'ab_appointments'         => array(
+            'ab_appointments' => array(
                 'ALTER TABLE `%s` CHANGE COLUMN `start_date` `start_date` DATETIME DEFAULT NULL',
                 'ALTER TABLE `%s` CHANGE COLUMN `end_date` `end_date` DATETIME DEFAULT NULL',
             ),
@@ -1046,7 +1138,7 @@ class Updater extends Base\Updater
             ),
         ) );
 
-        $bookly_cst_address_show_fields                  = get_option( 'bookly_cst_address_show_fields' );
+        $bookly_cst_address_show_fields = get_option( 'bookly_cst_address_show_fields' );
         $bookly_cst_address_show_fields['street_number'] = array( 'show' => 1 );
         update_option( 'bookly_cst_address_show_fields', $bookly_cst_address_show_fields );
 
@@ -1054,7 +1146,9 @@ class Updater extends Base\Updater
             'bookly_lic_repeat_time' => 'bookly_pr_show_time',
         ) );
 
-        add_option( 'bookly_pr_data', array( 'SW1wb3J0YW50ITxicj5JdCBsb29rcyBsaWtlIHlvdSBhcmUgdXNpbmcgYW4gaWxsZWdhbCBjb3B5IG9mIEJvb2tseS4gQW5kIGl0IG1heSBjb250YWluIGEgbWFsaWNpb3VzIGNvZGUsIGEgdHJvamFuIG9yIGEgYmFja2Rvb3Iu', 'Q29uc2lkZXIgc3dpdGNoaW5nIHRvIHRoZSBsZWdhbCBjb3B5IG9mIEJvb2tseSB0aGF0IGluY2x1ZGVzIGFsbCBmZWF0dXJlcywgbGlmZXRpbWUgZnJlZSB1cGRhdGVzLCBhbmQgMjQvNyBzdXBwb3J0Lg==', 'WW91IGNhbiBidXkgbGVnYWwgY29weSBhdCBvdXIgd2Vic2l0ZSA8YSBocmVmPSJodHRwczovL3d3dy5ib29raW5nLXdwLXBsdWdpbi5jb20iIHRhcmdldD0iX2JsYW5rIj53d3cuYm9va2luZy13cC1wbHVnaW4uY29tPC9hPiwgb3IgY29udGFjdCBhcyBhdCA8YSBocmVmPSJtYWlsdG86c3VwcG9ydEBsYWRlbGEuY29tIj5zdXBwb3J0QGxhZGVsYS5jb208L2E+IGZvciBhbnkgYXNzaXN0YW5jZS4=', ) );
+        add_option( 'bookly_pr_data', array( 'SW1wb3J0YW50ITxicj5JdCBsb29rcyBsaWtlIHlvdSBhcmUgdXNpbmcgYW4gaWxsZWdhbCBjb3B5IG9mIEJvb2tseS4gQW5kIGl0IG1heSBjb250YWluIGEgbWFsaWNpb3VzIGNvZGUsIGEgdHJvamFuIG9yIGEgYmFja2Rvb3Iu',
+            'Q29uc2lkZXIgc3dpdGNoaW5nIHRvIHRoZSBsZWdhbCBjb3B5IG9mIEJvb2tseSB0aGF0IGluY2x1ZGVzIGFsbCBmZWF0dXJlcywgbGlmZXRpbWUgZnJlZSB1cGRhdGVzLCBhbmQgMjQvNyBzdXBwb3J0Lg==',
+            'WW91IGNhbiBidXkgbGVnYWwgY29weSBhdCBvdXIgd2Vic2l0ZSA8YSBocmVmPSJodHRwczovL3d3dy5ib29raW5nLXdwLXBsdWdpbi5jb20iIHRhcmdldD0iX2JsYW5rIj53d3cuYm9va2luZy13cC1wbHVnaW4uY29tPC9hPiwgb3IgY29udGFjdCBhcyBhdCA8YSBocmVmPSJtYWlsdG86c3VwcG9ydEBsYWRlbGEuY29tIj5zdXBwb3J0QGxhZGVsYS5jb208L2E+IGZvciBhbnkgYXNzaXN0YW5jZS4=', ) );
         add_option( 'bookly_cst_required_birthday', '1' );
         add_option( 'bookly_sms_undelivered_count', '0' );
 
@@ -1107,10 +1201,10 @@ class Updater extends Base\Updater
             }
             $wpdb->insert( $this->getTableName( 'bookly_messages' ), array(
                 'message_id' => 0,
-                'type'       => 'simple',
-                'subject'    => 'Major update. Introducing the new Free version of Bookly.',
-                'body'       => 'Hello.<br/><br/>Recently Bookly Lite was updated to the latest version – Bookly 16.0. Bookly Lite rebrands into Bookly with more features available for free. Paid version will be available with Pro add-on and other add-ons to bring even more features and flexibility into the booking process.<br/><br/>Take a moment to read our <a href="https://www.booking-wp-plugin.com/bookly-major-update/?utm_campaign=migration_free&utm_medium=cpc&utm_source=newsletter" target="_blank">blog post</a> to see a full list of updates available in the new free version of Bookly.<br/><br/>Thank you',
-                'created'  => current_time( 'mysql' ),
+                'type' => 'simple',
+                'subject' => 'Major update. Introducing the new Free version of Bookly.',
+                'body' => 'Hello.<br/><br/>Recently Bookly Lite was updated to the latest version – Bookly 16.0. Bookly Lite rebrands into Bookly with more features available for free. Paid version will be available with Pro add-on and other add-ons to bring even more features and flexibility into the booking process.<br/><br/>Take a moment to read our <a href="https://www.booking-wp-plugin.com/bookly-major-update/?utm_campaign=migration_free&utm_medium=cpc&utm_source=newsletter" target="_blank">blog post</a> to see a full list of updates available in the new free version of Bookly.<br/><br/>Thank you',
+                'created' => current_time( 'mysql' ),
             ) );
         } else {
             // Bookly.
@@ -1161,7 +1255,9 @@ class Updater extends Base\Updater
         ) );
 
         add_option( 'bookly_cst_allow_duplicates', '0' );
-        update_option( 'bookly_reminder_data', array( 'SW1wb3J0YW50ISBJdCBsb29rcyBsaWtlIHlvdSBhcmUgdXNpbmcgYW4gaWxsZWdhbCBjb3B5IG9mIEJvb2tseSDigJMgaXQgbWF5IGNvbnRhaW4gYSBtYWxpY2lvdXMgY29kZSwgYSB0cm9qYW4gb3IgYSBiYWNrZG9vci4=', 'VGhlIGxlZ2FsIGNvcHkgb2YgQm9va2x5IGluY2x1ZGVzIGFsbCBmZWF0dXJlcywgbGlmZXRpbWUgZnJlZSB1cGRhdGVzIHdoaWNoIGludHJvZHVjZSBuZXcgZmVhdHVyZXMgYW5kIGltcG9ydGFudCBzZWN1cml0eSBmaXhlcywgYW5kIDI0Lzcgc3VwcG9ydC4=', 'PGEgaHJlZj0iaHR0cHM6Ly93d3cuYm9va2luZy13cC1wbHVnaW4uY29tL2JlY29tZS1sZWdhbC8iIHRhcmdldD0iX2JsYW5rIj5DbGljayBoZXJlIHRvIGxlYXJuIG1vcmUgPj4+PC9hPg' ) );
+        update_option( 'bookly_reminder_data', array( 'SW1wb3J0YW50ISBJdCBsb29rcyBsaWtlIHlvdSBhcmUgdXNpbmcgYW4gaWxsZWdhbCBjb3B5IG9mIEJvb2tseSDigJMgaXQgbWF5IGNvbnRhaW4gYSBtYWxpY2lvdXMgY29kZSwgYSB0cm9qYW4gb3IgYSBiYWNrZG9vci4=',
+            'VGhlIGxlZ2FsIGNvcHkgb2YgQm9va2x5IGluY2x1ZGVzIGFsbCBmZWF0dXJlcywgbGlmZXRpbWUgZnJlZSB1cGRhdGVzIHdoaWNoIGludHJvZHVjZSBuZXcgZmVhdHVyZXMgYW5kIGltcG9ydGFudCBzZWN1cml0eSBmaXhlcywgYW5kIDI0Lzcgc3VwcG9ydC4=',
+            'PGEgaHJlZj0iaHR0cHM6Ly93d3cuYm9va2luZy13cC1wbHVnaW4uY29tL2JlY29tZS1sZWdhbC8iIHRhcmdldD0iX2JsYW5rIj5DbGljayBoZXJlIHRvIGxlYXJuIG1vcmUgPj4+PC9hPg' ) );
     }
 
     function update_14_9()
@@ -1178,34 +1274,44 @@ class Updater extends Base\Updater
                 ),
             ) );
 
-            $refs = $wpdb->get_results( sprintf(
-                'SELECT `constraint_name`, `referenced_table_name` FROM `information_schema`.`key_column_usage`
+            $refs = $wpdb->get_results(
+                sprintf(
+                    'SELECT `constraint_name`, `referenced_table_name` FROM `information_schema`.`key_column_usage`
                 WHERE `TABLE_SCHEMA` = SCHEMA() AND `TABLE_NAME` = "%s" AND `REFERENCED_TABLE_NAME` IS NOT NULL',
-                $this->getTableName( 'ab_staff_services' )
-            ) );
+                    $this->getTableName( 'ab_staff_services' )
+                )
+            );
 
             if ( $refs ) {
                 foreach ( $refs as $ref ) {
                     $wpdb->query( sprintf( 'ALTER TABLE `%s` DROP FOREIGN KEY `%s`', $this->getTableName( 'ab_staff_services' ), $ref->constraint_name ) );
                 }
-                $wpdb->query( sprintf(
-                    'ALTER TABLE `%s` DROP INDEX `unique_ids_idx`',
-                    $this->getTableName( 'ab_staff_services' )
-                ) );
-                $wpdb->query( sprintf(
-                    'ALTER TABLE `%s` ADD CONSTRAINT FOREIGN KEY (service_id) REFERENCES %s(id) ON DELETE CASCADE ON UPDATE CASCADE',
-                    $this->getTableName( 'ab_staff_services' ),
-                    $this->getTableName( 'ab_services' )
-                ) );
-                $wpdb->query( sprintf(
-                    'ALTER TABLE `%s` ADD CONSTRAINT FOREIGN KEY (staff_id) REFERENCES %s(id) ON DELETE CASCADE ON UPDATE CASCADE',
-                    $this->getTableName( 'ab_staff_services' ),
-                    $this->getTableName( 'ab_staff' )
-                ) );
-                $wpdb->query( sprintf(
-                    'ALTER TABLE `%s` ADD UNIQUE KEY unique_ids_idx (staff_id, service_id, location_id)',
-                    $this->getTableName( 'ab_staff_services' )
-                ) );
+                $wpdb->query(
+                    sprintf(
+                        'ALTER TABLE `%s` DROP INDEX `unique_ids_idx`',
+                        $this->getTableName( 'ab_staff_services' )
+                    )
+                );
+                $wpdb->query(
+                    sprintf(
+                        'ALTER TABLE `%s` ADD CONSTRAINT FOREIGN KEY (service_id) REFERENCES %s(id) ON DELETE CASCADE ON UPDATE CASCADE',
+                        $this->getTableName( 'ab_staff_services' ),
+                        $this->getTableName( 'ab_services' )
+                    )
+                );
+                $wpdb->query(
+                    sprintf(
+                        'ALTER TABLE `%s` ADD CONSTRAINT FOREIGN KEY (staff_id) REFERENCES %s(id) ON DELETE CASCADE ON UPDATE CASCADE',
+                        $this->getTableName( 'ab_staff_services' ),
+                        $this->getTableName( 'ab_staff' )
+                    )
+                );
+                $wpdb->query(
+                    sprintf(
+                        'ALTER TABLE `%s` ADD UNIQUE KEY unique_ids_idx (staff_id, service_id, location_id)',
+                        $this->getTableName( 'ab_staff_services' )
+                    )
+                );
             }
 
             $birthday_labels = array_combine( Utils\DateTime::getDatePartsOrder(), array( __( 'Birthday', 'bookly' ), '', '' ) );
@@ -1228,8 +1334,12 @@ class Updater extends Base\Updater
 
             add_option( 'bookly_cst_required_address', '0' );
             add_option( 'bookly_cst_address_show_fields', array(
-                'country' => array( 'show' => 1 ), 'state' => array( 'show' => 1 ), 'postcode' => array( 'show' => 1 ),
-                'city' => array( 'show' => 1 ), 'street' => array( 'show' => 1 ), 'additional_address' => array( 'show' => 1 ),
+                'country' => array( 'show' => 1 ),
+                'state' => array( 'show' => 1 ),
+                'postcode' => array( 'show' => 1 ),
+                'city' => array( 'show' => 1 ),
+                'street' => array( 'show' => 1 ),
+                'additional_address' => array( 'show' => 1 ),
             ) );
 
             add_option( 'bookly_app_show_address', '0' );
@@ -1242,32 +1352,32 @@ class Updater extends Base\Updater
             delete_option( 'bookly_cst_required_phone' );
 
             $this->addL10nOptions( array(
-                'bookly_l10n_label_birthday_day'            => $birthday_labels['day'],
-                'bookly_l10n_label_birthday_month'          => $birthday_labels['month'],
-                'bookly_l10n_label_birthday_year'           => $birthday_labels['year'],
-                'bookly_l10n_invalid_day'                   => __( 'Invalid day', 'bookly' ),
-                'bookly_l10n_required_day'                  => __( 'Day is required', 'bookly' ),
-                'bookly_l10n_required_month'                => __( 'Month is required', 'bookly' ),
-                'bookly_l10n_required_year'                 => __( 'Year is required', 'bookly' ),
-                'bookly_l10n_option_day'                    => __( 'Select day', 'bookly' ),
-                'bookly_l10n_option_month'                  => __( 'Select month', 'bookly' ),
-                'bookly_l10n_option_year'                   => __( 'Select year', 'bookly' ),
-                'bookly_l10n_info_address'                  => __( 'Address', 'bookly' ),
-                'bookly_l10n_label_country'                 => __( 'Country', 'bookly' ),
-                'bookly_l10n_label_state'                   => __( 'State/Region', 'bookly' ),
-                'bookly_l10n_label_postcode'                => __( 'Postal Code', 'bookly' ),
-                'bookly_l10n_label_city'                    => __( 'City', 'bookly' ),
-                'bookly_l10n_label_street'                  => __( 'Street Address', 'bookly' ),
-                'bookly_l10n_label_additional_address'      => __( 'Additional Address', 'bookly' ),
-                'bookly_l10n_required_country'              => __( 'Country is required', 'bookly' ),
-                'bookly_l10n_required_state'                => __( 'State is required', 'bookly' ),
-                'bookly_l10n_required_postcode'             => __( 'Postcode is required', 'bookly' ),
-                'bookly_l10n_required_city'                 => __( 'City is required', 'bookly' ),
-                'bookly_l10n_required_street'               => __( 'Street is required', 'bookly' ),
-                'bookly_l10n_required_additional_address'   => __( 'Additional address is required', 'bookly' ),
+                'bookly_l10n_label_birthday_day' => $birthday_labels['day'],
+                'bookly_l10n_label_birthday_month' => $birthday_labels['month'],
+                'bookly_l10n_label_birthday_year' => $birthday_labels['year'],
+                'bookly_l10n_invalid_day' => __( 'Invalid day', 'bookly' ),
+                'bookly_l10n_required_day' => __( 'Day is required', 'bookly' ),
+                'bookly_l10n_required_month' => __( 'Month is required', 'bookly' ),
+                'bookly_l10n_required_year' => __( 'Year is required', 'bookly' ),
+                'bookly_l10n_option_day' => __( 'Select day', 'bookly' ),
+                'bookly_l10n_option_month' => __( 'Select month', 'bookly' ),
+                'bookly_l10n_option_year' => __( 'Select year', 'bookly' ),
+                'bookly_l10n_info_address' => __( 'Address', 'bookly' ),
+                'bookly_l10n_label_country' => __( 'Country', 'bookly' ),
+                'bookly_l10n_label_state' => __( 'State/Region', 'bookly' ),
+                'bookly_l10n_label_postcode' => __( 'Postal Code', 'bookly' ),
+                'bookly_l10n_label_city' => __( 'City', 'bookly' ),
+                'bookly_l10n_label_street' => __( 'Street Address', 'bookly' ),
+                'bookly_l10n_label_additional_address' => __( 'Additional Address', 'bookly' ),
+                'bookly_l10n_required_country' => __( 'Country is required', 'bookly' ),
+                'bookly_l10n_required_state' => __( 'State is required', 'bookly' ),
+                'bookly_l10n_required_postcode' => __( 'Postcode is required', 'bookly' ),
+                'bookly_l10n_required_city' => __( 'City is required', 'bookly' ),
+                'bookly_l10n_required_street' => __( 'Street is required', 'bookly' ),
+                'bookly_l10n_required_additional_address' => __( 'Additional address is required', 'bookly' ),
             ) );
 
-            $cart_show_columns        = get_option( 'bookly_cart_show_columns' );
+            $cart_show_columns = get_option( 'bookly_cart_show_columns' );
             $cart_show_columns['tax'] = array( 'show' => '0' );
             update_option( 'bookly_cart_show_columns', $cart_show_columns );
 
@@ -1284,15 +1394,17 @@ class Updater extends Base\Updater
                 ),
                 'ab_appointments' => array(
                     'ALTER TABLE `%s` ADD COLUMN `google_event_etag` VARCHAR(255) DEFAULT NULL',
-                    'ALTER TABLE `%s` ADD COLUMN `created_from` ENUM("bookly","google") NOT NULL DEFAULT "bookly"'
+                    'ALTER TABLE `%s` ADD COLUMN `created_from` ENUM("bookly","google") NOT NULL DEFAULT "bookly"',
                 ),
             ) );
             // Google Calendar options.
-            update_option( 'bookly_gc_event_title', strtr( get_option( 'bookly_gc_event_title' ), array(
-                '[[SERVICE_NAME]]' => '{service_name}',
-                '[[CLIENT_NAMES]]' => '{client_names}',
-                '[[STAFF_NAME]]'   => '{staff_name}',
-            ) ) );
+            update_option(
+                'bookly_gc_event_title', strtr( get_option( 'bookly_gc_event_title' ), array(
+                    '[[SERVICE_NAME]]' => '{service_name}',
+                    '[[CLIENT_NAMES]]' => '{client_names}',
+                    '[[STAFF_NAME]]' => '{staff_name}',
+                ) )
+            );
             add_option( 'bookly_gc_sync_mode', get_option( 'bookly_gc_two_way_sync' ) == '1' ? '1.5-way' : '1-way' );
             delete_option( 'bookly_gc_two_way_sync' );
             // Update google_data in staff table.
@@ -1300,26 +1412,28 @@ class Updater extends Base\Updater
             $rows = (array) $wpdb->get_results( sprintf( 'SELECT * FROM `%s` WHERE `google_data` IS NOT NULL', $staff_table ), ARRAY_A );
             foreach ( $rows as $row ) {
                 $google_data = array(
-                    'token'    => $row['google_data'],
+                    'token' => $row['google_data'],
                     'calendar' => array(
-                        'id'         => $row['google_calendar_id'],
+                        'id' => $row['google_calendar_id'],
                         'sync_token' => null,
                     ),
-                    'channel'  => array(
-                        'id'          => null,
+                    'channel' => array(
+                        'id' => null,
                         'resource_id' => null,
-                        'expiration'  => null,
+                        'expiration' => null,
                     ),
                 );
-                $wpdb->query( $wpdb->prepare(
-                    sprintf( 'UPDATE `%s` SET `google_data` = %%s WHERE `id` = %%d', $staff_table  ),
-                    json_encode( $google_data ),
-                    $row['id']
-                ) );
+                $wpdb->query(
+                    $wpdb->prepare(
+                        sprintf( 'UPDATE `%s` SET `google_data` = %%s WHERE `id` = %%d', $staff_table ),
+                        json_encode( $google_data ),
+                        $row['id']
+                    )
+                );
             }
             $this->alterTables( array(
                 'ab_staff' => array(
-                    'ALTER TABLE `%s` DROP COLUMN `google_calendar_id`'
+                    'ALTER TABLE `%s` DROP COLUMN `google_calendar_id`',
                 ),
             ) );
         }
@@ -1341,7 +1455,7 @@ class Updater extends Base\Updater
             }
             if ( isset( $details['items'] ) ) {
                 foreach ( $details['items'] as &$item ) {
-                    $extras_price  = 0;
+                    $extras_price = 0;
                     $deposit_price = 0;
                     $price = $item['service_price'] * $item['number_of_persons'];
                     if ( ! empty( $item['extras'] ) ) {
@@ -1352,14 +1466,14 @@ class Updater extends Base\Updater
                     }
 
                     if ( Config::depositPaymentsActive() ) {
-                        $deposit_price          = Proxy\DepositPayments::prepareAmount( $price, $item['deposit'], $item['number_of_persons'] );
+                        $deposit_price = Proxy\DepositPayments::prepareAmount( $price, $item['deposit'], $item['number_of_persons'] );
                         $item['deposit_format'] = Proxy\DepositPayments::formatDeposit( $deposit_price, $item['deposit'] );
                     } else {
                         $item['deposit_format'] = null;
                     }
-                    $item['wait_listed']    = false;
-                    $item['service_tax']    = null;
-                    $details['subtotal']['price']   += $price;
+                    $item['wait_listed'] = false;
+                    $item['service_tax'] = null;
+                    $details['subtotal']['price'] += $price;
                     $details['subtotal']['deposit'] += $deposit_price;
                 }
 
@@ -1418,10 +1532,12 @@ class Updater extends Base\Updater
             ) );
 
             if ( $this->existsTable( 'icl_strings' ) ) {
-                $rows = $wpdb->get_results( sprintf(
-                    'SELECT id, gateway, type FROM `%s`',
-                    $this->getTableName( 'ab_notifications' )
-                ) );
+                $rows = $wpdb->get_results(
+                    sprintf(
+                        'SELECT id, gateway, type FROM `%s`',
+                        $this->getTableName( 'ab_notifications' )
+                    )
+                );
 
                 $strings = array();
                 foreach ( $rows as $row ) {
@@ -1445,10 +1561,12 @@ class Updater extends Base\Updater
 
         if ( $wc_exists ) {
             $wc_order_meta_table = $this->getTableName( 'woocommerce_order_itemmeta' );
-            $rows = (array) $wpdb->get_results( $wpdb->prepare(
-                'SELECT meta_id, meta_value FROM `' . $wc_order_meta_table . '` WHERE meta_key = \'bookly\' AND meta_id > %d',
-                $meta_id
-            ), ARRAY_A );
+            $rows = (array) $wpdb->get_results(
+                $wpdb->prepare(
+                    'SELECT meta_id, meta_value FROM `' . $wc_order_meta_table . '` WHERE meta_key = \'bookly\' AND meta_id > %d',
+                    $meta_id
+                ), ARRAY_A
+            );
             foreach ( $rows as $row ) {
                 $meta = @unserialize( $row['meta_value'] );
                 if ( isset( $meta['items'] ) ) {
@@ -1495,20 +1613,22 @@ class Updater extends Base\Updater
         add_option( 'bookly_url_cancel_confirm_page_url', home_url() );
         add_option( 'bookly_ntf_processing_interval', '2' );
         add_option( 'bookly_app_show_notes', '0' );
-        add_option( 'bookly_reminder_data', array( 'SW1wb3J0YW50ISBJdCBsb29rcyBsaWtlIHlvdSBhcmUgdXNpbmcgYW4gaWxsZWdhbCBjb3B5IG9mIEJvb2tseSDigJMgaXQgbWF5IGNvbnRhaW4gYSBtYWxpY2lvdXMgY29kZSwgYSB0cm9qYW4gb3IgYSBiYWNrZG9vci4=', 'VGhlIGxlZ2FsIGNvcHkgb2YgQm9va2x5IGluY2x1ZGVzIGFsbCBmZWF0dXJlcywgbGlmZXRpbWUgZnJlZSB1cGRhdGVzLCBhbmQgMjQvNyBzdXBwb3J0LiBCeSBidXlpbmcgYSBsZWdhbCBjb3B5IG9mIEJvb2tseSBhdCBhIHNwZWNpYWwgZGlzY291bnRlZCBwcmljZSwgeW91IG1heSBiZW5lZml0IGZyb20gb3VyIHBhcnRuZXLigJlzIGV4Y2x1c2l2ZSBkaXNjb3VudHMh', 'PGEgaHJlZj0iaHR0cHM6Ly93d3cuYm9va2luZy13cC1wbHVnaW4uY29tL2JlY29tZS1sZWdhbC8iIHRhcmdldD0iX2JsYW5rIj5DbGljayBoZXJlIHRvIGxlYXJuIG1vcmUgPj4+PC9hPg' ) );
+        add_option( 'bookly_reminder_data', array( 'SW1wb3J0YW50ISBJdCBsb29rcyBsaWtlIHlvdSBhcmUgdXNpbmcgYW4gaWxsZWdhbCBjb3B5IG9mIEJvb2tseSDigJMgaXQgbWF5IGNvbnRhaW4gYSBtYWxpY2lvdXMgY29kZSwgYSB0cm9qYW4gb3IgYSBiYWNrZG9vci4=',
+            'VGhlIGxlZ2FsIGNvcHkgb2YgQm9va2x5IGluY2x1ZGVzIGFsbCBmZWF0dXJlcywgbGlmZXRpbWUgZnJlZSB1cGRhdGVzLCBhbmQgMjQvNyBzdXBwb3J0LiBCeSBidXlpbmcgYSBsZWdhbCBjb3B5IG9mIEJvb2tseSBhdCBhIHNwZWNpYWwgZGlzY291bnRlZCBwcmljZSwgeW91IG1heSBiZW5lZml0IGZyb20gb3VyIHBhcnRuZXLigJlzIGV4Y2x1c2l2ZSBkaXNjb3VudHMh',
+            'PGEgaHJlZj0iaHR0cHM6Ly93d3cuYm9va2luZy13cC1wbHVnaW4uY29tL2JlY29tZS1sZWdhbC8iIHRhcmdldD0iX2JsYW5rIj5DbGljayBoZXJlIHRvIGxlYXJuIG1vcmUgPj4+PC9hPg' ) );
         add_option( 'bookly_lic_repeat_time', time() + 7776000 );
         $this->addL10nOptions( array(
             'bookly_l10n_label_notes' => __( 'Notes', 'bookly' ),
         ) );
 
         $this->renameOptions( array(
-            'bookly_pmt_paypal'               => 'bookly_paypal_enabled',
-            'bookly_pmt_paypal_sandbox'       => 'bookly_paypal_sandbox',
-            'bookly_pmt_paypal_api_password'  => 'bookly_paypal_api_password',
+            'bookly_pmt_paypal' => 'bookly_paypal_enabled',
+            'bookly_pmt_paypal_sandbox' => 'bookly_paypal_sandbox',
+            'bookly_pmt_paypal_api_password' => 'bookly_paypal_api_password',
             'bookly_pmt_paypal_api_signature' => 'bookly_paypal_api_signature',
-            'bookly_pmt_paypal_api_username'  => 'bookly_paypal_api_username',
-            'bookly_pmt_paypal_id'            => 'bookly_paypal_id',
-            'bookly_custom_fields'            => 'bookly_custom_fields_data',
+            'bookly_pmt_paypal_api_username' => 'bookly_paypal_api_username',
+            'bookly_pmt_paypal_id' => 'bookly_paypal_id',
+            'bookly_custom_fields' => 'bookly_custom_fields_data',
             'bookly_custom_fields_merge_repetitive' => 'bookly_custom_fields_merge_repeating',
         ) );
 
@@ -1516,45 +1636,50 @@ class Updater extends Base\Updater
             'ab_appointments' => array(
                 'ALTER TABLE `%s` ADD COLUMN `custom_service_name` VARCHAR(255) DEFAULT NULL AFTER `service_id`',
                 'ALTER TABLE `%s` ADD COLUMN `custom_service_price` DECIMAL(10,2) DEFAULT NULL AFTER `custom_service_name`',
-                'ALTER TABLE `%s` CHANGE COLUMN `service_id` `service_id` INT UNSIGNED DEFAULT NULL'
+                'ALTER TABLE `%s` CHANGE COLUMN `service_id` `service_id` INT UNSIGNED DEFAULT NULL',
             ),
             'ab_customer_appointments' => array(
                 'ALTER TABLE `%s` ADD COLUMN `status_changed_at` DATETIME NULL AFTER `status`',
-                'ALTER TABLE `%s` ADD COLUMN `notes` TEXT DEFAULT NULL AFTER `number_of_persons`'
+                'ALTER TABLE `%s` ADD COLUMN `notes` TEXT DEFAULT NULL AFTER `number_of_persons`',
             ),
             'ab_notifications' => array(
                 'ALTER TABLE `%s` ADD COLUMN `attach_ics` TINYINT(1) NOT NULL DEFAULT 0 AFTER `to_admin`',
             ),
-            'ab_services'     => array(
+            'ab_services' => array(
                 'ALTER TABLE `%s` ADD COLUMN `recurrence_enabled` TINYINT(1) NOT NULL DEFAULT 1 AFTER `staff_preference`',
                 'ALTER TABLE `%s` ADD COLUMN `recurrence_frequencies` SET("daily","weekly","biweekly","monthly") NOT NULL DEFAULT "daily,weekly,biweekly,monthly" AFTER `recurrence_enabled`',
-            )
+            ),
         ) );
 
         // Remove `unique_ids_idx` index from `ab_sub_services`.
-        $ref = $wpdb->get_row( sprintf(
-            'SELECT `constraint_name`, `referenced_table_name` FROM `information_schema`.`key_column_usage`
+        $ref = $wpdb->get_row(
+            sprintf(
+                'SELECT `constraint_name`, `referenced_table_name` FROM `information_schema`.`key_column_usage`
                 WHERE `TABLE_SCHEMA` = SCHEMA() AND `TABLE_NAME` = "%s" AND `COLUMN_NAME` = "service_id" AND `REFERENCED_TABLE_NAME` IS NOT NULL',
-            $this->getTableName( 'ab_sub_services' )
-        ) );
+                $this->getTableName( 'ab_sub_services' )
+            )
+        );
         if ( $ref ) {
             $wpdb->query( sprintf( 'ALTER TABLE `%s` DROP FOREIGN KEY `%s`', $this->getTableName( 'ab_sub_services' ), $ref->constraint_name ) );
             $this->alterTables( array(
                 'ab_sub_services' => array(
-                    'ALTER TABLE `%s` DROP INDEX `unique_ids_idx`'
+                    'ALTER TABLE `%s` DROP INDEX `unique_ids_idx`',
                 ),
             ) );
-            $wpdb->query( sprintf(
-                'ALTER TABLE `%s` ADD CONSTRAINT FOREIGN KEY (service_id) REFERENCES %s(id) ON DELETE CASCADE ON UPDATE CASCADE',
-                $this->getTableName( 'ab_sub_services' ),
-                $ref->referenced_table_name
-            ) );
+            $wpdb->query(
+                sprintf(
+                    'ALTER TABLE `%s` ADD CONSTRAINT FOREIGN KEY (service_id) REFERENCES %s(id) ON DELETE CASCADE ON UPDATE CASCADE',
+                    $this->getTableName( 'ab_sub_services' ),
+                    $ref->referenced_table_name
+                )
+            );
         }
 
         foreach ( (array) json_decode( 'bookly_recurring_appointments_frequencies', true ) as $service_id => $frequencies ) {
-            $wpdb->update( $this->getTableName( 'ab_services' ),
+            $wpdb->update(
+                $this->getTableName( 'ab_services' ),
                 array(
-                    'recurrence_enabled'     => $frequencies['enabled'],
+                    'recurrence_enabled' => $frequencies['enabled'],
                     'recurrence_frequencies' => implode( ',', $frequencies['frequencies'] ),
                 ),
                 array( 'id' => $service_id )
@@ -1562,11 +1687,14 @@ class Updater extends Base\Updater
         }
         delete_option( 'bookly_recurring_appointments_frequencies' );
 
-        $notifications = (array) $wpdb->get_results( sprintf( 'SELECT id, settings FROM `%s` WHERE `type` IN (\'%s\',\'%s\') AND `active` = 1',
-            $this->getTableName( 'ab_notifications' ),
-            'appointment_start_time',
-            'last_appointment'
-        ) );
+        $notifications = (array) $wpdb->get_results(
+            sprintf(
+                'SELECT id, settings FROM `%s` WHERE `type` IN (\'%s\',\'%s\') AND `active` = 1',
+                $this->getTableName( 'ab_notifications' ),
+                'appointment_start_time',
+                'last_appointment'
+            )
+        );
 
         foreach ( $notifications as $notification ) {
             $settings = (array) json_decode( $notification->settings, true );
@@ -1580,11 +1708,11 @@ class Updater extends Base\Updater
     function update_14_3()
     {
         $this->renameOptions( array(
-            'bookly_gen_approve_page_url'        => 'bookly_url_approve_page_url',
+            'bookly_gen_approve_page_url' => 'bookly_url_approve_page_url',
             'bookly_gen_approve_denied_page_url' => 'bookly_url_approve_denied_page_url',
-            'bookly_gen_cancel_page_url'         => 'bookly_url_cancel_page_url',
-            'bookly_gen_cancel_denied_page_url'  => 'bookly_url_cancel_denied_page_url',
-            'bookly_gen_final_step_url'          => 'bookly_url_final_step_url',
+            'bookly_gen_cancel_page_url' => 'bookly_url_cancel_page_url',
+            'bookly_gen_cancel_denied_page_url' => 'bookly_url_cancel_denied_page_url',
+            'bookly_gen_final_step_url' => 'bookly_url_final_step_url',
         ) );
 
         add_option( 'bookly_url_reject_page_url', home_url() );
@@ -1595,7 +1723,7 @@ class Updater extends Base\Updater
                 'ALTER TABLE `%s` ADD COLUMN `end_time_info` VARCHAR(255) DEFAULT "" AFTER `info`',
                 'ALTER TABLE `%s` ADD COLUMN `start_time_info` VARCHAR(255) DEFAULT "" AFTER `info`',
                 'ALTER TABLE `%s` ADD COLUMN `appointments_limit` INT DEFAULT NULL AFTER `package_size`',
-                'ALTER TABLE `%s` ADD COLUMN `limit_period` ENUM("off","day","week","month","year") NOT NULL DEFAULT "off" AFTER `appointments_limit`'
+                'ALTER TABLE `%s` ADD COLUMN `limit_period` ENUM("off","day","week","month","year") NOT NULL DEFAULT "off" AFTER `appointments_limit`',
             ),
             'ab_customer_appointments' => array(
                 'ALTER TABLE `%s` ADD COLUMN `package_id` INT UNSIGNED DEFAULT NULL AFTER `id`',
@@ -1610,7 +1738,7 @@ class Updater extends Base\Updater
                 'ALTER TABLE `%s` ADD COLUMN `notification_id` INT UNSIGNED',
                 'UPDATE `%s` `sn` SET `sn`.`notification_id` = (SELECT `n`.`id` FROM `' . $this->getTableName( 'ab_notifications' ) . '` `n` WHERE `n`.`type` = `sn`.`type` LIMIT 1)',
                 'ALTER TABLE `%s` CHANGE COLUMN `notification_id` INT UNSIGNED NOT NULL',
-                'ALTER TABLE `%s` ADD CONSTRAINT FOREIGN KEY (`notification_id`) REFERENCES `' . $this->getTableName( 'ab_notifications' ) . '` (`id`) ON DELETE CASCADE ON UPDATE CASCADE'
+                'ALTER TABLE `%s` ADD CONSTRAINT FOREIGN KEY (`notification_id`) REFERENCES `' . $this->getTableName( 'ab_notifications' ) . '` (`id`) ON DELETE CASCADE ON UPDATE CASCADE',
             ),
             'ab_sub_services' => array(
                 'ALTER TABLE `%s` ADD COLUMN `type` ENUM("service","spare_time") NOT NULL DEFAULT "service" AFTER `id`',
@@ -1627,7 +1755,7 @@ class Updater extends Base\Updater
 
         $options = array(
             'bookly_l10n_info_complete_step_limit_error' => __( 'You are trying to use the service too often. Please contact us to make a booking.', 'bookly' ),
-            'bookly_l10n_info_complete_step_processing'  => __( 'Your payment has been accepted for processing.', 'bookly' ),
+            'bookly_l10n_info_complete_step_processing' => __( 'Your payment has been accepted for processing.', 'bookly' ),
         );
         $this->addL10nOptions( $options );
     }
@@ -1636,22 +1764,30 @@ class Updater extends Base\Updater
     {
         global $wpdb;
 
-        $wpdb->query( sprintf(
-            'ALTER TABLE `%s` CHANGE `type` `type` ENUM("simple","compound","package") NOT NULL DEFAULT "simple"',
-            $this->getTableName( 'ab_services' )
-        ) );
-        $wpdb->query( sprintf(
-            'ALTER TABLE `%s` ADD `package_life_time` INT DEFAULT NULL AFTER `type`',
-            $this->getTableName( 'ab_services' )
-        ) );
-        $wpdb->query( sprintf(
-            'ALTER TABLE `%s` ADD `package_size` INT DEFAULT NULL AFTER `package_life_time`',
-            $this->getTableName( 'ab_services' )
-        ) );
-        $wpdb->query( sprintf(
-            'ALTER TABLE `%s` ADD COLUMN `staff_preference` ENUM("order","least_occupied","most_occupied","least_expensive","most_expensive") NOT NULL DEFAULT "most_expensive" AFTER `package_size`',
-            $this->getTableName( 'ab_services' )
-        ) );
+        $wpdb->query(
+            sprintf(
+                'ALTER TABLE `%s` CHANGE `type` `type` ENUM("simple","compound","package") NOT NULL DEFAULT "simple"',
+                $this->getTableName( 'ab_services' )
+            )
+        );
+        $wpdb->query(
+            sprintf(
+                'ALTER TABLE `%s` ADD `package_life_time` INT DEFAULT NULL AFTER `type`',
+                $this->getTableName( 'ab_services' )
+            )
+        );
+        $wpdb->query(
+            sprintf(
+                'ALTER TABLE `%s` ADD `package_size` INT DEFAULT NULL AFTER `package_life_time`',
+                $this->getTableName( 'ab_services' )
+            )
+        );
+        $wpdb->query(
+            sprintf(
+                'ALTER TABLE `%s` ADD COLUMN `staff_preference` ENUM("order","least_occupied","most_occupied","least_expensive","most_expensive") NOT NULL DEFAULT "most_expensive" AFTER `package_size`',
+                $this->getTableName( 'ab_services' )
+            )
+        );
 
         $wpdb->query(
             'CREATE TABLE IF NOT EXISTS `' . $this->getTableName( 'ab_sub_services' ) . '` (
@@ -1710,67 +1846,85 @@ class Updater extends Base\Updater
             COLLATE = utf8_general_ci'
         );
 
-        $wpdb->query( sprintf(
-            'ALTER TABLE `%s` CHANGE COLUMN `name` `full_name` VARCHAR(255) NOT NULL DEFAULT ""',
-            $this->getTableName( 'ab_customers' )
-        ) );
-        $wpdb->query( sprintf(
-            'ALTER TABLE `%s`
+        $wpdb->query(
+            sprintf(
+                'ALTER TABLE `%s` CHANGE COLUMN `name` `full_name` VARCHAR(255) NOT NULL DEFAULT ""',
+                $this->getTableName( 'ab_customers' )
+            )
+        );
+        $wpdb->query(
+            sprintf(
+                'ALTER TABLE `%s`
                 ADD COLUMN `first_name` VARCHAR(255) NOT NULL DEFAULT "" AFTER `full_name`,
                 ADD COLUMN `last_name` VARCHAR(255) NOT NULL DEFAULT "" AFTER `first_name`',
-            $this->getTableName( 'ab_customers' )
-        ) );
+                $this->getTableName( 'ab_customers' )
+            )
+        );
         add_option( 'bookly_cst_first_last_name', '0' );
 
         $options = array(
-            'bookly_l10n_label_first_name'    => __( 'First name', 'bookly' ),
-            'bookly_l10n_label_last_name'     => __( 'Last name', 'bookly' ),
+            'bookly_l10n_label_first_name' => __( 'First name', 'bookly' ),
+            'bookly_l10n_label_last_name' => __( 'Last name', 'bookly' ),
             'bookly_l10n_required_first_name' => __( 'Please tell us your first name', 'bookly' ),
-            'bookly_l10n_required_last_name'  => __( 'Please tell us your last name', 'bookly' ),
+            'bookly_l10n_required_last_name' => __( 'Please tell us your last name', 'bookly' ),
         );
         $this->addL10nOptions( $options );
 
         // Update first and last name fields from full name.
-        $wpdb->query( sprintf(
-            'UPDATE `%s` SET `first_name` = SUBSTRING_INDEX(`full_name`, " ", 1), `last_name` = TRIM(SUBSTR(`full_name`, LOCATE(" ", `full_name`)))',
-            $this->getTableName( 'ab_customers' )
-        ) );
+        $wpdb->query(
+            sprintf(
+                'UPDATE `%s` SET `first_name` = SUBSTRING_INDEX(`full_name`, " ", 1), `last_name` = TRIM(SUBSTR(`full_name`, LOCATE(" ", `full_name`)))',
+                $this->getTableName( 'ab_customers' )
+            )
+        );
 
-        $wpdb->query( sprintf(
-            'ALTER TABLE `%s` ADD `staff_any` TINYINT(1) NOT NULL DEFAULT 0 AFTER `staff_id`',
-            $this->getTableName( 'ab_appointments' )
-        ) );
+        $wpdb->query(
+            sprintf(
+                'ALTER TABLE `%s` ADD `staff_any` TINYINT(1) NOT NULL DEFAULT 0 AFTER `staff_id`',
+                $this->getTableName( 'ab_appointments' )
+            )
+        );
 
         // Move location from CustomerAppointment to Appointment.
-        $wpdb->query( sprintf(
-            'ALTER TABLE `%s` ADD `location_id` INT UNSIGNED DEFAULT NULL AFTER `series_id`',
-            $this->getTableName( 'ab_appointments' )
-        ) );
-        $wpdb->query( sprintf(
-            'UPDATE `%s` `a` SET `a`.`location_id` = (SELECT `ca`.`location_id` FROM `%s` `ca` WHERE `ca`.`appointment_id` = `a`.`id` AND `ca`.`location_id` IS NOT NULL LIMIT 1)',
-            $this->getTableName( 'ab_appointments' ),
-            $this->getTableName( 'ab_customer_appointments' )
-        ) );
-        $ref = $wpdb->get_row( sprintf(
-            'SELECT `constraint_name`, `referenced_table_name` FROM `information_schema`.`key_column_usage`
+        $wpdb->query(
+            sprintf(
+                'ALTER TABLE `%s` ADD `location_id` INT UNSIGNED DEFAULT NULL AFTER `series_id`',
+                $this->getTableName( 'ab_appointments' )
+            )
+        );
+        $wpdb->query(
+            sprintf(
+                'UPDATE `%s` `a` SET `a`.`location_id` = (SELECT `ca`.`location_id` FROM `%s` `ca` WHERE `ca`.`appointment_id` = `a`.`id` AND `ca`.`location_id` IS NOT NULL LIMIT 1)',
+                $this->getTableName( 'ab_appointments' ),
+                $this->getTableName( 'ab_customer_appointments' )
+            )
+        );
+        $ref = $wpdb->get_row(
+            sprintf(
+                'SELECT `constraint_name`, `referenced_table_name` FROM `information_schema`.`key_column_usage`
                 WHERE `TABLE_SCHEMA` = SCHEMA() AND `TABLE_NAME` = "%s" AND `COLUMN_NAME` = "location_id"',
-            $this->getTableName( 'ab_customer_appointments' )
-        ) );
+                $this->getTableName( 'ab_customer_appointments' )
+            )
+        );
         if ( $ref ) {
             $wpdb->query( sprintf( 'ALTER TABLE `%s` DROP FOREIGN KEY `%s`', $this->getTableName( 'ab_customer_appointments' ), $ref->constraint_name ) );
-            $wpdb->query( sprintf(
-                'ALTER TABLE `%s` ADD CONSTRAINT FOREIGN KEY (location_id) REFERENCES %s(id) ON DELETE SET NULL ON UPDATE CASCADE',
-                $this->getTableName( 'ab_appointments' ),
-                $ref->referenced_table_name
-            ) );
+            $wpdb->query(
+                sprintf(
+                    'ALTER TABLE `%s` ADD CONSTRAINT FOREIGN KEY (location_id) REFERENCES %s(id) ON DELETE SET NULL ON UPDATE CASCADE',
+                    $this->getTableName( 'ab_appointments' ),
+                    $ref->referenced_table_name
+                )
+            );
         }
         $wpdb->query( sprintf( 'ALTER TABLE `%s` DROP COLUMN `location_id`', $this->getTableName( 'ab_customer_appointments' ) ) );
 
         // Add 'waitlisted' status.
-        $wpdb->query( sprintf(
-            'ALTER TABLE `%s` CHANGE `status` `status` ENUM("pending","approved","cancelled","rejected","waitlisted") NOT NULL DEFAULT "approved"',
-            $this->getTableName( 'ab_customer_appointments' )
-        ) );
+        $wpdb->query(
+            sprintf(
+                'ALTER TABLE `%s` CHANGE `status` `status` ENUM("pending","approved","cancelled","rejected","waitlisted") NOT NULL DEFAULT "approved"',
+                $this->getTableName( 'ab_customer_appointments' )
+            )
+        );
 
         // Add new options.
         add_option( 'bookly_gen_approve_denied_page_url', get_option( 'bookly_gen_approve_page_url' ) );
@@ -1795,37 +1949,45 @@ class Updater extends Base\Updater
         add_option( 'bookly_cst_remember_in_cookie', '0' );
         $this->addL10nOptions( array( 'bookly_l10n_step_details_button_login' => __( 'Log In' ) ) );
 
-        $wpdb->query( sprintf(
-            'ALTER TABLE `%s` ADD COLUMN `paid_type` ENUM("in_full","deposit") NOT NULL DEFAULT "in_full" AFTER `paid`',
-            $this->getTableName( 'ab_payments' )
-        ) );
-        $wpdb->query( sprintf(
-            'UPDATE `%s` SET `paid_type` = (CASE WHEN `paid` = `total` THEN "in_full" ELSE "deposit" END)',
-            $this->getTableName( 'ab_payments' )
-        ) );
+        $wpdb->query(
+            sprintf(
+                'ALTER TABLE `%s` ADD COLUMN `paid_type` ENUM("in_full","deposit") NOT NULL DEFAULT "in_full" AFTER `paid`',
+                $this->getTableName( 'ab_payments' )
+            )
+        );
+        $wpdb->query(
+            sprintf(
+                'UPDATE `%s` SET `paid_type` = (CASE WHEN `paid` = `total` THEN "in_full" ELSE "deposit" END)',
+                $this->getTableName( 'ab_payments' )
+            )
+        );
 
         // Set price format.
         $currencies = Utils\Price::getCurrencies();
-        $format     = $currencies[ get_option( 'bookly_pmt_currency' ) ]['format'];
+        $format = $currencies[ get_option( 'bookly_pmt_currency' ) ]['format'];
         add_option( 'bookly_pmt_price_format', $format );
 
         // Time zone.
-        $wpdb->query( sprintf(
-            'ALTER TABLE `%s` ADD `time_zone` VARCHAR(255) AFTER `token`',
-            $this->getTableName( 'ab_customer_appointments' )
-        ) );
+        $wpdb->query(
+            sprintf(
+                'ALTER TABLE `%s` ADD `time_zone` VARCHAR(255) AFTER `token`',
+                $this->getTableName( 'ab_customer_appointments' )
+            )
+        );
     }
 
     function update_13_4()
     {
         global $wpdb;
 
-        $wpdb->query( sprintf(
-            'ALTER TABLE `%s`
+        $wpdb->query(
+            sprintf(
+                'ALTER TABLE `%s`
                 ADD `created_from` ENUM("frontend","backend") NOT NULL DEFAULT "frontend" AFTER `compound_token`,
                 ADD `created` DATETIME NOT NULL DEFAULT "0000-00-00 00:00:00" AFTER `created_from`',
-            $this->getTableName( 'ab_customer_appointments' )
-        ) );
+                $this->getTableName( 'ab_customer_appointments' )
+            )
+        );
 
         $wpdb->query( sprintf( 'ALTER TABLE `%s` CHANGE `capacity` `capacity_max` INT NOT NULL DEFAULT 1', $this->getTableName( 'ab_services' ) ) );
         $wpdb->query( sprintf( 'ALTER TABLE `%s` ADD `capacity_min` INT NOT NULL DEFAULT 1 AFTER `color`', $this->getTableName( 'ab_services' ) ) );
@@ -1834,20 +1996,22 @@ class Updater extends Base\Updater
 
         add_option( 'bookly_app_service_name_with_duration', '0' );
 
-        $items = $wpdb->get_results( sprintf(
-            'SELECT `subject`, `message`, `gateway` FROM `%s` WHERE `type` = "client_reminder"',
-            $this->getTableName( 'ab_notifications' )
-        ) );
+        $items = $wpdb->get_results(
+            sprintf(
+                'SELECT `subject`, `message`, `gateway` FROM `%s` WHERE `type` = "client_reminder"',
+                $this->getTableName( 'ab_notifications' )
+            )
+        );
 
         foreach ( $items as $item ) {
             $types = array( 'client_reminder_1st', 'client_reminder_2nd', 'client_reminder_3rd' );
             foreach ( $types as $type ) {
                 $wpdb->insert( $this->getTableName( 'ab_notifications' ), array(
                     'gateway' => $item->gateway,
-                    'type'    => $type,
+                    'type' => $type,
                     'subject' => $item->subject,
                     'message' => $item->message,
-                    'active'  => 0,
+                    'active' => 0,
                 ) );
             }
         }
@@ -1858,12 +2022,12 @@ class Updater extends Base\Updater
         $times['client_reminder_3rd'] = 3;
         update_option( 'bookly_cron_reminder_times', $times );
 
-        $bookly_cal_one_participant = '{service_name}' . "\n" . '{client_name}' . "\n" . '{client_phone}' . "\n" . '{client_email}' . "\n" . '{extras}' . '{location_name}' . '{custom_fields}' . "\n" . '{total_price} {payment_type} {payment_status}' . "\n" . __( 'Status', 'bookly' ) . ': {status}' . "\n" . __( 'Signed up', 'bookly' ) . ': {signed_up}' . "\n" . __( 'Capacity',  'bookly' ) . ': {service_capacity}';
+        $bookly_cal_one_participant = '{service_name}' . "\n" . '{client_name}' . "\n" . '{client_phone}' . "\n" . '{client_email}' . "\n" . '{extras}' . '{location_name}' . '{custom_fields}' . "\n" . '{total_price} {payment_type} {payment_status}' . "\n" . __( 'Status', 'bookly' ) . ': {status}' . "\n" . __( 'Signed up', 'bookly' ) . ': {signed_up}' . "\n" . __( 'Capacity', 'bookly' ) . ': {service_capacity}';
         $bookly_cal_one_participant = str_replace( '{extras}', Config::serviceExtrasActive() ? '{extras}' . "\n" : '', $bookly_cal_one_participant );
         $bookly_cal_one_participant = str_replace( '{location_name}', Config::locationsActive() ? __( 'Location', 'bookly' ) . ': {location_name}' . "\n" : '', $bookly_cal_one_participant );
 
         add_option( 'bookly_cal_one_participant', $bookly_cal_one_participant );
-        add_option( 'bookly_cal_many_participants', '{service_name}' . "\n" . __( 'Signed up', 'bookly' ) . ': {signed_up}' . "\n" . __( 'Capacity',  'bookly' ) . ': {service_capacity}' );
+        add_option( 'bookly_cal_many_participants', '{service_name}' . "\n" . __( 'Signed up', 'bookly' ) . ': {signed_up}' . "\n" . __( 'Capacity', 'bookly' ) . ': {service_capacity}' );
         $options = array(
             'bookly_l10n_step_time_slot_not_available' => __( 'The selected time is not available anymore. Please, choose another time slot.', 'bookly' ),
             'bookly_l10n_step_cart_slot_not_available' => __( 'The highlighted time is not available anymore. Please, choose another time slot.', 'bookly' ),
@@ -1882,14 +2046,14 @@ class Updater extends Base\Updater
         add_option( 'bookly_cst_required_phone', '1' );
 
         // Rename and add new appearance options.
-        $info_coupon       = get_option( 'bookly_l10n_info_coupon' );
+        $info_coupon = get_option( 'bookly_l10n_info_coupon' );
         $info_payment_step = get_option( 'bookly_l10n_info_payment_step' );
         $this->renameL10nStrings( array(
-            'bookly_l10n_info_coupon'       => 'bookly_l10n_info_coupon_single_app',
+            'bookly_l10n_info_coupon' => 'bookly_l10n_info_coupon_single_app',
             'bookly_l10n_info_payment_step' => 'bookly_l10n_info_payment_step_single_app',
         ) );
         $this->addL10nOptions( array(
-            'bookly_l10n_info_coupon_several_apps'       => $info_coupon,
+            'bookly_l10n_info_coupon_several_apps' => $info_coupon,
             'bookly_l10n_info_payment_step_several_apps' => $info_payment_step,
         ) );
     }
@@ -1900,9 +2064,9 @@ class Updater extends Base\Updater
         $this->renameOptions( array( 'bookly_l10n_button_next' => 'bookly_l10n_step_service_button_next' ) );
         $options = array(
             'bookly_l10n_step_service_mobile_button_next' => $next,
-            'bookly_l10n_step_cart_button_next'           => $next,
-            'bookly_l10n_step_details_button_next'        => $next,
-            'bookly_l10n_step_payment_button_next'        => $next,
+            'bookly_l10n_step_cart_button_next' => $next,
+            'bookly_l10n_step_details_button_next' => $next,
+            'bookly_l10n_step_payment_button_next' => $next,
         );
         $this->addL10nOptions( $options );
     }
@@ -1923,17 +2087,17 @@ class Updater extends Base\Updater
         $notifications = array(
             array(
                 'gateway' => 'email',
-                'type'    => 'client_birthday_greeting',
+                'type' => 'client_birthday_greeting',
                 'subject' => __( 'Happy Birthday!', 'bookly' ),
                 'message' => wpautop( __( "Dear {client_name},\n\nHappy birthday!\nWe wish you all the best.\nMay you and your family be happy and healthy.\n\nThank you for choosing our company.\n\n{company_name}\n{company_phone}\n{company_website}", 'bookly' ) ),
-                'active'  => 0,
+                'active' => 0,
             ),
             array(
                 'gateway' => 'sms',
-                'type'    => 'client_birthday_greeting',
+                'type' => 'client_birthday_greeting',
                 'subject' => '',
                 'message' => __( "Dear {client_name},\nHappy birthday!\nWe wish you all the best.\nMay you and your family be happy and healthy.\nThank you for choosing our company.\n{company_name}\n{company_phone}\n{company_website}", 'bookly' ),
-                'active'  => 0,
+                'active' => 0,
             ),
         );
         foreach ( $notifications as $data ) {
@@ -1944,10 +2108,12 @@ class Updater extends Base\Updater
         $wpdb->query( sprintf( 'ALTER TABLE `%s` ADD COLUMN `ref_id` INT UNSIGNED AFTER `id`, ADD INDEX `ref_id_idx` (`ref_id`)', $sn_table ) );
         $wpdb->query( sprintf( 'UPDATE `%s` SET `ref_id` = COALESCE(`customer_appointment_id`, `staff_id`)', $sn_table ) );
         $this->dropTableColumns( $sn_table, array( 'customer_appointment_id', 'staff_id' ) );
-        $wpdb->query( sprintf(
-            'ALTER TABLE `%s` CHANGE COLUMN `status` `status` ENUM("pending","approved","cancelled","rejected") NOT NULL DEFAULT "approved" AFTER `custom_fields`',
-            $this->getTableName( 'ab_customer_appointments' )
-        ) );
+        $wpdb->query(
+            sprintf(
+                'ALTER TABLE `%s` CHANGE COLUMN `status` `status` ENUM("pending","approved","cancelled","rejected") NOT NULL DEFAULT "approved" AFTER `custom_fields`',
+                $this->getTableName( 'ab_customer_appointments' )
+            )
+        );
         $this->dropTableColumns( $this->getTableName( 'ab_services' ), array( 'start_time', 'end_time' ) );
     }
 
@@ -1965,19 +2131,19 @@ class Updater extends Base\Updater
         delete_option( 'bookly_gen_show_subscribe_notice' );
 
         add_option( 'bookly_api_server_error_time', '0' );
-        add_option( 'bookly_grace_notifications', array ( 'bookly' => '0', 'add-ons' => '0', 'sent' => '0' ) );
+        add_option( 'bookly_grace_notifications', array( 'bookly' => '0', 'add-ons' => '0', 'sent' => '0' ) );
         add_option( 'bookly_grace_hide_admin_notice_time', '0' );
         foreach ( apply_filters( 'bookly_plugins', array() ) as $plugin_class ) {
             add_option( $plugin_class::getPrefix() . 'grace_start', time() + 2 * WEEK_IN_SECONDS );
         }
 
         $options = array(
-            'bookly_email_content_type'               => 'bookly_email_send_as',
-            'bookly_pmt_authorizenet'                 => 'bookly_pmt_authorize_net',
-            'bookly_pmt_authorizenet_api_login_id'    => 'bookly_pmt_authorize_net_api_login_id',
+            'bookly_email_content_type' => 'bookly_email_send_as',
+            'bookly_pmt_authorizenet' => 'bookly_pmt_authorize_net',
+            'bookly_pmt_authorizenet_api_login_id' => 'bookly_pmt_authorize_net_api_login_id',
             'bookly_pmt_authorizenet_transaction_key' => 'bookly_pmt_authorize_net_transaction_key',
-            'bookly_pmt_authorizenet_sandbox'         => 'bookly_pmt_authorize_net_sandbox',
-            'bookly_pmt_pay_locally'                  => 'bookly_pmt_local',
+            'bookly_pmt_authorizenet_sandbox' => 'bookly_pmt_authorize_net_sandbox',
+            'bookly_pmt_pay_locally' => 'bookly_pmt_local',
         );
         $this->renameOptions( $options );
 
@@ -1986,49 +2152,55 @@ class Updater extends Base\Updater
         }
 
         // Authorize.Net => authorize_net.
-        $wpdb->query( sprintf(
-            'ALTER TABLE `%s` CHANGE COLUMN `type` `type` ENUM("local","coupon","paypal","authorizeNet","authorize_net","stripe","2checkout","payu_latam","payson","mollie","woocommerce") NOT NULL DEFAULT "local"',
-            $this->getTableName( 'ab_payments' )
-        ) );
-        $wpdb->query( sprintf(
-            'UPDATE `%s` SET `type` = "authorize_net" WHERE `type` = "authorizeNet"',
-            $this->getTableName( 'ab_payments' )
-        ) );
-        $wpdb->query( sprintf(
-            'ALTER TABLE `%s` CHANGE COLUMN `type` `type` ENUM("local","free","paypal","authorize_net","stripe","2checkout","payu_latam","payson","mollie","woocommerce") NOT NULL DEFAULT "local"',
-            $this->getTableName( 'ab_payments' )
-        ) );
+        $wpdb->query(
+            sprintf(
+                'ALTER TABLE `%s` CHANGE COLUMN `type` `type` ENUM("local","coupon","paypal","authorizeNet","authorize_net","stripe","2checkout","payu_latam","payson","mollie","woocommerce") NOT NULL DEFAULT "local"',
+                $this->getTableName( 'ab_payments' )
+            )
+        );
+        $wpdb->query(
+            sprintf(
+                'UPDATE `%s` SET `type` = "authorize_net" WHERE `type` = "authorizeNet"',
+                $this->getTableName( 'ab_payments' )
+            )
+        );
+        $wpdb->query(
+            sprintf(
+                'ALTER TABLE `%s` CHANGE COLUMN `type` `type` ENUM("local","free","paypal","authorize_net","stripe","2checkout","payu_latam","payson","mollie","woocommerce") NOT NULL DEFAULT "local"',
+                $this->getTableName( 'ab_payments' )
+            )
+        );
         $this->dropTableColumns( $this->getTableName( 'ab_payments' ), array( 'transaction_id', 'token' ) );
 
         $notifications = array(
             array(
                 'gateway' => 'email',
-                'type'    => 'client_rejected_appointment',
+                'type' => 'client_rejected_appointment',
                 'subject' => __( 'Booking rejection', 'bookly' ),
                 'message' => wpautop( __( "Dear {client_name}.\n\nYour booking of {service_name} on {appointment_date} at {appointment_time} has been rejected.\n\nReason: {cancellation_reason}\n\nThank you for choosing our company.\n\n{company_name}\n{company_phone}\n{company_website}", 'bookly' ) ),
-                'active'  => 1,
+                'active' => 1,
             ),
             array(
                 'gateway' => 'email',
-                'type'    => 'staff_rejected_appointment',
+                'type' => 'staff_rejected_appointment',
                 'subject' => __( 'Booking rejection', 'bookly' ),
                 'message' => wpautop( __( "Hello.\n\nThe following booking has been rejected.\n\nReason: {cancellation_reason}\n\nService: {service_name}\nDate: {appointment_date}\nTime: {appointment_time}\nClient name: {client_name}\nClient phone: {client_phone}\nClient email: {client_email}", 'bookly' ) ),
-                'active'  => 1,
+                'active' => 1,
             ),
 
             array(
                 'gateway' => 'sms',
-                'type'    => 'client_rejected_appointment',
+                'type' => 'client_rejected_appointment',
                 'subject' => '',
                 'message' => __( "Dear {client_name}.\nYour booking of {service_name} on {appointment_date} at {appointment_time} has been rejected.\nReason: {cancellation_reason}\nThank you for choosing our company.\n{company_name}\n{company_phone}\n{company_website}", 'bookly' ),
-                'active'  => 1,
+                'active' => 1,
             ),
             array(
                 'gateway' => 'sms',
-                'type'    => 'staff_rejected_appointment',
+                'type' => 'staff_rejected_appointment',
                 'subject' => '',
                 'message' => __( "Hello.\nThe following booking has been rejected.\nReason: {cancellation_reason}\nService: {service_name}\nDate: {appointment_date}\nTime: {appointment_time}\nClient name: {client_name}\nClient phone: {client_phone}\nClient email: {client_email}", 'bookly' ),
-                'active'  => 1,
+                'active' => 1,
             ),
         );
         foreach ( $notifications as $data ) {
@@ -2046,11 +2218,13 @@ class Updater extends Base\Updater
             COLLATE = utf8_general_ci'
         );
         $wpdb->query( sprintf( 'ALTER TABLE `%s` ADD COLUMN `series_id` INT UNSIGNED AFTER `id`', $this->getTableName( 'ab_appointments' ) ) );
-        $wpdb->query( sprintf(
-            'ALTER TABLE `%s` ADD CONSTRAINT FOREIGN KEY (series_id) REFERENCES %s(id) ON DELETE CASCADE ON UPDATE CASCADE',
-            $this->getTableName( 'ab_appointments' ),
-            $this->getTableName( 'ab_series' )
-        ) );
+        $wpdb->query(
+            sprintf(
+                'ALTER TABLE `%s` ADD CONSTRAINT FOREIGN KEY (series_id) REFERENCES %s(id) ON DELETE CASCADE ON UPDATE CASCADE',
+                $this->getTableName( 'ab_appointments' ),
+                $this->getTableName( 'ab_series' )
+            )
+        );
     }
 
     function update_12_1()
@@ -2058,11 +2232,11 @@ class Updater extends Base\Updater
         global $wpdb;
 
         $options = array(
-            'bookly_l10n_required_email'    => __( 'Please tell us your email', 'bookly' ),
+            'bookly_l10n_required_email' => __( 'Please tell us your email', 'bookly' ),
             'bookly_l10n_required_employee' => __( 'Please select an employee', 'bookly' ),
-            'bookly_l10n_required_name'     => __( 'Please tell us your name',  'bookly' ),
-            'bookly_l10n_required_phone'    => __( 'Please tell us your phone', 'bookly' ),
-            'bookly_l10n_required_service'  => __( 'Please select a service',   'bookly' ),
+            'bookly_l10n_required_name' => __( 'Please tell us your name', 'bookly' ),
+            'bookly_l10n_required_phone' => __( 'Please tell us your phone', 'bookly' ),
+            'bookly_l10n_required_service' => __( 'Please select a service', 'bookly' ),
         );
         foreach ( $options as $option_name => $option_value ) {
             if ( get_option( $option_name ) == '' ) {

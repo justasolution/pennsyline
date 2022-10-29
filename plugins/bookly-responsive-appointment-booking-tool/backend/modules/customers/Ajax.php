@@ -35,6 +35,8 @@ class Ajax extends Lib\Base\Ajax
 
         $total = $query->count();
 
+         // Mady M code --> WHERE (ca.customer_id = c.id AND ca.status != "Rejected") 44,48,54 to make sure the customers appts and amount is not calculated
+
         $select = 'SQL_CALC_FOUND_ROWS c.*,
                 (
                     SELECT MAX(a.start_date) FROM ' . Lib\Entities\Appointment::getTableName() . ' a
@@ -83,6 +85,9 @@ class Ajax extends Lib\Base\Ajax
         $query->limit( self::parameter( 'length' ) )->offset( self::parameter( 'start' ) );
 
         $data = array();
+        //echo json_encode($columns, JSON_FORCE_OBJECT);
+//         echo "<pre>".print_r((array_values($columns),true)."</pre>";
+//         echo "<pre>".print_r(json_encode(array_values($order),true)."</pre>";
         $rows = $query->fetchArray();
         $records_filtered = ( int ) $wpdb->get_var( 'SELECT FOUND_ROWS()' );
         foreach ( $rows as $row ) {

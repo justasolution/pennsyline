@@ -3,6 +3,7 @@ namespace Bookly\Lib;
 
 /**
  * Class PluginsUpdater
+ *
  * @package Bookly\Lib
  */
 class PluginsUpdater
@@ -17,17 +18,18 @@ class PluginsUpdater
         // Update Bookly add-ons
         add_action( 'wp_ajax_bookly_update_plugin', array( __CLASS__, 'updateAddon' ), 10, 0 );
         // Check update add-ns
-        add_action( 'wp_ajax_bookly_check_update',  array( __CLASS__, 'getAddonsUpdatingData' ), 10, 0 );
+        add_action( 'wp_ajax_bookly_check_update', array( __CLASS__, 'getAddonsUpdatingData' ), 10, 0 );
         // Modify updating data
-        add_action( 'after_plugin_row',             array( __CLASS__, 'renderAfterPluginRow' ), 10, 3 );
+        add_action( 'after_plugin_row', array( __CLASS__, 'renderAfterPluginRow' ), 10, 3 );
         // Reduce time of last check for updates of Bookly plugins to quicker identify new versions
-        add_action( 'upgrader_process_complete',    array( __CLASS__, 'reduceTimeOfLastCheck' ), 10, 2 );
+        add_action( 'upgrader_process_complete', array( __CLASS__, 'reduceTimeOfLastCheck' ), 10, 2 );
 
-        $scripts   = wp_scripts();
-        $version   = Plugin::getVersion();
-        $resources = plugins_url( 'backend/resources', Plugin::getMainFile() );
         // Enqueue plugins.js on page plugins.php
-        add_action( 'pre_current_active_plugins', function () use ( $scripts, $version, $resources ) {
+        add_action( 'pre_current_active_plugins', function() {
+            $scripts = wp_scripts();
+            $version = Plugin::getVersion();
+            $resources = plugins_url( 'backend/resources', Plugin::getMainFile() );
+
             $scripts->add( 'bookly-plugins-page', $resources . '/js/plugins.js', array( 'jquery' ), $version );
             $scripts->enqueue( 'bookly-plugins-page' );
             PluginsUpdater::renderModal();
@@ -48,7 +50,7 @@ class PluginsUpdater
                 require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
             }
 
-            $slug      = $_POST['slug'];
+            $slug = $_POST['slug'];
             $base_name = $slug . '/main.php';
 
             $current = get_site_transient( 'update_plugins' );
@@ -56,21 +58,21 @@ class PluginsUpdater
                 $upgrader = new \Plugin_Upgrader( new \Automatic_Upgrader_Skin() );
                 $upgrader->init();
                 $upgrader->run( array(
-                    'package'           => $current->response[ $base_name ]->package,
-                    'destination'       => WP_PLUGIN_DIR,
+                    'package' => $current->response[ $base_name ]->package,
+                    'destination' => WP_PLUGIN_DIR,
                     'clear_destination' => true,
-                    'clear_working'     => true,
-                    'hook_extra'        => array(
+                    'clear_working' => true,
+                    'hook_extra' => array(
                         'plugin' => $base_name,
-                        'type'   => 'plugin',
+                        'type' => 'plugin',
                         'action' => 'update',
                     ),
                 ) );
 
                 if ( ! is_wp_error( $upgrader->result ) ) {
-                    $update  = array();
+                    $update = array();
                     $plugins = apply_filters( 'bookly_plugins', array() );
-                    $title   = $plugins[ $slug ]::getTitle();
+                    $title = $plugins[ $slug ]::getTitle();
                     wp_send_json_success( compact( 'title', 'update' ) );
                 }
             }
@@ -85,14 +87,14 @@ class PluginsUpdater
     {
         $update = array();
         if ( wp_verify_nonce( $_POST['csrf_token'], 'bookly' ) == 1 ) {
-            $slug           = $_POST['slug'];
+            $slug = $_POST['slug'];
             $bookly_plugins = apply_filters( 'bookly_plugins', array() );
             if ( $slug == 'bookly-responsive-appointment-booking-tool' ) {
                 if ( array_key_exists( 'bookly-addon-pro', $bookly_plugins ) ) {
                     $update = self::getUpdates( array( 'bookly-addon-pro' => $bookly_plugins['bookly-addon-pro'] ) );
                 }
             } elseif ( $slug == 'bookly-addon-pro' ) {
-                $plugins        = apply_filters( 'bookly_plugins', array() );
+                $plugins = apply_filters( 'bookly_plugins', array() );
                 $bookly_plugins = array();
                 foreach ( $_POST['slugs'] as $slug ) {
                     if ( array_key_exists( $slug, $plugins ) ) {
@@ -109,10 +111,11 @@ class PluginsUpdater
 
     /**
      * @param string $plugin_file
-     * @param array  $plugin_data
+     * @param array $plugin_data
      * @param string $status
      */
-    public static function renderAfterPluginRow( $plugin_file, $plugin_data, $status ) {
+    public static function renderAfterPluginRow( $plugin_file, $plugin_data, $status )
+    {
         /** @var \Bookly\Lib\Base\Plugin[] $bookly_plugins */
         $bookly_plugins = apply_filters( 'bookly_plugins', array() );
         $slug = dirname( $plugin_file );
@@ -129,8 +132,8 @@ class PluginsUpdater
                     unset( $bookly_update_plugins[ $slug ][ $key ] );
                     set_site_transient( 'bookly_update_plugins', $bookly_update_plugins );
                 }
-            } else if ( $plugin_class::getPurchaseCode() == '' && ! $plugin_class::embedded() ) {
-                 echo self::renderPurchaseCodeInfo();
+            } elseif ( $plugin_class::getPurchaseCode() == '' && ! $plugin_class::embedded() ) {
+                echo self::renderPurchaseCodeInfo();
             }
         }
     }
@@ -139,9 +142,10 @@ class PluginsUpdater
      * Reduce time of last check for updates of Bookly plugins to quicker identify new versions
      *
      * @param \WP_Upgrader $upgrader
-     * @param array        $data
+     * @param array $data
      */
-    public static function reduceTimeOfLastCheck ( $upgrader, $data ) {
+    public static function reduceTimeOfLastCheck( $upgrader, $data )
+    {
         if ( isset( $data['type'], $data['plugins'] ) && $data['type'] == 'plugin' ) {
             $slugs = array();
             if ( in_array( 'bookly-addon-pro/main.php', $data['plugins'] ) ) {
@@ -186,13 +190,14 @@ class PluginsUpdater
     protected static function renderPurchaseCodeInfo()
     {
         $wp_list_table = _get_list_table( 'WP_Plugins_List_Table' );
+
         return '<tr class="plugin-update-tr active bookly-js-plugin">
                 <td colspan="' . esc_attr( $wp_list_table->get_column_count() ) . '" class="plugin-update colspanchange">
                     <div class="update-message notice inline notice-error notice-alt">
                         <p>
                            ' . esc_html__( 'Important', 'bookly' ) . '!<br>
                            ' . sprintf( esc_html__( 'You haven\'t entered the purchase code which results in impossibility to see if there is a new version available. Enter your purchase code in Settings > %sPurchase Code%s.', 'bookly' ),
-                        '<a href="' . Utils\Common::escAdminUrl( \Bookly\Backend\Modules\Settings\Page::pageSlug(), array( 'tab' => 'purchase_code' ) ) . '">', '</a>' ) . '
+                '<a href="' . Utils\Common::escAdminUrl( \Bookly\Backend\Modules\Settings\Page::pageSlug(), array( 'tab' => 'purchase_code' ) ) . '">', '</a>' ) . '
                            </p>
                     </div>
                 </td>
@@ -240,7 +245,7 @@ class PluginsUpdater
      */
     protected static function getUpdates( $bookly_plugins )
     {
-        $update  = array();
+        $update = array();
         if ( $bookly_plugins ) {
             $cookies = array();
             foreach ( $_COOKIE as $name => $value ) {
@@ -256,7 +261,7 @@ class PluginsUpdater
                         add_query_arg(
                             array(
                                 'puc_check_for_updates' => 1,
-                                'puc_slug'              => $slug,
+                                'puc_slug' => $slug,
                             ),
                             self_admin_url( 'plugins.php' )
                         ),
@@ -271,7 +276,7 @@ class PluginsUpdater
                 $base_name = $bookly_plugin::getBasename();
                 if ( isset( $current->response[ $base_name ] ) ) {
                     $update[] = array(
-                        'icon'    => isset( $current->response[ $base_name ]->icons['1x'] ) ? $current->response[ $base_name ]->icons['1x'] : null,
+                        'icon' => isset( $current->response[ $base_name ]->icons['1x'] ) ? $current->response[ $base_name ]->icons['1x'] : null,
                         'details' => self::getPluginUpdateInfo( $bookly_plugin, $current->response[ $base_name ] ),
                         'support' => self::renderSupportInfo( $bookly_plugin ),
                     );
@@ -293,10 +298,12 @@ class PluginsUpdater
         unset( $bookly_plugins['bookly-responsive-appointment-booking-tool'], $bookly_plugins['bookly-addon-pro'] );
         wp_localize_script( 'bookly-plugins-page', 'BooklyPluginsPageL10n', array(
             'csrfToken' => Utils\Common::getCsrfToken(),
-            'updated'   => __( '%s updated' ) . '!',
-            'addons'    => array_keys( $bookly_plugins ),
-            'wait'      => __( 'Please wait, we are checking updates for {checked}/{total} Bookly add-ons', 'bookly' ),
-            'noUpdatesAvailable' => __( 'No updates available', 'bookly' )
+            'deleteData' => get_option( 'bookly_gen_delete_data_on_uninstall', '1' ),
+            'deletingInfo' => __( 'Please note that upon deleting this Bookly item, all data associated with it will be permanently deleted', 'bookly' ),
+            'updated' => __( '%s updated', 'bookly' ) . '!',
+            'addons' => array_keys( $bookly_plugins ),
+            'wait' => __( 'Please wait, we are checking updates for {checked}/{total} Bookly add-ons', 'bookly' ),
+            'noUpdatesAvailable' => __( 'No updates available', 'bookly' ),
         ) );
     }
 

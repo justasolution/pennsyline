@@ -42,7 +42,7 @@ jQuery(function ($) {
                         BooklyRechargeDialogL10n.country = country;
                     }
                     settings.$country.val(country).trigger('change');
-                    settings.$invoiceCountry.html($country.select2('data')[0].text);
+                    settings.$invoiceCountry.html($country.booklySelect2('data')[0].text);
                     if (response.auto_recharge === 'disabled') {
                         $(document.body).trigger('bookly.auto-recharge.toggle', [false]);
                     }

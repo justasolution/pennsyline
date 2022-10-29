@@ -4,11 +4,14 @@ use Bookly\Lib as BooklyLib;
 <div>
     <p><?php printf( __( 'Cannot find your purchase code? See this <a href="%s" target="_blank">page</a>.', 'bookly' ), 'https://help.market.envato.com/hc/en-us/articles/202822600-Where-can-I-find-my-Purchase-Code' ) ?></p>
     <?php
+    $today = (int) ( current_time( 'timestamp' ) / DAY_IN_SECONDS );
+    $api_error_day = (int) ( get_option( 'bookly_api_server_error_time' ) / DAY_IN_SECONDS );
+    $show_all = $api_error_day && $today - $api_error_day > 7;
     $addons = apply_filters( 'bookly_plugins', array() );
     unset ( $addons[ BooklyLib\Plugin::getSlug() ] );
     /** @var \Bookly\Lib\Base\Plugin $plugin_class */
     foreach ( $addons as $plugin_class ) :
-        if ( $plugin_class::getPurchaseCode() == '' && ! $plugin_class::embedded() ) :
+        if ( $show_all || ( $plugin_class::getPurchaseCode() == '' && ! $plugin_class::embedded() ) ) :
             printf(
                 '<label for="%2$s">%1$s:</label>
                     <div class="input-group mb-3">

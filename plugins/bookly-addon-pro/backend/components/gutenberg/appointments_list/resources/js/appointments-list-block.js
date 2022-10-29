@@ -32,6 +32,10 @@
                 type: 'boolean',
                 default: true
             },
+            column_time_zone: {
+                type: 'boolean',
+                default: true
+            },
             column_price: {
                 type: 'boolean',
                 default: false
@@ -108,6 +112,9 @@
                 }
                 if (attributes.column_time) {
                     columns.push('time');
+                }
+                if (attributes.column_time_zone) {
+                    columns.push('time_zone');
                 }
                 if (attributes.column_price) {
                     columns.push('price');

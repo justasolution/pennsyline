@@ -1,5 +1,6 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 use Bookly\Backend\Components\Dialogs;
+use Bookly\Backend\Components\Notices;
 use Bookly\Backend\Components\Controls\Inputs;
 use Bookly\Backend\Components\Controls\Buttons;
 /** @var array $datatables */
@@ -34,6 +35,7 @@ use Bookly\Backend\Components\Controls\Buttons;
     <div class='text-right my-3'>
         <?php Buttons::renderDelete() ?>
     </div>
+    <?php Notices\Cron\Notice::render() ?>
     <?php Dialogs\Mailing\Campaign\Dialog::render() ?>
 </div>
 

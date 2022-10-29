@@ -2,8 +2,8 @@
 namespace BooklyAdvancedGoogleCalendar\Lib;
 
 use Bookly\Lib as BooklyLib;
-use BooklyAdvancedGoogleCalendar\Frontend as Frontend;
-use BooklyAdvancedGoogleCalendar\Backend as Backend;
+use BooklyAdvancedGoogleCalendar\Frontend;
+use BooklyAdvancedGoogleCalendar\Backend;
 
 /**
  * Class Plugin
@@ -23,7 +23,7 @@ abstract class Plugin extends BooklyLib\Base\Plugin
     protected static $embedded;
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     protected static function init()
     {
@@ -41,7 +41,7 @@ abstract class Plugin extends BooklyLib\Base\Plugin
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public static function deactivate( $network_wide )
     {

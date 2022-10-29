@@ -5,6 +5,7 @@ use Bookly\Lib;
 
 /**
  * Class Finder
+ *
  * @package Bookly\Lib\Slots
  */
 class Finder
@@ -130,13 +131,13 @@ class Finder
             $parent_service_id = $chain_item->getService()->withSubServices()
                 ? $chain_item->getService()->getId()
                 : null;
-            $is_collaborative  = $chain_item->getService()->isCollaborative();
-            $sub_services      = $chain_item->getSubServicesWithSpareTime();
-            $extras            = $chain_item->distributeExtrasAcrossSubServices();
-            $extras_durations  = array();
+            $is_collaborative = $chain_item->getService()->isCollaborative();
+            $sub_services = $chain_item->getSubServicesWithSpareTime();
+            $extras = $chain_item->distributeExtrasAcrossSubServices();
+            $extras_durations = array();
 
             // Calculate extras durations (and max duration for collaborative services).
-            $consider_extras_duration   = (bool) Lib\Proxy\ServiceExtras::considerDuration();
+            $consider_extras_duration = (bool) Lib\Proxy\ServiceExtras::considerDuration();
             $collaborative_max_duration = null;
             foreach ( $sub_services as $key => $sub_service ) {
                 if ( $sub_service instanceof Lib\Entities\Service ) {
@@ -155,18 +156,18 @@ class Finder
             if ( $is_collaborative && ! $chain_item->getService()->getCollaborativeEqualDuration() ) {
                 // If duration is different then the last sub-service must find next slots after
                 // the longest sub-service ends, use $collaborative_spare_time for that.
-                $collaborative_spare_time   = $collaborative_max_duration - $duration;
+                $collaborative_spare_time = $collaborative_max_duration - $duration;
                 $collaborative_max_duration = null;
             }
 
             $extras_durations = array_reverse( $extras_durations );
 
-            for ( $q = 0; $q < $chain_item->getQuantity(); ++ $q ) {
+            for ( $q = 0; $q < $chain_item->getQuantity(); ++$q ) {
                 $spare_time = $collaborative_spare_time;
                 $connection = Generator::CONNECTION_CONSECUTIVE;
                 foreach ( array_reverse( $sub_services ) as $key => $sub_service ) {
                     if ( $sub_service instanceof Lib\Entities\Service ) {
-                        $service_id       = $sub_service->getId();
+                        $service_id = $sub_service->getId();
                         $service_duration = $collaborative_max_duration !== null
                             ? $collaborative_max_duration - $extras_durations[ $key ]
                             : ( $chain_item->getUnits() ?: 1 ) * $sub_service->getDuration();
@@ -200,7 +201,7 @@ class Finder
                             Lib\Config::proActive() ? $sub_service->getPaddingLeft() : 0,
                             Lib\Config::proActive() ? $sub_service->getPaddingRight() : 0,
                             $chain_item->getNumberOfPersons(),
-                            $extras_durations[ $key ],
+                            isset( $extras_durations[ $key ] ) ? $extras_durations[ $key ] : 0,
                             $this->start_dp,
                             $show_single_slot ? null : $this->userData->getTimeFrom(),
                             $show_single_slot ? null : $this->userData->getTimeTo(),
@@ -296,9 +297,9 @@ class Finder
                     // Add slot to result.
                     $this->slots[ $group ][] = $slot;
 
-                    ++ $slots_count;
+                    ++$slots_count;
                     if ( $slot->notFullyBooked() ) {
-                        ++ $available_slots_count;
+                        ++$available_slots_count;
                     }
                 }
             }
@@ -344,7 +345,7 @@ class Finder
      */
     private function _breakDefault( DatePoint $dp, $srv_duration_days, $slots_count )
     {
-        return $dp->modify( - ( $srv_duration_days > 1 ? $srv_duration_days - 1 : 0 ) . ' days' )->gte( $this->client_end_dp );
+        return $dp->modify( -( $srv_duration_days > 1 ? $srv_duration_days - 1 : 0 ) . ' days' )->gte( $this->client_end_dp );
     }
 
     /**
@@ -357,7 +358,7 @@ class Finder
     {
         return $client_dp
             ->modify( $this->srv_duration_days && ! $this->show_calendar ? 'first day of this month' : null )
-            ->format('Y-m-d' );
+            ->format( 'Y-m-d' );
     }
 
     /**
@@ -368,7 +369,7 @@ class Finder
      * @param int $slots_count
      * @return bool
      */
-    private function _stopCalendar( DatePoint $client_dp, $groups_count, $slots_count  )
+    private function _stopCalendar( DatePoint $client_dp, $groups_count, $slots_count )
     {
         return (int) $client_dp->gte( $this->client_end_dp );
     }
@@ -411,10 +412,7 @@ class Finder
         // Calculate min time prior booking.
         $min_time_prior_booking = 0;
         foreach ( $this->userData->chain->getItems() as $chain_item ) {
-            $services_list = $chain_item->getService()->withSubServices() ? $chain_item->getSubServices() : array( $chain_item->getService() );
-            foreach ( $services_list as $service ) {
-                $min_time_prior_booking = max( $min_time_prior_booking, Lib\Proxy\Pro::getMinimumTimePriorBooking( $service->getId() ) );
-            }
+            $min_time_prior_booking = max( $min_time_prior_booking, Lib\Proxy\Pro::getMinimumTimePriorBooking( $chain_item->getServiceId() ) );
         }
 
         $min_start = $now->modify( $min_time_prior_booking );
@@ -457,7 +455,7 @@ class Finder
 
         // Start and end dates in WP time zone.
         $this->start_dp = $this->client_start_dp->toWpTz();
-        $this->end_dp   = $max_end;
+        $this->end_dp = $max_end;
     }
 
     /**
@@ -465,9 +463,14 @@ class Finder
      */
     private function _prepareStaffData()
     {
+        $custom_service = false;
         // Prepare staff IDs for each service.
         $staff_ids = array();
         foreach ( $this->userData->chain->getItems() as $chain_item ) {
+            // Custom service in chain can't be combined with other services
+            if ( $chain_item->getServiceId() === null ) {
+                $custom_service = true;
+            }
             $parent_service_id = $chain_item->getService()->withSubServices()
                 ? $chain_item->getService()->getId()
                 : null;
@@ -573,15 +576,16 @@ class Finder
             ->leftJoin( 'ScheduleItemBreak', 'break', 'break.staff_schedule_item_id = ssi.id' )
             ->whereIn( 'ssi.staff_id', array_keys( $this->staff ) )
             ->where( 'ssi.location_id', null )
-            ->whereNot( 'ssi.start_time', null )
-        ;
+            ->whereNot( 'ssi.start_time', null );
         $working_schedule = Lib\Proxy\Locations::prepareWorkingSchedule( $working_schedule, array_keys( $this->staff ) );
         foreach ( $working_schedule->fetchArray() as $item ) {
             $location_id = $item['location_id'] ?: 0;
-            if ( ! in_array( $location_id, $this->staff[ $item['staff_id'] ]->getScheduleLocations() ) ) {
+            if ( $custom_service ) {
+                $this->staff[ $item['staff_id'] ]->setSchedule( new Schedule(), null );
+            } elseif ( ! in_array( $location_id, $this->staff[ $item['staff_id'] ]->getScheduleLocations() ) ) {
                 $this->staff[ $item['staff_id'] ]->setSchedule( new Schedule(), $location_id );
             }
-            $weekday  = $item['day_index'] - 1;
+            $weekday = $item['day_index'] - 1;
             $schedule = $this->staff[ $item['staff_id'] ]->getSchedule( $location_id );
             if ( ! $schedule->hasDay( $weekday ) ) {
                 $schedule->addDay( $weekday, $item['start_time'], $item['end_time'] );
@@ -621,11 +625,11 @@ class Finder
             }
 
             // Prepare padding_left for first service.
-            $chain         = $this->userData->chain->getItems();
-            $first_item    = $chain[0];
-            $services      = $first_item->getSubServices();
+            $chain = $this->userData->chain->getItems();
+            $first_item = $chain[0];
+            $services = $first_item->getSubServices();
             $first_service = $services[0];
-            $padding_left  = $first_service->getPaddingLeft();
+            $padding_left = $first_service->getPaddingLeft();
         }
 
         // Take into account the statuses.
@@ -645,7 +649,7 @@ class Finder
                 `a`.`staff_id`,
                 `a`.`service_id`,
                 `a`.`start_date`,
-                DATE_ADD(`a`.`end_date`, INTERVAL IF(`ca`.`extras_consider_duration`, `a`.`extras_duration`, 0) SECOND) AS `end_date`,
+                DATE_ADD(`a`.`end_date`, INTERVAL `a`.`extras_duration` SECOND) AS `end_date`,
                 `a`.`extras_duration`,
                 `s`.`one_booking_per_slot`,
                 %s AS `padding_left`,
@@ -660,11 +664,11 @@ class Finder
             ->leftJoin( 'Service', 's', '`s`.`id` = `a`.`service_id`' )
             ->whereIn( 'a.staff_id', array_keys( $this->staff ) )
             ->whereNotIn( 'a.id', $this->ignore_appointments )
-            ->whereRaw( sprintf( 'ca.status IN ("%s") OR ca.status IS NULL', implode('","', $statuses ) ), array() )
+            ->whereRaw( sprintf( 'ca.status IN ("%s") OR ca.status IS NULL', implode( '","', $statuses ) ), array() )
             ->whereRaw( 'DATE_ADD(a.end_date, INTERVAL (' . Lib\Proxy\Shared::prepareStatement( 0, 'COALESCE(s.padding_right,0)', 'Service' ) . ' + %d) SECOND) >= %s',
                 array(
                     $padding_left,
-                    $this->start_dp->modify( sprintf( '-%d days', $staff_preference_period_before) )->format( 'Y-m-d' ),
+                    $this->start_dp->modify( sprintf( '-%d days', $staff_preference_period_before ) )->format( 'Y-m-d' ),
                 ) )
             ->groupBy( 'a.id' )
             ->fetchArray();
@@ -752,10 +756,10 @@ class Finder
                 $extras_duration = (int) Lib\Proxy\ServiceExtras::getTotalDuration( $cart_item->getExtras() );
                 foreach ( $cart_item->getSlots() as $slot ) {
                     list ( $service_id, $staff_id, $datetime ) = $slot;
-                    if ( isset ( $this->staff[ $staff_id ] ) ) {
+                    if ( isset ( $datetime, $this->staff[ $staff_id ] ) ) {
                         $service = Lib\Entities\Service::find( $service_id );
-                        $range   = Range::fromDates( $datetime, $datetime );
-                        $range   = $range->resize( $service->getDuration() * $cart_item->getUnits() + $extras_duration );
+                        $range = Range::fromDates( $datetime, $datetime );
+                        $range = $range->resize( $service->getDuration() * $cart_item->getUnits() + $extras_duration );
                         $extras_duration = 0;
                         $booking_exists = false;
                         foreach ( $this->staff[ $staff_id ]->getBookings() as $booking ) {
@@ -779,7 +783,7 @@ class Finder
                                 $range->start()->format( 'Y-m-d H:i:s' ),
                                 $range->end()->format( 'Y-m-d H:i:s' ),
                                 Lib\Config::proActive() ? $service->getPaddingLeft() : 0,
-                                Lib\Config::proActive() ? $service->getPaddingRight(): 0,
+                                Lib\Config::proActive() ? $service->getPaddingRight() : 0,
                                 $extras_duration,
                                 $service->getOneBookingPerSlot(),
                                 false
@@ -867,12 +871,14 @@ class Finder
                 return $this->selected_date;
             } else {
                 reset( $this->slots );
+
                 return key( $this->slots );
             }
         }
 
         if ( ! empty ( $this->slots ) ) {
             reset( $this->slots );
+
             return key( $this->slots );
         }
 

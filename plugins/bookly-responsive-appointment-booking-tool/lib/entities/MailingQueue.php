@@ -16,6 +16,8 @@ class MailingQueue extends Lib\Base\Entity
     protected $text;
     /** @var int */
     protected $sent;
+    /** @var int */
+    protected $campaign_id;
     /** @var string */
     protected $created_at;
 
@@ -26,6 +28,7 @@ class MailingQueue extends Lib\Base\Entity
         'phone' => array( 'format' => '%s' ),
         'text' => array( 'format' => '%s' ),
         'sent' => array( 'format' => '%d' ),
+        'campaign_id' => array( 'format' => '%d' ),
         'created_at' => array( 'format' => '%s' ),
     );
 
@@ -98,6 +101,29 @@ class MailingQueue extends Lib\Base\Entity
     public function setSent( $sent )
     {
         $this->sent = $sent;
+
+        return $this;
+    }
+
+    /**
+     * Gets campaign_id
+     *
+     * @return int
+     */
+    public function getCampaignId()
+    {
+        return $this->campaign_id;
+    }
+
+    /**
+     * Sets campaign_id
+     *
+     * @param int $campaign_id
+     * @return $this
+     */
+    public function setCampaignId( $campaign_id )
+    {
+        $this->campaign_id = $campaign_id;
 
         return $this;
     }

@@ -35,7 +35,7 @@ jQuery(function ($) {
                     if (BooklyRechargeDialogL10n) {
                         BooklyRechargeDialogL10n.country = country;
                     }
-                    $invoiceCountry.html($country.select2('data')[0].text);
+                    $invoiceCountry.html($country.booklySelect2('data')[0].text);
                     if (response.auto_recharge === 'disabled') {
                         $(document.body).trigger('bookly.auto-recharge.toggle', [false]);
                     }
@@ -51,8 +51,8 @@ jQuery(function ($) {
     /**
      * Invoice tab
      */
-    if ($country.length && $country.select2('data').length > 0) {
-        $invoiceCountry.html($country.select2('data')[0].text);
+    if ($country.length && $country.booklySelect2('data').length > 0) {
+        $invoiceCountry.html($country.booklySelect2('data')[0].text);
     }
 
     $('.bookly-js-invoice-country a').on('click', function (e) {

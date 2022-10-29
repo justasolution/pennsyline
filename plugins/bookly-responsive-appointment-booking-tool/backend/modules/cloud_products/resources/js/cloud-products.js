@@ -63,6 +63,11 @@ jQuery(function ($) {
         $(component.disable, $card).toggle(productActive);
         $(component.dropdown, $card).prop('disabled', productActive).toggleClass('disabled', productActive);
 
+        // Hide prices selector if only one price available
+        if ($(component.dropdown, $card).length && $(component.dropdown, $card).closest('.dropdown').find('.dropdown-menu li.dropdown-item').length < 2) {
+            $(component.dropdown, $card).closest('.dropdown').hide();
+        }
+
         if (!productActive) {
             if ($('.bookly-js-best-offer', $card).length > 0) {
                 $('.bookly-js-best-offer', $card).trigger('click');
@@ -134,6 +139,9 @@ jQuery(function ($) {
             case 'zapier':
                 action = 'bookly_cloud_zapier_revert_cancel';
                 break;
+            case 'cron':
+                action = 'bookly_cloud_cron_revert_cancel';
+                break;
             default:
                 return;
         }
@@ -175,6 +183,9 @@ jQuery(function ($) {
             case 'zapier':
                 action = 'bookly_cloud_zapier_change_status';
                 break;
+            case 'cron':
+                action = 'bookly_cloud_cron_change_status';
+                break;
             default:
                 return;
         }
@@ -212,37 +223,38 @@ jQuery(function ($) {
             case 'stripe':
             case 'sms':
             case 'zapier':
+            case 'cron':
                 $activationModal.booklyModal('show');
                 activationModal.$title.html(BooklyL10n.products[product].title);
-                    $.ajax({
-                        type: 'POST',
-                        url: ajaxurl,
-                        data: {
-                            action: 'bookly_cloud_get_product_activation_message',
-                            product: product,
-                            status: status,
-                            csrf_token: BooklyL10n.csrfToken,
-                        },
-                        dataType: 'json',
-                        success: function (response) {
-                            if (response.success) {
-                                activationModal.$success.show();
-                                activationModal.$content.html(response.data.content);
-                                if (response.data.button) {
-                                    activationModal.$button
-                                        .find('span').html(response.data.button.caption).end().off()
-                                        .on('click', function () {
-                                            window.location.href = response.data.button.url;
-                                        })
-                                        .show();
-                                }
-                            } else {
-                                activationModal.$fail.show();
-                                activationModal.$content.html(response.data.content);
+                $.ajax({
+                    type: 'POST',
+                    url: ajaxurl,
+                    data: {
+                        action: 'bookly_cloud_get_product_activation_message',
+                        product: product,
+                        status: status,
+                        csrf_token: BooklyL10n.csrfToken,
+                    },
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.success) {
+                            activationModal.$success.show();
+                            activationModal.$content.html(response.data.content);
+                            if (response.data.button) {
+                                activationModal.$button
+                                    .find('span').html(response.data.button.caption).end().off()
+                                    .on('click', function () {
+                                        window.location.href = response.data.button.url;
+                                    })
+                                    .show();
                             }
+                        } else {
+                            activationModal.$fail.show();
+                            activationModal.$content.html(response.data.content);
                         }
-                    });
-                    break;
+                    }
+                });
+                break;
         }
     }
 

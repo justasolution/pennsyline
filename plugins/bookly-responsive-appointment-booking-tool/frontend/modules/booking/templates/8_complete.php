@@ -2,16 +2,21 @@
 use Bookly\Lib\Utils\Common;
 use Bookly\Frontend\Modules\Booking\Proxy;
 
-$download_invoice = ( $state == 'completed' || $state == 'processing' )
+/** @var string $state */
+/** @var string $progress_tracker */
+/** @var string $info_text */
+
+$download_invoice = ( $state === 'completed' || $state === 'processing' )
     ? Proxy\Invoices::getDownloadButton()
     : null;
+
 echo Common::stripScripts( $progress_tracker );
 ?>
-<div class="bookly-box"><?php echo Proxy\Pro::prepareHtmlContentDoneStep( Common::html( $info_text ), $state ) ?></div>
+    <div class="bookly-box"><?php echo Common::html( $info_text ) ?></div>
 <?php if ( get_option( 'bookly_app_show_start_over' ) || get_option( 'bookly_app_show_download_ics' ) || $download_invoice ) : ?>
     <div class="bookly-box bookly-nav-steps">
         <div class="<?php echo get_option( 'bookly_app_align_buttons_left' ) ? 'bookly-left' : 'bookly-right' ?>">
-            <?php echo Common::stripScripts( $download_invoice ) ?>
+            <?php echo Common::stripScripts( $download_invoice ?: '' ) ?>
             <?php if ( get_option( 'bookly_app_show_download_ics' ) ): ?>
                 <button class="bookly-nav-btn bookly-js-download-ics bookly-btn ladda-button bookly-left" data-style="zoom-in" data-spinner-size="40">
                     <span class="ladda-label"><?php echo Common::getTranslatedOption( 'bookly_l10n_button_download_ics' ) ?></span>

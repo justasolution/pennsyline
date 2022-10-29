@@ -14,7 +14,7 @@ use Bookly\Backend\Components\Controls;
         <?php Controls\Buttons::render( 'bookly-more-news', 'btn-primary btn-lg', __( 'More news', 'bookly' ) ) ?>
     </div>
 
-    <div class="collapse" id="bookly-news-template">
+    <div class="bookly-collapse" id="bookly-news-template">
         <div class="card m-3 border rounded{{border}}" style="max-width: 476px; min-width: 476px;">
             {{media}}
             <div class="card-body">

@@ -93,6 +93,7 @@ export default function stepTime(params, error_message) {
             ;
             // 'BACK' button.
             $('.bookly-js-back-step', $container).on('click', function (e) {
+                e.stopPropagation();
                 e.preventDefault();
                 laddaStart(this);
                 if (!opt[params.form_id].skip_steps.extras && !opt[params.form_id].no_extras) {
@@ -107,6 +108,7 @@ export default function stepTime(params, error_message) {
             }).toggle(!opt[params.form_id].skip_steps.service || !opt[params.form_id].skip_steps.extras);
 
             $('.bookly-js-go-to-cart', $container).on('click', function(e) {
+                e.stopPropagation();
                 e.preventDefault();
                 laddaStart(this);
                 stepCart({form_id: params.form_id, from_step : 'time'});
@@ -135,6 +137,8 @@ export default function stepTime(params, error_message) {
                     weekdaysFull  : BooklyL10n.days,
                     weekdaysShort : BooklyL10n.daysShort,
                     monthsFull    : BooklyL10n.months,
+                    labelMonthNext: BooklyL10n.nextMonth,
+                    labelMonthPrev: BooklyL10n.prevMonth,
                     firstDay      : opt[params.form_id].firstDay,
                     clear         : false,
                     close         : false,
@@ -170,16 +174,20 @@ export default function stepTime(params, error_message) {
                     },
                     onRender: function() {
                         var date = new Date(Date.UTC(this.get('view').year, this.get('view').month));
-                        $('.picker__nav--next', $container).on('click', function() {
+                        $('.picker__nav--next', $container).on('click', function (e) {
+                            e.stopPropagation();
+                            e.preventDefault();
                             date.setUTCMonth(date.getUTCMonth() + 1);
                             dropAjax();
-                            stepTime({form_id: params.form_id, selected_date : date.toJSON().substr(0, 10)});
+                            stepTime({form_id: params.form_id, selected_date: date.toJSON().substr(0, 10)});
                             showSpinner();
                         });
-                        $('.picker__nav--prev', $container).on('click', function() {
+                        $('.picker__nav--prev', $container).on('click', function (e) {
+                            e.stopPropagation();
+                            e.preventDefault();
                             date.setUTCMonth(date.getUTCMonth() - 1);
                             dropAjax();
-                            stepTime({form_id: params.form_id, selected_date : date.toJSON().substr(0, 10)});
+                            stepTime({form_id: params.form_id, selected_date: date.toJSON().substr(0, 10)});
                             showSpinner();
                         });
                     }
@@ -442,6 +450,8 @@ export default function stepTime(params, error_message) {
                 }
 
                 $('button.bookly-time-skip', $container).off('click').on('click', function (e) {
+                    e.stopPropagation();
+                    e.preventDefault();
                     laddaStart(this);
                     if (!opt[params.form_id].no_extras && opt[params.form_id].step_extras === 'after_step_time') {
                         stepExtras({form_id: params.form_id});
@@ -461,6 +471,7 @@ export default function stepTime(params, error_message) {
                         xhr_session_save.abort();
                         xhr_session_save = null;
                     }
+                    e.stopPropagation();
                     e.preventDefault();
                     var $this = $(this),
                         data = {

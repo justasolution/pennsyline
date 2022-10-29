@@ -2,6 +2,7 @@
 use Bookly\Backend\Components\Controls\Buttons;
 use Bookly\Backend\Components\Controls\Inputs as ControlsInputs;
 use Bookly\Backend\Components\Settings\Inputs;
+
 ?>
 <div class="tab-pane" id="bookly_settings_files">
     <form method="post" action="<?php echo esc_url( add_query_arg( 'tab', 'files' ) ) ?>">
@@ -10,6 +11,7 @@ use Bookly\Backend\Components\Settings\Inputs;
             <?php if ( ! wp_is_writable( get_option( 'bookly_files_directory' ) ?: ABSPATH . 'wp-admin' ) ): ?>
                 <div class='alert alert-danger form-group mt-n2 p-1'><i class='fas pl-1 fa-times'></i> <?php esc_html_e( 'The specified folder is not writable', 'bookly' ) ?></div>
             <?php endif ?>
+            <?php Inputs::renderText( 'bookly_files_extensions', __( 'Allowed file extensions', 'bookly' ), __( 'Enter file extensions that can be uploaded. For example: "png,jpg,bmp".', 'bookly' ) ) ?>
         </div>
 
         <div class="card-footer bg-transparent d-flex justify-content-end">

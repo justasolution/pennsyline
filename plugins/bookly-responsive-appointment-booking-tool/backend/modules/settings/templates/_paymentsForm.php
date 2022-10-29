@@ -1,6 +1,7 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 use Bookly\Backend\Components\Controls\Inputs;
 use Bookly\Backend\Components\Controls\Buttons;
+use Bookly\Lib\Config;
 use Bookly\Lib\Utils\Price;
 use Bookly\Backend\Modules\Settings\Proxy;
 use Bookly\Lib\Utils\Common;
@@ -13,7 +14,7 @@ use Bookly\Lib\Utils\Common;
                     <label for="bookly_pmt_currency"><?php esc_html_e( 'Currency', 'bookly' ) ?></label>
                     <select id="bookly_pmt_currency" class="form-control custom-select" name="bookly_pmt_currency">
                         <?php foreach ( Price::getCurrencies() as $code => $currency ) : ?>
-                            <option value="<?php echo esc_attr( $code ) ?>" data-symbol="<?php esc_attr_e( $currency['symbol'] ) ?>" <?php selected( get_option( 'bookly_pmt_currency' ), $code ) ?> ><?php echo esc_html( $code ) ?> (<?php esc_html_e( $currency['symbol'] ) ?>)</option>
+                            <option value="<?php echo esc_attr( $code ) ?>" data-symbol="<?php esc_attr_e( $currency['symbol'] ) ?>" <?php selected( Config::getCurrency(), $code ) ?> ><?php echo esc_html( $code ) ?> (<?php esc_html_e( $currency['symbol'] ) ?>)</option>
                         <?php endforeach ?>
                     </select>
                 </div>

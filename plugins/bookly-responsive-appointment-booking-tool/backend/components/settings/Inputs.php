@@ -36,6 +36,57 @@ class Inputs
     }
 
     /**
+     * Render reorder.
+     *
+     * @param string $option_name
+     * @param string $label
+     * @param string $help
+     * @param array $titles
+     */
+    public static function renderReorder( $option_name, $label = null, $help = null, array $titles = array() )
+    {
+        $values = (array) get_option( $option_name );
+        $getTitle = function ( &$titles, $value ) {
+            foreach ( $titles as $key => $data ) {
+                if ( $data[0] == $value ) {
+                    $title = $data[1];
+                    unset( $titles[ $key ] );
+
+                    return $title;
+                }
+            }
+
+            return str_replace( array( '-', '_' ), array( ' ', ' ' ), ucfirst( $value ) );
+        };
+        $reorder = esc_attr__( 'Reorder', 'bookly' );
+        $getItem = function ( $value, $title ) use ( $option_name, $reorder ) {
+            return strtr(
+                '<div>
+                    <i class="fas fa-fw fa-bars text-muted bookly-cursor-move bookly-js-draghandle" title="{reorder}"></i>
+                    <input type="hidden" name="{name}[]" value="{value}">{caption}
+                </div>',
+                array(
+                    '{reorder}' => $reorder,
+                    '{name}' => $option_name,
+                    '{value}' => esc_attr( $value ),
+                    '{caption}' => esc_html( $title ),
+                )
+            );
+        };
+        $control = '';
+        foreach ( $values as $value ) {
+            $control .= $getItem( $value, $getTitle( $titles, $value ) );
+        }
+        foreach ( $titles as $option ) {
+            $control .= $getItem( $option[0], $option[1] );
+        }
+
+        $control = "<div id=\"$option_name\" class=\"bookly-js-drag-container\">$control</div>";
+
+        echo self::buildControl( $option_name, $label, $help, $control );
+    }
+
+    /**
      * Render row with numeric inputs
      *
      * @param array      $option_names
@@ -156,7 +207,7 @@ class Inputs
 
     private static function renderCopy( $name, $value, $label, $help )
     {
-        $version   = Lib\Plugin::getVersion();
+        $version = Lib\Plugin::getVersion();
         $resources = plugins_url( 'backend\components\settings\resources', Lib\Plugin::getMainFile() );
 
         wp_enqueue_script( 'bookly-settings-controls.js', $resources . '/js/settings-controls.js', array( 'jquery' ), $version );
@@ -167,7 +218,7 @@ class Inputs
              <small class="text-muted ml-auto" style="display:none">{copied}</small>',
 
             array(
-                '{name}'  => esc_attr( $name ),
+                '{name}' => esc_attr( $name ),
                 '{value}' => esc_attr( $value ),
                 '{title}' => esc_attr( __( 'Copy to clipboard', 'bookly' ) ),
                 '{copied}' => esc_attr( __( 'copied', 'bookly' ) )
@@ -175,7 +226,7 @@ class Inputs
         );
 
         echo strtr(
-            '<div class="form-group bookly-js-copy-to-clipboard">{label}<div class="form-control d-flex align-items-center" style="opacity:1;cursor:default">{control}</div>{help}</div>',
+            '<div class="form-group bookly-js-copy-to-clipboard">{label}<div class="form-control d-flex align-items-center" readonly style="opacity:1;cursor:default">{control}</div>{help}</div>',
             array(
                 '{label}'   => $label != '' ? sprintf( '<label for="%s">%s</label>', $name, $label ) : '',
                 '{help}'    => $help  != '' ? sprintf( '<small class="form-text text-muted">%s</small>', $help ) : '',

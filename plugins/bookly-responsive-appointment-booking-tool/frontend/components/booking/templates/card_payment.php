@@ -3,7 +3,7 @@
     <div class="bookly-form-group" style="width:200px!important">
         <label><?php echo \Bookly\Lib\Utils\Common::getTranslatedOption( 'bookly_l10n_label_ccard_number' ) ?></label>
         <div>
-            <input type="text" name="card_number" autocomplete="off" />
+            <input type="text" name="card_number" autocomplete="off"/>
         </div>
     </div>
     <div class="bookly-form-group">

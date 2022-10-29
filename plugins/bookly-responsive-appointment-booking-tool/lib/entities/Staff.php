@@ -99,17 +99,30 @@ class Staff extends Lib\Base\Entity
         // If it is 0(Sun) then the result should be 1,2,3,4,5,6,7.
         // If it is 1(Mon) then the result should be 2,3,4,5,6,7,1.
         // If it is 2(Tue) then the result should be 3,4,5,6,7,1,2. Etc.
-        $query = StaffScheduleItem::query()
+        $schedule = StaffScheduleItem::query()
             ->where( 'staff_id', $this->getId() )
             ->sortBy( "IF(r.day_index + 10 - {$start_of_week} > 10, r.day_index + 10 - {$start_of_week}, 16 + r.day_index)" )
-            ->indexBy( 'day_index' );
-        $query = Lib\Proxy\Locations::prepareStaffScheduleQuery(
-            $query,
-            $location_id,
-            $this->getId()
-        );
+            ->indexBy( 'day_index' )
+            ->where( 'location_id', $location_id )
+            ->find();
 
-        return $query->find();
+        if ( $schedule ) {
+            return $schedule;
+        }
+        $sch_item = new Lib\Entities\StaffScheduleItem();
+        $sch_item
+            ->setStaffId( $this->getId() )
+            ->setLocationId( $location_id );
+        $week = array( 1 => 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday' );
+        foreach ( $week as $day_index => $day ) {
+            $item = clone $sch_item;
+            $item->setDayIndex( $day_index )
+                ->setStartTime( get_option( 'bookly_bh_' . $day . '_start' ) ?: null )
+                ->setEndTime( get_option( 'bookly_bh_' . $day . '_end' ) ?: null )
+                ->save();
+        }
+
+        return $this->getScheduleItems( $location_id );
     }
 
     /**
@@ -284,15 +297,13 @@ class Staff extends Lib\Base\Entity
      *
      * @param string $size
      *
-     * @return false|string
+     * @return string
      */
     public function getImageUrl( $size = 'full' )
     {
-        if ( $this->attachment_id && $img = wp_get_attachment_image_src( $this->attachment_id, $size ) ) {
-            return $img[0];
-        }
-
-        return false;
+        return $this->attachment_id
+            ? Lib\Utils\Common::getAttachmentUrl( $this->attachment_id, $size )
+            : '';
     }
 
     /**************************************************************************

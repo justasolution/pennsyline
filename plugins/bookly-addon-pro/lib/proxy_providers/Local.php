@@ -379,12 +379,12 @@ class Local extends BooklyLib\Proxy\Pro
                 $duration = strtotime( $appointment->getEndDate() ) - strtotime( $appointment->getStartDate() );
             }
 
-            $staff  = Staff::find( Appointment::find( $ca->getAppointmentId() )->getStaffId() );
+            $staff  = Staff::find( $appointment->getStaffId() ); // Mady MM check
             $extras = array();
             if ( $ca->getExtras() != '[]' ) {
                 $_extras = json_decode( $ca->getExtras(), true );
                 /** @var \BooklyServiceExtras\Lib\Entities\ServiceExtra $extra */
-                foreach ( (array) BooklyLib\Proxy\ServiceExtras::findByIds( array_keys( $_extras ) ) as $extra ) {
+                foreach ( BooklyLib\Proxy\ServiceExtras::findByIds( array_keys( $_extras ) ) ?: array() as $extra ) { // Mady MM check
                     $quantity = $_extras[ $extra->getId() ];
                     $extras[] = array(
                         'title'    => $extra->getTitle(),
@@ -430,14 +430,14 @@ class Local extends BooklyLib\Proxy\Pro
                 ->setTotal( get_option( 'bookly_taxes_in_price' ) == 'excluded' ? $price + $tax : $price )
                 ->setTax( $tax )
                 ->setDetails( json_encode( array(
-                    'items'        => array( $item ),
-                    'coupon'       => null,
-                    'subtotal'     => array( 'price' => $price, 'deposit' => 0 ),
+                'items' => array( $item ),
+                'coupon' => null,
+                'subtotal' => array( 'price' => $price, 'deposit' => 0 ),
                     'customer'     => Customer::find( $ca->getCustomerId() )->getFullName(),
                     'customer_appt'=> json_encode($ca),
-                    'tax_in_price' => get_option( 'bookly_taxes_in_price' ) ?: 'excluded',
-                    'tax_paid'     => null,
-                    'from_backend' => true,
+                'tax_in_price' => get_option( 'bookly_taxes_in_price' ) ?: 'excluded',
+                'tax_paid' => null,
+                'from_backend' => true,
                 ) ) )
                 ->setPaid( 0 )
                 ->save();
@@ -455,7 +455,7 @@ class Local extends BooklyLib\Proxy\Pro
             $item = array();
             foreach($payments as $paymentTxns){
                 $txnTemp = $paymentTxns->getPaymentData();
-                $payment = new Payment();
+            $payment = new Payment();
                 $catemp = $txnTemp['payment']['items'][0];
                 //echo "<pre>".print_r($catemp,true)."</pre>";
                 $ca = CustomerAppointment::find( $catemp['ca_id'] );
@@ -588,9 +588,9 @@ class Local extends BooklyLib\Proxy\Pro
 //             echo "<pre>".print_r($customer,true)."</pre>";
 //             echo "<pre>".print_r($payment,true)."</pre>";
 
-            $payment
+                $payment
                 ->setType( Payment::TYPE_PAYSON ) // TODO set unique payment type for generated invoice
-                ->setStatus( Payment::STATUS_PENDING )
+                    ->setStatus( Payment::STATUS_PENDING )
                 ->setTotal( $total )
                 ->setTax( 0 )
                 ->setDetails( json_encode( array(

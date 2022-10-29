@@ -167,7 +167,7 @@ class Installer extends Base\Installer
         $settings['offset_hours'] = 1;
         $settings['perform'] = 'before';
         $settings['at_hour'] = 18;
-        $settings['offset_bidirectional_hours'] = - 24;
+        $settings['offset_bidirectional_hours'] = -24;
         $this->notifications[] = array(
             'gateway' => 'sms',
             'type' => Notification::TYPE_APPOINTMENT_REMINDER,
@@ -189,7 +189,7 @@ class Installer extends Base\Installer
         );
         $settings = $default_settings;
         $settings['at_hour'] = 18;
-        $settings['offset_bidirectional_hours'] = - 24;
+        $settings['offset_bidirectional_hours'] = -24;
         $this->notifications[] = array(
             'gateway' => 'sms',
             'type' => Notification::TYPE_STAFF_DAY_AGENDA,
@@ -240,6 +240,7 @@ class Installer extends Base\Installer
             'bookly_app_show_single_slot' => '0',
             'bookly_app_show_email_confirm' => '0',
             'bookly_app_show_start_over' => '1',
+            'bookly_app_show_category_info' => '0',
             'bookly_app_show_service_info' => '1',
             'bookly_app_show_staff_info' => '0',
             'bookly_app_show_terms' => '0',
@@ -295,6 +296,7 @@ class Installer extends Base\Installer
             'bookly_l10n_step_payment' => __( 'Payment', 'bookly' ),
             'bookly_l10n_step_done' => __( 'Done', 'bookly' ),
             'bookly_l10n_step_done_button_start_over' => __( 'Start over', 'bookly' ),
+            'bookly_l10n_step_service_category_info' => '{category_info}',
             'bookly_l10n_step_service_service_info' => '{service_info}',
             'bookly_l10n_step_service_staff_info' => '{staff_info}',
             // Button Next.
@@ -339,6 +341,7 @@ class Installer extends Base\Installer
             'bookly_email_send_as' => 'html',
             'bookly_email_reply_to_customers' => '1',
             // General.
+            'bookly_gen_delete_data_on_uninstall' => '0',
             'bookly_gen_time_slot_length' => '15',
             'bookly_gen_service_duration_as_slot_length' => '0',
             'bookly_gen_min_time_prior_booking' => '0',
@@ -362,6 +365,9 @@ class Installer extends Base\Installer
             // SMS.
             'bookly_sms_administrator_phone' => '',
             'bookly_sms_undelivered_count' => '0',
+            // ICS.
+            'bookly_l10n_ics_customer_template' => "{service_name}\n{staff_name}",
+            'bookly_ics_staff_template' => "{client_name}\n{client_phone}\n{status}",
             // Cloud.
             'bookly_cloud_account_products' => '',
             'bookly_cloud_auto_recharge_end_at' => '',
@@ -379,6 +385,7 @@ class Installer extends Base\Installer
             'bookly_cloud_stripe_metadata' => array(),
             'bookly_cloud_token' => '',
             'bookly_cloud_zapier_api_key' => '',
+            'bookly_cloud_cron_api_key' => '',
             // Business hours.
             'bookly_bh_monday_start' => '08:00:00',
             'bookly_bh_monday_end' => '18:00:00',
@@ -414,7 +421,7 @@ class Installer extends Base\Installer
             'bookly_appointment_default_status' => Entities\CustomerAppointment::STATUS_APPROVED,
             'bookly_appointment_cancel_action' => 'cancel',
             // Notices
-            'bookly_show_wpml_resave_required_notice' => '0'
+            'bookly_show_wpml_resave_required_notice' => '0',
         );
     }
 
@@ -423,51 +430,53 @@ class Installer extends Base\Installer
      */
     public function uninstall()
     {
-        /** @var \wpdb */
-        global $wpdb;
+        if ( get_option( 'bookly_gen_delete_data_on_uninstall' ) ) {
+            /** @var \wpdb */
+            global $wpdb;
 
-        $this->removeData();
-        $this->dropTables();
-        $this->_removeL10nData();
+            $this->removeData();
+            $this->dropTables();
+            $this->_removeL10nData();
 
-        // Remove user meta.
-        $meta_names = array(
-            'bookly_appointment_form_send_notifications',
-            'bookly_appointments_table_settings',
-            'bookly_attach_payment_for',
-            'bookly_calendar_refresh_rate',
-            'bookly_cloud_purchases_table_settings',
-            'bookly_contact_us_btn_clicked',
-            'bookly_customers_table_settings',
-            'bookly_delete_customers_options',
-            'bookly_dismiss_appearance_notice',
-            'bookly_dismiss_cloud_confirm_email',
-            'bookly_dismiss_cloud_promotion_notices',
-            'bookly_dismiss_collect_stats_notice',
-            'bookly_dismiss_contact_us_notice',
-            'bookly_dismiss_demo_site_description',
-            'bookly_dismiss_feature_requests_description',
-            'bookly_dismiss_feedback_notice',
-            'bookly_dismiss_nps_notice',
-            'bookly_dismiss_powered_by_notice',
-            'bookly_dismiss_subscribe_notice',
-            'bookly_email_notifications_table_settings',
-            'bookly_payments_table_settings',
-            'bookly_show_collecting_stats_notice',
-            'bookly_sms_notifications_table_settings',
-            'bookly_sms_prices_table_settings',
-            'bookly_sms_sender_table_settings',
-            'bookly_staff_table_settings',
-            'bookly_notice_renew_auto_recharge_hide_until',
-            // rate
-            'bookly_nps_rate',
-            'bookly_notice_rate_on_wp_hide_until',
-        );
-        $wpdb->query( $wpdb->prepare( sprintf( 'DELETE FROM `' . $wpdb->usermeta . '` WHERE meta_key IN (%s)',
-            implode( ', ', array_fill( 0, count( $meta_names ), '%s' ) ) ), $meta_names ) );
+            // Remove user meta.
+            $meta_names = array(
+                'bookly_appointment_form_send_notifications',
+                'bookly_appointments_table_settings',
+                'bookly_attach_payment_for',
+                'bookly_calendar_refresh_rate',
+                'bookly_cloud_purchases_table_settings',
+                'bookly_contact_us_btn_clicked',
+                'bookly_customers_table_settings',
+                'bookly_delete_customers_options',
+                'bookly_dismiss_appearance_notice',
+                'bookly_dismiss_cloud_confirm_email',
+                'bookly_dismiss_cloud_promotion_notices',
+                'bookly_dismiss_collect_stats_notice',
+                'bookly_dismiss_contact_us_notice',
+                'bookly_dismiss_demo_site_description',
+                'bookly_dismiss_feature_requests_description',
+                'bookly_dismiss_feedback_notice',
+                'bookly_dismiss_nps_notice',
+                'bookly_dismiss_powered_by_notice',
+                'bookly_dismiss_subscribe_notice',
+                'bookly_email_notifications_table_settings',
+                'bookly_payments_table_settings',
+                'bookly_show_collecting_stats_notice',
+                'bookly_sms_notifications_table_settings',
+                'bookly_sms_prices_table_settings',
+                'bookly_sms_sender_table_settings',
+                'bookly_staff_table_settings',
+                'bookly_notice_renew_auto_recharge_hide_until',
+                // rate
+                'bookly_nps_rate',
+                'bookly_notice_rate_on_wp_hide_until',
+            );
+            $wpdb->query( $wpdb->prepare( sprintf( 'DELETE FROM `' . $wpdb->usermeta . '` WHERE meta_key IN (%s)',
+                implode( ', ', array_fill( 0, count( $meta_names ), '%s' ) ) ), $meta_names ) );
 
-        wp_clear_scheduled_hook( 'bookly_daily_routine' );
-        wp_clear_scheduled_hook( 'bookly_hourly_routine' );
+            wp_clear_scheduled_hook( 'bookly_daily_routine' );
+            wp_clear_scheduled_hook( 'bookly_hourly_routine' );
+        }
     }
 
     /**
@@ -514,8 +523,10 @@ class Installer extends Base\Installer
 
         $wpdb->query(
             'CREATE TABLE IF NOT EXISTS `' . Entities\Category::getTableName() . '` (
-                `id`       INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                `name`     VARCHAR(255) NOT NULL,
+                `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                `name` VARCHAR(255) NOT NULL,
+                `attachment_id` INT UNSIGNED DEFAULT NULL,
+                `info` TEXT DEFAULT NULL,
                 `position` INT NOT NULL DEFAULT 9999
             ) ENGINE = INNODB
             ' . $charset_collate
@@ -555,7 +566,7 @@ class Installer extends Base\Installer
                 `recurrence_frequencies`       SET("daily","weekly","biweekly","monthly") NOT NULL DEFAULT "daily,weekly,biweekly,monthly",
                 `time_requirements`            ENUM("required","optional","off") NOT NULL DEFAULT "required",
                 `collaborative_equal_duration` TINYINT(1) NOT NULL DEFAULT 0,
-                `online_meetings`              ENUM("off","zoom","google_meet","jitsi") NOT NULL DEFAULT "off",
+                `online_meetings`              ENUM("off","zoom","google_meet","jitsi","bbb") NOT NULL DEFAULT "off",
                 `final_step_url`               VARCHAR(512) NOT NULL DEFAULT "",
                 `wc_product_id`                INT UNSIGNED NOT NULL DEFAULT 0,
                 `wc_cart_info_name`            VARCHAR(255) DEFAULT NULL,
@@ -728,7 +739,7 @@ class Installer extends Base\Installer
                 `outlook_event_id`         VARCHAR(255) DEFAULT NULL,
                 `outlook_event_change_key` VARCHAR(255) DEFAULT NULL,
                 `outlook_event_series_id`  VARCHAR(255) DEFAULT NULL,
-                `online_meeting_provider`  ENUM("zoom","google_meet","jitsi") DEFAULT NULL,
+                `online_meeting_provider`  ENUM("zoom","google_meet","jitsi","bbb") DEFAULT NULL,
                 `online_meeting_id`        VARCHAR(255) DEFAULT NULL,
                 `online_meeting_data`      TEXT DEFAULT NULL,
                 `created_from`             ENUM("bookly","google","outlook") NOT NULL DEFAULT "bookly",
@@ -766,29 +777,30 @@ class Installer extends Base\Installer
 
         $wpdb->query(
             'CREATE TABLE IF NOT EXISTS `' . Entities\Payment::getTableName() . '` (
-                `id`        INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                `target`    ENUM("appointments","packages") NOT NULL DEFAULT "appointments",
-                `coupon_id` INT UNSIGNED DEFAULT NULL,
-                `type`      ENUM("local","free","paypal","authorize_net","stripe","2checkout","payu_biz","payu_latam","payson","mollie","woocommerce","cloud_stripe") NOT NULL DEFAULT "local",
-                `total`     DECIMAL(10,2) NOT NULL DEFAULT 0.00,
-                `tax`       DECIMAL(10,2) NOT NULL DEFAULT 0.00,
-                `paid`      DECIMAL(10,2) NOT NULL DEFAULT 0.00,
-                `paid_type` ENUM("in_full","deposit") NOT NULL DEFAULT "in_full",
+                `id`           INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                `target`       ENUM("appointments","packages") NOT NULL DEFAULT "appointments",
+                `coupon_id`    INT UNSIGNED DEFAULT NULL,
+                `gift_card_id` INT UNSIGNED DEFAULT NULL,
+                `type`         ENUM("local","free","paypal","authorize_net","stripe","2checkout","payu_biz","payu_latam","payson","mollie","woocommerce","cloud_stripe","square","gift_card") NOT NULL DEFAULT "local",
+                `total`        DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+                `tax`          DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+                `paid`         DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+                `paid_type`    ENUM("in_full","deposit") NOT NULL DEFAULT "in_full",
                 `gateway_price_correction` DECIMAL(10,2) NULL DEFAULT 0.00,
-                `status`    ENUM("pending","completed","rejected","refunded") NOT NULL DEFAULT "completed",
-                `token`     VARCHAR(255) DEFAULT NULL,
-                `details`   TEXT DEFAULT NULL,
-                `ref_id`    VARCHAR(255) DEFAULT NULL,
-                `created_at` DATETIME NOT NULL,
-                `updated_at` DATETIME NOT NULL
+                `status`       ENUM("pending","completed","rejected","refunded") NOT NULL DEFAULT "completed",
+                `token`        VARCHAR(255) DEFAULT NULL,
+                `details`      TEXT DEFAULT NULL,
+                `ref_id`       VARCHAR(255) DEFAULT NULL,
+                `created_at`   DATETIME NOT NULL,
+                `updated_at`   DATETIME NOT NULL
             ) ENGINE = INNODB
             ' . $charset_collate
         );
 
         $wpdb->query(
             'CREATE TABLE IF NOT EXISTS `' . Entities\Order::getTableName() . '` (
-                `id`              INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                `token`           VARCHAR(255) DEFAULT NULL
+                `id`    INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                `token` VARCHAR(255) DEFAULT NULL
             ) ENGINE = INNODB
             ' . $charset_collate
         );
@@ -807,7 +819,6 @@ class Installer extends Base\Installer
                 `notes`                    TEXT DEFAULT NULL,
                 `extras`                   TEXT DEFAULT NULL,
                 `extras_multiply_nop`      TINYINT(1) NOT NULL DEFAULT 1,
-                `extras_consider_duration` TINYINT(1) NOT NULL DEFAULT 1,
                 `custom_fields`            TEXT DEFAULT NULL,
                 `status`                   VARCHAR(255) NOT NULL DEFAULT "approved",
                 `status_changed_at`        DATETIME NULL,
@@ -909,6 +920,7 @@ class Installer extends Base\Installer
                 `description` TEXT NOT NULL,
                 `url`         VARCHAR(255) NOT NULL,
                 `icon`        VARCHAR(255) NOT NULL,
+                `image`       VARCHAR(255) NOT NULL,
                 `price`       DECIMAL(10,2) NOT NULL,
                 `sales`       INT UNSIGNED NOT NULL,
                 `rating`      DECIMAL(10,2) NOT NULL,
@@ -923,7 +935,7 @@ class Installer extends Base\Installer
         $wpdb->query(
             'CREATE TABLE IF NOT EXISTS `' . Entities\Log::getTableName() . '` (
                 `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                `action`      ENUM("create","update","delete") DEFAULT NULL,
+                `action`      ENUM("create","update","delete","error") DEFAULT NULL,
                 `target`      VARCHAR(255) DEFAULT NULL,
                 `target_id`   INT UNSIGNED DEFAULT NULL,
                 `author`      VARCHAR(255) DEFAULT NULL,
@@ -965,7 +977,7 @@ class Installer extends Base\Installer
                 `mailing_list_id` INT UNSIGNED NULL,
                 `name` VARCHAR(255) DEFAULT NULL,
                 `text` TEXT DEFAULT NULL,
-                `state`  ENUM("pending","completed") NOT NULL DEFAULT "pending",
+                `state` ENUM("pending","in-progress","completed","canceled") NOT NULL DEFAULT "pending",
                 `send_at` DATETIME NOT NULL,
                 `created_at` DATETIME NOT NULL,
             CONSTRAINT
@@ -983,6 +995,7 @@ class Installer extends Base\Installer
                 `phone` VARCHAR(255) NOT NULL,
                 `text` TEXT DEFAULT NULL,
                 `sent` TINYINT(1) DEFAULT 0,
+                `campaign_id` INT NOT NULL DEFAULT 0,
                 `created_at` DATETIME NOT NULL
             ) ENGINE = INNODB
             ' . $charset_collate

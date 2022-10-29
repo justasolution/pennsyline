@@ -6,6 +6,7 @@ use BooklyPro\Lib\Base\Plugin as PluginPro;
 
 /**
  * Class Plugin
+ *
  * @package Bookly\Lib\Base
  */
 abstract class Plugin
@@ -104,26 +105,41 @@ abstract class Plugin
      */
     public static function run()
     {
-        Lib\Session::init();
+        try {
+            register_shutdown_function( array( __CLASS__, 'logErrors' ) );
+            Lib\Session::init();
 
-        /** @var static $plugin_class */
-        $plugin_class = get_called_class();
+            /** @var static $plugin_class */
+            $plugin_class = get_called_class();
 
-        // WP hooks.
-        $plugin_class::registerHooks();
+            // WP hooks.
+            $plugin_class::registerHooks();
 
-        // Update checker.
-        if ( ! $plugin_class::embedded() ) {
-            $plugin_class::initUpdateChecker();
+            // Update checker.
+            if ( ! $plugin_class::embedded() ) {
+                $plugin_class::initUpdateChecker();
+            }
+
+            // Init.
+            $plugin_class::init();
+
+            add_action( 'init', function() use ( $plugin_class ) {
+                // Updater.
+                $plugin_class::update();
+            } );
+        } catch ( \Error $e ) {
+            Lib\Utils\Log::error( $e->getMessage(), $e->getFile(), $e->getLine() );
+        } catch ( \Exception $e ) {
+            Lib\Utils\Log::error( $e->getMessage(), $e->getFile(), $e->getLine() );
         }
+    }
 
-        // Init.
-        $plugin_class::init();
-
-        add_action( 'init', function () use ( $plugin_class ) {
-            // Updater.
-            $plugin_class::update();
-        } );
+    public static function logErrors()
+    {
+        $error = error_get_last();
+        if ( $error && in_array( $error['type'], array( E_ERROR, E_PARSE, E_COMPILE_ERROR, E_USER_ERROR, E_RECOVERABLE_ERROR ), true ) ) {
+            Lib\Utils\Log::error( $error['message'], $error['file'], $error['line'] );
+        }
     }
 
     /**
@@ -167,7 +183,7 @@ abstract class Plugin
             /** @var static $plugin_class */
             $plugin_class = get_called_class();
             // Register bookly and add-ons in bookly_plugins list.
-            add_filter( 'bookly_plugins', function ( array $plugins ) use ( $plugin_class ) {
+            add_filter( 'bookly_plugins', function( array $plugins ) use ( $plugin_class ) {
                 $plugins[ $plugin_class::getSlug() ] = $plugin_class;
 
                 return $plugins;
@@ -208,8 +224,8 @@ abstract class Plugin
                 require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
             }
             $plugin_data = get_plugin_data( static::getMainFile() );
-            static::$version     = $plugin_data['Version'];
-            static::$title       = $plugin_data['Name'];
+            static::$version = $plugin_data['Version'];
+            static::$title = $plugin_data['Name'];
             static::$text_domain = $plugin_data['TextDomain'];
         }
 
@@ -228,8 +244,8 @@ abstract class Plugin
                 require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
             }
             $plugin_data = get_plugin_data( static::getMainFile() );
-            static::$version     = $plugin_data['Version'];
-            static::$title       = $plugin_data['Name'];
+            static::$version = $plugin_data['Version'];
+            static::$title = $plugin_data['Name'];
             static::$text_domain = $plugin_data['TextDomain'];
         }
 
@@ -356,7 +372,7 @@ abstract class Plugin
      * Update plugin purchase code.
      *
      * @param string $value
-     * @param int    $blog_id
+     * @param int $blog_id
      */
     public static function updatePurchaseCode( $value, $blog_id = null )
     {
@@ -432,7 +448,7 @@ abstract class Plugin
         /** @var static $plugin_class */
         $plugin_class = get_called_class();
         // Register bookly and add-ons in bookly_plugins list.
-        add_filter( 'bookly_plugins', function ( array $plugins ) use ( $plugin_class ) {
+        add_filter( 'bookly_plugins', function( array $plugins ) use ( $plugin_class ) {
             $plugins[ $plugin_class::getSlug() ] = $plugin_class;
 
             return $plugins;
@@ -446,10 +462,7 @@ abstract class Plugin
     /**
      * Init plugin.
      */
-    protected static function init()
-    {
-
-    }
+    protected static function init() {}
 
     /**
      * Init update checker.
@@ -478,9 +491,16 @@ abstract class Plugin
      */
     private static function getFilesystem()
     {
+        global $wp_filesystem;
+
+        require_once ABSPATH . 'wp-admin/includes/file.php';
+
+        if ( ! $wp_filesystem ) {
+            WP_Filesystem();
+        }
+
         // Emulate WP_Filesystem to avoid FS_METHOD and filters overriding "direct" type
         if ( ! class_exists( 'WP_Filesystem_Direct', false ) ) {
-            require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
             require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-direct.php';
         }
 

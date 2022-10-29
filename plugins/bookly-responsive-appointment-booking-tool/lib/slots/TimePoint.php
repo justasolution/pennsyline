@@ -10,9 +10,9 @@ use Bookly\Lib\Utils\DateTime;
 class TimePoint implements IPoint
 {
     /** @var string */
-    protected static $wp_timezone_offset = null;
+    protected static $wp_timezone_offset;
     /** @var string */
-    public static $client_timezone_offset = null;
+    public static $client_timezone_offset;
 
     /** @var int */
     protected $time;

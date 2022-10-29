@@ -3,7 +3,7 @@
 Plugin Name: Bookly Custom Fields (Add-on)
 Plugin URI: https://www.booking-wp-plugin.com/?utm_source=bookly_admin&utm_medium=plugins_page&utm_campaign=plugins_page
 Description: Bookly Custom Fields add-on allows you to add custom fields to the booking form.
-Version: 3.0
+Version: 3.3
 Author: Bookly
 Author URI: https://www.booking-wp-plugin.com/?utm_source=bookly_admin&utm_medium=plugins_page&utm_campaign=plugins_page
 Text Domain: bookly

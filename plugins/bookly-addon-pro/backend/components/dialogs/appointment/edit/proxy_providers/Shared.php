@@ -5,6 +5,7 @@ use Bookly\Backend\Components\Dialogs\Appointment\Edit\Proxy\Shared as Appointme
 
 /**
  * Class Shared
+ *
  * @package BooklyPro\Backend\Components\Dialogs\Appointment\Edit\ProxyProviders
  */
 class Shared extends AppointmentEditProxy
@@ -14,17 +15,11 @@ class Shared extends AppointmentEditProxy
      */
     public static function prepareL10n( $l10n )
     {
-        $plugins = apply_filters( 'bookly_plugins', array() );
-        unset( $plugins['bookly-responsive-appointment-booking-tool'] );
-        foreach ( array_keys( $plugins ) as $addon ) {
-            $l10n['addons'][] = substr( $addon, 13 );
-        }
-
         $l10n['l10n']['attach_payment'] = __( 'Attach payment', 'bookly' );
-        $l10n['l10n']['custom_service_name']  = __( 'Custom service name', 'bookly' );
+        $l10n['l10n']['custom_service_name'] = __( 'Custom service name', 'bookly' );
         $l10n['l10n']['custom_service_price'] = __( 'Custom service price', 'bookly' );
         $l10n['l10n']['online_meeting'] = __( 'Online meeting', 'bookly' );
-        $l10n['l10n']['meeting_code'] = __( 'This link can be inserted into notifications with {online_meeting_url} code', 'bookly' );
+        $l10n['l10n']['meeting_code'] = __( 'This link can be inserted into notifications with {online_meeting_start_url} code', 'bookly' );
         $l10n['l10n']['meeting_create'] = __( 'Save appointment to create a meeting', 'bookly' );
         $l10n['l10n']['copied'] = __( 'copied', 'bookly' );
         $l10n['l10n']['copy_to_clipboard'] = __( 'Copy to clipboard', 'bookly' );

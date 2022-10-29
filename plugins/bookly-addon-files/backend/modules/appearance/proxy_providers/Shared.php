@@ -19,11 +19,10 @@ class Shared extends Proxy\Shared
      */
     public static function prepareOptions( array $options_to_save, array $options )
     {
-        $options_to_save = array_merge( $options_to_save, array_intersect_key( $options, array_flip( array (
+        return array_merge( $options_to_save, array_intersect_key( $options, array_flip( array (
             'bookly_files_enabled',
             'bookly_l10n_browse',
+            'bookly_l10n_incorrect_file_type',
         ) ) ) );
-
-        return $options_to_save;
     }
 }

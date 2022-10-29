@@ -32,7 +32,7 @@ use Bookly\Lib;
             <?php if ( Lib\Utils\Common::isCurrentUserAdmin() ): ?>
                 <div class="form-row justify-content-end">
                     <div class="col-12 col-sm-auto">
-                        <?php Controls\Buttons::renderDefault( null, 'w-100 mb-3', __( 'Staff members order', 'bookly' ), array( 'data-toggle' => 'bookly-modal', 'data-target' => '#bookly-staff-order-modal' ), true ) ?>
+                        <?php Controls\Buttons::renderDefault( null, 'w-100 mb-3', __( 'Staff members order', 'bookly' ), array( 'data-toggle' => 'bookly-modal', 'data-target' => '#bookly-staff-order-modal', 'disabled' => 'disabled' ), true ) ?>
                     </div>
                     <?php Dialogs\Staff\Categories\Proxy\Pro::renderAdd() ?>
                     <div class="col-auto">

@@ -11,7 +11,7 @@ use Bookly\Backend\Modules\Calendar\Proxy;
 class Local extends Proxy\AdvancedGoogleCalendar
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public static function renderSyncButton( array $staff_members )
     {

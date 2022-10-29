@@ -29,7 +29,8 @@ class Ajax extends Lib\Base\Ajax
             'bookly_l10n_info_payment_step_several_apps',
             'bookly_l10n_info_service_step',
             'bookly_l10n_info_time_step',
-            // Service and staff info at service step.
+            // Category, service and staff info at service step.
+            'bookly_l10n_step_service_category_info',
             'bookly_l10n_step_service_service_info',
             'bookly_l10n_step_service_staff_info',
             // Step, label and option texts.
@@ -98,6 +99,7 @@ class Ajax extends Lib\Base\Ajax
             'bookly_app_show_login_button',
             'bookly_app_show_notes',
             'bookly_app_show_progress_tracker',
+            'bookly_app_show_category_info',
             'bookly_app_show_service_info',
             'bookly_app_show_staff_info',
             'bookly_app_show_single_slot',

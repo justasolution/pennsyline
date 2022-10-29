@@ -116,9 +116,11 @@ class Customer extends Lib\Base\Entity
      */
     public function getUpcomingAppointments()
     {
-        return $this->_buildQueryForAppointments()
+        $records = $this->_buildQueryForAppointments()
             ->whereRaw( 'a.start_date >= "%s" OR (a.start_date IS NULL AND ca.status != "%s")', array( current_time( 'Y-m-d 00:00:00' ), CustomerAppointment::STATUS_DONE ) )
             ->fetchArray();
+
+        return $this->_updateRecords( $records );
     }
 
     /**
@@ -130,7 +132,7 @@ class Customer extends Lib\Base\Entity
      */
     public function getPastAppointments( $page, $limit )
     {
-        $result = array( 'more' => true, 'appointments' => array() );
+        $result = array();
 
         $records = $this->_buildQueryForAppointments()
             ->whereRaw( 'a.start_date < "%s" OR (a.start_date IS NULL AND ca.status = "%s")', array( current_time( 'Y-m-d 00:00:00' ), CustomerAppointment::STATUS_DONE ) )
@@ -143,9 +145,25 @@ class Customer extends Lib\Base\Entity
             array_pop( $records );
         }
 
-        $result['appointments'] = $records;
+        $result['appointments'] = $this->_updateRecords( $records );
 
         return $result;
+    }
+
+
+    /**
+     * @param array $records
+     * @return array
+     */
+    private function _updateRecords( array $records )
+    {
+        foreach ( $records as &$record ) {
+            $record['start_date'] = Lib\Utils\DateTime::applyTimeZone( $record['start_date'], $record['time_zone'], $record['time_zone_offset'] );
+            $time_zone_offset = $record['time_zone_offset'] === null ? get_option( 'gmt_offset' ) * 60 : - $record['time_zone_offset'];
+            $record['time_zone'] = $record['time_zone'] ?: 'UTC' . ( $time_zone_offset >= 0 ? '+' : '' ) . ( $time_zone_offset / 60 );
+        }
+
+        return $records;
     }
 
     /**
@@ -155,30 +173,29 @@ class Customer extends Lib\Base\Entity
      */
     private function _buildQueryForAppointments()
     {
-        $client_diff = get_option( 'gmt_offset' ) * MINUTE_IN_SECONDS;
-
         return Appointment::query( 'a' )
-            ->select( 'ca.id AS ca_id,
-                    c.name AS category,
-                    COALESCE(s.title, a.custom_service_name) AS service,
-                    st.full_name AS staff,
-                    a.staff_id,
-                    a.staff_any,
-                    a.service_id,
-                    s.category_id,
-                    ca.status AS appointment_status,
-                    ca.extras,
-                    ca.collaborative_service_id,
-                    ca.compound_token,
-                    ca.number_of_persons,
-                    ca.custom_fields,
-                    ca.appointment_id,
-                    IF (ca.compound_service_id IS NULL AND ca.collaborative_service_id IS NULL, COALESCE(ss.price, ss_no_location.price, a.custom_service_price), s.price) AS price,
-                    IF (ca.time_zone_offset IS NULL,
-                        a.start_date,
-                        DATE_SUB(a.start_date, INTERVAL ' . $client_diff . ' + ca.time_zone_offset MINUTE)
-                    ) AS start_date,
-                    ca.token' )
+            ->select(
+                'ca.id AS ca_id,
+                c.name AS category,
+                COALESCE(s.title, a.custom_service_name) AS service,
+                st.full_name AS staff,
+                a.staff_id,
+                a.staff_any,
+                a.service_id,
+                s.category_id,
+                ca.status AS appointment_status,
+                ca.extras,
+                ca.collaborative_service_id,
+                ca.compound_token,
+                ca.number_of_persons,
+                ca.custom_fields,
+                ca.appointment_id,
+                IF (ca.compound_service_id IS NULL AND ca.collaborative_service_id IS NULL, COALESCE(ss.price, ss_no_location.price, a.custom_service_price), s.price) AS price,
+                a.start_date,
+                ca.time_zone,
+                ca.time_zone_offset,
+                ca.token'
+            )
             ->leftJoin( 'Staff', 'st', 'st.id = a.staff_id' )
             ->leftJoin( 'Customer', 'customer', 'customer.wp_user_id = ' . $this->getWpUserId() )
             ->innerJoin( 'CustomerAppointment', 'ca', 'ca.appointment_id = a.id AND ca.customer_id = customer.id' )

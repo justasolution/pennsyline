@@ -6,6 +6,7 @@ use Bookly\Lib\Slots\DatePoint;
 
 /**
  * Class Scheduler
+ *
  * @package BooklyRecurringAppointments\Lib
  */
 class Scheduler
@@ -46,13 +47,13 @@ class Scheduler
      * Constructor.
      *
      * @param Lib\Chain $chain chain to repeat
-     * @param string    $datetime first appointment date and time (in WP time zone)
-     * @param string    $until the last appointment date (in client time zone)
-     * @param string    $repeat repeat period, could be one of self::REPEAT_*
-     * @param array     $params additional params we should know to build schedule
-     * @param array     $exclude slots we can't use for schedule
-     * @param bool      $waiting_list_enabled
-     * @param array     $ignore_appointments
+     * @param string $datetime first appointment date and time (in WP time zone)
+     * @param string $until the last appointment date (in client time zone)
+     * @param string $repeat repeat period, could be one of self::REPEAT_*
+     * @param array $params additional params we should know to build schedule
+     * @param array $exclude slots we can't use for schedule
+     * @param bool $waiting_list_enabled
+     * @param array $ignore_appointments
      */
     public function __construct( Lib\Chain $chain, $datetime, $until, $repeat, array $params, array $exclude, $waiting_list_enabled = null, $ignore_appointments = array() )
     {
@@ -79,10 +80,10 @@ class Scheduler
         // Set up Finder.
         $this->finder = new Lib\Slots\Finder(
             $this->userData,
-            function ( DatePoint $client_dp ) {
+            function( DatePoint $client_dp ) {
                 return $client_dp->format( 'Y-m-d' );
             },
-            function ( DatePoint $client_dp, $groups_count, $slots_count ) {
+            function( DatePoint $client_dp, $groups_count, $slots_count ) {
                 return $groups_count >= 1 ? 2 : 0;
             },
             $waiting_list_enabled,
@@ -92,11 +93,11 @@ class Scheduler
 
         $this->finder->prepare();
 
-        $this->client_from   = DatePoint::fromStr( $datetime )->toClientTz();
-        $this->client_until  = DatePoint::fromStrInClientTz( $until );
-        $this->time          = $this->client_from->format( 'H:i:s' );
-        $this->repeat        = $repeat;
-        $this->params        = $params;
+        $this->client_from = DatePoint::fromStr( $datetime )->toClientTz();
+        $this->client_until = DatePoint::fromStrInClientTz( $until );
+        $this->time = $this->client_from->format( 'H:i:s' );
+        $this->repeat = $repeat;
+        $this->params = $params;
     }
 
     /**
@@ -107,7 +108,7 @@ class Scheduler
      */
     public function scheduleForBackend( $with_options = false )
     {
-        $this->for_backend  = true;
+        $this->for_backend = true;
         $this->with_options = (bool) $with_options;
 
         return $this->_schedule();
@@ -121,7 +122,7 @@ class Scheduler
      */
     public function scheduleForFrontend( $with_options = false )
     {
-        $this->for_backend  = false;
+        $this->for_backend = false;
         $this->with_options = (bool) $with_options;
 
         return $this->_schedule();
@@ -143,10 +144,10 @@ class Scheduler
         foreach ( $this->userData->chain->getItems() as $item ) {
             $appointments_in_chain += $item->getQuantity();
         }
-
-        for ( $i = 0; $i < count( $slots ); $i += $appointments_in_chain ) {
-            $dp         = DatePoint::fromStr( $slots[ $i ] );
-            $client_dp  = $dp->toClientTz();
+        
+        for ( $i = 0, $count = count( $slots ); $i < $count; $i += $appointments_in_chain ) {
+            $dp = DatePoint::fromStr( $slots[ $i ] );
+            $client_dp = $dp->toClientTz();
             $this->time = $client_dp->format( 'H:i:s' );
             $this->_addSlot( $client_dp->modify( 'today' ), true );
         }
@@ -164,7 +165,7 @@ class Scheduler
         $this->slots = array();
         $this->index = 0;
 
-        $start_dp  = $this->client_from->modify( 'today' );
+        $start_dp = $this->client_from->modify( 'today' );
         $client_dp = $this->client_from->modify( 'today' );
 
         $weekdays = array( 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun' );
@@ -192,7 +193,7 @@ class Scheduler
                                 if ( $client_dp->gt( $this->client_until ) ) {
                                     break ( 2 );
                                 }
-                                if ( $client_dp->gte( $start_dp  ) ) {
+                                if ( $client_dp->gte( $start_dp ) ) {
                                     $this->_addSlot( $client_dp );
                                 }
                             }
@@ -214,7 +215,7 @@ class Scheduler
                                 if ( $client_dp->gt( $this->client_until ) ) {
                                     break ( 2 );
                                 }
-                                if ( $client_dp->gte( $start_dp  ) ) {
+                                if ( $client_dp->gte( $start_dp ) ) {
                                     $this->_addSlot( $client_dp );
                                 }
                             }
@@ -231,7 +232,7 @@ class Scheduler
                                 $client_dp = $client_dp
                                     ->modify( 'last day of previous month' )
                                     ->modify( sprintf( '+%d days', $this->params['day'] ) );
-                                if ( $client_dp->gte( $start_dp  ) ) {
+                                if ( $client_dp->gte( $start_dp ) ) {
                                     $this->_addSlot( $client_dp );
                                 }
                             }
@@ -241,7 +242,7 @@ class Scheduler
                         while ( $client_dp->lte( $this->client_until ) ) {
                             $client_dp = $client_dp
                                 ->modify( sprintf( '%s %s of', $this->params['on'], $this->params['weekday'] ) );
-                            if ( $client_dp->gte( $start_dp  ) ) {
+                            if ( $client_dp->gte( $start_dp ) ) {
                                 $this->_addSlot( $client_dp );
                             }
                             $client_dp = $client_dp->modify( 'first day of next month' );
@@ -260,21 +261,21 @@ class Scheduler
      * Add slot.
      *
      * @param DatePoint $client_dp
-     * @param boolean   $skip_days_off
+     * @param boolean $skip_days_off
      */
     private function _addSlot( DatePoint $client_dp, $skip_days_off = false )
     {
         $this->finder->client_start_dp = $client_dp;
-        $this->finder->client_end_dp   = $this->client_until->modify( '+1 day' );
-        $this->finder->start_dp        = $this->finder->client_start_dp->toWpTz();
-        $this->finder->end_dp          = $this->finder->client_end_dp->toWpTz();
+        $this->finder->client_end_dp = $this->client_until->modify( '+1 day' );
+        $this->finder->start_dp = $this->finder->client_start_dp->toWpTz();
+        $this->finder->end_dp = $this->finder->client_end_dp->toWpTz();
 
         $last_date = new DatePoint( date_create() );
         $last_date = $last_date->modify( Config::getMaximumAvailableDaysForBooking() . ' days' );
         $this->finder->load(
             $skip_days_off ?
-                function ( DatePoint $dp, $srv_duration_days, $slots_count ) use ( $client_dp, $last_date ) {
-                    return ( $dp->gte( $client_dp->modify( ( $srv_duration_days > 1 ? $srv_duration_days : 1 ) . ' days' ) ) && $slots_count == 0 ) || $dp->gte( $last_date );
+                function( DatePoint $dp, $srv_duration_days, $slots_count ) use ( $client_dp, $last_date ) {
+                    return ( $dp->gte( $client_dp->modify( max( $srv_duration_days, 1 ) . ' days' ) ) && $slots_count == 0 ) || $dp->gte( $last_date );
                 }
                 : null
         );
@@ -285,7 +286,7 @@ class Scheduler
             // If there are more slots then start new search for the next day.
             $slots = $this->finder->getSlots();
             $this->finder->client_start_dp = DatePoint::fromStrInClientTz( key( $slots ) )->modify( '+1 day' );
-            $this->finder->start_dp        = $this->finder->client_start_dp->toWpTz();
+            $this->finder->start_dp = $this->finder->client_start_dp->toWpTz();
             $this->finder->load();
 
             $slot = $this->findSlot( $client_dp );
@@ -313,43 +314,46 @@ class Scheduler
     {
         $client_req_dp = $client_dp->modify( $this->time );
         $client_res_dp = null;
-        $options       = array();
-        $slots         = array();
+        $options = array();
+        $slots = array();
 
         foreach ( $this->finder->getSlots() as $group ) {
             /** @var Lib\Slots\Range $slot */
             foreach ( $group as $slot ) {
-                $data = $slot->buildSlotData();
-                // Check if we already have this slot in results
-                $has_slot = false;
-                $_data = json_encode( $data );
-                foreach ( $this->slots as $_slot ) {
-                    if ( $_slot['slots'] === $_data ) {
-                        $has_slot = true;
-                        break;
+                $min_date = Lib\Slots\DatePoint::now()->modify( Lib\Proxy\Pro::getMinimumTimePriorBooking( $slot->serviceId() ) ?: 0 );
+                if ( $this->for_backend || $min_date->lte( $slot->start() ) ) {
+                    $data = $slot->buildSlotData();
+                    // Check if we already have this slot in results
+                    $has_slot = false;
+                    $_data = json_encode( $data );
+                    foreach ( $this->slots as $_slot ) {
+                        if ( $_slot['slots'] === $_data ) {
+                            $has_slot = true;
+                            break;
+                        }
                     }
-                }
-                if ( ! $has_slot ) {
-                    /** @var DatePoint $client_start_dp */
-                    $client_start_dp = $slot->start()->toClientTz();
-                    $title = $client_start_dp->formatI18n( get_option( 'time_format' ) );
-                    if ( $this->with_options ) {
-                        $options[] = array(
-                            'value' => json_encode( $data ),
-                            'title' => $title,
-                            'disabled' => $slot->fullyBooked(),
-                        );
-                    }
-                    if ( $client_res_dp === null && $slot->notFullyBooked() && $client_start_dp->gte( $client_req_dp ) ) {
-                        $client_res_dp = $client_start_dp;
-                        $slots = $data;
-
-                        if ( ! $this->with_options ) {
+                    if ( ! $has_slot ) {
+                        /** @var DatePoint $client_start_dp */
+                        $client_start_dp = $slot->start()->toClientTz();
+                        $title = $client_start_dp->formatI18n( get_option( 'time_format' ) );
+                        if ( $this->with_options ) {
                             $options[] = array(
                                 'value' => json_encode( $data ),
                                 'title' => $title,
+                                'disabled' => $slot->fullyBooked(),
                             );
-                            break;
+                        }
+                        if ( $client_res_dp === null && $slot->notFullyBooked() && $client_start_dp->gte( $client_req_dp ) ) {
+                            $client_res_dp = $client_start_dp;
+                            $slots = $data;
+
+                            if ( ! $this->with_options ) {
+                                $options[] = array(
+                                    'value' => json_encode( $data ),
+                                    'title' => $title,
+                                );
+                                break;
+                            }
                         }
                     }
                 }
@@ -359,9 +363,9 @@ class Scheduler
             }
 
             $result = array(
-                'index'        => ++ $this->index,
-                'slots'        => json_encode( $slots ),
-                'options'      => $options,
+                'index' => ++$this->index,
+                'slots' => json_encode( $slots ),
+                'options' => $options,
                 'another_time' => $client_res_dp->neq( $client_req_dp ),
             );
             if ( $this->finder->isServiceDurationInDays() ) {
@@ -389,7 +393,7 @@ class Scheduler
     {
         $weekdays = array( 'mon' => 1, 'tue' => 2, 'wed' => 3, 'thu' => 4, 'fri' => 5, 'sat' => 6, 'sun' => 7 );
 
-        usort( $input, function ( $a, $b ) use ( $weekdays ) {
+        usort( $input, function( $a, $b ) use ( $weekdays ) {
             return $weekdays[ $a ] - $weekdays[ $b ];
         } );
     }

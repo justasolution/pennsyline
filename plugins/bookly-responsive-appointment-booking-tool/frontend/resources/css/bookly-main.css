@@ -639,41 +639,43 @@ span.bookly-round {
     background: url("../images/success.png") 0 0 no-repeat;
 }
 
-.bookly-columnizer .bookly-hour:hover {
-    border: 2px solid #f4662f;
-    color: #f4662f;
-}
+@media (hover) {
+    .bookly-columnizer .bookly-hour:hover {
+        border: 2px solid #f4662f;
+        color: #f4662f;
+    }
 
-.bookly-columnizer .bookly-hour.booked:hover {
-    border: 1px solid #cccccc !important;
-    color: #333333 !important;
-}
+    .bookly-columnizer .bookly-hour.booked:hover {
+        border: 1px solid #cccccc !important;
+        color: #333333 !important;
+    }
 
-.bookly-columnizer .bookly-hour.booked:hover .bookly-hour-icon span {
-    visibility: hidden;
-}
+    .bookly-columnizer .bookly-hour.booked:hover .bookly-hour-icon span {
+        visibility: hidden;
+    }
 
-.bookly-columnizer .bookly-hour:hover .bookly-hour-icon {
-    background: none;
-    border: 2px solid #f4662f;
-    color: #f4662f;
-    width: auto;
-    height: auto;
-    padding: 3px;
-    border-radius: 25px;
-    margin-right: 3px;
-}
+    .bookly-columnizer .bookly-hour:hover .bookly-hour-icon {
+        background: none;
+        border: 2px solid #f4662f;
+        color: #f4662f;
+        width: auto;
+        height: auto;
+        padding: 3px;
+        border-radius: 25px;
+        margin-right: 3px;
+    }
 
-.bookly-columnizer .bookly-hour.booked:hover .bookly-hour-icon {
-    border: 2px solid #cccccc !important;
-}
+    .bookly-columnizer .bookly-hour.booked:hover .bookly-hour-icon {
+        border: 2px solid #cccccc !important;
+    }
 
-.bookly-columnizer .bookly-hour:hover .bookly-hour-icon span {
-    background: #f4662f;
-    width: 8px;
-    height: 8px;
-    border-radius: 10px;
-    display: block;
+    .bookly-columnizer .bookly-hour:hover .bookly-hour-icon span {
+        background: #f4662f;
+        width: 8px;
+        height: 8px;
+        border-radius: 10px;
+        display: block;
+    }
 }
 
 .bookly-time-step .bookly-columnizer > button {
@@ -1134,7 +1136,7 @@ label.bookly-square {
 }
 
 /* Payment */
-.bookly-form input.bookly-user-coupon, .bookly-form input.bookly-user-tips {
+.bookly-form input.bookly-user-coupon, .bookly-form input.bookly-user-gift, .bookly-form input.bookly-user-tips {
     width: 100px !important;
     margin: 0 10px !important;
 }
@@ -1621,7 +1623,7 @@ label.bookly-square {
     color: #bbb !important;
 }
 
-.bookly-form .bookly-service-info, .bookly-form .bookly-staff-info {
+.bookly-form .bookly-category-info, .bookly-form .bookly-service-info, .bookly-form .bookly-staff-info {
     margin-top: -10px;
 }
 

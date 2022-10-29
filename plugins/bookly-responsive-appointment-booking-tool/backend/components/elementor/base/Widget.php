@@ -19,7 +19,12 @@ abstract class Widget extends Widget_Base
      */
     public static function register( $widgets_manager )
     {
-        $widgets_manager->register_widget_type( new static() );
+        if ( method_exists( $widgets_manager, 'register' ) ) {
+            $widgets_manager->register( new static() );
+        } else {
+            // for Elementor < 3.1
+            $widgets_manager->register_widget_type( new static() );
+        }
 
         wp_enqueue_style( 'bookly-elementor' );
     }

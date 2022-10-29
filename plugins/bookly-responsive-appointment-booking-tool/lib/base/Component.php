@@ -5,15 +5,19 @@ use Bookly\Lib;
 
 /**
  * Class Component
+ *
  * @package Bookly\Lib\Base
  */
 abstract class Component extends Cache
 {
     /**
      * Array of reflection objects of child classes.
+     *
      * @var \ReflectionClass[]
      */
     private static $reflections = array();
+
+    private static $data = array();
 
     /******************************************************************************************************************
      * Public methods                                                                                                 *
@@ -33,8 +37,8 @@ abstract class Component extends Cache
      * Render a template file.
      *
      * @param string $template
-     * @param array  $variables
-     * @param bool   $echo
+     * @param array $variables
+     * @param bool $echo
      * @return void|string
      */
     public static function renderTemplate( $template, $variables = array(), $echo = true )
@@ -102,6 +106,29 @@ abstract class Component extends Cache
         static::_enqueue( 'styles', $sources );
     }
 
+    protected static function enqueueData( array $data )
+    {
+        foreach ( $data as $token ) {
+            if ( ! in_array( $token, self::$data, true ) ) {
+                $item = null;
+                switch ( $token ) {
+                    case 'casest':
+                        $item = Lib\Config::getCaSeSt();
+                        break;
+                }
+                $item = Lib\Proxy\Shared::prepareGlobalSetting( $item, $token );
+                if ( $item !== null ) {
+                    if ( is_scalar( $item ) && ! is_bool( $item ) ) {
+                        $item = html_entity_decode( (string) $item, ENT_QUOTES, 'UTF-8' );
+                    }
+
+                    wp_add_inline_script( 'bookly-globals', 'BooklyL10nGlobal[\'' . $token . '\']=' . wp_json_encode( $item ) . ';', 'before' );
+                }
+                self::$data[] = $token;
+            }
+        }
+    }
+
     /**
      * Check if there is a parameter with given name in the request.
      *
@@ -141,6 +168,21 @@ abstract class Component extends Cache
     }
 
     /**
+     * @return Lib\Utils\Collection
+     */
+    protected static function jsonParameters()
+    {
+        static $collection;
+        if ( $collection === null ) {
+            $collection = new Lib\Utils\Collection( array_map( function ( $value ) {
+                return $value != '' ? $value : null;
+            }, json_decode( self::parameter( 'data' ), true ) ) );
+        }
+
+        return $collection;
+    }
+
+    /**
      * Get all request parameters.
      *
      * @return mixed
@@ -166,8 +208,7 @@ abstract class Component extends Cache
     protected static function registerGlobalAssets()
     {
         if ( ! ( wp_script_is( 'bookly-frontend-globals', 'registered' )
-            || wp_script_is( 'bookly-backend-globals', 'registered' ) ) )
-        {
+            || wp_script_is( 'bookly-backend-globals', 'registered' ) ) ) {
             Component::_register( 'scripts', array(
                 'backend' => array(
                     'bootstrap/js/bootstrap.min.js' => array( 'jquery' ),
@@ -175,7 +216,7 @@ abstract class Component extends Cache
                     'js/moment.min.js' => array(),
                     'js/daterangepicker.js' => array( 'bookly-moment.min.js', 'jquery' ),
                     'js/dropdown.js' => array( 'jquery' ),
-                    'js/alert.js' => array( 'jquery' ),
+                    'js/common.js' => array( 'jquery' ),
                     'js/select2.min.js' => array( 'jquery' ),
                 ),
                 'frontend' => array(
@@ -183,9 +224,10 @@ abstract class Component extends Cache
                     'js/ladda.min.js' => array( 'jquery' ),
                 ),
                 'alias' => array(
-                    'bookly-frontend-globals' => array( 'bookly-spin.min.js', 'bookly-ladda.min.js' ),
-                    'bookly-backend-globals' => array( 'bookly-bootstrap.min.js', 'bookly-datatables.min.js', 'bookly-daterangepicker.js', 'bookly-dropdown.js', 'bookly-select2.min.js', 'bookly-alert.js', 'bookly-spin.min.js', 'bookly-ladda.min.js', ),
-                )
+                    'bookly-globals' => array( 'bookly-spin.min.js' ),
+                    'bookly-frontend-globals' => array( 'bookly-globals', 'bookly-spin.min.js', 'bookly-ladda.min.js', 'bookly-moment.min.js' ),
+                    'bookly-backend-globals' => array( 'bookly-globals', 'bookly-bootstrap.min.js', 'bookly-datatables.min.js', 'bookly-daterangepicker.js', 'bookly-dropdown.js', 'bookly-select2.min.js', 'bookly-common.js', 'bookly-spin.min.js', 'bookly-ladda.min.js', ),
+                ),
             ) );
 
             Component::_register( 'styles', array(
@@ -194,15 +236,17 @@ abstract class Component extends Cache
                 'alias' => array(
                     'bookly-frontend-globals' => array( 'bookly-ladda.min.css' ),
                     'bookly-backend-globals' => array( 'bookly-bootstrap.min.css', 'bookly-ladda.min.css' ),
-                )
+                ),
             ) );
 
-            wp_localize_script( 'bookly-spin.min.js', 'BooklyL10nGlobal', Lib\Proxy\Shared::prepareL10nGlobal( array(
+            wp_localize_script( 'bookly-globals', 'BooklyL10nGlobal', Lib\Proxy\Shared::prepareL10nGlobal( array(
                 'csrf_token' => Lib\Utils\Common::getCsrfToken(),
+                'mjsTimeFormat' => Lib\Utils\DateTime::convertFormat( 'time', Lib\Utils\DateTime::FORMAT_MOMENT_JS ),
+                'datePicker' => Lib\Utils\DateTime::datePickerOptions(),
+                'dateRange' => Lib\Utils\DateTime::dateRangeOptions(),
                 'addons' => array(),
+                'data' => (object) array(),
             ) ) );
-
-            wp_add_inline_script( 'bookly-select2.min.js', 'delete jQuery.fn.select2;', 'before' );
         }
     }
 
@@ -249,7 +293,7 @@ abstract class Component extends Cache
      */
     private static function _assets( $func, array $sources )
     {
-        $plugin_class   = Lib\Base\Plugin::getPluginFor( get_called_class() );
+        $plugin_class = Lib\Base\Plugin::getPluginFor( get_called_class() );
         $assets_version = $plugin_class::getVersion();
 
         foreach ( $sources as $source => $files ) {

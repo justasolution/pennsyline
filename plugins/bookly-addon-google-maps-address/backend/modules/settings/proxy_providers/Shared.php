@@ -11,7 +11,7 @@ use Bookly\Backend\Components\Settings\Menu;
 class Shared extends Proxy\Shared
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public static function renderMenuItem()
     {
@@ -19,7 +19,7 @@ class Shared extends Proxy\Shared
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public static function renderTab()
     {
@@ -27,7 +27,7 @@ class Shared extends Proxy\Shared
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public static function saveSettings( array $alert, $tab, array $params )
     {

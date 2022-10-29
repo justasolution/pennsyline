@@ -5,6 +5,7 @@ use Bookly\Lib;
 
 /**
  * Class Ajax
+ *
  * @package Bookly\Backend\Components\Dialogs\Customer\Edit
  */
 class Ajax extends Lib\Base\Ajax
@@ -101,10 +102,11 @@ class Ajax extends Lib\Base\Ajax
         if ( $customer ) {
             $customer['id'] = (int) $customer['id'];
             if ( isset( $customer['info_fields'] ) && $customer['info_fields'] ) {
-                $customer['info_fields'] = array_map( function ( $item ) { return array( 'id' => (int) $item['id'], 'value' => $item['value'] ); }, json_decode( $customer['info_fields'], true ) );
+                $customer['info_fields'] = array_map( function( $item ) { return array( 'id' => (int) $item['id'], 'value' => $item['value'] ); }, json_decode( $customer['info_fields'], true ) );
             }
+
             $wp_user = $customer['wp_user_id']
-                ? $wpdb->get_row( Dialog::getWPUsersQuery() . ' WHERE ID = ' . (int) $customer['wp_user_id'] )
+                ? $wpdb->get_row( Dialog::getWPUsersQuery() . ( is_multisite() ? ' AND ' : ' WHERE ' ) . ' ID = ' . (int) $customer['wp_user_id'] )
                 : null;
             wp_send_json_success( compact( 'customer', 'wp_user' ) );
         } else {
@@ -126,7 +128,8 @@ class Ajax extends Lib\Base\Ajax
 
         if ( $filter != '' ) {
             $search_value = Lib\Query::escape( $filter );
-            $query .= ' WHERE u.display_name like "%' . $search_value . '%"';
+            $query .= is_multisite() ? ' AND' : ' WHERE';
+            $query .= ' u.display_name like "%' . $search_value . '%"';
         }
         $query .= ' ORDER BY u.display_name LIMIT ' . $max_results . ' OFFSET ' . ( $page - 1 ) * $max_results;
         $wp_users = $wpdb->get_results( $query, ARRAY_A );

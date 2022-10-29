@@ -69,6 +69,7 @@ class Ajax extends BooklyLib\Base\Ajax
             'tax_in_price' => 'included',
             'price_correction' => 25.05,
             'group_discount' => false,
+            'from_backend' => true,
         );
 
         if ( ! BooklyLib\Config::taxesActive() ) {
@@ -80,12 +81,21 @@ class Ajax extends BooklyLib\Base\Ajax
             'coupons' => BooklyLib\Config::couponsActive(),
             'customer_groups' => BooklyLib\Config::customerGroupsActive(),
             'deposit' => (int) BooklyLib\Config::depositPaymentsActive(),
+            'price_correction' => false,
             'gateway' => 1,
             'taxes' => (int) ( BooklyLib\Config::taxesActive() || $payment['tax_total'] > 0 ),
             'discounts' => (int) ( BooklyLib\Config::discountsActive() ),
         );
 
-        $content = self::renderTemplate( 'invoice', array( 'helper' => $helper, 'codes' => '', 'payment' => $payment, 'show' => $show, 'adjustments' => array() ), false );
+        $content = self::renderTemplate( 'invoice', array(
+            'helper' => $helper,
+            'codes' => '',
+            'payment' => $payment,
+            'show' => $show,
+            'time_zone_offset' => null,
+            'time_zone' => null,
+            'adjustments' => array(),
+        ), false );
 
         $company_logo = wp_get_attachment_image_src( get_option( 'bookly_co_logo_attachment_id' ), 'full' );
 

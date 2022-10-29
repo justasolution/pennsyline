@@ -1,5 +1,6 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 use Bookly\Lib\Utils\Common;
+
 /**
  * @var array $product
  */
@@ -7,13 +8,13 @@ use Bookly\Lib\Utils\Common;
 <div class="mb-3">
     <div class="h5"><?php echo Common::stripScripts( $product['texts']['price'] ) ?></div>
     <?php if ( isset ( $product['prices'] ) ) : ?>
-        <div class="dropdown">
-            <button class="bookly-js-product-price-dropdown btn btn-default dropdown-toggle d-flex align-items-center w-100" type="button" data-toggle="dropdown">
+        <div class="bookly-dropdown">
+            <button class="bookly-js-product-price-dropdown btn btn-default bookly-dropdown-toggle d-flex align-items-center w-100" type="button" data-toggle="bookly-dropdown">
                 <span class="bookly-js-product-price flex-grow-1">&nbsp;</span>
             </button>
-            <div class="dropdown-menu dropdown-menu-compact dropdown-menu-right text-right w-100 shadow">
+            <div class="bookly-dropdown-menu bookly-dropdown-menu-compact bookly-dropdown-menu-right text-right w-100 shadow">
                 <?php foreach ( $product['prices'] as $price ) : ?>
-                    <li class="dropdown-item" data-product-price-id="<?php echo esc_attr( $price['id'] ) ?>">
+                    <li class="bookly-dropdown-item" data-product-price-id="<?php echo esc_attr( $price['id'] ) ?>">
                         <?php if ( in_array( 'best_offer', $price['tags'] ) ) : ?>
                             <span class="bookly-js-best-offer badge badge-warning"><small><strong><?php esc_html_e( 'best offer', 'bookly' ) ?></strong></small></span>
                         <?php endif ?>

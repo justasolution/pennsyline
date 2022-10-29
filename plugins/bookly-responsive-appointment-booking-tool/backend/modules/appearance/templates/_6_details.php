@@ -22,7 +22,7 @@ use Bookly\Lib\Config;
     </div>
     <div class="bookly-details-step">
 
-        <div class="bookly-box bookly-table bookly-js-details-first-last-name<?php echo ! get_option( 'bookly_cst_first_last_name' ) ? ' collapse' : '' ?>">
+        <div class="bookly-box bookly-table bookly-js-details-first-last-name<?php echo ! get_option( 'bookly_cst_first_last_name' ) ? ' bookly-collapse' : '' ?>">
             <div class="bookly-form-group">
                 <?php Elements::renderLabel( array( 'bookly_l10n_label_first_name', 'bookly_l10n_required_first_name', ) ) ?>
                 <div>
@@ -38,7 +38,7 @@ use Bookly\Lib\Config;
         </div>
 
         <div class="bookly-box bookly-table">
-            <div class="bookly-form-group bookly-js-details-full-name<?php echo get_option( 'bookly_cst_first_last_name' ) ? ' collapse' : '' ?>">
+            <div class="bookly-form-group bookly-js-details-full-name<?php echo get_option( 'bookly_cst_first_last_name' ) ? ' bookly-collapse' : '' ?>">
                 <?php Elements::renderLabel( array( 'bookly_l10n_label_name', 'bookly_l10n_required_name', ) ) ?>
                 <div>
                     <input type="text" value="" maxlength="60" />
@@ -50,13 +50,13 @@ use Bookly\Lib\Config;
                     <input type="text" class="bookly-animate<?php if ( get_option( 'bookly_cst_phone_default_country' ) != 'disabled' ) : ?> bookly-user-phone<?php endif ?>" value="" />
                 </div>
             </div>
-            <div class="bookly-form-group bookly-js-details-email<?php echo ! get_option( 'bookly_cst_first_last_name' ) && get_option( 'bookly_app_show_email_confirm' ) ? ' collapse' : '' ?>">
+            <div class="bookly-form-group bookly-js-details-email<?php echo ! get_option( 'bookly_cst_first_last_name' ) && get_option( 'bookly_app_show_email_confirm' ) ? ' bookly-collapse' : '' ?>">
                 <?php Elements::renderLabel( array( 'bookly_l10n_label_email', 'bookly_l10n_required_email', 'bookly_l10n_email_in_use' ) ) ?>
                 <div>
                     <input class="bookly-animate" maxlength="40" type="text" value="" />
                 </div>
             </div>
-            <div class="bookly-form-group bookly-js-details-confirm<?php echo ! get_option( 'bookly_cst_first_last_name' ) || ! get_option( 'bookly_app_show_email_confirm' ) ? ' collapse' : '' ?>">
+            <div class="bookly-form-group bookly-js-details-confirm<?php echo ! get_option( 'bookly_cst_first_last_name' ) || ! get_option( 'bookly_app_show_email_confirm' ) ? ' bookly-collapse' : '' ?>">
                 <?php Elements::renderLabel( array( 'bookly_l10n_label_email_confirm', 'bookly_l10n_email_confirm_not_match' ) ) ?>
                 <div>
                     <input maxlength="40" type="text" value="" />
@@ -64,7 +64,7 @@ use Bookly\Lib\Config;
             </div>
         </div>
 
-        <div class="bookly-box bookly-table bookly-js-details-email-confirm<?php echo get_option( 'bookly_cst_first_last_name' ) || ! get_option( 'bookly_app_show_email_confirm' ) ? ' collapse' : '' ?>">
+        <div class="bookly-box bookly-table bookly-js-details-email-confirm<?php echo get_option( 'bookly_cst_first_last_name' ) || ! get_option( 'bookly_app_show_email_confirm' ) ? ' bookly-collapse' : '' ?>">
             <div class="bookly-form-group">
                 <?php Elements::renderLabel( array( 'bookly_l10n_label_email', 'bookly_l10n_required_email' ) ) ?>
                 <div>

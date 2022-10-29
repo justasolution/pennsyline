@@ -12,6 +12,7 @@ class Zapier extends Base
     const DEACTIVATE_NOW          = '/1.0/users/%token%/products/zapier/deactivate/now';            //POST
     const GENERATE_API_KEY        = '/1.0/users/%token%/products/zapier/generate/api-key';          //POST
     const REVERT_CANCEL           = '/1.0/users/%token%/products/zapier/revert-cancel';             //POST
+    const ENDPOINT                = '/1.0/users/%token%/products/zapier/endpoint';                  //POST
 
     /**
      * Activate Zapier product
@@ -23,7 +24,7 @@ class Zapier extends Base
     public function activate( $product_price )
     {
         $data = array(
-            'endpoint'      => add_query_arg( array( 'action' => 'bookly_cloud_zapier' ), admin_url( 'admin-ajax.php' ) ),
+            'endpoint'      => $this->getEndPoint(),
             'product_price' => $product_price,
         );
 
@@ -37,6 +38,24 @@ class Zapier extends Base
         }
 
         return false;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEndPoint()
+    {
+        return add_query_arg( array( 'action' => 'bookly_cloud_zapier' ), admin_url( 'admin-ajax.php' ) );
+    }
+
+    /**
+     * @return bool
+     */
+    public function updateEndPoint()
+    {
+        $endpoint = $this->getEndPoint();
+
+        return $this->api->sendPostRequest( self::ENDPOINT, compact( 'endpoint' ) );
     }
 
     /**

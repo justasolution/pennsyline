@@ -13,23 +13,24 @@ abstract class Tables
     const APPOINTMENTS = 'appointments';
     const CLOUD_PURCHASES = 'cloud_purchases';
     const COUPONS = 'coupons';
-    const CUSTOM_STATUSES = 'custom_statuses';
-    const CUSTOMER_GROUPS = 'customer_groups';
     const CUSTOMERS = 'customers';
+    const CUSTOMER_GROUPS = 'customer_groups';
+    const CUSTOM_STATUSES = 'custom_statuses';
     const DISCOUNTS = 'discounts';
     const EMAIL_LOGS = 'email_logs';
     const EMAIL_NOTIFICATIONS = 'email_notifications';
+    const GIFT_CARDS = 'gift_cards';
     const LOCATIONS = 'locations';
     const PACKAGES = 'packages';
     const PAYMENTS = 'payments';
-    const GAYMENTS = 'gayments';
-    const MAYMENTS = 'mayments';
+    const GAYMENTS = 'gayments'; // Mady M
+    const MAYMENTS = 'mayments'; // Mady M
     const SERVICES = 'services';
     const SMS_DETAILS = 'sms_details';
+    const SMS_MAILING_CAMPAIGNS = 'sms_mailing_campaigns';
     const SMS_MAILING_LISTS = 'sms_mailing_lists';
     const SMS_MAILING_RECIPIENTS_LIST = 'sms_mailing_recipients_list';
     const SMS_NOTIFICATIONS = 'sms_notifications';
-    const SMS_MAILING_CAMPAIGNS = 'sms_mailing_campaigns';
     const SMS_PRICES = 'sms_prices';
     const SMS_SENDER = 'sms_sender';
     const STAFF_MEMBERS = 'staff_members';
@@ -47,7 +48,8 @@ abstract class Tables
         switch ( $table ) {
             case self::APPOINTMENTS:
                 $columns = array(
-                    'id' => esc_html__( 'No.', 'bookly' ),
+                    'id' => esc_html__( 'ID', 'bookly' ),
+                    'no' => esc_html__( 'No.', 'bookly' ),
                     'start_date' => esc_html__( 'Appointment date', 'bookly' ),
                     'staff_name' => esc_html( Common::getTranslatedOption( 'bookly_l10n_label_employee' ) ),
                     'customer_full_name' => esc_html__( 'Customer name', 'bookly' ),
@@ -118,7 +120,7 @@ abstract class Tables
                     'status' => esc_html__( 'Status', 'bookly' ),
                 );
                 break;
-            case self::GAYMENTS:
+            case self::GAYMENTS: // Mady M
                 $columns = array(
                     'id' => esc_html__( 'No.', 'bookly' ),
                     'created_at' => esc_html__( 'Date', 'bookly' ),
@@ -130,7 +132,7 @@ abstract class Tables
                     'status' => esc_html__( 'Status', 'bookly' ),
                 );
                 break;
-            case self::MAYMENTS:
+            case self::MAYMENTS: // Mady M
                 $columns = array(
                     'id' => esc_html__( 'No.', 'bookly' ),
                     'created_at' => esc_html__( 'Date', 'bookly' ),
@@ -322,7 +324,10 @@ abstract class Tables
                 );
                 break;
             case self::APPOINTMENTS:
-                $columns = array( 'internal_note' => false, );
+                $columns = array(
+                    'no' => false,
+                    'internal_note' => false,
+                );
                 break;
             case self::EMAIL_LOGS:
             case self::EMAIL_NOTIFICATIONS:

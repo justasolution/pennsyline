@@ -23,9 +23,9 @@ use Bookly\Backend\Components\Controls\Inputs;
                 <tr>
                     <th></th>
                     <th width="24"></th>
-                    <?php foreach ( $datatables['locations']['settings']['columns'] as $column => $show ) : ?>
+                    <?php foreach ( $datatable['settings']['columns'] as $column => $show ) : ?>
                         <?php if ( $show ) : ?>
-                            <th><?php echo $datatables['locations']['titles'][ $column ] ?></th>
+                            <th><?php echo $datatable['titles'][ $column ] ?></th>
                         <?php endif ?>
                     <?php endforeach ?>
                     <th width="75"></th>

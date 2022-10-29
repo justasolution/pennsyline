@@ -1,9 +1,11 @@
 <?php
 namespace Bookly\Lib\Utils\Ics;
 
+use Bookly\Lib\DataHolders\Booking\Simple;
 use Bookly\Lib\UserBookingData;
 use Bookly\Lib\Utils\Common;
 use Bookly\Lib\Entities\CustomerAppointment;
+use Bookly\Lib;
 
 /**
  * Class Feed
@@ -55,34 +57,35 @@ class Feed
         return $this;
     }
 
+    /**
+     * @param UserBookingData $userData
+     * @return Feed
+     */
     public static function createFromBookingData( UserBookingData $userData )
     {
         // Generate ICS feed.
         $ics = new self();
 
         if ( $userData->load() && $userData->getOrderId() ) {
-            $ca_ids = CustomerAppointment::query( 'ca' )
-                ->select( 'MIN(ca.id) AS id' )
-                ->where( 'ca.order_id', $userData->getOrderId() )
-                ->groupBy( 'COALESCE(ca.compound_token, ca.collaborative_token, ca.id)' )
-                ->fetchCol( 'id' );
-
             $query = CustomerAppointment::query( 'ca' )
-                ->select( 'COALESCE(ca.compound_service_id,ca.collaborative_service_id,a.service_id) AS service_id, a.custom_service_name, a.location_id, s.title AS service_title, a.start_date, a.end_date, st.full_name AS staff_name' )
+                ->select( 'ca.id as ca_id, COALESCE(ca.compound_service_id,ca.collaborative_service_id,a.service_id) AS service_id, a.custom_service_name, a.location_id, s.title AS service_title, a.start_date, a.end_date, st.full_name AS staff_name' )
+                ->where( 'ca.order_id', $userData->getOrderId() )
                 ->leftJoin( 'Appointment', 'a', 'a.id = ca.appointment_id' )
                 ->leftJoin( 'Service', 's', 's.id = COALESCE(ca.compound_service_id,ca.collaborative_service_id,a.service_id)' )
                 ->leftJoin( 'Staff', 'st', 'st.id = a.staff_id' )
-                ->whereIn( 'ca.id', $ca_ids );
-
-            $appointments = $query->fetchArray();
-
-            foreach ( $appointments as $appointment ) {
+                ->groupBy( 'COALESCE(ca.compound_token, ca.collaborative_token, ca.id)' )
+                ->groupBy( 'a.id' );
+            $description_template = Lib\Utils\Codes::getICSDescriptionTemplate();
+            foreach ( $query->fetchArray() as $appointment ) {
+                $item = Simple::create( CustomerAppointment::find( $appointment['ca_id'] ) );
+                $description_codes = Lib\Utils\Codes::getICSCodes( $item );
                 if ( $appointment['service_id'] === null ) {
                     $service_name = $appointment['custom_service_name'];
                 } else {
                     $service_name = Common::getTranslatedString( 'service_' . $appointment['service_id'], $appointment['service_title'] );
                 }
-                $ics->addEvent( $appointment['start_date'], $appointment['end_date'], $service_name, sprintf( "%s\n%s", $service_name, $appointment['staff_name'] ), $appointment['location_id'] );
+
+                $ics->addEvent( $appointment['start_date'], $appointment['end_date'], $service_name, Lib\Utils\Codes::replace( $description_template, $description_codes, false ), $appointment['location_id'] );
             }
         }
 

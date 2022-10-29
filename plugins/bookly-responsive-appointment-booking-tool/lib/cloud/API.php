@@ -34,6 +34,8 @@ class API extends Cache
     public $stripe;
     /** @var Zapier */
     public $zapier;
+    /** @var Cron */
+    public $cron;
 
     /**
      * Constructor.
@@ -46,6 +48,7 @@ class API extends Cache
         $this->sms = new SMS( $this );
         $this->stripe = new Stripe( $this );
         $this->zapier = new Zapier( $this );
+        $this->cron = new Cron( $this );
     }
 
     /**
@@ -297,7 +300,7 @@ class API extends Cache
         $response = json_decode( $response, true );
 
         if ( $response !== null && array_key_exists( 'success', $response ) ) {
-            if ( $response['success'] == true ) {
+            if ( $response['success'] ) {
 
                 return $response;
             }

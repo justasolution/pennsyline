@@ -34,9 +34,15 @@ class Ajax extends BooklyLib\Base\Ajax
             $category
                 ->setPosition( $position )
                 ->setName( $category_data['name'] )
+                ->setAttachmentId( $category_data['attachment_id'] ?: null )
+                ->setInfo( $category_data['info'] )
                 ->save();
         }
 
-        wp_send_json_success( Entities\StaffCategory::query()->sortBy( 'position' )->fetchArray() );
+        $categories = Entities\StaffCategory::query()->sortBy( 'position' )->fetchArray();
+        foreach ( $categories as &$category ) {
+            $category['attachment'] = BooklyLib\Utils\Common::getAttachmentUrl( $category['attachment_id'], 'thumbnail' ) ?: null;
+        }
+        wp_send_json_success( $categories );
     }
 }

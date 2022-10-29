@@ -139,16 +139,18 @@ abstract class Common
      */
     public static function createWPUser( array $params, &$password, $alt_base = 'client' )
     {
-        if ( $params['email'] == '' ) {
+        if ( ! isset( $params['email'] ) || trim( $params['email'] ) === '' ) {
             throw new BooklyLib\Base\ValidationException( __( 'Email required', 'bookly' ), 'email' );
         }
-
-        $base = BooklyLib\Config::showFirstLastName()
-            ? sanitize_user( sprintf( '%s %s', $params['first_name'], $params['last_name'] ), true )
-            : sanitize_user( $params['full_name'], true );
-        $base     = $base != '' ? $base : $alt_base;
+        $use_full_name = ! ( isset( $params['first_name'], $params['last_name'] ) && trim( $params['first_name'] . $params['last_name'] ) !== '' );
+        if ( $use_full_name ) {
+            $base = sanitize_user( isset( $params['full_name'] ) ? $params['full_name'] : '', true );
+        } else {
+            $base = sanitize_user( sprintf( '%s %s', $params['first_name'], $params['last_name'] ), true );
+        }
+        $base = $base !== '' ? $base : $alt_base;
         $username = $base;
-        $i        = 1;
+        $i = 1;
         while ( username_exists( $username ) ) {
             $username = $base . $i;
             ++ $i;
@@ -158,17 +160,55 @@ abstract class Common
         // Create WordPress user.
         $wp_user_id = wp_create_user( $username, $password, $params['email'] );
         if ( is_wp_error( $wp_user_id ) ) {
-            throw new BooklyLib\Base\ValidationException( implode( $wp_user_id->get_error_messages(), PHP_EOL ), 'wp_user' );
+            throw new BooklyLib\Base\ValidationException( implode( PHP_EOL, $wp_user_id->get_error_messages() ), 'wp_user' );
         }
 
         // Set first/last name for WordPress user.
         $user = get_user_by( 'id', $wp_user_id );
-        if ( $user && ( $params['first_name'] || $params['last_name'] ) ) {
+        if ( $user && ! $use_full_name ) {
             $user->first_name = $params['first_name'];
             $user->last_name = $params['last_name'];
             wp_update_user( $user );
         }
 
         return $user;
+    }
+
+    /**
+     * Create WooCommerce order
+     *
+     * @param int $service_id
+     * @param float $price
+     * @param float $tax
+     * @param int|null $wp_user_id
+     * @return \WC_Order
+     */
+    public static function createWCOrder( $service_id, $price, $tax, $wp_user_id )
+    {
+        $total = get_option( 'bookly_taxes_in_price' ) == 'excluded' ? $price + $tax : $price;
+        $order_data = array(
+            'status' => get_option( 'bookly_wc_default_order_status' ),
+            'customer_id' => (int) $wp_user_id,
+        );
+
+        $product_id = get_option( 'bookly_wc_product' );
+        if ( $service_id ) {
+            $product_id = BooklyLib\Entities\Service::query()
+                ->where( 'id', $service_id )->fetchVar( 'wc_product_id' ) ?: $product_id;
+        }
+
+        /** @var \WC_Order $order */
+        $order = wc_create_order( $order_data );
+        $product = wc_get_product( $product_id );
+        if ( $product ) {
+            $product->set_price( $total );
+            $order->add_product( $product );
+        }
+        $order->set_cart_tax( $tax );
+        $order->set_total( $total );
+        $order->add_order_note( 'Created via Bookly backend', 0, true );
+        $order->save();
+
+        return $order;
     }
 }

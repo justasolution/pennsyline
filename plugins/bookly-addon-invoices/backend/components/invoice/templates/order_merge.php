@@ -38,7 +38,7 @@ use Bookly\Lib as BooklyLib;
          <?php
             $paymentDataTemp = $paymentsInfo->getPaymentData();
             $paymentData = $paymentDataTemp['payment'];
-
+            //print_r($paymentData);
             foreach($paymentData['subtotal'] as $key => $value){
                 //echo "<pre>";
                 if($key === 'price'){
@@ -49,9 +49,9 @@ use Bookly\Lib as BooklyLib;
                 //echo "</pre>";
             }
             $paymentData['p_subtotal'] = $p_subtotal;
-            $paymentData['p_total'] = $p_subtotal; // TODO add more logic if needed
+            $paymentData['p_total'] = $paymentData['total']; // TODO add more logic if needed
             //echo "<pre>";
-             //print_r($paymentData['subtotal']);
+            //print_r($paymentData['subtotal']);
             //print_r($paymentData['p_subtotal']);
             //echo "</pre>";
         ?>

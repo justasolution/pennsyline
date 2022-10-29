@@ -25,8 +25,10 @@ class Shared extends Proxy\Shared
      */
     public static function prepareCodes( array $codes )
     {
+        $codes['appointments']['loop']['codes']['custom_fields'] = array( 'description' => __( 'Combined values of all custom fields', 'bookly' ), 'if' => true );
         $codes['custom_fields'] = array( 'description' => __( 'Combined values of all custom fields', 'bookly' ), 'if' => true );
         foreach ( Lib\ProxyProviders\Local::getAll( array( 'captcha', 'text-content', 'file' ) ) as $custom_field ) {
+            $codes['appointments']['loop']['codes'][ 'custom_field#' . $custom_field->id ] = array( 'description' => __( 'Custom field', 'bookly' ) . ': ' . $custom_field->label, 'if' => true );
             $codes[ 'custom_field#' . $custom_field->id ] = array( 'description' => __( 'Custom field', 'bookly' ) . ': ' . $custom_field->label, 'if' => true );
         }
 

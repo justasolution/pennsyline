@@ -25,23 +25,32 @@ class Codes
                 'loop' => array(
                     'item' => 'appointment',
                     'codes' => array(
-                        'service_name' => array( 'description' => __( 'Service name of appointment', 'bookly' ) ),
-                        'service_info' => array( 'description' => __( 'Info of service', 'bookly' ), 'if' => true  ),
-                        'category_name' => array( 'description' => __( 'Service category name of appointment', 'bookly' ), 'if' => true ),
-                        'service_duration' => array( 'description' => __( 'Service duration of appointment', 'bookly' ) ),
-                        'service_price' => array( 'description' => __( 'Service price of appointment', 'bookly' ), 'if' => true ),
-                        'staff_name' => array( 'description' => __( 'Staff member full name in appointment', 'bookly' ) ),
+                        'appointment_id' => array( 'description' => __( 'Date of appointment', 'bookly' ), 'if' => true ),
                         'appointment_date' => array( 'description' => __( 'Date of appointment', 'bookly' ), 'if' => true ),
                         'appointment_time' => array( 'description' => __( 'Time of appointment', 'bookly' ), 'if' => true ),
+                        'category_image' => array( 'description' => __( 'Image of category', 'bookly' ), 'if' => true ),
+                        'category_info' => array( 'description' => __( 'Service category info of appointment', 'bookly' ), 'if' => true ),
+                        'category_name' => array( 'description' => __( 'Service category name of appointment', 'bookly' ), 'if' => true ),
+                        'service_duration' => array( 'description' => __( 'Service duration of appointment', 'bookly' ) ),
+                        'service_info' => array( 'description' => __( 'Info of service', 'bookly' ), 'if' => true  ),
+                        'service_name' => array( 'description' => __( 'Service name of appointment', 'bookly' ) ),
+                        'service_price' => array( 'description' => __( 'Service price of appointment', 'bookly' ), 'if' => true ),
+                        'staff_category_image' => array( 'description' => __( 'Image of staff category', 'bookly' ), 'if' => true ),
+                        'staff_category_info' => array( 'description' => __( 'Staff category info of appointment', 'bookly' ), 'if' => true ),
+                        'staff_category_name' => array( 'description' => __( 'Staff category name of appointment', 'bookly' ), 'if' => true ),
+                        'staff_name' => array( 'description' => __( 'Staff member full name in appointment', 'bookly' ) ),
                     ),
                 ),
                 'flags' => array( 'step' => '>1' ),
             ),
-            'appointments_count' => array( 'description' => __( 'Total quantity of appointments in cart', 'bookly' ), 'flags' => array( 'step' => 7, 'extra_codes' => true ) ),
+            'appointment_id' => array( 'description' => __( 'Date of appointment', 'bookly' ), 'if' => true, 'flags' => array( 'step' => '>3' ) ),
             'appointment_date' => array( 'description' => __( 'Date of appointment', 'bookly' ), 'if' => true, 'flags' => array( 'step' => '>3' ) ),
             'appointment_time' => array( 'description' => __( 'Time of appointment', 'bookly' ), 'if' => true, 'flags' => array( 'step' => '>3' ) ),
+            'appointments_count' => array( 'description' => __( 'Total quantity of appointments in cart', 'bookly' ), 'flags' => array( 'step' => 7, 'extra_codes' => true ) ),
             'booking_number' => array( 'description' => __( 'Booking number', 'bookly' ), 'flags' => array( 'step' => 8, 'extra_codes' => true ) ),
-            'category_name' => array( 'description' => __( 'Name of category', 'bookly' ) ),
+            'category_image' => array( 'description' => __( 'Image of category', 'bookly' ), 'if' => true, 'flags' => array( 'step' => '>1' ) ),
+            'category_info' => array( 'description' => __( 'Info of category', 'bookly' ), 'if' => true, 'flags' => array( 'step' => '>1' ) ),
+            'category_name' => array( 'description' => __( 'Name of category', 'bookly' ), 'if' => true, 'flags' => array( 'step' => '>1' ) ),
             'client_address' => array( 'description' => __( 'Address of client', 'bookly' ), 'if' => true ),
             'client_email' => array( 'description' => __( 'Email of client', 'bookly' ), 'if' => true ),
             'client_first_name' => array( 'description' => __( 'First name of client', 'bookly' ), 'if' => true ),
@@ -51,10 +60,13 @@ class Codes
             'client_phone' => array( 'description' => __( 'Phone of client', 'bookly' ), 'if' => true ),
             'login_form' => array( 'description' => __( 'Login form', 'bookly' ), 'flags' => array( 'step' => 6, 'extra_codes' => true ) ),
             'service_duration' => array( 'description' => __( 'Duration of service', 'bookly' ) ),
+            'service_image' => array( 'description' => __( 'Image of service', 'bookly' ), 'if' => true ),
             'service_info' => array( 'description' => __( 'Info of service', 'bookly' ), 'if' => true ),
             'service_name' => array( 'description' => __( 'Name of service', 'bookly' ) ),
-            'service_image' => array( 'description' => __( 'Image of service', 'bookly' ), 'if' => true ),
             'service_price' => array( 'description' => __( 'Price of service', 'bookly' ), 'if' => true ),
+            'staff_category_image' => array( 'description' => __( 'Image of staff category', 'bookly' ), 'if' => true, 'flags' => array( 'step' => '>1' ) ),
+            'staff_category_info' => array( 'description' => __( 'Staff category info of appointment', 'bookly' ), 'if' => true, 'flags' => array( 'step' => '>1' ) ),
+            'staff_category_name' => array( 'description' => __( 'Staff category name of appointment', 'bookly' ), 'if' => true, 'flags' => array( 'step' => '>1' ) ),
             'staff_info' => array( 'description' => __( 'Info of staff member', 'bookly' ), 'if' => true ),
             'staff_name' => array( 'description' => __( 'Full name of staff member', 'bookly' ) ),
             'staff_photo' => array( 'description' => __( 'Photo of staff member', 'bookly' ), 'if' => true, 'flags' => array( 'step' => '>1' ) ),
@@ -90,11 +102,29 @@ class Codes
     {
         return json_encode( array(
             'service_duration' => array( 'description' => __( 'Duration of service', 'bookly' ) ),
-            'service_info' => array( 'description' => __( 'Info of service', 'bookly' ), 'if' => true ),
-            'service_name' => array( 'description' => __( 'Name of service', 'bookly' ) ),
             'service_image' => array( 'description' => __( 'Image of service', 'bookly' ), 'if' => true ),
             'service_image_url' => array( 'description' => __( 'URL of service image (to use inside img tag)', 'bookly' ), 'if' => true ),
+            'service_info' => array( 'description' => __( 'Info of service', 'bookly' ), 'if' => true ),
+            'service_name' => array( 'description' => __( 'Name of service', 'bookly' ) ),
             'service_price' => array( 'description' => __( 'Price of service', 'bookly' ), 'if' => true ),
+        ) );
+    }
+
+    /**
+     * Get JSON for appearance category codes
+     *
+     * @return string
+     */
+    public static function getCategoryCodes()
+    {
+        return json_encode( array(
+            'category_image' => array( 'description' => __( 'Image of category', 'bookly' ), 'if' => true ),
+            'category_image_url' => array( 'description' => __( 'URL of category image (to use inside img tag)', 'bookly' ), 'if' => true ),
+            'category_info' => array( 'description' => __( 'Info of category', 'bookly' ), 'if' => true ),
+            'category_name' => array( 'description' => __( 'Name of category', 'bookly' ) ),
+            'staff_category_image' => array( 'description' => __( 'Image of staff category', 'bookly' ), 'if' => true ),
+            'staff_category_info' => array( 'description' => __( 'Info of staff category', 'bookly' ), 'if' => true ),
+            'staff_category_name' => array( 'description' => __( 'Name of staff category', 'bookly' ) ),
         ) );
     }
 

@@ -42,13 +42,31 @@ class Shared extends Proxy\Shared
     /**
      * @inheritDoc
      */
-    public static function prepareCartItemInfoText( $data, BooklyLib\CartItem $cart_item )
+    public static function prepareCartItemInfoText( $data, BooklyLib\CartItem $cart_item, $userData )
     {
         if ( $cart_item->getAppointmentId() ) {
-            $data['online_meeting_url'][] = BooklyLib\Proxy\Shared::buildOnlineMeetingUrl( '', $cart_item->getAppointment() );
+            $data['online_meeting_url'][] = BooklyLib\Proxy\Shared::buildOnlineMeetingUrl( '', $cart_item->getAppointment(), $userData->getCustomer() );
             $data['online_meeting_password'][] = BooklyLib\Proxy\Shared::buildOnlineMeetingPassword( '', $cart_item->getAppointment() );
-            $data['online_meeting_join_url'][] = BooklyLib\Proxy\Shared::buildOnlineMeetingJoinUrl( '', $cart_item->getAppointment() );
+            $data['online_meeting_join_url'][] = BooklyLib\Proxy\Shared::buildOnlineMeetingJoinUrl( '', $cart_item->getAppointment(), $userData->getCustomer() );
         }
+
+        $staff_category = $data['staff'] && $data['staff']->getCategoryId() ? Lib\Entities\StaffCategory::find( $data['staff']->getCategoryId() ) : null;
+        $data['staff_category_name'][] = $staff_category ? $staff_category->getTranslatedName() : '';
+        $data['staff_category_info'][] = $staff_category ? $staff_category->getTranslatedInfo() : '';
+        $data['staff_category_image'][] = ( $staff_category && ( $url = $staff_category->getImageUrl() ) ) ? '<img src="' . $url . '"/>' : '';
+
+        return $data;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function prepareChainItemInfoText( $data, BooklyLib\ChainItem $chain_item )
+    {
+        $staff_category = $data['staff'] && $data['staff']->getCategoryId() ? Lib\Entities\StaffCategory::find( $data['staff']->getCategoryId() ) : null;
+        $data['staff_category_name'][] = $staff_category ? $staff_category->getTranslatedName() : '';
+        $data['staff_category_info'][] = $staff_category ? $staff_category->getTranslatedInfo() : '';
+        $data['staff_category_image'][] = ( $staff_category && ( $url = $staff_category->getImageUrl() ) ) ? '<img src="' . $url . '"/>' : '';
 
         return $data;
     }
@@ -58,9 +76,10 @@ class Shared extends Proxy\Shared
      */
     public static function prepareInfoTextCodes( array $codes, array $data )
     {
-        $codes['online_meeting_url'] = isset( $data['online_meeting_url'] ) ? implode( ', ', $data['online_meeting_url'] ) : '';
-        $codes['online_meeting_password'] = isset( $data['online_meeting_password'] ) ? implode( ', ', $data['online_meeting_password'] ) : '';
-        $codes['online_meeting_join_url'] = isset( $data['online_meeting_join_url'] ) ? implode( ', ', $data['online_meeting_join_url'] ) : '';
+        $keys = array( 'online_meeting_url', 'online_meeting_password', 'online_meeting_join_url', 'staff_category_image', 'staff_category_info', 'staff_category_name' );
+        foreach ( $keys as $key ) {
+            $codes[ $key ] = isset( $data[ $key ] ) ? implode( ', ', $data[ $key ] ) : '';
+        }
 
         return $codes;
     }
@@ -74,7 +93,7 @@ class Shared extends Proxy\Shared
             $gateway = BooklyLib\Entities\Payment::TYPE_PAYPAL;
             if ( Proxy\CustomerGroups::allowedGateway( $gateway, $userData ) !== false ) {
                 $cart_info->setGateway( $gateway );
-                $payment_status = $userData->extractPaymentStatus();
+                $payment_status = $userData->extractPaymentStatus( $cart_info->getGateway() );
 
                 $options[ $gateway ] = array(
                     'html' => self::renderTemplate(
@@ -96,11 +115,17 @@ class Shared extends Proxy\Shared
     public static function renderPaymentForms( $form_id, $page_url )
     {
         if ( Config::paypalEnabled() ) {
-            $type = get_option( 'bookly_paypal_enabled' );
-            self::renderTemplate(
-                'paypal_payment_form',
-                compact( 'type', 'form_id', 'page_url' )
-            );
+            switch ( get_option( 'bookly_paypal_enabled' ) ) {
+                case Lib\Payment\PayPal::TYPE_EXPRESS_CHECKOUT:
+                    \Bookly\Frontend\Components\Payment\Gateway::renderForm( $form_id, 'paypal', $page_url, 'paypal-express-checkout' );
+                    break;
+                case Lib\Payment\PayPal::TYPE_PAYMENTS_STANDARD:
+                    Proxy\PaypalPaymentsStandard::renderPaymentForm( $form_id, $page_url );
+                    break;
+                case Lib\Payment\PayPal::TYPE_CHECKOUT:
+                    \Bookly\Frontend\Components\Payment\Gateway::renderForm( $form_id, 'paypal', $page_url );
+                    break;
+            }
         }
     }
 

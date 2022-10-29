@@ -562,6 +562,7 @@ export default function stepRepeat(params, error) {
                     });
 
                     $('.bookly-js-back-step', $container).on('click', function (e) {
+                        e.stopPropagation();
                         e.preventDefault();
                         laddaStart(this);
                         booklyAjax({
@@ -583,12 +584,15 @@ export default function stepRepeat(params, error) {
                     });
 
                     $('.bookly-js-go-to-cart', $container).on('click', function (e) {
+                        e.stopPropagation();
                         e.preventDefault();
                         laddaStart(this);
                         stepCart({form_id: params.form_id, from_step: 'repeat'});
                     });
 
                     $('.bookly-js-next-step', $container).on('click', function (e) {
+                        e.stopPropagation();
+                        e.preventDefault();
                         laddaStart(this);
 
                         // Execute custom JavaScript

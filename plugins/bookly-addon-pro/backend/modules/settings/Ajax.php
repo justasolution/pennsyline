@@ -75,6 +75,7 @@ class Ajax extends BooklyLib\Base\Ajax
         } else {
             wp_redirect( $zoom_config_url . '#zoom-failed' );
         }
+        exit;
     }
 
     public static function disconnectZoom()

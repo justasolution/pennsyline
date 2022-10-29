@@ -362,7 +362,7 @@ class TCPDF_IMAGES {
         if ( $size === false ) {
             $fp = self::booklyFopen( $file );
             if ( $fp ) {
-                $source = fread( $fp, 512 );
+                $source = fread( $fp, 1024 );
 
                 $size = @getimagesize( 'data://application/octet-stream;base64,' . base64_encode( $source ) );
             }
@@ -384,6 +384,10 @@ class TCPDF_IMAGES {
                     'method' => 'GET',
                     'header' => "User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.57 Safari/537.17\r\n",
                     'timeout' => 30,
+                ),
+                'ssl' => array(
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
                 ),
             );
             $context = stream_context_create( $headers );

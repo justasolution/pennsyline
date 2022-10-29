@@ -3,7 +3,7 @@
 Plugin Name: Bookly Invoices (Add-on)
 Plugin URI: https://www.booking-wp-plugin.com/?utm_source=bookly_admin&utm_medium=plugins_page&utm_campaign=plugins_page
 Description: Bookly Invoices add-on allows to automatically issue invoices to your customers upon ordered appointments.
-Version: 3.2
+Version: 3.4
 Author: Bookly
 Author URI: https://www.booking-wp-plugin.com/?utm_source=bookly_admin&utm_medium=plugins_page&utm_campaign=plugins_page
 Text Domain: bookly

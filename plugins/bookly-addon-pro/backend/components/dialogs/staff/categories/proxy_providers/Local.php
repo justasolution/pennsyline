@@ -8,6 +8,7 @@ use Bookly\Lib as BooklyLib;
 
 /**
  * Class Local
+ *
  * @package BooklyPro\Backend\Components\Dialogs\Appointment\AttachPayment\ProxyProviders
  */
 class Local extends Proxy\Pro
@@ -25,10 +26,6 @@ class Local extends Proxy\Pro
             'module' => array( 'js/staff-categories-dialog.js' => array( 'bookly-backend-globals', ) ),
         ) );
 
-        wp_localize_script( 'bookly-staff-categories-dialog.js', 'BooklyStaffCategoriesL10n', array(
-            'csrfToken' => BooklyLib\Utils\Common::getCsrfToken(),
-        ) );
-
         self::renderTemplate( 'dialog' );
     }
 
@@ -38,7 +35,7 @@ class Local extends Proxy\Pro
     public static function renderAdd()
     {
         print '<div class="col-12 col-sm-auto">';
-        Buttons::renderDefault( null, 'w-100 mb-3', __( 'Categories', 'bookly' ), array( 'data-toggle' => 'bookly-modal', 'data-target' => '#bookly-staff-categories-modal' ), true );
+        Buttons::renderDefault( null, 'w-100 mb-3', __( 'Categories', 'bookly' ), array( 'data-toggle' => 'bookly-modal', 'data-target' => '#bookly-staff-categories-modal', 'disabled' => 'disabled' ), true );
         print '</div>';
     }
 }

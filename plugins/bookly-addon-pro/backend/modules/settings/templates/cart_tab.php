@@ -9,7 +9,7 @@ use Bookly\Lib\Config;
         <div class="card-body">
             <div class="form-group">
                 <label for="bookly_cart_show_columns"><?php esc_html_e( 'Columns', 'bookly' ) ?></label><br/>
-                <div id="bookly_cart_show_columns">
+                <div id="bookly_cart_show_columns" class="bookly-js-drag-container">
                     <?php foreach ( (array) get_option( 'bookly_cart_show_columns' ) as $column => $attr ) : ?>
                         <div class="form-row mb-1"<?php if ( ( $column == 'deposit' && ! Config::depositPaymentsActive() )
                             || ( $column == 'tax' && ! Config::taxesActive() ) ) : ?> style="display:none"<?php endif ?>>

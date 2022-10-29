@@ -118,6 +118,21 @@ class Controller extends BooklyLib\Base\Ajax
                             ) ), 'error' );
                         WC()->cart->set_quantity( $wc_key, 0, false );
                         $recalculate_totals = true;
+                    } else {
+                        $now = BooklyLib\Slots\DatePoint::now();
+                        foreach ( $userData->cart->getItems() as $cart_item ) {
+                            $slot = $cart_item->getSlots();
+                            if ( $now->gte( BooklyLib\Slots\DatePoint::fromStr( $slot[0][2] )->modify( - BooklyLib\Proxy\Pro::getMinimumTimePriorBooking( $cart_item->getServiceId() ) ) ) ) {
+                                wc_add_notice( strtr( __( 'The selected slot for service {service_name} at {appointment_time} is not available anymore. Please select another time slot or contact the service provider', 'bookly' ),
+                                    array(
+                                        '{service_name}' => '<strong>' . $cart_item->getService()->getTranslatedTitle() . '</strong>',
+                                        '{appointment_time}' => BooklyLib\Utils\DateTime::formatDateTime( $slot[0][2] ),
+                                    ) ), 'error' );
+                                WC()->cart->set_quantity( $wc_key, 0, false );
+                                $recalculate_totals = true;
+                                break;
+                            }
+                        }
                     }
                 } else {
                     wc_add_notice( __( 'This service is no longer provided.', 'bookly' ), 'error' );
@@ -157,7 +172,7 @@ class Controller extends BooklyLib\Base\Ajax
      */
     public static function checkoutValue( $null, $field_name )
     {
-        if ( empty( self::$checkout_info ) ) {
+        if ( empty( self::$checkout_info ) && class_exists( 'WooCommerce', false ) && ! is_null( WC()->cart ) ) {
             foreach ( WC()->cart->get_cart() as $wc_key => $wc_item ) {
                 if ( array_key_exists( 'bookly', $wc_item ) ) {
                     foreach ( $wc_item['bookly']['wc_checkout'] as $key => $value ) {
@@ -173,79 +188,86 @@ class Controller extends BooklyLib\Base\Ajax
             return self::$checkout_info[ $field_name ];
         }
 
-        return null;
+        return $null;
     }
 
     /**
      * Do bookings after checkout.
      *
-     * @param $order_id
+     * @param string $order_id
      */
     public static function paymentComplete( $order_id )
     {
-        $wc_order = new \WC_Order( $order_id );
-        $address = array(
-            // WC address | Bookly Customer address
-            'country'    => 'country',
-            'state'      => 'state',
-            'city'       => 'city',
-            'address_1'  => 'street',
-            'address_2'  => 'additional_address',
-            'postcode'   => 'postcode',
-        );
-        /** @var \WC_Countries $countries */
-        $countries = WC()->countries;
-        foreach ( $wc_order->get_items() as $item_id => $order_item ) {
-            $data = wc_get_order_item_meta( $item_id, 'bookly' );
-            if ( $data && ! isset ( $data['processed'] ) ) {
-                $userData = new BooklyLib\UserBookingData( null );
-                foreach ( $address as $wc_part => $bookly_part ) {
-                    $method_name = 'get_billing_' . $wc_part;
-                    if ( method_exists( $wc_order, $method_name ) ) {
-                        // WC checkout address
-                        $value = $wc_order->$method_name();
-                        if ( $wc_part == 'country' ) {
-                            $value = isset( $countries->countries[ $value ] )
-                                ? $countries->countries[ $value ]
-                                : $value;
-                        } elseif ( $wc_part == 'state' ) {
-                            $country_code = $wc_order->get_billing_country();
-                            $value   = isset( $countries->states[ $country_code ][ $value ] )
-                                ? $countries->states[ $country_code ][ $value ]
-                                : $value;
+        $transient_name = 'bookly_wc_lock_order_id_' . $order_id;
+        $lock = (int) get_transient( $transient_name );
+        if ( $lock + 30 < time() ) {
+            set_transient( $transient_name, time(), 30 );
+
+            $wc_order = new \WC_Order( $order_id );
+            $address = array(
+                // WC address | Bookly Customer address
+                'country' => 'country',
+                'state' => 'state',
+                'city' => 'city',
+                'address_1' => 'street',
+                'address_2' => 'additional_address',
+                'postcode' => 'postcode',
+            );
+            /** @var \WC_Countries $countries */
+            $countries = WC()->countries;
+
+            foreach ( $wc_order->get_items() as $item_id => $order_item ) {
+                $data = wc_get_order_item_meta( $item_id, 'bookly' );
+                if ( $data && ! isset ( $data['processed'] ) ) {
+                    $userData = new BooklyLib\UserBookingData( null );
+                    foreach ( $address as $wc_part => $bookly_part ) {
+                        $method_name = 'get_billing_' . $wc_part;
+                        if ( method_exists( $wc_order, $method_name ) ) {
+                            // WC checkout address
+                            $value = $wc_order->$method_name();
+                            if ( $wc_part == 'country' ) {
+                                $value = isset( $countries->countries[ $value ] )
+                                    ? $countries->countries[ $value ]
+                                    : $value;
+                            } elseif ( $wc_part == 'state' ) {
+                                $country_code = $wc_order->get_billing_country();
+                                $value = isset( $countries->states[ $country_code ][ $value ] )
+                                    ? $countries->states[ $country_code ][ $value ]
+                                    : $value;
+                            }
+                            $data[ $bookly_part ] = $value;
                         }
-                        $data[ $bookly_part ] = $value;
                     }
-                }
-                $data['street_number'] = '';
-                $userData->fillData( $data );
-                $userData->cart->setItemsData( $data['items'] );
-                if ( $order_item['qty'] > 1 ) {
-                    foreach ( $userData->cart->getItems() as $cart_item ) {
-                        $cart_item->setNumberOfPersons( $cart_item->getNumberOfPersons() * $order_item['qty'] );
+                    $data['street_number'] = '';
+                    $userData->fillData( $data );
+                    $userData->cart->setItemsData( $data['items'] );
+                    if ( $order_item['qty'] > 1 ) {
+                        foreach ( $userData->cart->getItems() as $cart_item ) {
+                            $cart_item->setNumberOfPersons( $cart_item->getNumberOfPersons() * $order_item['qty'] );
+                        }
                     }
+                    $cart_info = $userData->cart->getInfo();
+                    $payment = new BooklyLib\Entities\Payment();
+                    $payment
+                        ->setType( BooklyLib\Entities\Payment::TYPE_WOOCOMMERCE )
+                        ->setStatus( BooklyLib\Entities\Payment::STATUS_COMPLETED )
+                        ->setCartInfo( $cart_info )
+                        ->save();
+                    $order = $userData->save( $payment );
+                    $payment->setDetailsFromOrder( $order, $cart_info, array( 'reference_id' => $order_id ) )->save();
+                    if ( get_option( 'bookly_cst_create_account' ) && $order->getCustomer()->getWpUserId() ) {
+                        update_post_meta( $order_id, '_customer_user', $order->getCustomer()->getWpUserId() );
+                    }
+                    // Mark item as processed.
+                    $data['processed'] = true;
+                    $data['ca_ids'] = array();
+                    foreach ( $order->getFlatItems() as $item ) {
+                        $data['ca_ids'][] = $item->getCA()->getId();
+                    }
+                    wc_update_order_item_meta( $item_id, 'bookly', $data );
+                    current( $order->getItems() )->getCA()->setJustCreated( true );
+                    BooklyLib\Notifications\Cart\Sender::send( $order );
                 }
-                $cart_info = $userData->cart->getInfo();
-                $payment = new BooklyLib\Entities\Payment();
-                $payment
-                    ->setType( BooklyLib\Entities\Payment::TYPE_WOOCOMMERCE )
-                    ->setStatus( BooklyLib\Entities\Payment::STATUS_COMPLETED )
-                    ->setCartInfo( $cart_info )
-                    ->save();
-                $order = $userData->save( $payment );
-                $payment->setDetailsFromOrder( $order, $cart_info, array( 'reference_id' => $order_id ) )->save();
-                if ( get_option( 'bookly_cst_create_account' ) && $order->getCustomer()->getWpUserId() ) {
-                    update_post_meta( $order_id, '_customer_user', $order->getCustomer()->getWpUserId() );
-                }
-                // Mark item as processed.
-                $data['processed'] = true;
-                $data['ca_ids']    = array();
-                foreach ( $order->getFlatItems() as $item ) {
-                    $data['ca_ids'][] = $item->getCA()->getId();
-                }
-                wc_update_order_item_meta( $item_id, 'bookly', $data );
-                current( $order->getItems() )->getCA()->setJustCreated( true );
-                BooklyLib\Notifications\Cart\Sender::send( $order );
             }
         }
     }
@@ -253,7 +275,7 @@ class Controller extends BooklyLib\Base\Ajax
     /**
      * Cancel appointments on WC order cancelled.
      *
-     * @param $order_id
+     * @param string $order_id
      */
     public static function cancelOrder( $order_id )
     {
@@ -340,7 +362,7 @@ class Controller extends BooklyLib\Base\Ajax
     /**
      * Get item data for cart.
      *
-     * @param $other_data
+     * @param array $other_data
      * @param $wc_item
      * @return array
      */
@@ -368,6 +390,9 @@ class Controller extends BooklyLib\Base\Ajax
                             $appointment_end_client_dp = $appointment_start_client_dp->modify( $cart_item->getUnits() * $service->getDuration() + $cart_item->getExtrasDuration() );
                         }
                     }
+                    $category = $service && $service->getCategoryId()
+                        ? BooklyLib\Entities\Category::find( $service->getCategoryId() )
+                        : false;
                     $codes = array(
                         'amount_due' => BooklyLib\Utils\Price::format( $cart_info->getDue() ),
                         'amount_to_pay' => BooklyLib\Utils\Price::format( $cart_info->getPayNow() ),
@@ -375,12 +400,14 @@ class Controller extends BooklyLib\Base\Ajax
                         'appointment_end_date' => $appointment_end_client_dp ? $appointment_end_client_dp->formatI18nDate() : __( 'N/A', 'bookly' ),
                         'appointment_end_time' => $appointment_end_client_dp ? $appointment_end_client_dp->formatI18nTime() : __( 'N/A', 'bookly' ),
                         'appointment_time' => $appointment_start_client_dp ? $appointment_start_client_dp->formatI18nTime() : __( 'N/A', 'bookly' ),
+                        'category_info' => $category ? $category->getTranslatedInfo() : '',
                         'category_name' => $service ? $service->getTranslatedCategoryName() : '',
                         'deposit_value' => BooklyLib\Utils\Price::format( $cart_info->getDepositPay() ),
                         'number_of_persons' => $cart_item->getNumberOfPersons(),
                         'service_info' => $service ? $service->getTranslatedInfo() : '',
                         'service_name' => $service ? $service->getTranslatedTitle() : __( 'Service was not found', 'bookly' ),
                         'service_price' => $service ? BooklyLib\Utils\Price::format( $cart_item->getServicePrice() ) : '',
+                        'staff' => $staff,
                         'staff_info' => $staff ? $staff->getTranslatedInfo() : '',
                         'staff_name' => $staff ? $staff->getTranslatedName() : '',
                     );
@@ -390,6 +417,7 @@ class Controller extends BooklyLib\Base\Ajax
                             'online_meeting_url' => array(),
                             'online_meeting_password' => array(),
                             'online_meeting_join_url' => array(),
+                            'staff' => $staff
                         ),
                         $cart_item,
                         $userData
@@ -434,7 +462,7 @@ class Controller extends BooklyLib\Base\Ajax
      * @param $product_price
      * @param $wc_item
      * @param $cart_item_key
-     * @return mixed
+     * @return string
      */
     public static function getCartItemPrice( $product_price, $wc_item, $cart_item_key )
     {

@@ -24,20 +24,25 @@ class Ajax extends BooklyLib\Base\Ajax
      */
     public static function upload()
     {
-        $file  = new Entities\Files();
-        $name  = $_FILES['files']['name'][0];
+        $file = new Entities\Files();
+        $name = $_FILES['files']['name'][0];
         $parts = explode( '.', $name );
-        $slug  = BooklyLib\Utils\Common::generateToken( get_class( $file ), 'slug' );
-        $path  = realpath( get_option( 'bookly_files_directory' ) ) . DIRECTORY_SEPARATOR . $slug;
+        $allowed_extensions = Local::getAllowedExtensions();
+        $extension = end( $parts );
+        if ( $allowed_extensions && ! in_array( strtolower( $extension ), $allowed_extensions, false ) ) {
+            BooklyLib\Utils\Common::getFilesystem()->delete( $_FILES['files']['tmp_name'][0], false, 'f' );
+            wp_send_json_error( array( 'error' => BooklyLib\Utils\Common::getTranslatedOption( 'bookly_l10n_incorrect_file_type' ) ) );
+        }
+        $slug = BooklyLib\Utils\Common::generateToken( get_class( $file ), 'slug' );
+        $path = realpath( get_option( 'bookly_files_directory' ) ) . DIRECTORY_SEPARATOR . $slug;
         if ( count( $parts ) > 1 ) {
-            $path .= '.' . end( $parts );
+            $path .= '.' . $extension;
         }
         $file
             ->setName( $name )
             ->setPath( $path )
             ->setSlug( $slug )
-            ->setCustomFieldId( self::parameter( 'custom_field_id' ) )
-        ;
+            ->setCustomFieldId( self::parameter( 'custom_field_id' ) );
         if ( move_uploaded_file( $_FILES['files']['tmp_name'][0], $path ) ) {
             $file->save();
             wp_send_json_success( compact( 'name', 'slug' ) );

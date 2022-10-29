@@ -8,11 +8,11 @@ msgstr ""
 "Language: it_IT\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-16 13:09+0000\n"
-"PO-Revision-Date: 2021-07-16 13:09+0000\n"
+"POT-Creation-Date: 2022-07-19 07:56+0000\n"
+"PO-Revision-Date: 2022-07-19 07:56+0000\n"
 "Last-Translator: support@bookly.info\n"
 "Language-Team: Italian\n"
-"X-Loco-Version: 2.3.1; wp-5.5"
+"X-Loco-Version: 2.3.1; wp-6.0"
 
 msgid "Invoice #{invoice_number} for your appointment"
 msgstr ""
@@ -82,7 +82,8 @@ msgstr ""
 msgid "Invoice due days"
 msgstr ""
 
-msgid "This setting specifies the due period for the invoice (in days)."
+msgid ""
+"This setting specifies the due period for the invoice (from 1 to 365 days)"
 msgstr ""
 
 msgid "Font"
@@ -130,9 +131,7 @@ msgstr ""
 msgid "Attach invoice"
 msgstr ""
 
-msgid ""
-"Invoice due days: Please enter value in the following range (in days) - 1 to "
-"365."
+msgid "Invoice due days: Please enter value in days from 1 to 365"
 msgstr ""
 
 msgid "Service"
@@ -149,6 +148,9 @@ msgstr "Costo"
 
 msgid "Tax"
 msgstr ""
+
+msgid "Package"
+msgstr "Pacchetto"
 
 msgid "N/A"
 msgstr ""
@@ -211,16 +213,22 @@ msgid ""
 msgstr ""
 
 msgid ""
-"In the left-hand navigation pane, select the <b>Azure Active Directory</b> "
-"service, and then select <b>App registrations &gt; New registration</b>."
+"In the left-hand navigation panel, select the <b>Azure Active Directory</b>. "
+"Then select <b>Add > App registration</b>."
 msgstr ""
 
 msgid ""
 "When the <b>Register an application</b> page appears, enter your "
-"application's <b>Name</b> and <b>Redirect URI</b> found below on this page. "
+"application's <b>Name</b> and <b>Redirect URI</b> found below on this page."
+msgstr ""
+
+msgid ""
 "Make sure that the <b>Supported account types</b> is set to <b>Accounts in "
-"any organizational directory and personal Microsoft accounts</b>. When "
-"finished, select <b>Register</b>."
+"any organizational directory (Any Azure AD directory - Multitenant) and "
+"personal Microsoft accounts (e.g. Skype, Xbox)</b>."
+msgstr ""
+
+msgid "When finished, select <b>Register</b>."
 msgstr ""
 
 msgid ""
@@ -234,10 +242,16 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Under <b>Certificates &amp; secrets</b>, choose <b>New client secret</b>, "
-"set <b>Expires</b> to <b>Never</b> and click <b>Add</b>. Copy the app secret "
-"from the <b>Client secrets</b> list before leaving the page. Insert the "
-"secret into the form below on this page."
+"Under <b>Certificates & secrets</b>, choose <b>New client secret</b>, set <b>"
+"Expires</b> to <b>24 months</b> and click <b>Add</b>."
+msgstr ""
+
+msgid ""
+"Copy the app secret value from the <b>Client secrets</b> list before leaving "
+"the page."
+msgstr ""
+
+msgid "Insert the secret into the form below on this page."
 msgstr ""
 
 msgid ""
@@ -251,11 +265,9 @@ msgid "<b>Save</b> your changes."
 msgstr ""
 
 msgid ""
-"Go to Staff Members, select a staff member and click <b>Connect</b> which is "
-"located at the bottom of the page."
+"Go to Staff Members, select a staff member. On the <b>Advanced</b> tab, "
+"click <b>Sign in with Microsoft</b>."
 msgstr ""
-"Vai ai membri dello staff, selezionare un membro dello staff e cliccare su "
-"<b>Connetti</b> che si trova nella parte inferiore della pagina."
 
 msgid "Application ID"
 msgstr ""
@@ -332,7 +344,8 @@ msgstr "Modello per titolo dell'evento"
 
 msgid ""
 "Configure what information should be placed in the title of Outlook Calendar "
-"event. Available codes are {service_name}, {staff_name} and {client_names}."
+"event. Available codes are {service_name}, {category_name}, {staff_name} and "
+"{client_names}."
 msgstr ""
 
 msgid "Template for event description"
@@ -352,9 +365,6 @@ msgstr ""
 
 msgid "Outlook Calendar integration"
 msgstr ""
-
-msgid "Connect"
-msgstr "Connetti"
 
 #, php-format
 msgid "Please configure Outlook Calendar <a href=\"%s\">settings</a> first"
@@ -390,10 +400,16 @@ msgstr "Campi personalizzati"
 msgid "Incorrect code"
 msgstr "Codice errato"
 
+msgid "Incorrect value"
+msgstr ""
+
 msgid "Required"
 msgstr "Richiesto"
 
 msgid "Combined values of all custom fields"
+msgstr ""
+
+msgid "Custom field"
 msgstr ""
 
 msgid "General"
@@ -446,6 +462,15 @@ msgstr "Gruppo di caselle di scelta"
 msgid "Drop Down"
 msgstr "Menu a scomparsa"
 
+msgid "Numeric Field"
+msgstr ""
+
+msgid "Date Field"
+msgstr ""
+
+msgid "Time Field"
+msgstr ""
+
 msgid "Captcha"
 msgstr "Captcha"
 
@@ -473,6 +498,21 @@ msgstr "Casella di scelta"
 msgid "Option"
 msgstr "Opzione"
 
+msgid "Use limit values"
+msgstr ""
+
+msgid "Min value"
+msgstr ""
+
+msgid "Max value"
+msgstr ""
+
+msgid "Delimiter, minutes"
+msgstr ""
+
+msgid "Default"
+msgstr "Predefinito"
+
 msgid "Remove item"
 msgstr "Rimuovi elemento"
 
@@ -484,22 +524,25 @@ msgstr ""
 msgid "Add condition"
 msgstr ""
 
-msgid "equals"
+msgid "in"
 msgstr ""
 
-msgid "not equals"
+msgid "not in"
 msgstr ""
 
 msgid "Enter a description"
+msgstr ""
+
+msgid "Field will be displayed in booking form"
+msgstr ""
+
+msgid "Field will not be displayed in booking form"
 msgstr ""
 
 msgid "Show custom fields"
 msgstr "Mostra campi personalizzati"
 
 msgid "Custom field description"
-msgstr ""
-
-msgid "Custom field"
 msgstr ""
 
 msgid "Extended staff agenda for next day"
@@ -513,6 +556,143 @@ msgstr ""
 
 msgid "Another code"
 msgstr "Un'altra codice"
+
+msgid ""
+"To find your <b>API Key</b> and <b>Server</b> parameter, do the following:"
+msgstr ""
+
+#, php-format
+msgid ""
+"Navigate to the <a href=\"%s\" target=\"_blank\">API Keys section</a> of "
+"your Mailchimp account."
+msgstr ""
+
+msgid ""
+"If you already have an API key listed and you'd like to use it for your "
+"application, simply copy it."
+msgstr ""
+
+msgid ""
+"Otherwise, click <b>Create Key</b> and give it a descriptive name that will "
+"remind you which application it's used for."
+msgstr ""
+
+msgid "API Key"
+msgstr ""
+
+msgid "The API Key obtained from your Mailchimp account"
+msgstr ""
+
+msgid "Server"
+msgstr ""
+
+msgid ""
+"To find the value, log into Mailchimp account and look at the URL in your "
+"browser. You'll see something like https://us19.admin.mailchimp.com/; the "
+"us19 part is the server prefix. Note that your specific value may be "
+"different"
+msgstr ""
+
+msgid "Update mode"
+msgstr ""
+
+msgid ""
+"Override customer's data in Mailchimp if email address matches the existing "
+"one. If you select \"Override\", then information about existing user will "
+"be overrided. If you select \"Don't override\", then information about "
+"existing user will remain unchanged"
+msgstr ""
+
+msgid "Override"
+msgstr ""
+
+msgid "Don't override"
+msgstr ""
+
+msgid "Default status"
+msgstr ""
+
+msgid "Default status of new user according to Mailchimp statuses"
+msgstr ""
+
+msgid "Subscribed"
+msgstr ""
+
+msgid "Unsubscribed"
+msgstr ""
+
+msgid "Pending"
+msgstr "Da confermare"
+
+msgid "Cleaned"
+msgstr ""
+
+msgid "Transactional"
+msgstr ""
+
+msgid "Audience ID"
+msgstr ""
+
+msgid ""
+"ID of audience can be found in Settings > Audience name and campaign "
+"defaults of interested audience"
+msgstr ""
+
+msgid "Fields matching"
+msgstr ""
+
+#, php-format
+msgid ""
+"Enter the names of the fields in your Mailchimp audience settings in "
+"accordance with Bookly data. You can find these names in <b>Audience "
+"settings > Audience fields and %s tags</b> in your Mailchimp account"
+msgstr ""
+
+msgid "Value"
+msgstr ""
+
+msgid "Codes"
+msgstr "Codici"
+
+msgid "Add field"
+msgstr ""
+
+msgid ""
+"Remove a subscriber from mailing list when customer is deleted in Bookly"
+msgstr ""
+
+msgid "Delete"
+msgstr "Cancella"
+
+msgid "Are you sure?"
+msgstr "Sei sicuro?"
+
+msgid "Cancel"
+msgstr "Annulla"
+
+msgid "Address of client"
+msgstr "Indirizzo del cliente"
+
+msgid "Client birthday"
+msgstr ""
+
+msgid "Email of client"
+msgstr "Email del cliente"
+
+msgid "First name of client"
+msgstr "Nome del cliente"
+
+msgid "Last name of client"
+msgstr "Cognome del cliente"
+
+msgid "Full name of client"
+msgstr "Cognome e Nome del cliente"
+
+msgid "Note of client"
+msgstr ""
+
+msgid "Phone of client"
+msgstr "Telefono del cliente"
 
 msgid "Notification to customer about approved recurring appointment"
 msgstr ""
@@ -1061,6 +1241,12 @@ msgstr ""
 msgid "URL for approving the whole schedule"
 msgstr ""
 
+msgid "Cancel all appointments in chain link"
+msgstr ""
+
+msgid "URL of cancel all appointments link (to use inside <a> tag)"
+msgstr ""
+
 msgid "Recurring appointments"
 msgstr "Appuntamenti ricorrenti"
 
@@ -1078,9 +1264,6 @@ msgstr ""
 
 msgid "Back"
 msgstr "Indietro"
-
-msgid "Delete"
-msgstr "Cancella"
 
 msgid "Every"
 msgstr ""
@@ -1100,6 +1283,9 @@ msgid "This and next appointments"
 msgstr ""
 
 msgid "View series"
+msgstr ""
+
+msgid "The \"Until\" date cannot be earlier than the date of the appointment"
 msgstr ""
 
 msgid "Delete Appointment"
@@ -1190,9 +1376,6 @@ msgstr ""
 msgid "Custom"
 msgstr ""
 
-msgid "Are you sure?"
-msgstr "Sei sicuro?"
-
 msgid "Duplicate dates are not permitted."
 msgstr "Le date duplicate non sono permesse."
 
@@ -1282,6 +1465,9 @@ msgid ""
 "members."
 msgstr ""
 
+msgid "Read only"
+msgstr ""
+
 msgid "Hide visibility field"
 msgstr "Nascondi visibilità campo"
 
@@ -1345,9 +1531,6 @@ msgstr ""
 msgid "Fields"
 msgstr ""
 
-msgid "read only"
-msgstr ""
-
 msgid "Repeat every year"
 msgstr "Ripeti ogni anno"
 
@@ -1359,6 +1542,21 @@ msgstr "La capacità minima non deve essere superiore alla capacità massima."
 
 msgid "Export to CSV"
 msgstr "Esporta in CSV"
+
+msgid "Auto-refresh Calendar"
+msgstr ""
+
+msgid "Every 1 minute"
+msgstr ""
+
+msgid "Every 5 minutes"
+msgstr ""
+
+msgid "Every 15 minutes"
+msgstr ""
+
+msgid "Disable"
+msgstr "Disattiva"
 
 msgid "Displayed appointments"
 msgstr "Appuntamenti visualizzati"
@@ -1396,29 +1594,8 @@ msgstr "Stato"
 msgid "Payment"
 msgstr "Pagamento"
 
-msgid "Today"
-msgstr "Oggi"
-
-msgid "Week"
-msgstr "Settimana"
-
-msgid "Month"
-msgstr "Mese"
-
-msgid "All Day"
-msgstr "Tutto Il giorno"
-
-msgid "List"
-msgstr ""
-
-msgid "No appointments for selected period."
-msgstr "Nessun appuntamento per il periodo selezionato."
-
 msgid "On waiting list"
 msgstr "Sulla lista di attesa"
-
-msgid "Package"
-msgstr "Pacchetto"
 
 #, php-format
 msgid "%s of %s"
@@ -1545,11 +1722,20 @@ msgstr ""
 msgid "Customer Information"
 msgstr ""
 
+msgid "Combined values of all customer information fields"
+msgstr ""
+
+msgid "Customer information field"
+msgstr ""
+
 msgid "Ask once"
 msgstr ""
 
 msgid "Show customer information"
 msgstr "Mostra informazioni cliente"
+
+msgid "Info field"
+msgstr ""
 
 msgid ""
 "To receive REST API credentials, in <b>My Apps & Credentials</b> of your "
@@ -1578,9 +1764,6 @@ msgstr ""
 
 msgid "I will pay now with Mollie"
 msgstr "Pago subito con Mollie"
-
-msgid "API Key"
-msgstr ""
 
 msgid "Time interval of payment gateway"
 msgstr ""
@@ -1742,8 +1925,8 @@ msgstr "Videoconferenza"
 msgid "Join online meeting"
 msgstr ""
 
-msgid "Cancel"
-msgstr "Annulla"
+msgid "Cancellation reason"
+msgstr ""
 
 msgid "Reschedule"
 msgstr ""
@@ -1868,10 +2051,18 @@ msgid_plural " and %d more items"
 msgstr[0] " e %d altro elemento"
 msgstr[1] " e %d più elementi"
 
+msgid "Bookly Cloud couldn't connect to your server."
+msgstr ""
+
 msgid "Stripe not connected"
 msgstr ""
 
 msgid "Stripe account not found"
+msgstr ""
+
+msgid ""
+"Refund cannot be processed. Try again later or process it manually in your "
+"payment system"
 msgstr ""
 
 msgid "Error connecting to server."
@@ -1936,6 +2127,9 @@ msgstr ""
 msgid "Bookly Cloud - Low Balance"
 msgstr ""
 
+msgid "Card"
+msgstr ""
+
 msgid ""
 "You don't have enough Bookly Cloud credits to send this message. Please add "
 "funds to your balance and try again."
@@ -1973,12 +2167,6 @@ msgstr "Fallito"
 
 msgid "Undelivered"
 msgstr "Non consegnato"
-
-msgid "Default"
-msgstr "Predefinito"
-
-msgid "Pending"
-msgstr "Da confermare"
 
 msgid "Approved"
 msgstr "Confermato"
@@ -2310,6 +2498,9 @@ msgstr ""
 msgid "Bookly verification code"
 msgstr ""
 
+msgid "Download ICS"
+msgstr ""
+
 msgid ""
 "Thank you! Your booking is complete. An email with details of your booking "
 "has been sent to you."
@@ -2373,6 +2564,12 @@ msgstr "Sarò disponibile il o dopo il"
 
 msgid "Start from"
 msgstr "A partire dalle"
+
+msgid "I agree to the terms of service"
+msgstr ""
+
+msgid "You must accept our terms"
+msgstr ""
 
 msgid "Select category"
 msgstr "Seleziona una categoria"
@@ -2582,6 +2779,227 @@ msgstr ""
 "{company_phone}\n"
 "{company_website}"
 
+msgid "Page Redirection"
+msgstr "Pagina di re-indirizzamento"
+
+#, php-format
+msgid ""
+"If you are not redirected automatically, follow the <a href=\"%s\">link</a>."
+msgstr ""
+"Se non vieni automaticamente re-indirizzato, segui questo <a href=\"%s\">"
+"link</a>."
+
+msgid "Local"
+msgstr "Locale"
+
+msgid "Today"
+msgstr "Oggi"
+
+msgid "Week"
+msgstr "Settimana"
+
+msgid "Month"
+msgstr "Mese"
+
+msgid "List"
+msgstr ""
+
+msgid "No appointments for selected period."
+msgstr "Nessun appuntamento per il periodo selezionato."
+
+#, php-format
+msgid "+%d more"
+msgstr ""
+
+msgid "Education"
+msgstr ""
+
+msgid "Universities"
+msgstr ""
+
+msgid "Colleges"
+msgstr ""
+
+msgid "Schools"
+msgstr ""
+
+msgid "Libraries"
+msgstr ""
+
+msgid "Teaching"
+msgstr ""
+
+msgid "Tutoring lessons"
+msgstr ""
+
+msgid "Parent meetings"
+msgstr ""
+
+msgid "Child care"
+msgstr ""
+
+msgid "Driving Schools"
+msgstr ""
+
+msgid "Driving Instructors"
+msgstr ""
+
+msgid "Other"
+msgstr ""
+
+msgid "Beauty and wellness"
+msgstr ""
+
+msgid "Beauty salons"
+msgstr ""
+
+msgid "Hair salons"
+msgstr ""
+
+msgid "Nail salons"
+msgstr ""
+
+msgid "Eyelash extensions"
+msgstr ""
+
+msgid "Spa"
+msgstr ""
+
+msgid "Events and entertainment"
+msgstr ""
+
+msgid "Events (One time and Recurring)"
+msgstr ""
+
+msgid "Business events"
+msgstr ""
+
+msgid "Meeting rooms"
+msgstr ""
+
+msgid "Escape rooms"
+msgstr ""
+
+msgid "Art classes"
+msgstr ""
+
+msgid "Equipment rental"
+msgstr ""
+
+msgid "Photographers"
+msgstr ""
+
+msgid "Restaurants"
+msgstr ""
+
+msgid "Medical"
+msgstr ""
+
+msgid "Medical Clinics & Doctors"
+msgstr ""
+
+msgid "Dentists"
+msgstr ""
+
+msgid "Chiropractors"
+msgstr ""
+
+msgid "Acupuncture"
+msgstr ""
+
+msgid "Massage"
+msgstr ""
+
+msgid "Physiologists"
+msgstr ""
+
+msgid "Psychologists"
+msgstr ""
+
+msgid "Officials"
+msgstr ""
+
+msgid "City councils"
+msgstr ""
+
+msgid "Embassies and consulates"
+msgstr ""
+
+msgid "Attorneys"
+msgstr ""
+
+msgid "Legal services"
+msgstr ""
+
+msgid "Financial services"
+msgstr ""
+
+msgid "Interview scheduling"
+msgstr ""
+
+msgid "Call centers"
+msgstr ""
+
+msgid "Personal meetings and services"
+msgstr ""
+
+msgid "Consulting"
+msgstr ""
+
+msgid "Counselling"
+msgstr ""
+
+msgid "Coaching"
+msgstr ""
+
+msgid "Spiritual services"
+msgstr ""
+
+msgid "Design consultants"
+msgstr ""
+
+msgid "Cleaning"
+msgstr ""
+
+msgid "Household"
+msgstr ""
+
+msgid "Pet services"
+msgstr ""
+
+msgid "Retailers"
+msgstr ""
+
+msgid "Supermarket"
+msgstr ""
+
+msgid "Retail Finance"
+msgstr ""
+
+msgid "Other retailers"
+msgstr ""
+
+msgid "Sport"
+msgstr ""
+
+msgid "Personal trainers"
+msgstr ""
+
+msgid "Gyms"
+msgstr ""
+
+msgid "Fitness classes"
+msgstr ""
+
+msgid "Yoga classes"
+msgstr ""
+
+msgid "Golf classes"
+msgstr ""
+
+msgid "Sport items renting"
+msgstr ""
+
 #, php-format
 msgid "%d year"
 msgid_plural "%d years"
@@ -2635,6 +3053,12 @@ msgstr "Ultima settimana"
 msgid "Last 30 days"
 msgstr "Ultimi 30 giorni"
 
+msgid "Next 7 days"
+msgstr ""
+
+msgid "Next 30 days"
+msgstr ""
+
 msgid "This month"
 msgstr "Mese corrente"
 
@@ -2659,6 +3083,9 @@ msgstr "Email Cliente"
 msgid "Created"
 msgstr "Creato"
 
+msgid "Internal note"
+msgstr "Nota interna"
+
 msgid "Type"
 msgstr "Tipo"
 
@@ -2680,8 +3107,17 @@ msgstr "Pagamenti"
 msgid "State"
 msgstr "Stato"
 
+msgid "Subject"
+msgstr "Oggetto"
+
 msgid "Customer"
 msgstr "Cliente"
+
+msgid "Start at"
+msgstr ""
+
+msgid "Number of recipients"
+msgstr ""
 
 msgid "Text"
 msgstr "Testo"
@@ -2754,14 +3190,20 @@ msgid "Bookly updater"
 msgstr ""
 
 msgid ""
+"Please note that upon deleting this Bookly item, all data associated with it "
+"will be permanently deleted"
+msgstr ""
+
+#, php-format
+msgid "%s updated"
+msgstr ""
+
+msgid ""
 "Please wait, we are checking updates for {checked}/{total} Bookly add-ons"
 msgstr ""
 
 msgid "No updates available"
 msgstr ""
-
-msgid "Local"
-msgstr "Locale"
 
 msgid "Free"
 msgstr ""
@@ -2771,6 +3213,12 @@ msgstr "Completato"
 
 msgid "Rejected"
 msgstr "Rifiutato"
+
+msgid "Refunded"
+msgstr ""
+
+msgid "Mixed"
+msgstr ""
 
 msgid "Untitled"
 msgstr "Senza titolo"
@@ -2794,6 +3242,9 @@ msgid "Verify customer's email"
 msgstr ""
 
 msgid "Verify customer's phone"
+msgstr ""
+
+msgid "Mailing message"
 msgstr ""
 
 msgid "Test message"
@@ -2821,6 +3272,12 @@ msgid ""
 "should update your user data, or press Cancel to edit entered data."
 msgstr ""
 
+msgid "Enter verification code from SMS"
+msgstr ""
+
+msgid "Enter verification code from email"
+msgstr ""
+
 msgid "Internal Notes"
 msgstr ""
 
@@ -2830,6 +3287,9 @@ msgid ""
 msgstr ""
 
 msgid "Admins"
+msgstr ""
+
+msgid "Initial setup"
 msgstr ""
 
 msgid "Dashboard"
@@ -2859,29 +3319,17 @@ msgstr ""
 msgid "Get Bookly Pro"
 msgstr ""
 
-msgid "Messages"
-msgstr "Messaggi"
-
-msgid "Subject"
-msgstr "Oggetto"
-
-msgid "Message"
-msgstr "Messaggio"
-
-msgid "No records."
-msgstr "Nessun risultato."
-
-msgid "messages"
-msgstr ""
-
-msgid "Previous"
-msgstr "Precedente"
-
 msgid "New appointment"
 msgstr "Nuovo appuntamento"
 
 msgid "Created at any time"
 msgstr "Tutti i periodi"
+
+msgid "All statuses"
+msgstr ""
+
+msgid "No status selected"
+msgstr ""
 
 msgid "No result found"
 msgstr "Nessun risultato trovato"
@@ -2893,6 +3341,83 @@ msgid "Attachments"
 msgstr ""
 
 msgid "Archived"
+msgstr ""
+
+msgid "1 - 9 employees"
+msgstr ""
+
+msgid "10 - 19 employees"
+msgstr ""
+
+msgid "20 - 49 employees"
+msgstr ""
+
+msgid "50 - 249 employees"
+msgstr ""
+
+msgid "250 or more employees"
+msgstr ""
+
+msgid "Company name"
+msgstr "Nome dell'azienda"
+
+msgid "Industry"
+msgstr ""
+
+msgid "Select industry"
+msgstr ""
+
+msgid "Company size"
+msgstr ""
+
+msgid "Select company size"
+msgstr ""
+
+msgid "Company owner email"
+msgstr ""
+
+msgid "Add service"
+msgstr "Aggiungi servizio"
+
+msgid "Continue"
+msgstr ""
+
+msgid "Finish"
+msgstr ""
+
+msgid "Skip"
+msgstr ""
+
+msgid "Company"
+msgstr "Azienda"
+
+msgid "Congratulations, the initial setup is complete!"
+msgstr ""
+
+#, php-format
+msgid "Shortcut of your form is %s"
+msgstr ""
+
+msgid ""
+"Open the page where you want to add the booking form in page edit mode and "
+"paste this shortcut in a free block."
+msgstr ""
+
+#, php-format
+msgid ""
+"You can find more detailed instructions for publishing Bookly form in our %s"
+msgstr ""
+
+msgid "Help center"
+msgstr ""
+
+#, php-format
+msgid ""
+"Bookly can boost your sales and scale together with your business. Get more "
+"features and remove the limits by upgrading to the paid version with the %s, "
+"which allows you to use a vast number of additional features and settings "
+"for online scheduling, install other add-ons for Bookly, and includes six "
+"months of customer support."
 msgstr ""
 
 msgid "Staff members order"
@@ -2910,17 +3435,31 @@ msgstr "Categorie"
 msgid "Show archived"
 msgstr "Mostra archiviati"
 
+msgid "next day"
+msgstr ""
+
 msgid "Reorder"
 msgstr "Riordina"
+
+msgid "No records."
+msgstr "Nessun risultato."
 
 msgid "Image"
 msgstr "Immagine"
 
-msgid "Company name"
-msgstr "Nome dell'azienda"
-
 msgid "Website"
 msgstr "Sito internet"
+
+msgid "Bookly data upon deleting Bookly items"
+msgstr ""
+
+msgid ""
+"If you choose Delete, all data associated with Bookly will be permanently "
+"deleted when deleting Bookly items (Bookly, Bookly Pro, or any Bookly add-on)"
+msgstr ""
+
+msgid "Don't delete"
+msgstr ""
 
 msgid "Time slot length"
 msgstr "Dimensione fascia oraria"
@@ -2941,12 +3480,6 @@ msgid ""
 msgstr ""
 "Attivare questa opzione per rendere la lunghezza della fascia oraria pari "
 "alla durata del servizio durante lo step Orario del form di prenotazione."
-
-msgid "Default appointment status"
-msgstr "Stato predefinito dell'appuntamento"
-
-msgid "Select status for newly booked appointments."
-msgstr "Selezionare Stato per gli appuntamenti prenotati di recente."
 
 msgid "Number of days available for booking"
 msgstr "Numero di giorni disponibili per effettuare una prenotazione"
@@ -3016,14 +3549,17 @@ msgid ""
 "various other processes to timeout or fail"
 msgstr ""
 
+msgid "Show news notifications"
+msgstr ""
+
+msgid "If enabled, News notification icon will be displayed"
+msgstr ""
+
 msgid "Service paid locally"
 msgstr "Servizio pagato in sede"
 
 msgid "URL Settings"
 msgstr ""
-
-msgid "Company"
-msgstr "Azienda"
 
 msgid "Business Hours"
 msgstr "Orari lavorativi"
@@ -3099,6 +3635,31 @@ msgstr ""
 "non gli orari lavorativi dell'azienda. Pertanto, controlla gli orari dei "
 "tuoi membri dello staff se riscontri anomalie nel sistema di prenotazione."
 
+msgid ""
+"Please note that business hours you set here will be used as visible hours "
+"in Calendar for all staff members if you enable \"Show only business hours "
+"in the calendar\" in Settings > Calendar."
+msgstr ""
+
+msgid "Select status for newly booked appointments."
+msgstr "Selezionare Stato per gli appuntamenti prenotati di recente."
+
+#, php-format
+msgid ""
+"Please note that this setting will be overridden by Customer Groups > "
+"General settings > <a href=\"%s\" target=\"_blank\">Default appointment "
+"status</a>."
+msgstr ""
+
+msgid "Default appointment status"
+msgstr "Stato predefinito dell'appuntamento"
+
+msgid "ICS description for customers"
+msgstr ""
+
+msgid "ICS description for staff"
+msgstr ""
+
 msgid "Show only business days in the calendar"
 msgstr "Mostra solo giorni lavorativi nel calendario"
 
@@ -3131,6 +3692,44 @@ msgstr ""
 "Attivando questa funzione, solo i membri dello staff che hanno appuntamenti "
 "saranno visibili nella visualizzazione giornaliera del calendario."
 
+msgid "Show new appointments notifications"
+msgstr ""
+
+msgid ""
+"If enabled, you will see an indicator near 'Calendar' for newly created "
+"appointments"
+msgstr ""
+
+msgid "Month view style"
+msgstr ""
+
+msgid "Select the style for displaying appointments in Month view"
+msgstr ""
+
+msgid "Classic"
+msgstr ""
+
+msgid "Minimalistic"
+msgstr ""
+
+msgid "Coloring mode"
+msgstr ""
+
+msgid ""
+"If you select \"By service\", then the color will be taken from the service "
+"settings. If you select \"By status\", then the color will depend on the "
+"appointment status"
+msgstr ""
+
+msgid "By service"
+msgstr ""
+
+msgid "By status"
+msgstr ""
+
+msgid "By staff"
+msgstr ""
+
 msgid "Appointment with one participant"
 msgstr "Appuntamento con un partecipante"
 
@@ -3142,6 +3741,18 @@ msgstr "Valuta"
 
 msgid "Price format"
 msgstr "Formato prezzo"
+
+msgid "Add custom metadata to payment"
+msgstr ""
+
+msgid ""
+"You can specify up to 50 keys, with key names up to 40 characters long and "
+"values up to 500 characters long. Key names can contain only letters, digits "
+"and spaces."
+msgstr ""
+
+msgid "Add metadata"
+msgstr ""
 
 msgid "Phone field default country"
 msgstr "Campo telefono paese predefinito"
@@ -3241,13 +3852,19 @@ msgid ""
 "appointments."
 msgstr ""
 
+msgid "All actions"
+msgstr ""
+
+msgid "Target ID"
+msgstr ""
+
+msgid "Quick search"
+msgstr ""
+
 msgid "Action"
 msgstr ""
 
 msgid "Target"
-msgstr ""
-
-msgid "Target ID"
 msgstr ""
 
 msgid "Author"
@@ -3260,6 +3877,9 @@ msgid "Reference"
 msgstr ""
 
 msgid "Clear logs"
+msgstr ""
+
+msgid "Appointment ID"
 msgstr ""
 
 msgid "Date of appointment"
@@ -3285,9 +3905,6 @@ msgstr "Telefono dell'azienda"
 
 msgid "Company web-site address"
 msgstr "Sito web dell'azienda"
-
-msgid "Internal note"
-msgstr "Nota interna"
 
 msgid "Duration of service"
 msgstr "Durata del servizio"
@@ -3316,21 +3933,6 @@ msgstr "Telefono dell'incaricato"
 msgid "Customer notes for appointment"
 msgstr "Note del cliente sull'appuntamento"
 
-msgid "Email of client"
-msgstr "Email del cliente"
-
-msgid "Full name of client"
-msgstr "Cognome e Nome del cliente"
-
-msgid "First name of client"
-msgstr "Nome del cliente"
-
-msgid "Last name of client"
-msgstr "Cognome del cliente"
-
-msgid "Phone of client"
-msgstr "Telefono del cliente"
-
 msgid "Status of payment"
 msgstr ""
 
@@ -3346,14 +3948,6 @@ msgstr ""
 msgid "Loop over participants list with delimiter"
 msgstr ""
 
-#, php-format
-msgid ""
-"WooCommerce cart is not set up. Follow the <a href=\"%s\">link</a> to "
-"correct this problem."
-msgstr ""
-"WooCommerce carrello non è impostato. Seguite il <a href=\"%s\">"
-"collegamento</a> per correggere questo problema."
-
 msgid "Last month"
 msgstr ""
 
@@ -3368,6 +3962,12 @@ msgstr ""
 
 msgid "Notifications"
 msgstr "Notifiche"
+
+msgid "Campaigns"
+msgstr ""
+
+msgid "Mailing lists"
+msgstr ""
 
 msgid "SMS Details"
 msgstr "SMS Dettagli"
@@ -3399,21 +3999,6 @@ msgstr ""
 msgid "Quick search notifications"
 msgstr "Ricerca rapida notifiche"
 
-#, php-format
-msgid ""
-"To send scheduled notifications please refer to <a href=\"%1$s\">Bookly "
-"Multisite</a> add-on <a href=\"%2$s\">message</a>."
-msgstr ""
-"Per inviare notifiche pianificate fare riferimento al <a href=\"%2$s\">"
-"messaggio</a> di <a href=\"%1$s\">Bookly Multisite</a> add-on."
-
-msgid ""
-"To send scheduled notifications please execute the following command hourly "
-"with your cron:"
-msgstr ""
-"Per inviare notifiche pianificate, eseguire il seguente comando ogni ora con "
-"il tuo cron:"
-
 msgid ""
 "Please take into account that not all countries by law allow custom SMS "
 "sender ID. Please check if particular country supports custom sender ID in "
@@ -3442,6 +4027,12 @@ msgstr "Annulla richiesta"
 msgid "Can only contain letters or digits (up to 11 characters)."
 msgstr "Può contenere solo lettere o cifre (fino a 11 caratteri)."
 
+msgid "Current mailing list"
+msgstr ""
+
+msgid "Back to lists"
+msgstr ""
+
 msgid "Sender ID request is sent."
 msgstr "Richiesta di ID del mittente è stato inviato."
 
@@ -3456,6 +4047,12 @@ msgstr "attiva"
 
 msgid "disable"
 msgstr "disattiva"
+
+msgid "In progress"
+msgstr ""
+
+msgid "Canceled"
+msgstr ""
 
 msgid "SMS has been sent successfully."
 msgstr "SMS è stato inviato correttamente."
@@ -3474,15 +4071,8 @@ msgstr ""
 msgid "Bookly Cloud Settings"
 msgstr ""
 
-msgid "Auto-Recharge"
-msgstr "Auto-ricarica"
-
 msgid "Change password"
 msgstr "Cambia password"
-
-#, php-format
-msgid "We will only charge you when your balance falls below %s"
-msgstr ""
 
 msgid "Company address"
 msgstr ""
@@ -3518,6 +4108,9 @@ msgstr ""
 msgid "Save invoice settings"
 msgstr ""
 
+msgid "Show SMS notification icon"
+msgstr ""
+
 msgid "Send email notification to administrators at low balance"
 msgstr "Invia notifica e-mail agli amministratori a basso equilibrio"
 
@@ -3543,9 +4136,6 @@ msgstr ""
 
 msgid "Services order"
 msgstr "Ordine dei servizi"
-
-msgid "Add service"
-msgstr "Aggiungi servizio"
 
 msgid "Quick search services"
 msgstr "Ricerca rapida servizi"
@@ -3690,26 +4280,113 @@ msgstr ""
 msgid "Stripe activation was not completed"
 msgstr ""
 
+msgid "Diagnostics"
+msgstr ""
+
+msgid "Success"
+msgstr ""
+
+msgid "PHP Sessions"
+msgstr ""
+
+#, php-format
+msgid ""
+"This test checks if PHP sessions are enabled. Bookly needs PHP sessions to "
+"work correctly. For more information about PHP sessions, please check the "
+"official PHP documentation %s."
+msgstr ""
+
+msgid "Critical errors"
+msgstr ""
+
+msgid "This test checks for critical errors in Bookly."
+msgstr ""
+
+msgid ""
+"Some critical errors in Bookly were found recently. Please check Settings > "
+"Logs and contact Bookly support."
+msgstr ""
+
+msgid "Timezone settings"
+msgstr ""
+
+msgid ""
+"We recommend to use timezones with geographic names (e.g., \"Europe/London\")"
+" instead of \"UTC +1\". Using numerical representation may cause errors with "
+"daylight saving time. You can modify your timezone in WP Settings > General >"
+" Timezone."
+msgstr ""
+
+msgid "Add-ons directories"
+msgstr ""
+
+msgid ""
+"Since Bookly has specific add-ons directories, their renaming may cause "
+"issues."
+msgstr ""
+
+msgid "Current directory name"
+msgstr ""
+
+msgid "Expected directory name"
+msgstr ""
+
+msgid ""
+"Some folders were renamed. Below you can find a list with current and "
+"correct names."
+msgstr ""
+
+msgid "Incompatible plugins"
+msgstr ""
+
+msgid ""
+"This test checks the plugins that may affect Bookly. For example, some "
+"caching and optimizing plugins may cause incorrect work of Bookly."
+msgstr ""
+
+msgid ""
+"One or several incompatible plugins were detected. Please add pages with "
+"Bookly shortcodes to cache exceptions and Javascript-code minification."
+msgstr ""
+
+msgid "Secure connection"
+msgstr ""
+
+msgid ""
+"Some Bookly integrations require HTTPS connection and won't work with your "
+"website if there is no valid SSL certificate installed on your web server."
+msgstr ""
+
+msgid "External connections"
+msgstr ""
+
+msgid ""
+"This test checks the ability to establish a connection with the Bookly Cloud "
+"external server."
+msgstr ""
+
+msgid ""
+"For some reason, your server blocks Bookly Cloud requests. To fix the issue, "
+"please ask your hosting provider to whitelist the Bookly Cloud server."
+msgstr ""
+
+msgid "Bookly updates"
+msgstr ""
+
+msgid ""
+"Bookly updates bring new useful features and bugfixes. Make sure you are "
+"using the latest version of Bookly to get more possibilities and the highest "
+"quality."
+msgstr ""
+
+msgid "Some Bookly items are outdated. Please update the following items:"
+msgstr ""
+
 msgid "All staff"
 msgstr "Tutto lo staff"
 
 msgid "No staff selected"
 msgstr "Nessun incaricato selezionato"
-
-msgid "Auto-refresh Calendar"
-msgstr ""
-
-msgid "Every 1 minute"
-msgstr ""
-
-msgid "Every 5 minutes"
-msgstr ""
-
-msgid "Every 15 minutes"
-msgstr ""
-
-msgid "Disable"
-msgstr "Disattiva"
 
 msgid "Welcome to Bookly and thank you for your choice!"
 msgstr ""
@@ -3769,6 +4446,12 @@ msgstr "Aggiungi Servizi"
 msgid "Try Bookly Pro add-on"
 msgstr ""
 
+msgid "News"
+msgstr ""
+
+msgid "More news"
+msgstr ""
+
 msgid "No payments for selected period and criteria."
 msgstr "Nessun pagamento trovato per la fascia oraria e i criteri impostati."
 
@@ -3812,7 +4495,13 @@ msgstr "Mostra il prezzo del servizio accanto al nome dell'incaricato"
 msgid "Show service duration next to service name"
 msgstr "Mostra la durata del servizio accanto al nome del servizio"
 
+msgid "Show category info"
+msgstr ""
+
 msgid "Show service info"
+msgstr ""
+
+msgid "Show staff info"
 msgstr ""
 
 msgid "Show calendar"
@@ -3823,6 +4512,12 @@ msgstr "Mostra le fasce orarie occupate"
 
 msgid "Show each day in one column"
 msgstr "Mostra ogni giorno in una colonna"
+
+msgid "Please note that \"I'm available on or after\" picker will be hidden"
+msgstr ""
+
+msgid "Show only the nearest timeslot"
+msgstr ""
 
 msgid "Phone field required"
 msgstr "Telefono campo obbligatorio"
@@ -3851,7 +4546,13 @@ msgstr "Campo Conferma email"
 msgid "Show notes field"
 msgstr "Mostra campo Note"
 
+msgid "Show Terms & Conditions checkbox"
+msgstr ""
+
 msgid "Show 'Start over' button"
+msgstr ""
+
+msgid "Show 'Download ICS' button"
 msgstr ""
 
 msgid ""
@@ -3887,13 +4588,16 @@ msgstr ""
 msgid "Loop over appointments list with delimiter"
 msgstr ""
 
-msgid "Service name of appointment"
+msgid "Service category info of appointment"
 msgstr ""
 
 msgid "Service category name of appointment"
 msgstr ""
 
 msgid "Service duration of appointment"
+msgstr ""
+
+msgid "Service name of appointment"
 msgstr ""
 
 msgid "Service price of appointment"
@@ -3905,7 +4609,16 @@ msgstr ""
 msgid "Total quantity of appointments in cart"
 msgstr ""
 
+msgid "Image of category"
+msgstr ""
+
+msgid "Info of category"
+msgstr ""
+
 msgid "Login form"
+msgstr ""
+
+msgid "Image of service"
 msgstr ""
 
 msgid "Info of staff member"
@@ -3920,16 +4633,17 @@ msgstr ""
 msgid "Total price of booking"
 msgstr "Prezzo totale della prenotazione"
 
+msgid "URL of service image (to use inside img tag)"
+msgstr ""
+
+msgid "URL of category image (to use inside img tag)"
+msgstr ""
+
+msgid "URL of staff photo (to use inside img tag)"
+msgstr ""
+
 msgid "Previous month"
 msgstr "Mese precedente"
-
-#, php-format
-msgid ""
-"To use the cart, disable integration with WooCommerce <a href=\"%s\">here</a>"
-"."
-msgstr ""
-"Per utilizzare il carrello, disattivare l'integrazione con WooCommerce <a "
-"href=\"%s\">qui</a>."
 
 msgid "Your custom CSS was saved. Please refresh the page to see your changes."
 msgstr ""
@@ -4038,9 +4752,6 @@ msgstr "Informazioni sul carrello"
 msgid "Cart information with cancel"
 msgstr "Informazioni sul carrello con cancellazione"
 
-msgid "Address of client"
-msgstr "Indirizzo del cliente"
-
 msgid "Time zone of client"
 msgstr "Fuso orario del cliente"
 
@@ -4055,17 +4766,17 @@ msgstr "URL di cancellazione appuntamento con conferma (da usare nel tag <a>)"
 msgid "URL of cancel appointment link (to use inside <a> tag)"
 msgstr "URL per cancellazione appuntamento (da utilizzare nel tag <a>)"
 
-msgid "Reason you mentioned while deleting appointment"
-msgstr "Motivo della cancellazione dell'appuntamento"
-
-msgid ""
-"URL for adding event to client's Google Calendar (to use inside <a> tag)"
+msgid "Reason mentioned while cancelling appointment"
 msgstr ""
-"URL per l'aggiunta di un evento nel Google Calendar del cliente (da "
-"utilizzare all'interno del tag <a>)"
+
+msgid "URL for adding event to Google Calendar (to use inside <a> tag)"
+msgstr ""
 
 msgid "URL of reject appointment link (to use inside <a> tag)"
 msgstr "URL per il rifiuto dell'appuntamento (da utilizzare nel tag <a>)"
+
+msgid "Time limit to which appointments can be cancelled "
+msgstr ""
 
 msgid "Payment status"
 msgstr "Stato del pagamento"
@@ -4099,22 +4810,6 @@ msgstr "Link cancellazione appuntamento"
 
 msgid "Photo of staff"
 msgstr "Foto dell'incaricato"
-
-msgid "General settings"
-msgstr "Impostazioni generali"
-
-msgid "Scheduled notifications retry period"
-msgstr "Tentativo di reinvio notifica programmato"
-
-msgid ""
-"Set period of time when system will attempt to deliver notification to user. "
-"Notification will be discarded after period expiration."
-msgstr ""
-"Imposta periodo di tempo in cui il sistema tenterà di inviare la notifica "
-"all'utente. La notifica sarà eliminata dopo la scadenza."
-
-msgid "Save settings"
-msgstr "Salva modifiche"
 
 msgid "Test email notifications"
 msgstr "Test notifiche email"
@@ -4167,6 +4862,16 @@ msgstr ""
 "Se questa opzione è abilitata, l'indirizzo di posta elettronica del cliente "
 "viene utilizzato come indirizzo di posta elettronica del mittente per le "
 "notifiche inviate ai membri del personale e gli amministratori."
+
+msgid "Scheduled notifications retry period"
+msgstr "Tentativo di reinvio notifica programmato"
+
+msgid ""
+"Set period of time when system will attempt to deliver notification to user. "
+"Notification will be discarded after period expiration."
+msgstr ""
+"Imposta periodo di tempo in cui il sistema tenterà di inviare la notifica "
+"all'utente. La notifica sarà eliminata dopo la scadenza."
 
 msgid "Sent successfully."
 msgstr "Inviato con successo."
@@ -4255,6 +4960,12 @@ msgstr ""
 msgid "Log out"
 msgstr "Uscire"
 
+#, php-format
+msgid "%s day"
+msgid_plural "%s days"
+msgstr[0] ""
+msgstr[1] ""
+
 msgid "Register"
 msgstr "Registrare"
 
@@ -4282,6 +4993,12 @@ msgstr ""
 msgid "Enter code from email"
 msgstr "Inserisci il codice da e-mail"
 
+msgid "current<br/>balance"
+msgstr ""
+
+msgid "Recharge"
+msgstr ""
+
 msgid "Thank you for registration."
 msgstr ""
 
@@ -4307,6 +5024,39 @@ msgstr ""
 
 #, php-format
 msgid "Click %s here %s to resend the email."
+msgstr ""
+
+msgid "Auto-Recharge is enabled"
+msgstr ""
+
+#, php-format
+msgid "Payment method: %s"
+msgstr ""
+
+#, php-format
+msgid "End date: %s"
+msgstr ""
+
+msgid "Change"
+msgstr ""
+
+msgid "Support has expired"
+msgstr ""
+
+msgid "Support is about to expire"
+msgstr ""
+
+msgid "Support is active"
+msgstr ""
+
+#, php-format
+msgid "Expiration date: %s"
+msgstr ""
+
+msgid "How it works"
+msgstr ""
+
+msgid "Extend support"
 msgstr ""
 
 msgid "Please accept terms and conditions."
@@ -4336,7 +5086,32 @@ msgstr ""
 msgid "Your payment has been cancelled"
 msgstr ""
 
+msgid "Disable Auto-Recharge"
+msgstr "Disabilitare Auto-ricarica"
+
+msgid "Are you sure you want to disable Auto-Recharge?"
+msgstr ""
+
+msgid "Auto-Recharge"
+msgstr "Auto-ricarica"
+
+msgid "One-time payment"
+msgstr ""
+
+msgid "Please select an amount and enable Auto-Recharge"
+msgstr ""
+
+#, php-format
+msgid ""
+"Your account will be topped up with the selected amount <b>now</b> if your "
+"balance is less than %1$s, and <b>automatically later</b> when the balance "
+"falls below %1$s."
+msgstr ""
+
 msgid "Please select an amount and recharge your account"
+msgstr ""
+
+msgid "Select"
 msgstr ""
 
 msgid "Pay using"
@@ -4345,50 +5120,16 @@ msgstr ""
 msgid "Continue with"
 msgstr ""
 
-msgid "Auto-Recharge has been enabled"
-msgstr ""
-
 msgid "Auto-Recharge has been cancelled"
 msgstr ""
 
-msgid "current<br/>balance"
+msgid "Auto-Recharge has been enabled"
 msgstr ""
 
-msgid "Recharge"
+msgid "Auto-Recharge has been renewed"
 msgstr ""
 
-msgid "Other options"
-msgstr ""
-
-msgid "Best offer"
-msgstr ""
-
-msgid "Users choice"
-msgstr ""
-
-msgid "Buy now"
-msgstr ""
-
-msgid "Select amount of Auto-Recharge"
-msgstr ""
-
-msgid "Enable"
-msgstr "Attiva"
-
-msgid "Disable Auto-Recharge"
-msgstr "Disabilitare Auto-ricarica"
-
-msgid "Are you sure you want to disable Auto-Recharge?"
-msgstr ""
-
-msgid "Turn on Auto-Recharge and get even more"
-msgstr ""
-
-msgid "Auto-Recharge disabled"
-msgstr "Auto-ricarica disattivata"
-
-#, php-format
-msgid "Can't disable Auto-Recharge, please contact us at %s"
+msgid "You don't have active auto-recharge"
 msgstr ""
 
 msgid "Auto-Recharge has failed, please replenish your balance directly."
@@ -4401,8 +5142,40 @@ msgstr ""
 msgid "Payment has failed, please use another payment option"
 msgstr ""
 
+msgid "Auto-Recharge disabled"
+msgstr "Auto-ricarica disattivata"
+
+#, php-format
+msgid "Can't disable Auto-Recharge, please contact us at %s"
+msgstr ""
+
+msgid "Booking form"
+msgstr ""
+
+msgid "A custom block for displaying booking form"
+msgstr ""
+
+msgid "hide"
+msgstr ""
+
+msgid "Quantity"
+msgstr ""
+
+msgid "Select location"
+msgstr "Seleziona sede"
+
 msgid "Empty"
 msgstr "&nbsp;"
+
+msgid "WARNING"
+msgstr ""
+
+msgid "Using <script> tag can be dangerous."
+msgstr ""
+
+msgid ""
+"Unless you understand exactly what you are doing, click Cancel and stay safe."
+msgstr ""
 
 #, php-format
 msgid ""
@@ -4547,6 +5320,9 @@ msgstr ""
 msgid "This text can be inserted into notifications with %s code."
 msgstr "Questo testo può essere inserito nelle notifiche con il codice %s."
 
+msgid "Color"
+msgstr "Colore"
+
 msgid "Archive"
 msgstr "Archiviato"
 
@@ -4599,6 +5375,18 @@ msgstr ""
 msgid "Reason"
 msgstr ""
 
+msgid "Tips"
+msgstr ""
+
+msgid "order ID"
+msgstr ""
+
+msgid "Refund"
+msgstr ""
+
+msgid "Are you sure you want to approve refund? This action cannot be undone."
+msgstr ""
+
 msgid "Edit appointment"
 msgstr "Modifica appuntamento"
 
@@ -4638,6 +5426,12 @@ msgstr ""
 msgid "Send as for new"
 msgstr ""
 
+msgid "View"
+msgstr ""
+
+msgid "Please select a provider"
+msgstr ""
+
 msgid "The selected period is occupied by another appointment"
 msgstr "Il periodo selezionato è occupato da un altro appuntamento"
 
@@ -4648,6 +5442,9 @@ msgstr ""
 
 msgid "Selected period doesn't match provider's schedule"
 msgstr "Il periodo selezionato non corrisponde all'orario stabilito"
+
+msgid "No timeslots available"
+msgstr ""
 
 msgid "Start time must not be empty"
 msgstr "L'ora di inizio non può essere vuota"
@@ -4663,6 +5460,9 @@ msgstr "Impossibile salvare appuntamento in banca dati."
 
 #, php-format
 msgid "%s has reached the limit of bookings for this service"
+msgstr ""
+
+msgid "Appointment notes"
 msgstr ""
 
 msgid ""
@@ -4690,6 +5490,85 @@ msgstr ""
 msgid "Deleted Customer"
 msgstr ""
 
+msgid "ago"
+msgstr ""
+
+msgid "Add recipients"
+msgstr ""
+
+msgid "Automatic selection"
+msgstr ""
+
+msgid "Manual selection"
+msgstr ""
+
+msgid ""
+"Add phone numbers using international phone format, one number per line."
+msgstr ""
+
+msgid "E.g"
+msgstr ""
+
+#, php-format
+msgid "You can add no more than %s contacts"
+msgstr ""
+
+msgid ""
+"Please note that only customers who meet all of the conditions will be added "
+"to the list. You can find more information in our documentation"
+msgstr ""
+
+msgid "Total sum of payments, greater or equal than"
+msgstr ""
+
+msgid "Total number of appointments, greater or equal than"
+msgstr ""
+
+msgid "Providers"
+msgstr "Incaricati"
+
+msgid "New mailing list"
+msgstr ""
+
+msgid "New list"
+msgstr ""
+
+msgid "New campaign"
+msgstr ""
+
+msgid "Edit campaign"
+msgstr ""
+
+msgid "Start campaign"
+msgstr ""
+
+msgid "Immediately"
+msgstr ""
+
+msgid "Start sending messages at"
+msgstr ""
+
+msgid "Set the time when the mailing will start"
+msgstr ""
+
+msgid "Start time"
+msgstr ""
+
+msgid "Start"
+msgstr ""
+
+msgid "Sms text"
+msgstr ""
+
+msgid "Campaign"
+msgstr ""
+
+msgid "Cancel campaign"
+msgstr ""
+
+msgid "Select mailing list"
+msgstr ""
+
 msgid ""
 "You are going to delete item which is involved in upcoming appointments. All "
 "related appointments will be deleted. Please double check and edit "
@@ -4707,12 +5586,6 @@ msgstr ""
 
 msgid "Create service"
 msgstr "Crea servizio"
-
-msgid "Color"
-msgstr "Colore"
-
-msgid "Providers"
-msgstr "Incaricati"
 
 msgid "Start and end times of the appointment"
 msgstr ""
@@ -4748,6 +5621,9 @@ msgstr "Aggiungi categoria"
 msgid "Adjust the order of categories in your booking form"
 msgstr "Imposta l'ordine delle categorie nel form di prenotazione"
 
+msgid "This text can be inserted into notifications with {category_info} code"
+msgstr ""
+
 msgid "Table settings"
 msgstr "Impostazioni tabella"
 
@@ -4757,9 +5633,6 @@ msgstr "Colonne"
 msgid "Attach ICS file"
 msgstr "Aggiungi file ICS"
 
-msgid "Codes"
-msgstr "Codici"
-
 msgid "Visual"
 msgstr ""
 
@@ -4767,6 +5640,24 @@ msgid "New email notification"
 msgstr "Nuova notifica email"
 
 msgid "Edit email notification"
+msgstr ""
+
+msgid "Renew"
+msgstr ""
+
+msgid "Dismiss"
+msgstr ""
+
+#, php-format
+msgid "Your Auto-Recharge will end in %d day."
+msgid_plural "Your Auto-Recharge will end in %d days."
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Please renew the connection to keep using Bookly Cloud services."
+msgstr ""
+
+msgid "Your Auto-Recharge will end today."
 msgstr ""
 
 msgid ""
@@ -4803,6 +5694,13 @@ msgstr ""
 msgid "You just made the <b>10000th Sale</b> using Bookly Plugin!"
 msgstr ""
 
+#, php-format
+msgid ""
+"To allow scheduled actions, please activate <a href=\"%s\" target=\"_blank\">"
+"Bookly Cloud Cron</a> or follow <a href=\"%s\" target=\"_blank\">the "
+"instructions</a> about cron setup"
+msgstr ""
+
 msgid ""
 "To help us improve Bookly, the plugin anonymously collects usage information."
 " You can opt out of sharing the information in Settings > General."
@@ -4821,11 +5719,62 @@ msgstr ""
 
 #, php-format
 msgid ""
+"If you use WPML and notice that some translations don't appear on front end, "
+"you will need to restore them. Go to WPML, select strings within %s domain, "
+"choose any translation, and click the \"Save\" button."
+msgstr ""
+
+msgid "This function is not available in the Bookly."
+msgstr ""
+
+msgid ""
+"You are using the free version of Bookly, so you can't add more than 5 "
+"services. To remove this limitation, get access to all Bookly features, "
+"lifetime free updates and 24/7 support, please upgrade to the Pro version of "
+"Bookly."
+msgstr ""
+
+msgid "For more information visit"
+msgstr ""
+
+msgid ""
+"You are using the free version of Bookly, so you can't add more than 1 staff."
+" To remove this limitation, get access to all Bookly features, lifetime free "
+"updates and 24/7 support, please upgrade to the Pro version of Bookly."
+msgstr ""
+
+#, php-format
+msgid ""
 "<b>Bookly Lite rebrands into Bookly with more features available.</b><br/>"
 "<br/>We have changed the architecture of Bookly Lite and Bookly to optimize "
 "the development of both plugin versions and add more features to the new "
 "free Bookly. To learn more about the major Bookly update, check our <a "
 "href=\"%s\" target=\"_blank\">blog post</a>."
+msgstr ""
+
+msgid ""
+"How likely is it that you would recommend Bookly to a friend or colleague?"
+msgstr ""
+"Quante probabilità ci sono che si dovrebbe raccomandare Bookly ad un amico o "
+"un collega?"
+
+msgid "What do you think should be improved?"
+msgstr "Cosa pensi dovrebbe essere migliorato?"
+
+msgid "Please enter your email (optional)"
+msgstr "Inserisci il tuo e-mail (facoltativo)"
+
+msgid "Subscribe to monthly emails about Bookly improvements and new releases."
+msgstr ""
+"Iscriviti alle e-mail mensili circa miglioramenti Bookly e nuove uscite."
+
+msgid "Please, check your email to confirm the subscription. Thank you!"
+msgstr ""
+
+msgid "Given email address is already subscribed, thank you!"
+msgstr ""
+
+msgid "This email address is not valid."
 msgstr ""
 
 #, php-format
@@ -4844,46 +5793,16 @@ msgstr ""
 msgid "Let Bookly Cloud products continuously work without interruptions."
 msgstr ""
 
+msgid "Enable"
+msgstr "Attiva"
+
 msgid "Remind me later"
 msgstr ""
-
-msgid "This function is not available in the Bookly."
-msgstr ""
-
-msgid ""
-"To get access to all Bookly features, lifetime free updates and 24/7 support,"
-" please upgrade to the Pro version of Bookly.<br>For more information visit"
-msgstr ""
-
-msgid "Subscribe to monthly emails about Bookly improvements and new releases."
-msgstr ""
-"Iscriviti alle e-mail mensili circa miglioramenti Bookly e nuove uscite."
 
 msgid ""
 "Allow the plugin to set a Powered by Bookly notice on the booking widget to "
 "spread information about the plugin. This will allow the team to improve the "
 "product and enhance its functionality."
-msgstr ""
-
-msgid ""
-"How likely is it that you would recommend Bookly to a friend or colleague?"
-msgstr ""
-"Quante probabilità ci sono che si dovrebbe raccomandare Bookly ad un amico o "
-"un collega?"
-
-msgid "What do you think should be improved?"
-msgstr "Cosa pensi dovrebbe essere migliorato?"
-
-msgid "Please enter your email (optional)"
-msgstr "Inserisci il tuo e-mail (facoltativo)"
-
-msgid "Please, check your email to confirm the subscription. Thank you!"
-msgstr ""
-
-msgid "Given email address is already subscribed, thank you!"
-msgstr ""
-
-msgid "This email address is not valid."
 msgstr ""
 
 msgid "Revenue"
@@ -4900,12 +5819,6 @@ msgstr "Tutti i campi contrassegnati con un asterisco (*) sono obbligatori."
 
 msgid "Error sending support request."
 msgstr "Errore durante l'invio richiesta di supporto."
-
-msgid "Show all notifications"
-msgstr "Mostra tutte le notifiche"
-
-msgid "Mark all notifications as read"
-msgstr "Segna tutte le notifiche come lette"
 
 msgid "View this page at Bookly Pro Demo"
 msgstr ""
@@ -4988,15 +5901,6 @@ msgid ""
 "others what you think."
 msgstr ""
 
-msgid "Booking form"
-msgstr ""
-
-msgid "A custom block for displaying booking form"
-msgstr ""
-
-msgid "Select location"
-msgstr "Seleziona sede"
-
 msgid "Form fields"
 msgstr ""
 
@@ -5011,12 +5915,6 @@ msgstr ""
 
 msgid "Default value for employee"
 msgstr "Valore di default per Incaricato"
-
-msgid "Quantity"
-msgstr ""
-
-msgid "hide"
-msgstr ""
 
 msgid "Username"
 msgstr ""
@@ -5041,16 +5939,6 @@ msgstr "Dati già in uso"
 
 msgid "Update"
 msgstr ""
-
-msgid "Page Redirection"
-msgstr "Pagina di re-indirizzamento"
-
-#, php-format
-msgid ""
-"If you are not redirected automatically, follow the <a href=\"%s\">link</a>."
-msgstr ""
-"Se non vieni automaticamente re-indirizzato, segui questo <a href=\"%s\">"
-"link</a>."
 
 msgid "Verify"
 msgstr ""
@@ -5183,6 +6071,9 @@ msgid ""
 "Client email: {client_email}"
 msgstr ""
 
+msgid "Unassigned"
+msgstr ""
+
 msgid "Notification about new package creation"
 msgstr ""
 
@@ -5196,9 +6087,6 @@ msgid "Packages"
 msgstr ""
 
 msgid "New package"
-msgstr ""
-
-msgid "Unassigned"
 msgstr ""
 
 msgid "Edit package"
@@ -5245,6 +6133,9 @@ msgid "-- Search customer --"
 msgstr ""
 
 msgid "Save & schedule"
+msgstr ""
+
+msgid "Attach payment"
 msgstr ""
 
 msgid "Please select a package"
@@ -5307,6 +6198,9 @@ msgid "Packages list"
 msgstr ""
 
 msgid "A custom block for displaying packages list"
+msgstr ""
+
+msgid "Your package has been created."
 msgstr ""
 
 msgid "Creation Date"
@@ -5469,12 +6363,20 @@ msgid ""
 "{company_website}"
 msgstr ""
 
+msgid "Applied"
+msgstr ""
+
 msgid "I will pay now with PayPal"
 msgstr "Pago subito con PayPal"
 
 msgid ""
 "You are not required to pay for the booked services, click Next to complete "
 "the booking process."
+msgstr ""
+
+msgid ""
+"No payment methods available for one or more staff. Please contact service "
+"provider."
 msgstr ""
 
 msgid "Street Number"
@@ -5539,6 +6441,12 @@ msgid ""
 "verify the license within {days}, access to your bookings will be disabled."
 msgstr ""
 
+msgid "Customer address"
+msgstr "Indirizzo del cliente"
+
+msgid "Customer birthday"
+msgstr ""
+
 msgid "Online meetings"
 msgstr "Videoconferenze"
 
@@ -5594,6 +6502,9 @@ msgstr ""
 msgid "Please verify Bookly add-ons license; {days} remaining."
 msgstr "Controllare Bookly licenza add-on; {days} rimanenti."
 
+msgid "no limit"
+msgstr ""
+
 #, php-format
 msgid ""
 "%s is used on another domain %s.<br/>In order to use the purchase code on "
@@ -5615,6 +6526,9 @@ msgstr ""
 
 #, php-format
 msgid "Your support period has expired on %s."
+msgstr ""
+
+msgid "Failed to create an online meeting"
 msgstr ""
 
 msgid "Print"
@@ -5695,6 +6609,29 @@ msgstr ""
 "indirizzati al carrello WooCommerce invece di procedere allo step "
 "predefinito per il pagamento."
 
+msgid "Create a WooCommerce order from backend"
+msgstr ""
+
+msgid ""
+"If enabled, a WooCommerce order will be created for appointment when a "
+"payment is attached in backend"
+msgstr ""
+
+msgid "Default status of WooCommerce order"
+msgstr ""
+
+msgid "Status of WooCommerce order created from backend"
+msgstr ""
+
+msgid "Create a WooCommerce order if the cost of the service is zero"
+msgstr ""
+
+msgid ""
+"If enabled, a WooCommerce order will be created for services with 0 (zero) "
+"price. Please note that if the order contains at least one service with a "
+"price other than 0, the WooCommerce order will still be created"
+msgstr ""
+
 msgid "Booking product"
 msgstr "Prenotazione del prodotto"
 
@@ -5705,8 +6642,8 @@ msgid "Make address mandatory"
 msgstr "Rendi obbligatorio l'inserimento dell'indirizzo"
 
 msgid ""
-"Customers are required to enter address to proceed with a booking. To "
-"disable, deactivate Invoices add-on first."
+"If enabled, a customer will be required to enter address to proceed with a "
+"booking."
 msgstr ""
 
 msgid "Customer's address fields"
@@ -5763,50 +6700,44 @@ msgstr ""
 
 msgid ""
 "Go to the <a href=\"https://console.developers.google.com/\" "
-"target=\"_blank\">Google Developers Console</a>."
+"target=\"_blank\">Google Cloud Platform</a>."
 msgstr ""
-"Vai alla pagina <a href=\"https://console.developers.google.com/\" "
-"target=\"_blank\">Google Developers Console</a>."
 
-msgid "Select a project, or create a new one."
-msgstr "Seleziona un progetto, o creane uno nuovo."
+msgid "Select a project or create a new one."
+msgstr ""
+
+#, php-format
+msgid ""
+"In the sidebar on the left, select <b>Library</b>. In the list of APIs look "
+"for <b>Calendar API</b> or click <a href=\"%s\" target=\"_blank\">this "
+"link</a> to go directly to Calendar API and make sure it is enabled."
+msgstr ""
 
 msgid ""
-"Click in the upper left part to see a sliding sidebar. Next, click <b>API "
-"Manager</b>. In the list of APIs look for <b>Calendar API</b> and make sure "
-"it is enabled."
+"Click <b>OAuth consent screen</b> tab, select user type and provide the "
+"necessary information (App name, User support email and Developer contact "
+"information). Then click <b>Save and continue</b>. You can leave the "
+"following settings unchanged."
 msgstr ""
-"Fare clic nella parte superiore sinistra di vedere una barra laterale "
-"scorrevole. Quindi, fare clic su <b>API Manager</b>. Nella lista di API "
-"cercare <b>Calendar API</b> e assicurarsi che sia abilitata."
-
-msgid "In the sidebar on the left, select <b>Credentials</b>."
-msgstr "Nel menu laterale di sinistra, seleziona <b>Credentials</b>."
 
 msgid ""
-"Go to <b>OAuth consent screen</b> tab and give a name to the product, then "
-"click <b>Save</b>."
+"We recommend to change the publishing status of your app to <b>In "
+"production</b> by clicking <b>Publish app</b> button."
 msgstr ""
-"Vai a <b>OAuth consent screen</b> e dare un nome al prodotto, quindi fare "
-"clic su <b>Salva</b>."
+
+#, php-format
+msgid ""
+"In the sidebar on the left, select <a href=\"%s\" target=\"_blank\">"
+"Credentials</a>, and in <b>Create credentials</b> drop-down menu select <b>"
+"OAuth client ID</b>."
+msgstr ""
 
 msgid ""
-"Go to <b>Credentials</b> tab and in <b>New credentials</b> drop-down menu "
-"select <b>OAuth client ID</b>."
-msgstr ""
-"Vai alla scheda <b>Credenziali</b> e nel menu a discesa <b>Nuove "
-"credenziali</b> selezionare <b>OAuth client ID</b>."
-
-msgid ""
-"Select <b>Web application</b> and create your project's OAuth 2.0 "
-"credentials by providing the necessary information. For <b>Authorized "
+"Select <b>Web application</b> and create your project's <b>OAuth 2.0 "
+"credentials</b> by providing the necessary information. For <b>Authorized "
 "redirect URIs</b> enter the <b>Redirect URI</b> found below on this page. "
 "Click <b>Create</b>."
 msgstr ""
-"Selezionare <b>Web application</b> e creare OAuth credenziali del vostro "
-"progetto 2.0, fornendo le informazioni necessarie. Per <b>Authorized "
-"redirect URIs</b>  immettere il <b>Redirect URI</b> trovato sotto in questa "
-"pagina. Fare clic su <b>Create</b>."
 
 msgid ""
 "In the popup window look for the <b>Client ID</b> and <b>Client secret</b>. "
@@ -5815,30 +6746,22 @@ msgstr ""
 "Nella sguardo finestra popup per la <b>Client ID</b> e <b>Client secret</b>. "
 "Usali il modulo qui sotto in questa pagina."
 
-#, php-format
 msgid ""
-"Important: for two-way sync, your website must use HTTPS. Google Calendar "
-"API will be able to send notifications to HTTPS address only if there is a "
-"valid SSL certificate installed on your web server. Follow the steps in this "
-"<a href=\"%s\" target=\"_blank\">document</a> to <b>verify and register your "
-"domain</b>."
+"Go to <b>Staff Members</b>, select a staff member and enable the connection "
+"with Google Calendar on the <b>Advanced</b> tab."
 msgstr ""
 
-msgid "The client ID obtained from the Developers Console"
+msgid "The client ID obtained from the Google Cloud Platform"
 msgstr ""
-"Il \n"
-"Client ID ottenuto dalla Developer Console"
 
 msgid "Client secret"
 msgstr "Client secret"
 
-msgid "The client secret obtained from the Developers Console"
+msgid "The client secret obtained from the Google Cloud Platform"
 msgstr ""
-"Il \n"
-"Client secret ottenuto dalla Developer Console"
 
-msgid "Enter this URL as a redirect URI in the Developers Console"
-msgstr "Inserisci questa URL come \"redirect URI\" nella Developer Console"
+msgid "Enter this URL as a redirect URI in the Google Cloud Platform"
+msgstr ""
 
 msgid ""
 "With \"One-way\" sync Bookly pushes new appointments and any further changes "
@@ -5856,11 +6779,9 @@ msgstr ""
 
 msgid ""
 "Configure what information should be placed in the title of Google Calendar "
-"event. Available codes are {service_name}, {staff_name} and {client_names}."
-msgstr ""
-"Configurare quali informazioni devono essere inserite nel titolo dell'evento "
-"Google Calendar. I codici disponibili sono {service_name}, {staff_name} e "
+"event. Available codes are {service_name}, {category_name}, {staff_name} and "
 "{client_names}."
+msgstr ""
 
 msgid "To set up Facebook integration, do the following:"
 msgstr ""
@@ -5916,11 +6837,60 @@ msgstr ""
 "Se non si fornisce un codice di acquisto valido entro {days}, l'accesso alle "
 "vostre prenotazioni sarà disattivato."
 
+msgid "First value for newly created appointments via backend"
+msgstr ""
+
+msgid ""
+"Select what value should be selected first when creating a new appointment "
+"via backend."
+msgstr ""
+
+msgid "Displayed time slots"
+msgstr ""
+
+msgid ""
+"Select what time slots will be shown when creating a new appointment via "
+"backend."
+msgstr ""
+
+msgid "Only appropriate slots"
+msgstr ""
+
 msgid "Time delimiter"
 msgstr ""
 
-msgid "Customer address"
-msgstr "Indirizzo del cliente"
+msgid ""
+"This setting allows you to set a delimiter during a day for appointments "
+"created via backend."
+msgstr ""
+
+msgid "Cancel appointment action"
+msgstr "Azione per cancellare l'appuntamento"
+
+msgid ""
+"Select what happens when customer clicks cancel appointment link. With "
+"\"Delete\" the appointment will be deleted from the calendar. With "
+"\"Cancel\" only appointment status will be changed to \"Cancelled\"."
+msgstr ""
+"Seleziona cosa succede quando il cliente fa clic sul link Cancella "
+"appuntamento. Con \"Rimuovi\" l'appuntamento sarà rimosso dal calendario. "
+"Con \"Cancella\", solo lo stato dell'appuntamento sarà modificato in "
+"\"Cancellato\"."
+
+msgid "Automatically change status of appointment"
+msgstr ""
+
+msgid ""
+"If enabled, initial status of the appointment will be changed to the status "
+"set in the \"Status to be set\" field after the appointment has been "
+"completed."
+msgstr ""
+
+msgid "Initial status"
+msgstr ""
+
+msgid "Status to be set"
+msgstr ""
 
 msgid "Authentication"
 msgstr ""
@@ -6048,7 +7018,21 @@ msgstr ""
 msgid "Disconnect"
 msgstr ""
 
-msgid "Client birthday"
+msgid "Connect"
+msgstr "Connetti"
+
+msgid ""
+"To find your URL and Secret, connect to the server (e.g. via SSH) with "
+"hosted BBB and execute the following command in console"
+msgstr ""
+
+msgid "The URL obtained from command return"
+msgstr ""
+
+msgid "Shared secret"
+msgstr ""
+
+msgid "The Secret obtained from command return"
 msgstr ""
 
 msgid "Online meeting password"
@@ -6083,6 +7067,14 @@ msgstr "Carrello"
 msgid "Select product"
 msgstr "Seleziona un prodotto"
 
+#, php-format
+msgid ""
+"WooCommerce cart is not set up. Follow the <a href=\"%s\">link</a> to "
+"correct this problem."
+msgstr ""
+"WooCommerce carrello non è impostato. Seguite il <a href=\"%s\">"
+"collegamento</a> per correggere questo problema."
+
 msgid "All staff members will use these settings when connecting to Zoom"
 msgstr ""
 
@@ -6111,19 +7103,6 @@ msgstr ""
 "clienti. Se il cliente è già loggato con un account, il nuovo cliente verrà "
 "associato a tale account."
 
-msgid "Cancel appointment action"
-msgstr "Azione per cancellare l'appuntamento"
-
-msgid ""
-"Select what happens when customer clicks cancel appointment link. With "
-"\"Delete\" the appointment will be deleted from the calendar. With "
-"\"Cancel\" only appointment status will be changed to \"Cancelled\"."
-msgstr ""
-"Seleziona cosa succede quando il cliente fa clic sul link Cancella "
-"appuntamento. Con \"Rimuovi\" l'appuntamento sarà rimosso dal calendario. "
-"Con \"Cancella\", solo lo stato dell'appuntamento sarà modificato in "
-"\"Cancellato\"."
-
 msgid "New user account role"
 msgstr "Ruolo del nuovo account"
 
@@ -6146,6 +7125,9 @@ msgstr "Videoconferenze"
 msgid "User Permissions"
 msgstr ""
 
+msgid "Show tips"
+msgstr ""
+
 msgid "Form view in case of single booking"
 msgstr "Form view in caso di prenotazione singola"
 
@@ -6156,13 +7138,11 @@ msgstr "Form view in caso di prenotazione multipla"
 msgid "Form in case of 100% discount"
 msgstr ""
 
+msgid "Form view if there are no common payment methods for client and staff"
+msgstr ""
+
 msgid "Show birthday field"
 msgstr "Mostra campo Compleanno"
-
-msgid ""
-"Address information is needed for Invoices add-on. To disable, deactivate "
-"Invoices add-on first."
-msgstr ""
 
 msgid "Show address fields"
 msgstr "Mostra campi indirizzo"
@@ -6183,6 +7163,12 @@ msgstr "Mostra opzione fuso orario"
 
 msgid "Online meeting join URL"
 msgstr "URL partecipazione alla videoconferenza"
+
+msgid "Please note that QR code will be shown only for single appointments"
+msgstr ""
+
+msgid "Show QR code"
+msgstr ""
 
 msgid "Import"
 msgstr "Importa"
@@ -6215,8 +7201,44 @@ msgstr ""
 "Nota: Se il pagamento è effettuato per più di un servizio, si vedrà l'intero "
 "importo in Incasso."
 
+msgid "Email logs"
+msgstr ""
+
+msgid ""
+"If this setting is enabled then all sent email notifications will be "
+"recorded in a log table. You can find these logs in Email Notifications > "
+"Email logs table."
+msgstr ""
+
+msgid "Email details"
+msgstr ""
+
+msgid "Recipient"
+msgstr ""
+
+msgid "Message"
+msgstr "Messaggio"
+
+msgid "Headers"
+msgstr ""
+
+msgid "Client birthday full date"
+msgstr ""
+
 msgid "Time zone of staff"
 msgstr "Fuso orario dell'incaricato"
+
+msgid "Show cancellation reason"
+msgstr ""
+
+msgid "Add appointment cancellation confirmation"
+msgstr ""
+
+#, php-format
+msgid ""
+"Check status of this option in Settings > Calendar > <a href=\"%s\" "
+"target=\"_blank\"/>Display front-end calendar</a>"
+msgstr ""
 
 msgid "Titles"
 msgstr "Titoli"
@@ -6224,7 +7246,13 @@ msgstr "Titoli"
 msgid "Add Bookly appointments list"
 msgstr "Aggiungi una lista appuntamenti di Bookly"
 
-msgid "Add appointment cancellation confirmation"
+msgid "Add Bookly calendar"
+msgstr ""
+
+msgid "Add Bookly search form"
+msgstr ""
+
+msgid "Add Bookly services form"
 msgstr ""
 
 #, php-format
@@ -6240,7 +7268,18 @@ msgid ""
 "This will also remove the entered purchase code from this site."
 msgstr ""
 
+msgid "Display front-end calendar"
+msgstr ""
+
+msgid ""
+"If this option is enabled then customers will be able to view the "
+"availability of the selected staff in a front-end calendar"
+msgstr ""
+
 msgid "Error dissociating purchase code."
+msgstr ""
+
+msgid "This calendar is already connected to another staff member"
 msgstr ""
 
 msgid "Google Calendar integration"
@@ -6276,6 +7315,23 @@ msgid ""
 "staff member. Padding time is not included."
 msgstr ""
 
+msgid "ICalendar feed"
+msgstr ""
+
+msgid ""
+"If enabled, you'll get the ICalendar feed URL which can be used in other "
+"calendars for displaying staff member appointments."
+msgstr ""
+
+msgid "ICalendar feed URL"
+msgstr ""
+
+msgid ""
+"Specify how many days of past and future calendar data you wish to display. "
+"If you enter 0 in either field, past or future appointments will not be "
+"displayed."
+msgstr ""
+
 msgid ""
 "The staff member's schedule will be considered to be in the selected time "
 "zone. This time zone will also be used for the dates and times in "
@@ -6293,15 +7349,21 @@ msgstr ""
 msgid "Ok, continue editing"
 msgstr ""
 
+msgid "Available payment methods"
+msgstr ""
+
+msgid "All methods"
+msgstr ""
+
+msgid "No methods selected"
+msgstr ""
+
 msgid ""
 "Please setup and enable New staff member's WordPress user login details "
 "notification"
 msgstr ""
 
 msgid "Create WordPress user"
-msgstr ""
-
-msgid "Attach payment"
 msgstr ""
 
 msgid "Create payment"
@@ -6316,6 +7378,15 @@ msgstr ""
 msgid "Payment ID"
 msgstr ""
 
+msgid "Payment for"
+msgstr ""
+
+msgid "Payment for whole series"
+msgstr ""
+
+msgid "Payment only for current appointment"
+msgstr ""
+
 msgid "Custom service name"
 msgstr ""
 
@@ -6323,7 +7394,8 @@ msgid "Custom service price"
 msgstr ""
 
 msgid ""
-"This link can be inserted into notifications with {online_meeting_url} code"
+"This link can be inserted into notifications with {online_meeting_start_url} "
+"code"
 msgstr ""
 
 msgid "Save appointment to create a meeting"
@@ -6457,6 +7529,11 @@ msgstr ""
 "Attivando questa impostazione, si fisseranno appuntamenti in videoconferenza "
 "con il software selezionato. Assicurati che il software sia configurato "
 "correttamente in Impostazioni > <a href=\"%s\">Videoconferenze</a>"
+
+msgid ""
+"If you choose Google Meet then meetings will be created for those staff "
+"members who have Google Calendar configured."
+msgstr ""
 
 msgid "You must select at least one repeat option for recurring services."
 msgstr ""
@@ -6624,6 +7701,21 @@ msgstr ""
 msgid "A custom block for displaying cancellation confirmation"
 msgstr ""
 
+msgid "Services form"
+msgstr ""
+
+msgid "A custom block for displaying services form"
+msgstr ""
+
+msgid "Search form"
+msgstr ""
+
+msgid "A custom block for displaying search form"
+msgstr ""
+
+msgid "A custom block for displaying frontend calendar"
+msgstr ""
+
 msgid "Appointments list"
 msgstr ""
 
@@ -6639,6 +7731,27 @@ msgstr "Mantieni prenotazione"
 msgid "Thank you for being with us"
 msgstr ""
 
+msgid "Book now"
+msgstr ""
+
+msgid "Book more"
+msgstr ""
+
+msgid "No time slots available"
+msgstr ""
+
+msgid "No results found"
+msgstr ""
+
+msgid "Thank you!"
+msgstr ""
+
+msgid "Your booking is complete"
+msgstr ""
+
+msgid "Slot already booked"
+msgstr ""
+
 msgid "Invalid token provided"
 msgstr "Token validi forniti"
 
@@ -6647,6 +7760,12 @@ msgid ""
 msgstr ""
 "Spiacenti, l'intervallo di tempo%date_time% per il %service% è stato già "
 "occupato."
+
+msgid ""
+"The selected slot for service {service_name} at {appointment_time} is not "
+"available anymore. Please select another time slot or contact the service "
+"provider"
+msgstr ""
 
 msgid "This service is no longer provided."
 msgstr ""
@@ -6662,6 +7781,9 @@ msgstr "Nessun appuntamento trovato."
 
 msgid "Show past appointments"
 msgstr "Mostra appuntamenti passati"
+
+msgid "Invalid online meeting url"
+msgstr ""
 
 msgid "Would you like to pay deposit or total price"
 msgstr ""
@@ -6755,7 +7877,7 @@ msgid ""
 "Client email: {client_email}"
 msgstr ""
 
-msgid "Skip"
+msgid "Show Time step"
 msgstr ""
 
 msgid "Skip time selection"
@@ -6951,11 +8073,17 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
+msgid "Payment methods"
+msgstr ""
+
 msgid "Group"
 msgstr ""
 
 msgid "Customer Groups"
 msgstr ""
+
+msgid "General settings"
+msgstr "Impostazioni generali"
 
 msgid "New group"
 msgstr ""
@@ -6975,7 +8103,15 @@ msgstr ""
 msgid "Form view in case of payment has been skipped"
 msgstr ""
 
+msgid ""
+"Note that only common payment methods for customer and staff will be "
+"available on Payment step"
+msgstr ""
+
 msgid "No group"
+msgstr ""
+
+msgid "Skip payment step"
 msgstr ""
 
 msgid "Total discount"
@@ -6985,6 +8121,9 @@ msgstr ""
 msgid ""
 "Enter the fixed amount of discount (e.g. 10 off). To specify a percentage "
 "discount (e.g. 10% off), add '%' symbol to a numerical value."
+msgstr ""
+
+msgid "Settings for customers without group"
 msgstr ""
 
 msgid "Edit group"
@@ -7082,9 +8221,28 @@ msgid ""
 "{appointment_waiting_list}"
 msgstr ""
 
+msgid "Notification to customer to set appointment from waiting list"
+msgstr ""
+
+msgid "The time slot from the waiting list is now available"
+msgstr ""
+
+msgid ""
+"Dear {client_name},\n"
+"\n"
+"The time slot on {appointment_date} at {appointment_time} for {service_name} "
+"is now available for booking. Please use the link below to approve this "
+"appointment: {appointment_booking_url}. Please note that the availability of "
+"the requested timeslot is not guaranteed, because this message is sent out "
+"to all customers in the appointment waitlist."
+msgstr ""
+
 msgid ""
 "To join the waiting list for a busy time slot, please select a slot marked "
 "with \"(N)\", where N is a number of customers on the waiting list."
+msgstr ""
+
+msgid "The time slot from the waiting list is now available."
 msgstr ""
 
 msgid "Notification for staff member to set up appointment from waiting list"
@@ -7106,6 +8264,22 @@ msgstr ""
 msgid "Number of persons on waiting list"
 msgstr ""
 
+msgid "Set appointment from waiting list (success)"
+msgstr ""
+
+msgid ""
+"Set the URL of a page that is shown to clients after they successfully set "
+"the appointment from waiting list."
+msgstr ""
+
+msgid "Set appointment from waiting list (denied)"
+msgstr ""
+
+msgid ""
+"Set the URL of a page that is shown to clients when the setting of "
+"appointment from waiting list is not available anymore."
+msgstr ""
+
 msgid "Waiting List"
 msgstr ""
 
@@ -7115,10 +8289,16 @@ msgstr ""
 msgid "Waiting list of appointment"
 msgstr ""
 
+msgid "URL of booking the appointment from the waiting list"
+msgstr ""
+
 msgid "Show chain appointments"
 msgstr "Mostra opzione Aggiungi Servizi"
 
 msgid "Browse"
+msgstr ""
+
+msgid "File's extension is not allowed"
 msgstr ""
 
 msgid "Upload directory"
@@ -7127,6 +8307,16 @@ msgstr ""
 msgid ""
 "Enter the network folder path where the files will be stored. If necessary, "
 "make sure that there is no free web access to the folder materials."
+msgstr ""
+
+msgid "The specified folder is not writable"
+msgstr ""
+
+msgid "Allowed file extensions"
+msgstr ""
+
+msgid ""
+"Enter file extensions that can be uploaded. For example: \"png,jpg,bmp\"."
 msgstr ""
 
 msgid "Files"
@@ -7236,13 +8426,63 @@ msgstr ""
 msgid "Extras price"
 msgstr ""
 
+msgid "Min quantity"
+msgstr ""
+
 msgid "Max quantity"
 msgstr "Q.tà"
 
 msgid "New Item"
 msgstr "Aggiungi"
 
+msgid "Min quantity should not be greater than max quantity"
+msgstr ""
+
 msgid "Extras tax"
+msgstr ""
+
+#, php-format
+msgid ""
+"Go to the <a href=\"%s\" target=\"_blank\">Square Developer dashboard</a>."
+msgstr ""
+
+msgid "Select an app or create a new one."
+msgstr ""
+
+msgid ""
+"Depending on the mode (Sandbox or Production), look for the <b>Application "
+"ID</b> and <b>Access token</b>."
+msgstr ""
+
+msgid "Use them in the form below on this page."
+msgstr ""
+
+msgid "In the sidebar on the left, go to the <b>Webhooks > Subscriptions</b>."
+msgstr ""
+
+#, php-format
+msgid ""
+"Depending on the mode (Sandbox or Production), press <b>Add subscription</b> "
+"button, enter the following URL as the destination for events %s and select "
+"%s in <b>Events</b>."
+msgstr ""
+
+msgid "Click <b>Save</b>."
+msgstr ""
+
+msgid "In the sidebar on the left, select <b>Locations</b>."
+msgstr ""
+
+msgid "Look for the necessary location and copy <b>Location ID</b>."
+msgstr ""
+
+msgid "Use it in the form below on this page."
+msgstr ""
+
+msgid "Access token"
+msgstr ""
+
+msgid "Location ID"
 msgstr ""
 
 msgid "Book More"
@@ -7255,6 +8495,9 @@ msgstr ""
 "Qui sotto puoi trovare un elenco di servizi selezionati per la prenotazione."
 "\n"
 "Clicca PRENOTA PIU' SERVIZI se si desidera aggiungere più servizi."
+
+msgid "Show \"Book more\" near \"Next\" button"
+msgstr ""
 
 msgid "Show Cart step"
 msgstr "Mostra step Carrello"
@@ -7305,6 +8548,9 @@ msgid ""
 "Email addresses must be confirmed."
 msgstr ""
 
+msgid "Highlight special hours"
+msgstr ""
+
 msgid "Disable special hours update"
 msgstr ""
 
@@ -7322,6 +8568,9 @@ msgstr "Membri dello staff"
 
 msgid "Locations"
 msgstr "Sedi"
+
+msgid "W/o location"
+msgstr ""
 
 msgid "Custom settings for location"
 msgstr "Impostazioni personalizzate per sede"
@@ -7350,9 +8599,6 @@ msgstr "Aggiungi Sede"
 
 msgid "No locations found."
 msgstr "Nessuna sede."
-
-msgid "W/o location"
-msgstr ""
 
 msgid "Custom settings for location enabled"
 msgstr ""
@@ -7520,6 +8766,9 @@ msgid ""
 "2. In the Dashboard's <a href=\"%s\" target=\"_blank\">Webhooks settings</a> "
 "section, click <b>Add endpoint</b> to reveal a form to add a new endpoint "
 "for receiving events."
+msgstr ""
+
+msgid "Session has expired. Please reload the page and try again"
 msgstr ""
 
 msgid "Condition"

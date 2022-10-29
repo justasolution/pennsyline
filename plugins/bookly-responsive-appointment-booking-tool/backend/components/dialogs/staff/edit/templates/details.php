@@ -10,22 +10,24 @@ use Bookly\Lib\Config;
         <div class="col-md-auto">
             <div id="bookly-js-staff-avatar">
                 <div class="form-group">
-                    <?php $img = wp_get_attachment_image_src( $staff->getAttachmentId(), 'thumbnail' ) ?>
+                    <?php $img = $staff->getImageUrl( 'thumbnail' ) ?>
 
                     <div class="bookly-js-image bookly-thumb<?php echo esc_attr( $img ? ' bookly-thumb-with-image' : '' ) ?>"
-                         style="<?php echo esc_attr( $img ? 'background-image: url(' . $img[0] . '); background-size: cover;' : '' ) ?>"
+                         style="<?php echo esc_attr( $img ? 'background-image: url(' . $img . '); background-size: cover;' : '' ) ?>"
                     >
                         <i class="fas fa-fw fa-4x fa-camera mt-2 text-white w-100"></i>
-                        <a class="far fa-fw fa-trash-alt text-danger bookly-thumb-delete bookly-js-delete"
-                           href="javascript:void(0)"
-                           title="<?php esc_attr_e( 'Delete', 'bookly' ) ?>"
-                           <?php if ( ! $img ) : ?>style="display: none;"<?php endif ?>>
-                        </a>
-                        <div class="bookly-thumb-edit">
-                            <label class="bookly-thumb-edit-btn">
-                                <?php esc_html_e( 'Image', 'bookly' ) ?>
-                            </label>
-                        </div>
+                        <?php if ( current_user_can( 'upload_files' ) ) : ?>
+                            <a class="far fa-fw fa-trash-alt text-danger bookly-thumb-delete bookly-js-delete"
+                               href="javascript:void(0)"
+                               title="<?php esc_attr_e( 'Delete', 'bookly' ) ?>"
+                               <?php if ( ! $img ) : ?>style="display: none;"<?php endif ?>>
+                            </a>
+                            <div class="bookly-thumb-edit">
+                                <label class="bookly-thumb-edit-btn">
+                                    <?php esc_html_e( 'Image', 'bookly' ) ?>
+                                </label>
+                            </div>
+                        <?php endif ?>
                     </div>
                 </div>
             </div>

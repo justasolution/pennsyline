@@ -24,10 +24,7 @@ class Dialog extends Lib\Base\Component
         ) );
 
         $types = array();
-        foreach ( array( Payment::TYPE_PAYPAL, Payment::TYPE_LOCAL, Payment::TYPE_STRIPE, Payment::TYPE_CLOUD_STRIPE,
-            Payment::TYPE_AUTHORIZENET, Payment::TYPE_2CHECKOUT, Payment::TYPE_PAYUBIZ, Payment::TYPE_PAYULATAM,
-            Payment::TYPE_PAYSON, Payment::TYPE_MOLLIE, Payment::TYPE_FREE, Payment::TYPE_WOOCOMMERCE,
-            ) as $type ) {
+        foreach ( Payment::getTypes() as $type ) {
             $types[ $type ] = Payment::typeToString( $type );
         }
 
@@ -51,6 +48,7 @@ class Dialog extends Lib\Base\Component
                 'close' => __( 'Close', 'bookly' ),
                 'complete_payment' => __( 'Complete payment', 'bookly' ),
                 'coupon_discount' => __( 'Coupon discount', 'bookly' ),
+                'gift_card_discount' => __( 'Gift card discount', 'bookly' ),
                 'customer' => __( 'Customer', 'bookly' ),
                 'date' => __( 'Date', 'bookly' ),
                 'deposit' => __( 'Deposit', 'bookly' ),

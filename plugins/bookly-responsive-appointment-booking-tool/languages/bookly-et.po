@@ -3,16 +3,16 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Project-Id-Version: WPML_EXPORT_bookly\n"
-"POT-Creation-Date: 2021-01-19 08:29+0000\n"
-"PO-Revision-Date: 2022-03-03 09:37+0000\n"
-"Last-Translator: Nazar <naz@artnaz.com>\n"
+"POT-Creation-Date: 2022-07-19 07:59+0000\n"
+"PO-Revision-Date: 2022-07-20 11:42+0000\n"
+"Last-Translator: support@bookly.info\n"
 "Language-Team: Estonian\n"
 "Language: et\n"
 "MIME-Version: 1.0\n"
 "X-Generator: Loco https://localise.biz/\n"
 "Report-Msgid-Bugs-To: \n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Loco-Version: 2.3.1; wp-5.5"
+"X-Loco-Version: 2.3.1; wp-6.0"
 
 # wpml-name: 646ac2adc0f6724e6d3610f7fabde92c
 msgid "Invoice #{invoice_number} for your appointment"
@@ -67,6 +67,9 @@ msgstr ""
 msgid "We really appreciate it"
 msgstr ""
 
+msgid "Download invoice"
+msgstr ""
+
 # wpml-name: 648ae11b3bedd555fba75c77c9fe9619
 msgid ""
 "Invoices add-on requires your customers address information. So options "
@@ -83,9 +86,15 @@ msgstr ""
 msgid "Invoice due days"
 msgstr "Arve tasumise päevad"
 
-# wpml-name: cf10dc1c3298988a2263eaf3c26fb64b
-msgid "This setting specifies the due period for the invoice (in days)."
-msgstr "Selline säte täpsustab arve maksetähtaja (päevades)."
+msgid ""
+"This setting specifies the due period for the invoice (from 1 to 365 days)"
+msgstr ""
+
+msgid "Font"
+msgstr ""
+
+msgid "Choose the font for your invoice template"
+msgstr ""
 
 # wpml-name: ca021799c283f1c606f02280feb24b17
 msgid "Invoice template"
@@ -111,6 +120,9 @@ msgstr "Seaded on salvestatud."
 msgid "Download invoices"
 msgstr "Arvete allalaadimine"
 
+msgid "Show 'Download invoice' button"
+msgstr ""
+
 msgid "Invoice creation date"
 msgstr ""
 
@@ -130,16 +142,8 @@ msgstr ""
 msgid "Attach invoice"
 msgstr "Lisa Arvet"
 
-msgid "Empty"
+msgid "Invoice due days: Please enter value in days from 1 to 365"
 msgstr ""
-
-# wpml-name: 3de7da8486ea7502a71c0d2a6ec94cfd
-msgid ""
-"Invoice due days: Please enter value in the following range (in days) - 1 to "
-"365."
-msgstr ""
-"Arve tasumise päevad: sisestage väärtus järgmises vahemikus (päevades) - 1 "
-"kuni 365."
 
 # wpml-name: c2ba7e785c49050f48da9aacc45c2b85
 msgid "Service"
@@ -160,6 +164,10 @@ msgstr "Hind"
 # wpml-name: 4b78ac8eb158840e9638a3aeb26c4a9d
 msgid "Tax"
 msgstr "Maks"
+
+# wpml-name: 209802fb858e2c83205027dbbb5d9e6c
+msgid "Package"
+msgstr "Pakett"
 
 # wpml-name: 382b0f5185773fa0f67a8ed8056c7759
 msgid "N/A"
@@ -240,16 +248,22 @@ msgid ""
 msgstr ""
 
 msgid ""
-"In the left-hand navigation pane, select the <b>Azure Active Directory</b> "
-"service, and then select <b>App registrations &gt; New registration</b>."
+"In the left-hand navigation panel, select the <b>Azure Active Directory</b>. "
+"Then select <b>Add > App registration</b>."
 msgstr ""
 
 msgid ""
 "When the <b>Register an application</b> page appears, enter your "
-"application's <b>Name</b> and <b>Redirect URI</b> found below on this page. "
+"application's <b>Name</b> and <b>Redirect URI</b> found below on this page."
+msgstr ""
+
+msgid ""
 "Make sure that the <b>Supported account types</b> is set to <b>Accounts in "
-"any organizational directory and personal Microsoft accounts</b>. When "
-"finished, select <b>Register</b>."
+"any organizational directory (Any Azure AD directory - Multitenant) and "
+"personal Microsoft accounts (e.g. Skype, Xbox)</b>."
+msgstr ""
+
+msgid "When finished, select <b>Register</b>."
 msgstr ""
 
 msgid ""
@@ -263,10 +277,16 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Under <b>Certificates &amp; secrets</b>, choose <b>New client secret</b>, "
-"set <b>Expires</b> to <b>Never</b> and click <b>Add</b>. Copy the app secret "
-"from the <b>Client secrets</b> list before leaving the page. Insert the "
-"secret into the form below on this page."
+"Under <b>Certificates & secrets</b>, choose <b>New client secret</b>, set <b>"
+"Expires</b> to <b>24 months</b> and click <b>Add</b>."
+msgstr ""
+
+msgid ""
+"Copy the app secret value from the <b>Client secrets</b> list before leaving "
+"the page."
+msgstr ""
+
+msgid "Insert the secret into the form below on this page."
 msgstr ""
 
 msgid ""
@@ -280,13 +300,10 @@ msgstr ""
 msgid "<b>Save</b> your changes."
 msgstr "<b> Salvesta </b> oma muudatused."
 
-# wpml-name: 02a3ad2cb3e4be3622c1f95af664f9f8
 msgid ""
-"Go to Staff Members, select a staff member and click <b>Connect</b> which is "
-"located at the bottom of the page."
+"Go to Staff Members, select a staff member. On the <b>Advanced</b> tab, "
+"click <b>Sign in with Microsoft</b>."
 msgstr ""
-"Minge personaliliikmete juurde, valige töötaja ja klõpsake lehe allosas "
-"asuval nupul <b> Ühenda </b>."
 
 # wpml-name: e500e94f457ddd88824c88fda548bed2
 msgid "Application ID"
@@ -396,117 +413,13 @@ msgstr ""
 msgid "Template for event title"
 msgstr "Ürituse pealkirja mall"
 
-# wpml-name: c7d9c651268f032745709cae75f8dbae
 msgid ""
 "Configure what information should be placed in the title of Outlook Calendar "
-"event. Available codes are {service_name}, {staff_name} and {client_names}."
-msgstr ""
-"Seadistage, milline teave tuleks Outlooki kalendri sündmuse pealkirja "
-"paigutada. Saadaolevad koodid on {teenus_nimi}, {personaal_nimi} ja "
-"{klient_nimi}."
-
-# wpml-name: d12d68ef61a2d487d01fbf0fd7f4e886
-msgid "Appointment section"
-msgstr "Ametisse nimetamise jaotis"
-
-# wpml-name: c16e3ce260f8705dbe2f3b1db3ec504b
-msgid "This section describes information that is displayed about appointment."
-msgstr "Selles jaotises kirjeldatakse kohtumiste kohta kuvatavat teavet."
-
-# wpml-name: 6ecb3698ef282c4f8798506048c4739b
-msgid "Customer section"
-msgstr "Klientide sektsioon"
-
-# wpml-name: 9471701130d3fcb8a05f61b2da6e2b30
-msgid ""
-"This section describes information that is displayed about each participant "
-"of the appointment."
-msgstr ""
-"Selles jaotises kirjeldatakse teavet, mis kuvatakse iga kohtumise osaleja "
-"kohta."
-
-msgid "Customer notes for appointment"
+"event. Available codes are {service_name}, {category_name}, {staff_name} and "
+"{client_names}."
 msgstr ""
 
-msgid "Email of client"
-msgstr ""
-
-msgid "Full name of client"
-msgstr ""
-
-msgid "First name of client"
-msgstr ""
-
-msgid "Last name of client"
-msgstr ""
-
-msgid "Phone of client"
-msgstr ""
-
-msgid "Status of payment"
-msgstr ""
-
-msgid "Payment type"
-msgstr ""
-
-msgid "Status of appointment"
-msgstr ""
-
-msgid "Total price of booking (sum of all cart items after applying coupon)"
-msgstr ""
-
-msgid "Date of appointment"
-msgstr ""
-
-msgid "Time of appointment"
-msgstr ""
-
-msgid "Booking number"
-msgstr ""
-
-msgid "Name of category"
-msgstr ""
-
-msgid "Address of company"
-msgstr ""
-
-msgid "Name of company"
-msgstr ""
-
-msgid "Company phone"
-msgstr ""
-
-msgid "Company web-site address"
-msgstr ""
-
-msgid "Online meeting password"
-msgstr ""
-
-msgid "Online meeting start URL"
-msgstr ""
-
-msgid "Online meeting URL"
-msgstr ""
-
-msgid "Info of service"
-msgstr ""
-
-msgid "Name of service"
-msgstr ""
-
-msgid "Price of service"
-msgstr ""
-
-msgid "Email of staff"
-msgstr ""
-
-msgid "Info of staff"
-msgstr ""
-
-msgid "Name of staff"
-msgstr ""
-
-msgid "Phone of staff"
+msgid "Template for event description"
 msgstr ""
 
 # wpml-name: 49102efccc7913584b5cb42f99e6ba3e
@@ -528,10 +441,6 @@ msgstr "Kalendrid on sünkroonitud edukalt."
 # wpml-name: e845be6dbeef24c98ca6f2d00d835d99
 msgid "Outlook Calendar integration"
 msgstr "Outlooki kalendri integreerimine"
-
-# wpml-name: 49ab28040dfa07f53544970c6d147e1e
-msgid "Connect"
-msgstr "Ühenda"
 
 # wpml-name: 2d323e4013f2d7386c032baa29b744a0
 #, php-format
@@ -580,12 +489,34 @@ msgstr "Kohandatud väljad"
 msgid "Incorrect code"
 msgstr "Vale kood"
 
+msgid "Incorrect value"
+msgstr ""
+
 # wpml-name: b651efdb98a5d6bd2b3935d0c3f4a5e2
 msgid "Required"
 msgstr "Nõutud"
 
 msgid "Combined values of all custom fields"
 msgstr ""
+
+# wpml-name: d5255642a07f3ac10f6962c53fe55aca
+msgid "Custom field"
+msgstr "Kohandatud väli"
+
+# wpml-name: 0db377921f4ce762c62526131097968f
+msgid "General"
+msgstr "Üldine"
+
+msgid "Conditions"
+msgstr ""
+
+# wpml-name: 727803cdc1c064037f32ee10d254af02
+msgid "All services"
+msgstr "Kõik teenused"
+
+# wpml-name: 18df9b7c5560723c00fc2804f20c7f9d
+msgid "No service selected"
+msgstr "Ühtegi teenust pole valitud"
 
 # wpml-name: d1f9016a9bc81a954b8a87a1e44ffadd
 msgid "Bind fields to services"
@@ -637,6 +568,15 @@ msgstr "Raadionuppude rühm"
 msgid "Drop Down"
 msgstr "Rippmenüüst"
 
+msgid "Numeric Field"
+msgstr ""
+
+msgid "Date Field"
+msgstr ""
+
+msgid "Time Field"
+msgstr ""
+
 # wpml-name: 45d048c35e3cfd449dc0a1b503cd103a
 msgid "Captcha"
 msgstr "Captcha"
@@ -673,21 +613,55 @@ msgstr "Raadionupp"
 msgid "Option"
 msgstr "Valik"
 
+msgid "Use limit values"
+msgstr ""
+
+msgid "Min value"
+msgstr ""
+
+msgid "Max value"
+msgstr ""
+
+msgid "Delimiter, minutes"
+msgstr ""
+
+# wpml-name: 7a1920d61156abc05a60135aefe8bc67
+msgid "Default"
+msgstr "Vaikimisi"
+
 # wpml-name: 3a5ff2a600be03b239d9026e685aaee5
 msgid "Remove item"
 msgstr "Eemalda üksus"
 
-# wpml-name: 727803cdc1c064037f32ee10d254af02
-msgid "All services"
-msgstr "Kõik teenused"
+msgid ""
+"You can select only Checkbox Group, Radio Button Group or Dropdown in \"If\" "
+"statement."
+msgstr ""
 
-# wpml-name: 18df9b7c5560723c00fc2804f20c7f9d
-msgid "No service selected"
-msgstr "Ühtegi teenust pole valitud"
+msgid "Add condition"
+msgstr ""
+
+msgid "in"
+msgstr ""
+
+msgid "not in"
+msgstr ""
+
+msgid "Enter a description"
+msgstr ""
+
+msgid "Field will be displayed in booking form"
+msgstr ""
+
+msgid "Field will not be displayed in booking form"
+msgstr ""
 
 # wpml-name: c84101a9a90ab5e096c323b8e85434fc
 msgid "Show custom fields"
 msgstr "Kuva kohandatud väljad"
+
+msgid "Custom field description"
+msgstr ""
 
 msgid "Extended staff agenda for next day"
 msgstr ""
@@ -695,9 +669,156 @@ msgstr ""
 msgid "Combined values of all custom fields (formatted in 2 columns)"
 msgstr ""
 
+# wpml-name: 7b9324fd1b6cc33da6065e0338fd1828
+msgid "Custom fields"
+msgstr "Kohandatud väljad"
+
 # wpml-name: 56d12a670ff82bba6aac43d5cd58cc02
 msgid "Another code"
 msgstr "Teine kood"
+
+msgid ""
+"To find your <b>API Key</b> and <b>Server</b> parameter, do the following:"
+msgstr ""
+
+#, php-format
+msgid ""
+"Navigate to the <a href=\"%s\" target=\"_blank\">API Keys section</a> of "
+"your Mailchimp account."
+msgstr ""
+
+msgid ""
+"If you already have an API key listed and you'd like to use it for your "
+"application, simply copy it."
+msgstr ""
+
+msgid ""
+"Otherwise, click <b>Create Key</b> and give it a descriptive name that will "
+"remind you which application it's used for."
+msgstr ""
+
+# wpml-name: d876ff8da67c3731ae25d8335a4168b4
+msgid "API Key"
+msgstr "API Võtti"
+
+msgid "The API Key obtained from your Mailchimp account"
+msgstr ""
+
+msgid "Server"
+msgstr ""
+
+msgid ""
+"To find the value, log into Mailchimp account and look at the URL in your "
+"browser. You'll see something like https://us19.admin.mailchimp.com/; the "
+"us19 part is the server prefix. Note that your specific value may be "
+"different"
+msgstr ""
+
+msgid "Update mode"
+msgstr ""
+
+msgid ""
+"Override customer's data in Mailchimp if email address matches the existing "
+"one. If you select \"Override\", then information about existing user will "
+"be overrided. If you select \"Don't override\", then information about "
+"existing user will remain unchanged"
+msgstr ""
+
+msgid "Override"
+msgstr ""
+
+msgid "Don't override"
+msgstr ""
+
+msgid "Default status"
+msgstr ""
+
+msgid "Default status of new user according to Mailchimp statuses"
+msgstr ""
+
+msgid "Subscribed"
+msgstr ""
+
+msgid "Unsubscribed"
+msgstr ""
+
+# wpml-name: 2d13df6f8b5e4c5af9f87e0dc39df69d
+msgid "Pending"
+msgstr "Ootel"
+
+msgid "Cleaned"
+msgstr ""
+
+msgid "Transactional"
+msgstr ""
+
+msgid "Audience ID"
+msgstr ""
+
+msgid ""
+"ID of audience can be found in Settings > Audience name and campaign "
+"defaults of interested audience"
+msgstr ""
+
+msgid "Fields matching"
+msgstr ""
+
+#, php-format
+msgid ""
+"Enter the names of the fields in your Mailchimp audience settings in "
+"accordance with Bookly data. You can find these names in <b>Audience "
+"settings > Audience fields and %s tags</b> in your Mailchimp account"
+msgstr ""
+
+msgid "Value"
+msgstr ""
+
+# wpml-name: 8b4ecc7d463a0084d62e8b4565b8d0b8
+msgid "Codes"
+msgstr "Koodid"
+
+msgid "Add field"
+msgstr ""
+
+msgid ""
+"Remove a subscriber from mailing list when customer is deleted in Bookly"
+msgstr ""
+
+# wpml-name: f2a6c498fb90ee345d997f888fce3b18
+msgid "Delete"
+msgstr "Kustuta"
+
+# wpml-name: 729a51874fe901b092899e9e8b31c97a
+msgid "Are you sure?"
+msgstr "Kas olete kindel?"
+
+# wpml-name: ea4788705e6873b424c65e91c2846b19
+msgid "Cancel"
+msgstr "Loobu"
+
+msgid "Address of client"
+msgstr ""
+
+msgid "Client birthday"
+msgstr ""
+
+msgid "Email of client"
+msgstr ""
+
+msgid "First name of client"
+msgstr ""
+
+msgid "Last name of client"
+msgstr ""
+
+msgid "Full name of client"
+msgstr ""
+
+msgid "Note of client"
+msgstr ""
+
+msgid "Phone of client"
+msgstr ""
 
 # wpml-name: 63394e7de40a21658c1a09e87be9293a
 msgid "Notification to customer about approved recurring appointment"
@@ -1222,31 +1343,30 @@ msgstr ""
 msgid "URL for approving the whole schedule"
 msgstr "URL kogu ajakava kinnitamiseks"
 
+msgid "Cancel all appointments in chain link"
+msgstr ""
+
+msgid "URL of cancel all appointments link (to use inside <a> tag)"
+msgstr ""
+
 # wpml-name: 407b4f60c20c320218c9d38312464110
 msgid "Recurring appointments"
 msgstr "Korduvad kohtumised"
-
-# wpml-name: ffcf70e892b8ac3facbac0f88602396b
-msgid "Every"
-msgstr "Iga"
-
-msgid ""
-"You are going to reschedule the recurring appointment. Please select "
-"recurring appointments which should be rescheduled as well."
-msgstr ""
-
-msgid "Only this appointment"
-msgstr ""
-
-msgid "This and next appointments"
-msgstr ""
 
 # wpml-name: 7f1904bef70b8a31c51312ad60f908a8
 msgid "All appointments"
 msgstr "Kõik kohtumised"
 
-msgid "Number of days to shift appointments"
-msgstr ""
+# wpml-name: 2ae1a91d2a82e76efb0a4600283cc0e0
+msgid "Another time was offered on pages"
+msgstr "Teine aeg pakuti lehtedel"
+
+# #-#-#-#-#  catalog.po (WPML_EXPORT_bookly)  #-#-#-#-#
+# wpml-name: bookly_l10n_button_apply
+# #-#-#-#-#  catalog.po (WPML_EXPORT_bookly)  #-#-#-#-#
+# wpml-name: 9639e32cab248434a17ab32237cb3b71
+msgid "Apply"
+msgstr "Kasuta"
 
 msgid "Appointments will be scheduled at"
 msgstr ""
@@ -1258,20 +1378,30 @@ msgstr ""
 msgid "Back"
 msgstr "Tagasi"
 
-# wpml-name: f2a6c498fb90ee345d997f888fce3b18
-msgid "Delete"
-msgstr "Kustuta"
+# wpml-name: ffcf70e892b8ac3facbac0f88602396b
+msgid "Every"
+msgstr "Iga"
 
-# #-#-#-#-#  catalog.po (WPML_EXPORT_bookly)  #-#-#-#-#
-# wpml-name: bookly_l10n_button_apply
-# #-#-#-#-#  catalog.po (WPML_EXPORT_bookly)  #-#-#-#-#
-# wpml-name: 9639e32cab248434a17ab32237cb3b71
-msgid "Apply"
-msgstr "Kasuta"
+msgid "Number of days to shift appointments"
+msgstr ""
 
-# wpml-name: 2ae1a91d2a82e76efb0a4600283cc0e0
-msgid "Another time was offered on pages"
-msgstr "Teine aeg pakuti lehtedel"
+msgid "Only this appointment"
+msgstr ""
+
+msgid ""
+"You are going to reschedule the recurring appointment. Please select "
+"recurring appointments which should be rescheduled as well."
+msgstr ""
+
+msgid "This and next appointments"
+msgstr ""
+
+# wpml-name: ca647e9f2145e2b66c192c8a676192ce
+msgid "View series"
+msgstr "Vaatamis seeriad"
+
+msgid "The \"Until\" date cannot be earlier than the date of the appointment"
+msgstr ""
 
 # wpml-name: 130e21efe8cc9bd5728d59c1b3a99085
 msgid "Delete Appointment"
@@ -1393,10 +1523,6 @@ msgstr "Ühikuhind"
 msgid "Custom"
 msgstr "Kohandatud"
 
-# wpml-name: 729a51874fe901b092899e9e8b31c97a
-msgid "Are you sure?"
-msgstr "Kas olete kindel?"
-
 # wpml-name: 9169bfde8e4353d7929a329a5a058bbc
 msgid "Duplicate dates are not permitted."
 msgstr "Korduskuupäevad ei ole lubatud."
@@ -1448,13 +1574,13 @@ msgstr "Kategoriseerimata"
 msgid "Compound"
 msgstr "Ühend"
 
-# wpml-name: af2a1ff8a5f7112e3bd06199554ecab1
-msgid "Part of compound service"
-msgstr "Osa liitteenusest"
-
 # wpml-name: 1232fab68fa3e66e8dd93e027a471cd9
 msgid "Compound service"
 msgstr "Ühend teenus"
+
+# wpml-name: af2a1ff8a5f7112e3bd06199554ecab1
+msgid "Part of compound service"
+msgstr "Osa liitteenusest"
 
 # wpml-name: 3518e9a92007552d040f6b0dcee779d5
 msgid "Spare time"
@@ -1507,6 +1633,9 @@ msgstr "Lisa Personali Puhkuse Päevad"
 msgid ""
 "Hide this field if you want to hide the list of WP users from your staff "
 "members."
+msgstr ""
+
+msgid "Read only"
 msgstr ""
 
 # wpml-name: 7e6450768bcbf2418b1e0e92af9a65cb
@@ -1593,10 +1722,6 @@ msgstr "Eritunnid"
 msgid "Fields"
 msgstr "Väljad"
 
-# wpml-name: 07d570e5990987d91d9ab6a4f8d99632
-msgid "read only"
-msgstr "loe ainult"
-
 # wpml-name: 5d9e4a318e3b45e3b4465fde3093bb88
 msgid "Repeat every year"
 msgstr "Korda igal aastal"
@@ -1612,6 +1737,21 @@ msgstr "Minimaalne maht ei tohiks olla suurem kui maksimaalne maht."
 # wpml-name: 3629d01920a945712d30867ceba48ef3
 msgid "Export to CSV"
 msgstr "Ekspordi CSV-sse"
+
+msgid "Auto-refresh Calendar"
+msgstr "Värskenda kalendrit automaatselt"
+
+msgid "Every 1 minute"
+msgstr ""
+
+msgid "Every 5 minutes"
+msgstr ""
+
+msgid "Every 15 minutes"
+msgstr ""
+
+msgid "Disable"
+msgstr ""
 
 # wpml-name: dae5892c02f5fca335d0dbba0a2d0dd9
 msgid "Displayed appointments"
@@ -1632,6 +1772,9 @@ msgstr "Koma (,)"
 # wpml-name: af38804ede73ce45d7bed6419c2443ba
 msgid "Semicolon (;)"
 msgstr "Semikoolon (;)"
+
+msgid "Select all"
+msgstr ""
 
 # wpml-name: a9114db8f64049b45780152112c53a7c
 msgid "Booking Time"
@@ -1660,36 +1803,9 @@ msgstr "Staatus"
 msgid "Payment"
 msgstr "Makse"
 
-# wpml-name: 1dd1c5fb7f25cd41b291d43a89e3aefd
-msgid "Today"
-msgstr "Täna"
-
-# wpml-name: d2ce009594dcc60befa6a4e6cbeb71fc
-msgid "Week"
-msgstr "Nädal"
-
-# wpml-name: 7cbb885aa1164b390a0bc050a64e1812
-msgid "Month"
-msgstr "Kuu"
-
-# wpml-name: 36f02e334da6ebe8ecf4a2e6a5f627fb
-msgid "All Day"
-msgstr "Terve päev"
-
-msgid "List"
-msgstr ""
-
-# wpml-name: 74f82d8144664f170b34726d7f6c3f54
-msgid "No appointments for selected period."
-msgstr "Valitud perioodil kohtumisi pole."
-
 # wpml-name: 89775f091e9766d4afd75bf1f7b1a284
 msgid "On waiting list"
 msgstr "Ootejärjekorras"
-
-# wpml-name: 209802fb858e2c83205027dbbb5d9e6c
-msgid "Package"
-msgstr "Pakett"
 
 # wpml-name: 2ae3330084b44abd37672d0ca603471e
 #, php-format
@@ -1736,6 +1852,12 @@ msgstr "Kõik asukohad"
 # wpml-name: 6f6cf22cf52e319e758dfb819874f48f
 msgid "No locations selected"
 msgstr "Ühtegi asukohta pole valitud"
+
+msgid "Zoom connection failed"
+msgstr ""
+
+msgid "Zoom: OAuth2.0 connection needed"
+msgstr ""
 
 # wpml-name: 480fd84fc4e6365263fb6cd4439e55d2
 msgid "You don't have permissions to view this content."
@@ -1845,6 +1967,12 @@ msgstr "Maksustamine"
 msgid "Customer Information"
 msgstr "Kliendi Info"
 
+msgid "Combined values of all customer information fields"
+msgstr ""
+
+msgid "Customer information field"
+msgstr ""
+
 # wpml-name: 6194a5fa3a6ee3b2bdf194d5004b7a67
 msgid "Ask once"
 msgstr "Küsi üks kord"
@@ -1852,6 +1980,9 @@ msgstr "Küsi üks kord"
 # wpml-name: 8ba3e0042fda68be579764ec91bbbefb
 msgid "Show customer information"
 msgstr "Kuva kliendi teave"
+
+msgid "Info field"
+msgstr ""
 
 msgid ""
 "To receive REST API credentials, in <b>My Apps & Credentials</b> of your "
@@ -1877,10 +2008,6 @@ msgstr ""
 msgid "Invalid session"
 msgstr "Kehtetu seanss"
 
-# wpml-name: 81b03c92dfacde3a438c56d16bbd2399
-msgid "Mollie accepts payments in Euro only."
-msgstr "Mollie aktsepteerib makseid ainult eurodes."
-
 # wpml-name: c7dac57d6f4dc504e8dd9a91fae00836
 msgid "Mollie error."
 msgstr "Mollie viga."
@@ -1888,10 +2015,6 @@ msgstr "Mollie viga."
 # wpml-name: c2425cd262bd71775d7ec9d89a7a9d8e
 msgid "I will pay now with Mollie"
 msgstr "Ma maksan nüüd koos Molliega"
-
-# wpml-name: d876ff8da67c3731ae25d8335a4168b4
-msgid "API Key"
-msgstr "API Võtti"
 
 # wpml-name: 400bc399ce9c43e61f8f0db218e73095
 msgid "Time interval of payment gateway"
@@ -1905,6 +2028,9 @@ msgid ""
 msgstr ""
 "Selline säte määrab tähtaja, mille möödudes maksevärava kaudu tehtud makse "
 "loetakse puudulikuks. See funktsioon nõuab plaanitud cron-tööd."
+
+msgid "Payment failed"
+msgstr ""
 
 # wpml-name: cbb82b745c094bfd47efca06378ecd6f
 msgid "Persons"
@@ -2078,6 +2204,9 @@ msgstr "Kliendi kabinet (kõik teenused kuvatakse vahekaartidel)"
 msgid "Appointment management"
 msgstr "Ametisse nimetamise juhtimine"
 
+msgid "Filters"
+msgstr ""
+
 # wpml-name: 8281fa9e90b25dcea4338242b41dba57
 msgid "Show timezone"
 msgstr "Vaata ajavöönd"
@@ -2100,9 +2229,8 @@ msgstr ""
 msgid "Join online meeting"
 msgstr ""
 
-# wpml-name: ea4788705e6873b424c65e91c2846b19
-msgid "Cancel"
-msgstr "Loobu"
+msgid "Cancellation reason"
+msgstr ""
 
 # wpml-name: 4d71f6e4d505e2025e99a24491603763
 msgid "Reschedule"
@@ -2158,10 +2286,6 @@ msgstr "Ajavöönd"
 msgid "Employee"
 msgstr "Töötaja"
 
-# wpml-name: d5255642a07f3ac10f6962c53fe55aca
-msgid "Custom field"
-msgstr "Kohandatud väli"
-
 # wpml-name: 1d949d2235747b894bbaae35fbf44f1d
 msgid "Customer information"
 msgstr "Kliendi info"
@@ -2173,6 +2297,10 @@ msgstr "Kohtumised"
 # wpml-name: cce99c598cfdb9773ab041d54c3d973a
 msgid "Profile"
 msgstr "Profiil"
+
+# wpml-name: 76226a8e01dcea3cdd58627d565159b9
+msgid "Any time"
+msgstr "Koguaeg"
 
 # wpml-name: 7473ed15b3eee472230e9fd7d67a3a4c
 msgid "WP user"
@@ -2275,10 +2403,18 @@ msgstr "Ok"
 msgid " and %d more item"
 msgstr " ja %d rohkem asi"
 
+msgid "Bookly Cloud couldn't connect to your server."
+msgstr ""
+
 msgid "Stripe not connected"
 msgstr ""
 
 msgid "Stripe account not found"
+msgstr ""
+
+msgid ""
+"Refund cannot be processed. Try again later or process it manually in your "
+"payment system"
 msgstr ""
 
 # wpml-name: e4e411aa2814194eb52225ddea8df124
@@ -2355,6 +2491,9 @@ msgstr ""
 msgid "Bookly Cloud - Low Balance"
 msgstr "Bookly Cloud - Madal saldo"
 
+msgid "Card"
+msgstr ""
+
 msgid ""
 "You don't have enough Bookly Cloud credits to send this message. Please add "
 "funds to your balance and try again."
@@ -2403,14 +2542,6 @@ msgstr "Ebaõnnestus"
 # wpml-name: c50edafe3daf410248bf4dd2c9232fe8
 msgid "Undelivered"
 msgstr "Tarnimata"
-
-# wpml-name: 7a1920d61156abc05a60135aefe8bc67
-msgid "Default"
-msgstr "Vaikimisi"
-
-# wpml-name: 2d13df6f8b5e4c5af9f87e0dc39df69d
-msgid "Pending"
-msgstr "Ootel"
 
 # wpml-name: 6f8063417ab31f38d864c28302f3de2f
 msgid "Approved"
@@ -2647,6 +2778,15 @@ msgid ""
 "{next_day_agenda}"
 msgstr ""
 
+msgid "Notification to customer with verification code"
+msgstr ""
+
+msgid "Bookly verification code"
+msgstr ""
+
+msgid "Download ICS"
+msgstr ""
+
 # #-#-#-#-#  catalog.po (WPML_EXPORT_bookly)  #-#-#-#-#
 # wpml-name: bookly_l10n_info_complete_step
 # #-#-#-#-#  catalog.po (WPML_EXPORT_bookly)  #-#-#-#-#
@@ -2750,6 +2890,12 @@ msgstr "Valige päev"
 msgid "Start from"
 msgstr "Alusta siit"
 
+msgid "I agree to the terms of service"
+msgstr ""
+
+msgid "You must accept our terms"
+msgstr ""
+
 # wpml-name: 03368e3c1eb4d2a9048775874301b19f
 msgid "Select category"
 msgstr "Vali kategooria"
@@ -2795,6 +2941,10 @@ msgstr "Valige aasta"
 # wpml-name: 81313f12cfcd6871b0d3c2ff34e994cd
 msgid "Please tell us your email"
 msgstr "Palun rääkige meile oma e-posti aadress"
+
+# wpml-name: e520a9de05ba26dbe873de06d4b69eaa
+msgid "This email is already in use"
+msgstr "Selline e-post on juba kasutusel"
 
 # #-#-#-#-#  catalog.po (WPML_EXPORT_bookly)  #-#-#-#-#
 # wpml-name: bookly_l10n_email_confirm_not_match
@@ -2855,6 +3005,9 @@ msgstr "Logi sisse"
 # wpml-name: f92965e2c8a7afb3c1b9a5c09a263636
 msgid "Done"
 msgstr "Tehtud"
+
+msgid "Start over"
+msgstr ""
 
 # wpml-name: 53d30406db9f817ba4584694ccdc3e94
 msgid "Signed up"
@@ -3046,6 +3199,233 @@ msgid ""
 "{company_website}"
 msgstr ""
 
+# wpml-name: 0728ba52bf48b33d6f0f97b08ea24465
+msgid "Page Redirection"
+msgstr "Lehe ümbersuunamine"
+
+# wpml-name: c1a925d5fa9dfce4ca382b9d34bcfb5f
+#, php-format
+msgid ""
+"If you are not redirected automatically, follow the <a href=\"%s\">link</a>."
+msgstr ""
+"Kui teid ei suunata automaatselt ümber, järgige <a href=\"%s\">linki</a>."
+
+# wpml-name: 509820290d57f333403f490dde7316f4
+msgid "Local"
+msgstr "Lokaalne"
+
+# wpml-name: 1dd1c5fb7f25cd41b291d43a89e3aefd
+msgid "Today"
+msgstr "Täna"
+
+# wpml-name: d2ce009594dcc60befa6a4e6cbeb71fc
+msgid "Week"
+msgstr "Nädal"
+
+# wpml-name: 7cbb885aa1164b390a0bc050a64e1812
+msgid "Month"
+msgstr "Kuu"
+
+msgid "List"
+msgstr ""
+
+# wpml-name: 74f82d8144664f170b34726d7f6c3f54
+msgid "No appointments for selected period."
+msgstr "Valitud perioodil kohtumisi pole."
+
+#, php-format
+msgid "+%d more"
+msgstr ""
+
+msgid "Education"
+msgstr ""
+
+msgid "Universities"
+msgstr ""
+
+msgid "Colleges"
+msgstr ""
+
+msgid "Schools"
+msgstr ""
+
+msgid "Libraries"
+msgstr ""
+
+msgid "Teaching"
+msgstr ""
+
+msgid "Tutoring lessons"
+msgstr ""
+
+msgid "Parent meetings"
+msgstr ""
+
+msgid "Child care"
+msgstr ""
+
+msgid "Driving Schools"
+msgstr ""
+
+msgid "Driving Instructors"
+msgstr ""
+
+msgid "Other"
+msgstr ""
+
+msgid "Beauty and wellness"
+msgstr ""
+
+msgid "Beauty salons"
+msgstr ""
+
+msgid "Hair salons"
+msgstr ""
+
+msgid "Nail salons"
+msgstr ""
+
+msgid "Eyelash extensions"
+msgstr ""
+
+msgid "Spa"
+msgstr ""
+
+msgid "Events and entertainment"
+msgstr ""
+
+msgid "Events (One time and Recurring)"
+msgstr ""
+
+msgid "Business events"
+msgstr ""
+
+msgid "Meeting rooms"
+msgstr ""
+
+msgid "Escape rooms"
+msgstr ""
+
+msgid "Art classes"
+msgstr ""
+
+msgid "Equipment rental"
+msgstr ""
+
+msgid "Photographers"
+msgstr ""
+
+msgid "Restaurants"
+msgstr ""
+
+msgid "Medical"
+msgstr ""
+
+msgid "Medical Clinics & Doctors"
+msgstr ""
+
+msgid "Dentists"
+msgstr ""
+
+msgid "Chiropractors"
+msgstr ""
+
+msgid "Acupuncture"
+msgstr ""
+
+msgid "Massage"
+msgstr ""
+
+msgid "Physiologists"
+msgstr ""
+
+msgid "Psychologists"
+msgstr ""
+
+msgid "Officials"
+msgstr ""
+
+msgid "City councils"
+msgstr ""
+
+msgid "Embassies and consulates"
+msgstr ""
+
+msgid "Attorneys"
+msgstr ""
+
+msgid "Legal services"
+msgstr ""
+
+msgid "Financial services"
+msgstr ""
+
+msgid "Interview scheduling"
+msgstr ""
+
+msgid "Call centers"
+msgstr ""
+
+msgid "Personal meetings and services"
+msgstr ""
+
+msgid "Consulting"
+msgstr ""
+
+msgid "Counselling"
+msgstr ""
+
+msgid "Coaching"
+msgstr ""
+
+msgid "Spiritual services"
+msgstr ""
+
+msgid "Design consultants"
+msgstr ""
+
+msgid "Cleaning"
+msgstr ""
+
+msgid "Household"
+msgstr ""
+
+msgid "Pet services"
+msgstr ""
+
+msgid "Retailers"
+msgstr ""
+
+msgid "Supermarket"
+msgstr ""
+
+msgid "Retail Finance"
+msgstr ""
+
+msgid "Other retailers"
+msgstr ""
+
+msgid "Sport"
+msgstr ""
+
+msgid "Personal trainers"
+msgstr ""
+
+msgid "Gyms"
+msgstr ""
+
+msgid "Fitness classes"
+msgstr ""
+
+msgid "Yoga classes"
+msgstr ""
+
+msgid "Golf classes"
+msgstr ""
+
+msgid "Sport items renting"
+msgstr ""
+
 # wpml-name: 2daa0d539a32aaac767aabaca91adba0
 #, php-format
 msgid "%d year"
@@ -3104,6 +3484,12 @@ msgstr "Viimased 7 päevad"
 msgid "Last 30 days"
 msgstr "Viimased 30 päevad"
 
+msgid "Next 7 days"
+msgstr ""
+
+msgid "Next 30 days"
+msgstr ""
+
 # wpml-name: 96165d6df5c2fc0a2d2049848c130c1c
 msgid "This month"
 msgstr "See kuu"
@@ -3131,6 +3517,10 @@ msgstr ""
 # wpml-name: 0eceeb45861f9585dd7a97a3e36f85c6
 msgid "Created"
 msgstr "Loodud"
+
+# wpml-name: 08643daceac5930a01274e8e41de11b3
+msgid "Internal note"
+msgstr "Sisemine märkus"
 
 # wpml-name: a1fa27779242b4902f7ae3bdd5c6d508
 msgid "Type"
@@ -3160,9 +3550,19 @@ msgstr "Maksed"
 msgid "State"
 msgstr "Valdkond"
 
+# wpml-name: c7892ebbb139886662c6f2fc8c450710
+msgid "Subject"
+msgstr "Teema"
+
 # wpml-name: ce26601dac0dea138b7295f02b7620a7
 msgid "Customer"
 msgstr "Klient"
+
+msgid "Start at"
+msgstr ""
+
+msgid "Number of recipients"
+msgstr ""
 
 # wpml-name: 9dffbf69ffba8bc38bc4e01abf4b1675
 msgid "Text"
@@ -3211,6 +3611,13 @@ msgstr ""
 msgid "Important"
 msgstr ""
 
+#, php-format
+msgid ""
+"You haven't entered the purchase code which results in impossibility to see "
+"if there is a new version available. Enter your purchase code in Settings > "
+"%sPurchase Code%s."
+msgstr ""
+
 msgid ""
 "Though, every new version is thoroughly tested to its highest quality before "
 "deploying, we can't guarantee that after update the plugin will work "
@@ -3235,15 +3642,20 @@ msgid "Bookly updater"
 msgstr "Bookly värskendaja"
 
 msgid ""
+"Please note that upon deleting this Bookly item, all data associated with it "
+"will be permanently deleted"
+msgstr ""
+
+#, php-format
+msgid "%s updated"
+msgstr ""
+
+msgid ""
 "Please wait, we are checking updates for {checked}/{total} Bookly add-ons"
 msgstr ""
 
 msgid "No updates available"
 msgstr ""
-
-# wpml-name: 509820290d57f333403f490dde7316f4
-msgid "Local"
-msgstr "Lokaalne"
 
 # wpml-name: b24ce0cd392a5b0b8dedc66c25213594
 msgid "Free"
@@ -3257,6 +3669,12 @@ msgstr "Lõpetatud"
 msgid "Rejected"
 msgstr "Tagasi lükatud"
 
+msgid "Refunded"
+msgstr ""
+
+msgid "Mixed"
+msgstr ""
+
 # wpml-name: 911af7aa209e00b49f3d6fd2afa92564
 msgid "Untitled"
 msgstr "Pealkirjata"
@@ -3268,14 +3686,6 @@ msgstr "Tundmatu"
 # wpml-name: 9db7426b6e7496a228edc2a0b4f712e0
 msgid "New booking notification"
 msgstr "Uus broneeringuteade"
-
-# wpml-name: c698f5c0551a093ca75c6d812b045d1f
-msgid "New booking combined notification"
-msgstr "Uue broneeringu kombineeritud teatis"
-
-# wpml-name: 92988ae91de1b3f6f2fd373465f07db8
-msgid "New customer's WordPress user login details"
-msgstr "Uute klientide WordPressi kasutaja sisselogimisandmed"
 
 # wpml-name: 574ee6a55c7b6863e5b4eb23c4395cfd
 msgid "Customer's birthday greeting"
@@ -3289,6 +3699,15 @@ msgstr "Kliendi viimase kohtumise teatis"
 msgid "Staff full day agenda"
 msgstr "Töötajate terve päevakava"
 
+msgid "Verify customer's email"
+msgstr ""
+
+msgid "Verify customer's phone"
+msgstr ""
+
+msgid "Mailing message"
+msgstr ""
+
 # wpml-name: 82dfa5549ebc9afc168eb7931ebece5f
 msgid "Test message"
 msgstr "Tekstisõnum"
@@ -3296,10 +3715,6 @@ msgstr "Tekstisõnum"
 # wpml-name: 681c7d68f4df5cdfbe3e1a29d22c275a
 msgid "Invalid email"
 msgstr "Vale e-post"
-
-# wpml-name: e520a9de05ba26dbe873de06d4b69eaa
-msgid "This email is already in use"
-msgstr "Selline e-post on juba kasutusel"
 
 # wpml-name: 6ba9c661c90a806719041de15214d131
 #, php-format
@@ -3324,9 +3739,15 @@ msgid ""
 "Your %s: %s is already associated with another %s.<br/>Press Update if we "
 "should update your user data, or press Cancel to edit entered data."
 msgstr ""
-"Teie% s:% s on juba seotud teise% s-ga. <br/> Kui peaksime teie "
+"Teie %s: %s on juba seotud teise %s-ga. <br/> Kui peaksime teie "
 "kasutajaandmeid värskendama, vajutage nuppu Uuenda, või sisestatud andmete "
 "muutmiseks vajutage Tühista."
+
+msgid "Enter verification code from SMS"
+msgstr ""
+
+msgid "Enter verification code from email"
+msgstr ""
 
 # wpml-name: 8073feb31373eed50f74e18534a0e530
 msgid "Internal Notes"
@@ -3342,6 +3763,9 @@ msgstr ""
 
 msgid "Admins"
 msgstr "Administraatorid"
+
+msgid "Initial setup"
+msgstr ""
 
 msgid "Dashboard"
 msgstr ""
@@ -3376,30 +3800,6 @@ msgstr ""
 msgid "Get Bookly Pro"
 msgstr "Võta Bookly Pro"
 
-# wpml-name: 41de6d6cfb8953c021bbe4ba0701c8a1
-msgid "Messages"
-msgstr "Sõnumid"
-
-# wpml-name: c7892ebbb139886662c6f2fc8c450710
-msgid "Subject"
-msgstr "Teema"
-
-# wpml-name: 4c2a8fe7eaf24721cc7a9f0175115bd4
-msgid "Message"
-msgstr "Sõnum"
-
-# wpml-name: 2fdbcf05b1296c2634f41c25ab495c25
-msgid "No records."
-msgstr "Puuduvad kirjed."
-
-# wpml-name: de70938849b75d3db63bba421c93e018
-msgid "messages"
-msgstr "sõnumid"
-
-# wpml-name: dd1f775e443ff3b9a89270713580a51b
-msgid "Previous"
-msgstr "Eelmine"
-
 # wpml-name: 633195e76e308b000115e77c4c8a81aa
 msgid "New appointment"
 msgstr "Uus kohtumine"
@@ -3408,9 +3808,11 @@ msgstr "Uus kohtumine"
 msgid "Created at any time"
 msgstr "Loodud igal ajal"
 
-# wpml-name: 76226a8e01dcea3cdd58627d565159b9
-msgid "Any time"
-msgstr "Koguaeg"
+msgid "All statuses"
+msgstr ""
+
+msgid "No status selected"
+msgstr ""
 
 # wpml-name: 03ac21a9797a06114f0aedd391a1e2a3
 msgid "No result found"
@@ -3427,6 +3829,87 @@ msgstr "Manused"
 msgid "Archived"
 msgstr "Arhiivitud"
 
+msgid "1 - 9 employees"
+msgstr ""
+
+msgid "10 - 19 employees"
+msgstr ""
+
+msgid "20 - 49 employees"
+msgstr ""
+
+msgid "50 - 249 employees"
+msgstr ""
+
+msgid "250 or more employees"
+msgstr ""
+
+# wpml-name: c281f92b77ba329f692077d23636f5c9
+msgid "Company name"
+msgstr "Ettevõtte Nimi"
+
+msgid "Industry"
+msgstr ""
+
+msgid "Select industry"
+msgstr ""
+
+msgid "Company size"
+msgstr ""
+
+msgid "Select company size"
+msgstr ""
+
+msgid "Company owner email"
+msgstr ""
+
+# wpml-name: b21b3d1d8927b772005eb6d231890aae
+msgid "Add service"
+msgstr "Lisa teenus"
+
+msgid "Continue"
+msgstr ""
+
+msgid "Finish"
+msgstr ""
+
+# wpml-name: 72ef2b9b6965d078e3c7f95487a82d1c
+msgid "Skip"
+msgstr "Jäta vahele"
+
+# wpml-name: 1c76cbfe21c6f44c1d1e59d54f3e4420
+msgid "Company"
+msgstr "Firma"
+
+msgid "Congratulations, the initial setup is complete!"
+msgstr ""
+
+#, php-format
+msgid "Shortcut of your form is %s"
+msgstr ""
+
+msgid ""
+"Open the page where you want to add the booking form in page edit mode and "
+"paste this shortcut in a free block."
+msgstr ""
+
+#, php-format
+msgid ""
+"You can find more detailed instructions for publishing Bookly form in our %s"
+msgstr ""
+
+msgid "Help center"
+msgstr ""
+
+#, php-format
+msgid ""
+"Bookly can boost your sales and scale together with your business. Get more "
+"features and remove the limits by upgrading to the paid version with the %s, "
+"which allows you to use a vast number of additional features and settings "
+"for online scheduling, install other add-ons for Bookly, and includes six "
+"months of customer support."
+msgstr ""
+
 msgid "Staff members order"
 msgstr ""
 
@@ -3442,21 +3925,35 @@ msgstr "Kategooriad"
 msgid "Show archived"
 msgstr ""
 
+msgid "next day"
+msgstr ""
+
 # wpml-name: 332c80b1838dc515f5031e09da3b7f3f
 msgid "Reorder"
 msgstr "Ümberkorraldamine"
+
+# wpml-name: 2fdbcf05b1296c2634f41c25ab495c25
+msgid "No records."
+msgstr "Puuduvad kirjed."
 
 # wpml-name: be53a0541a6d36f6ecb879fa2c584b08
 msgid "Image"
 msgstr "Pilt"
 
-# wpml-name: c281f92b77ba329f692077d23636f5c9
-msgid "Company name"
-msgstr "Ettevõtte Nimi"
-
 # wpml-name: 15bbb9d0bbf25e8d2978de1168c749dc
 msgid "Website"
 msgstr "Veebileht"
+
+msgid "Bookly data upon deleting Bookly items"
+msgstr ""
+
+msgid ""
+"If you choose Delete, all data associated with Bookly will be permanently "
+"deleted when deleting Bookly items (Bookly, Bookly Pro, or any Bookly add-on)"
+msgstr ""
+
+msgid "Don't delete"
+msgstr ""
 
 # wpml-name: 84ee7b0667103638e49dffc1c2a1df4e
 msgid "Time slot length"
@@ -3481,14 +3978,6 @@ msgid ""
 msgstr ""
 "Lubage see suvand, et teenindusaja pikkus võrduks teenuse kestusega "
 "broneeringu ajahetkel."
-
-# wpml-name: e9d579b54e3af19aaaa23163061776a7
-msgid "Default appointment status"
-msgstr "Kohtumise vaikeolek"
-
-# wpml-name: fdf164244befe9798a21b77bb90767fe
-msgid "Select status for newly booked appointments."
-msgstr "Valige äsja broneeritud kohtumiste olek."
 
 # wpml-name: dc0165916bff47779bcf87c423327110
 msgid "Number of days available for booking"
@@ -3558,21 +4047,28 @@ msgid ""
 "form"
 msgstr ""
 
+msgid "Prevent PHP session locking"
+msgstr ""
+
+msgid ""
+"Enable this option to make Bookly close the PHP session as soon as it is "
+"done with it. This should prevent locking the session, which could cause "
+"various other processes to timeout or fail"
+msgstr ""
+
+msgid "Show news notifications"
+msgstr ""
+
+msgid "If enabled, News notification icon will be displayed"
+msgstr ""
+
 # wpml-name: 11a4544cfde2a5a5402d2f3c70e39713
 msgid "Service paid locally"
 msgstr "Teenus makstakse kohapeal"
 
-# wpml-name: 0db377921f4ce762c62526131097968f
-msgid "General"
-msgstr "Üldine"
-
 # wpml-name: 2fc41d0c0c6fb7e056d7570c256738d1
 msgid "URL Settings"
 msgstr "URL-i seaded"
-
-# wpml-name: 1c76cbfe21c6f44c1d1e59d54f3e4420
-msgid "Company"
-msgstr "Firma"
 
 # wpml-name: 391ad1f462480aba941c0d392f073cda
 msgid "Business Hours"
@@ -3670,11 +4166,31 @@ msgstr ""
 "ainult töötajate ajakava, mitte ettevõtte tööaega. Kontrollige kindlasti oma "
 "töötajate ajakava, kui teil on broneerimissüsteemis mõni ootamatu käitumine."
 
-# wpml-name: 08643daceac5930a01274e8e41de11b3
-msgid "Internal note"
-msgstr "Sisemine märkus"
+msgid ""
+"Please note that business hours you set here will be used as visible hours "
+"in Calendar for all staff members if you enable \"Show only business hours "
+"in the calendar\" in Settings > Calendar."
+msgstr ""
 
-msgid "Duration of service"
+# wpml-name: fdf164244befe9798a21b77bb90767fe
+msgid "Select status for newly booked appointments."
+msgstr "Valige äsja broneeritud kohtumiste olek."
+
+#, php-format
+msgid ""
+"Please note that this setting will be overridden by Customer Groups > "
+"General settings > <a href=\"%s\" target=\"_blank\">Default appointment "
+"status</a>."
+msgstr ""
+
+# wpml-name: e9d579b54e3af19aaaa23163061776a7
+msgid "Default appointment status"
+msgstr "Kohtumise vaikeolek"
+
+msgid "ICS description for customers"
+msgstr ""
+
+msgid "ICS description for staff"
 msgstr ""
 
 msgid "Show only business days in the calendar"
@@ -3701,6 +4217,44 @@ msgid ""
 "appointments will be displayed in the Day view"
 msgstr ""
 
+msgid "Show new appointments notifications"
+msgstr ""
+
+msgid ""
+"If enabled, you will see an indicator near 'Calendar' for newly created "
+"appointments"
+msgstr ""
+
+msgid "Month view style"
+msgstr ""
+
+msgid "Select the style for displaying appointments in Month view"
+msgstr ""
+
+msgid "Classic"
+msgstr ""
+
+msgid "Minimalistic"
+msgstr ""
+
+msgid "Coloring mode"
+msgstr ""
+
+msgid ""
+"If you select \"By service\", then the color will be taken from the service "
+"settings. If you select \"By status\", then the color will depend on the "
+"appointment status"
+msgstr ""
+
+msgid "By service"
+msgstr ""
+
+msgid "By status"
+msgstr ""
+
+msgid "By staff"
+msgstr ""
+
 # wpml-name: b9217f4518f6ea8509aa143c48af37dd
 msgid "Appointment with one participant"
 msgstr "Kohtumine ühe osalejaga"
@@ -3709,10 +4263,6 @@ msgstr "Kohtumine ühe osalejaga"
 msgid "Appointment with many participants"
 msgstr "Kohtumine paljude osalejatega"
 
-# wpml-name: 4c7b508170b62ca4c009b6b440d1fd84
-msgid "Set order of the fields in calendar"
-msgstr "Määrake väljade järjekord kalendris"
-
 # wpml-name: 386c339d37e737a436499d423a77df0c
 msgid "Currency"
 msgstr "Valuuta"
@@ -3720,6 +4270,18 @@ msgstr "Valuuta"
 # wpml-name: fce0d6ef46dce1c4b3c95ba87d6bac67
 msgid "Price format"
 msgstr "Hinnavorming"
+
+msgid "Add custom metadata to payment"
+msgstr ""
+
+msgid ""
+"You can specify up to 50 keys, with key names up to 40 characters long and "
+"values up to 500 characters long. Key names can contain only letters, digits "
+"and spaces."
+msgstr ""
+
+msgid "Add metadata"
+msgstr ""
 
 # wpml-name: 1f19aa1e33c1181492fc1b171ca38146
 msgid "Phone field default country"
@@ -3796,6 +4358,26 @@ msgstr ""
 "Kui see valik on sisse lülitatud ja klient sisestab kontaktinfo erineb "
 "eelmisest järjekorras hoiatusteade ilmub paludes andmeid värskendada."
 
+msgid "Verify customer's contact information at Details step"
+msgstr ""
+
+msgid ""
+"Select when to send a notification with a verification code to the customer "
+"by SMS or email."
+msgstr ""
+
+msgid "Off"
+msgstr ""
+
+msgid "Always verify phone"
+msgstr ""
+
+msgid "Always verify email"
+msgstr ""
+
+msgid "Only if data is different from the previous order"
+msgstr ""
+
 msgid "Debug logs"
 msgstr ""
 
@@ -3806,13 +4388,19 @@ msgid ""
 "appointments."
 msgstr ""
 
+msgid "All actions"
+msgstr ""
+
+msgid "Target ID"
+msgstr ""
+
+msgid "Quick search"
+msgstr ""
+
 msgid "Action"
 msgstr ""
 
 msgid "Target"
-msgstr ""
-
-msgid "Target ID"
 msgstr ""
 
 msgid "Author"
@@ -3828,14 +4416,74 @@ msgstr ""
 msgid "Clear logs"
 msgstr ""
 
-# wpml-name: 79e3fb68d2509ac9f7872c2d4ad77d20
-#, php-format
-msgid ""
-"WooCommerce cart is not set up. Follow the <a href=\"%s\">link</a> to "
-"correct this problem."
+msgid "Appointment ID"
 msgstr ""
-"WooCommendi ostukorvi pole üles seatud. Selle probleemi lahendamiseks "
-"järgige linki <a href=\"%s\">."
+
+msgid "Date of appointment"
+msgstr ""
+
+msgid "Time of appointment"
+msgstr ""
+
+msgid "Booking number"
+msgstr ""
+
+msgid "Name of category"
+msgstr ""
+
+msgid "Address of company"
+msgstr ""
+
+msgid "Name of company"
+msgstr ""
+
+msgid "Company phone"
+msgstr ""
+
+msgid "Company web-site address"
+msgstr ""
+
+msgid "Duration of service"
+msgstr ""
+
+msgid "Info of service"
+msgstr ""
+
+msgid "Name of service"
+msgstr ""
+
+msgid "Price of service"
+msgstr ""
+
+msgid "Email of staff"
+msgstr ""
+
+msgid "Info of staff"
+msgstr ""
+
+msgid "Name of staff"
+msgstr ""
+
+msgid "Phone of staff"
+msgstr ""
+
+msgid "Customer notes for appointment"
+msgstr ""
+
+msgid "Status of payment"
+msgstr ""
+
+msgid "Payment type"
+msgstr ""
+
+msgid "Status of appointment"
+msgstr ""
+
+msgid "Loop over participants list"
+msgstr ""
+
+msgid "Loop over participants list with delimiter"
+msgstr ""
 
 # wpml-name: 80cbddde2192d459a99ee9b8088a6df5
 msgid "Last month"
@@ -3855,6 +4503,12 @@ msgstr ""
 # wpml-name: a274f4d4670213a9045ce258c6c56b80
 msgid "Notifications"
 msgstr "Teated"
+
+msgid "Campaigns"
+msgstr ""
+
+msgid "Mailing lists"
+msgstr ""
 
 # wpml-name: 3898d1d5e5bf4f9ff01ce380f8f9d437
 msgid "SMS Details"
@@ -3896,23 +4550,6 @@ msgstr ""
 msgid "Quick search notifications"
 msgstr "Kiirotsingu teatised"
 
-# wpml-name: e1d1ea607899dda483ed3b589cd72bfa
-#, php-format
-msgid ""
-"To send scheduled notifications please refer to <a href=\"%1$s\">Bookly "
-"Multisite</a> add-on <a href=\"%2$s\">message</a>."
-msgstr ""
-"Ajastatud teatiste saatmiseks lugege <a href=\"%1$s\"> Bookly Multisite </a> "
-"lisandmooduli <a href=\"%2$s\"> sõnumit </a>."
-
-# wpml-name: a2d1c61322ab9101b60fce745131a365
-msgid ""
-"To send scheduled notifications please execute the following command hourly "
-"with your cron:"
-msgstr ""
-"Planeeritud teatiste saatmiseks täitke oma croniga järgmine kord järgmine "
-"käsk:"
-
 # wpml-name: 448ca6d1794180b35245489eeb185203
 msgid ""
 "Please take into account that not all countries by law allow custom SMS "
@@ -3945,6 +4582,12 @@ msgstr "Tühistamise taotlus"
 msgid "Can only contain letters or digits (up to 11 characters)."
 msgstr "Saab sisaldada ainult tähti või numbreid (kuni 11 tähemärki)."
 
+msgid "Current mailing list"
+msgstr ""
+
+msgid "Back to lists"
+msgstr ""
+
 # wpml-name: 5a1d52892049f1dc8e00b3fb933528ba
 msgid "Sender ID request is sent."
 msgstr "Saatja ID taotlus on saadetud."
@@ -3965,6 +4608,12 @@ msgstr "luba"
 msgid "disable"
 msgstr "keelata"
 
+msgid "In progress"
+msgstr ""
+
+msgid "Canceled"
+msgstr ""
+
 # wpml-name: aff664dcc38d38afa90b6ec8a91970d6
 msgid "SMS has been sent successfully."
 msgstr "SMS on edukalt saadetud."
@@ -3984,17 +4633,9 @@ msgstr ""
 msgid "Bookly Cloud Settings"
 msgstr ""
 
-# wpml-name: 2bec9e8325a4a214a8e707272c6c843e
-msgid "Auto-Recharge"
-msgstr "Automaatne Laadimine"
-
 # wpml-name: 0b39c5aca15b84b1ad53a94d6b3feb78
 msgid "Change password"
 msgstr "Muuda parooli"
-
-#, php-format
-msgid "We will only charge you when your balance falls below %s"
-msgstr ""
 
 # wpml-name: f14c8df9347857ce8f50597fe0b00f8c
 msgid "Company address"
@@ -4035,6 +4676,9 @@ msgstr "Sisestage komadega eraldatud üks või mitu e-posti aadressi."
 msgid "Save invoice settings"
 msgstr ""
 
+msgid "Show SMS notification icon"
+msgstr ""
+
 # wpml-name: b8c646e946e7a36e7f8e27d9108c48d3
 msgid "Send email notification to administrators at low balance"
 msgstr "Madala saldoga administraatoritele e-posti teel teatise saatmine"
@@ -4063,10 +4707,6 @@ msgstr ""
 
 msgid "Services order"
 msgstr ""
-
-# wpml-name: b21b3d1d8927b772005eb6d231890aae
-msgid "Add service"
-msgstr "Lisa teenus"
 
 msgid "Quick search services"
 msgstr ""
@@ -4098,9 +4738,6 @@ msgstr ""
 # wpml-name: ed75712b0eb1913c28a3872731ffd48d
 msgid "Duplicate"
 msgstr "Duplikaat"
-
-msgid "You must select at least one repeat option for recurring services."
-msgstr ""
 
 # wpml-name: 1fbb1e3943c2c6c560247ac8f9289780
 msgid "Simple"
@@ -4220,6 +4857,108 @@ msgstr ""
 msgid "Stripe activation was not completed"
 msgstr ""
 
+msgid "Diagnostics"
+msgstr ""
+
+msgid "Success"
+msgstr ""
+
+msgid "PHP Sessions"
+msgstr ""
+
+#, php-format
+msgid ""
+"This test checks if PHP sessions are enabled. Bookly needs PHP sessions to "
+"work correctly. For more information about PHP sessions, please check the "
+"official PHP documentation %s."
+msgstr ""
+
+msgid "Critical errors"
+msgstr ""
+
+msgid "This test checks for critical errors in Bookly."
+msgstr ""
+
+msgid ""
+"Some critical errors in Bookly were found recently. Please check Settings > "
+"Logs and contact Bookly support."
+msgstr ""
+
+msgid "Timezone settings"
+msgstr ""
+
+msgid ""
+"We recommend to use timezones with geographic names (e.g., \"Europe/London\")"
+" instead of \"UTC +1\". Using numerical representation may cause errors with "
+"daylight saving time. You can modify your timezone in WP Settings > General >"
+" Timezone."
+msgstr ""
+
+msgid "Add-ons directories"
+msgstr ""
+
+msgid ""
+"Since Bookly has specific add-ons directories, their renaming may cause "
+"issues."
+msgstr ""
+
+msgid "Current directory name"
+msgstr ""
+
+msgid "Expected directory name"
+msgstr ""
+
+msgid ""
+"Some folders were renamed. Below you can find a list with current and "
+"correct names."
+msgstr ""
+
+msgid "Incompatible plugins"
+msgstr ""
+
+msgid ""
+"This test checks the plugins that may affect Bookly. For example, some "
+"caching and optimizing plugins may cause incorrect work of Bookly."
+msgstr ""
+
+msgid ""
+"One or several incompatible plugins were detected. Please add pages with "
+"Bookly shortcodes to cache exceptions and Javascript-code minification."
+msgstr ""
+
+msgid "Secure connection"
+msgstr ""
+
+msgid ""
+"Some Bookly integrations require HTTPS connection and won't work with your "
+"website if there is no valid SSL certificate installed on your web server."
+msgstr ""
+
+msgid "External connections"
+msgstr ""
+
+msgid ""
+"This test checks the ability to establish a connection with the Bookly Cloud "
+"external server."
+msgstr ""
+
+msgid ""
+"For some reason, your server blocks Bookly Cloud requests. To fix the issue, "
+"please ask your hosting provider to whitelist the Bookly Cloud server."
+msgstr ""
+
+msgid "Bookly updates"
+msgstr ""
+
+msgid ""
+"Bookly updates bring new useful features and bugfixes. Make sure you are "
+"using the latest version of Bookly to get more possibilities and the highest "
+"quality."
+msgstr ""
+
+msgid "Some Bookly items are outdated. Please update the following items:"
+msgstr ""
+
 # wpml-name: fd033609866a2ab039e0655c4d1d641b
 msgid "All staff"
 msgstr "Kogu personal"
@@ -4227,21 +4966,6 @@ msgstr "Kogu personal"
 # wpml-name: 24426572ef050c6bc86715b4bb1612ab
 msgid "No staff selected"
 msgstr "Ühtegi personali pole valitud"
-
-msgid "Auto-refresh Calendar"
-msgstr "Värskenda kalendrit automaatselt"
-
-msgid "Every 1 minute"
-msgstr ""
-
-msgid "Every 5 minutes"
-msgstr ""
-
-msgid "Every 15 minutes"
-msgstr ""
-
-msgid "Disable"
-msgstr ""
 
 # wpml-name: edafddee7f7b76971944857bcbc9dab8
 msgid "Welcome to Bookly and thank you for your choice!"
@@ -4315,6 +5039,12 @@ msgstr "Lisa Teenused"
 msgid "Try Bookly Pro add-on"
 msgstr "Proovige lisandmoodulit Bookly Pro"
 
+msgid "News"
+msgstr ""
+
+msgid "More news"
+msgstr ""
+
 # wpml-name: 7ca8110a3bf58ed6d8eb1ae5f93cf936
 msgid "No payments for selected period and criteria."
 msgstr "Valitud perioodi ja kriteeriumide eest makseid pole."
@@ -4375,6 +5105,15 @@ msgstr "Näita teenuse nime töötaja nime kõrval"
 msgid "Show service duration next to service name"
 msgstr "Näita teenuse nime kõrval teenuse kestus"
 
+msgid "Show category info"
+msgstr ""
+
+msgid "Show service info"
+msgstr ""
+
+msgid "Show staff info"
+msgstr ""
+
 # wpml-name: 9fe93f3e410fa5ffee132c466debc311
 msgid "Show calendar"
 msgstr "Näita kalendrit"
@@ -4386,6 +5125,12 @@ msgstr "Näita blokeeritud ajapilud"
 # wpml-name: 585deeced69316b618f62b84c1f09c3b
 msgid "Show each day in one column"
 msgstr "Kuvage iga päev ühes veerus"
+
+msgid "Please note that \"I'm available on or after\" picker will be hidden"
+msgstr ""
+
+msgid "Show only the nearest timeslot"
+msgstr ""
 
 # wpml-name: 924eb063afac8e2898eab94211522a80
 msgid "Phone field required"
@@ -4418,6 +5163,15 @@ msgstr "E-kirja kinnituse väli"
 # wpml-name: a94f1564403fce47ca2d174e1bdbb67d
 msgid "Show notes field"
 msgstr "Näita märkmete väli"
+
+msgid "Show Terms & Conditions checkbox"
+msgstr ""
+
+msgid "Show 'Start over' button"
+msgstr ""
+
+msgid "Show 'Download ICS' button"
+msgstr ""
 
 # wpml-name: ce610b1561b5c879e4840b89a020a07c
 msgid ""
@@ -4452,18 +5206,69 @@ msgstr "Nähtav, kui valitud ajavahe on juba broneeritud"
 msgid "Visible to non-logged in customers only"
 msgstr "Nähtav ainult sisselogimata klientidele"
 
+msgid "Loop over appointments list"
+msgstr ""
+
+msgid "Loop over appointments list with delimiter"
+msgstr ""
+
+msgid "Service category info of appointment"
+msgstr ""
+
+msgid "Service category name of appointment"
+msgstr ""
+
+msgid "Service duration of appointment"
+msgstr ""
+
+msgid "Service name of appointment"
+msgstr ""
+
+msgid "Service price of appointment"
+msgstr ""
+
+msgid "Staff member full name in appointment"
+msgstr ""
+
+msgid "Total quantity of appointments in cart"
+msgstr ""
+
+msgid "Image of category"
+msgstr ""
+
+msgid "Info of category"
+msgstr ""
+
+msgid "Login form"
+msgstr ""
+
+msgid "Image of service"
+msgstr ""
+
+msgid "Info of staff member"
+msgstr ""
+
+msgid "Full name of staff member"
+msgstr ""
+
+msgid "Photo of staff member"
+msgstr ""
+
+msgid "Total price of booking"
+msgstr ""
+
+msgid "URL of service image (to use inside img tag)"
+msgstr ""
+
+msgid "URL of category image (to use inside img tag)"
+msgstr ""
+
+msgid "URL of staff photo (to use inside img tag)"
+msgstr ""
+
 # wpml-name: 31092a4cf85b77f80fdc80611ba82370
 msgid "Previous month"
 msgstr "Eelmine kuu"
-
-# wpml-name: 9aacf45e5226a7046e901e63a2f83c1a
-#, php-format
-msgid ""
-"To use the cart, disable integration with WooCommerce <a href=\"%s\">here</a>"
-"."
-msgstr ""
-"Ostukorvi kasutamiseks keelake integreerimine WooCommerce'iga <a href=\"%s\">"
-" siin </a>."
 
 # wpml-name: 3f85671080ef5c8104f05f0775cae6f9
 msgid "Your custom CSS was saved. Please refresh the page to see your changes."
@@ -4593,9 +5398,6 @@ msgstr ""
 msgid "Cart information with cancel"
 msgstr ""
 
-msgid "Address of client"
-msgstr ""
-
 msgid "Time zone of client"
 msgstr ""
 
@@ -4613,18 +5415,18 @@ msgstr ""
 msgid "URL of cancel appointment link (to use inside <a> tag)"
 msgstr "Kohtumise tühistamise lingi URL (sildi <a> sees kasutamiseks)"
 
-msgid "Reason you mentioned while deleting appointment"
+msgid "Reason mentioned while cancelling appointment"
 msgstr ""
 
-# wpml-name: 2ecac7f879c1e008902076e9cf7d0fc2
-msgid ""
-"URL for adding event to client's Google Calendar (to use inside <a> tag)"
+msgid "URL for adding event to Google Calendar (to use inside <a> tag)"
 msgstr ""
-"URL sündmuse lisamiseks kliendi Google'i kalendrisse (sildi <a> kasutamiseks)"
 
 # wpml-name: 33bb19b1a5181388b520d91ce15548c1
 msgid "URL of reject appointment link (to use inside <a> tag)"
 msgstr "Kohtumise tagasilükkamise lingi URL (sildi <a> sees kasutamiks)"
+
+msgid "Time limit to which appointments can be cancelled "
+msgstr ""
 
 msgid "Payment status"
 msgstr ""
@@ -4647,6 +5449,9 @@ msgstr ""
 msgid "Site address"
 msgstr ""
 
+msgid "Verification code"
+msgstr ""
+
 msgid "Company logo"
 msgstr ""
 
@@ -4655,26 +5460,6 @@ msgstr ""
 
 msgid "Photo of staff"
 msgstr ""
-
-# wpml-name: de62775a71fc2bf7a13d7530ae24a7ed
-msgid "General settings"
-msgstr "Üldised seaded"
-
-# wpml-name: cf1aa26741bf99cedf433765d6056bf6
-msgid "Scheduled notifications retry period"
-msgstr "Plaanitud teatiste kordusperiood"
-
-# wpml-name: 6068f1bbabf370552016010b4f9ad8df
-msgid ""
-"Set period of time when system will attempt to deliver notification to user. "
-"Notification will be discarded after period expiration."
-msgstr ""
-"Määrake ajavahemik, millal süsteem üritab kasutajale teavitust edastada. "
-"Pärast perioodi möödumist loobutakse teatisest."
-
-# wpml-name: d4dccb8ca2dac4e53c01bd9954755332
-msgid "Save settings"
-msgstr "Salvesta sätted"
 
 # wpml-name: c1d419b1a457d91ffcadf4414f155043
 msgid "Test email notifications"
@@ -4739,6 +5524,18 @@ msgstr ""
 "Kui see suvand on lubatud, kasutatakse personali liikmetele ja "
 "administraatoritele saadetavate teadete saatja e-posti aadressina kliendi e-"
 "posti aadressi."
+
+# wpml-name: cf1aa26741bf99cedf433765d6056bf6
+msgid "Scheduled notifications retry period"
+msgstr "Plaanitud teatiste kordusperiood"
+
+# wpml-name: 6068f1bbabf370552016010b4f9ad8df
+msgid ""
+"Set period of time when system will attempt to deliver notification to user. "
+"Notification will be discarded after period expiration."
+msgstr ""
+"Määrake ajavahemik, millal süsteem üritab kasutajale teavitust edastada. "
+"Pärast perioodi möödumist loobutakse teatisest."
 
 # wpml-name: 2c1ecab897dee7e722c813daff0398ef
 msgid "Sent successfully."
@@ -4846,6 +5643,12 @@ msgstr ""
 msgid "Log out"
 msgstr "Logi välja"
 
+#, php-format
+msgid "%s day"
+msgid_plural "%s days"
+msgstr[0] ""
+msgstr[1] ""
+
 # wpml-name: 0ba7583639a274c434bbe6ef797115a4
 msgid "Register"
 msgstr "Registreeri"
@@ -4883,6 +5686,12 @@ msgstr ""
 msgid "Enter code from email"
 msgstr "Sisestage kood e-posti aadressilt"
 
+msgid "current<br/>balance"
+msgstr ""
+
+msgid "Recharge"
+msgstr ""
+
 # wpml-name: 54c452f7c1da04da5555138b32327257
 msgid "Thank you for registration."
 msgstr "Thank you for registration."
@@ -4909,6 +5718,39 @@ msgstr ""
 
 #, php-format
 msgid "Click %s here %s to resend the email."
+msgstr ""
+
+msgid "Auto-Recharge is enabled"
+msgstr ""
+
+#, php-format
+msgid "Payment method: %s"
+msgstr ""
+
+#, php-format
+msgid "End date: %s"
+msgstr ""
+
+msgid "Change"
+msgstr ""
+
+msgid "Support has expired"
+msgstr ""
+
+msgid "Support is about to expire"
+msgstr ""
+
+msgid "Support is active"
+msgstr ""
+
+#, php-format
+msgid "Expiration date: %s"
+msgstr ""
+
+msgid "How it works"
+msgstr ""
+
+msgid "Extend support"
 msgstr ""
 
 # wpml-name: d8d7d23c7e185642711cd672d72416cc
@@ -4939,7 +5781,34 @@ msgstr ""
 msgid "Your payment has been cancelled"
 msgstr ""
 
+# wpml-name: a8f0af2951a5a5f999fda561bd5a463f
+msgid "Disable Auto-Recharge"
+msgstr "Keela Automaatne Laadimine"
+
+msgid "Are you sure you want to disable Auto-Recharge?"
+msgstr "Kas soovite kindlasti automaatse laadimise keelata?"
+
+# wpml-name: 2bec9e8325a4a214a8e707272c6c843e
+msgid "Auto-Recharge"
+msgstr "Automaatne Laadimine"
+
+msgid "One-time payment"
+msgstr ""
+
+msgid "Please select an amount and enable Auto-Recharge"
+msgstr ""
+
+#, php-format
+msgid ""
+"Your account will be topped up with the selected amount <b>now</b> if your "
+"balance is less than %1$s, and <b>automatically later</b> when the balance "
+"falls below %1$s."
+msgstr ""
+
 msgid "Please select an amount and recharge your account"
+msgstr ""
+
+msgid "Select"
 msgstr ""
 
 msgid "Pay using"
@@ -4948,52 +5817,16 @@ msgstr ""
 msgid "Continue with"
 msgstr ""
 
-msgid "Auto-Recharge has been enabled"
-msgstr "Automaatne laadimine on lubatud"
-
 msgid "Auto-Recharge has been cancelled"
 msgstr "Automaatne laadimine on tühistatud"
 
-msgid "current<br/>balance"
+msgid "Auto-Recharge has been enabled"
+msgstr "Automaatne laadimine on lubatud"
+
+msgid "Auto-Recharge has been renewed"
 msgstr ""
 
-msgid "Recharge"
-msgstr ""
-
-msgid "Other options"
-msgstr ""
-
-msgid "Best offer"
-msgstr "Parim pakkumine"
-
-msgid "Users choice"
-msgstr ""
-
-msgid "Buy now"
-msgstr "Osta kohe"
-
-msgid "Select amount of Auto-Recharge"
-msgstr ""
-
-msgid "Enable"
-msgstr ""
-
-# wpml-name: a8f0af2951a5a5f999fda561bd5a463f
-msgid "Disable Auto-Recharge"
-msgstr "Keela Automaatne Laadimine"
-
-msgid "Are you sure you want to disable Auto-Recharge?"
-msgstr "Kas soovite kindlasti automaatse laadimise keelata?"
-
-msgid "Turn on Auto-Recharge and get even more"
-msgstr ""
-
-# wpml-name: 74d571c4b3e32d055bfa43a70298c6fa
-msgid "Auto-Recharge disabled"
-msgstr "Automaatlaadimine on keelatud"
-
-#, php-format
-msgid "Can't disable Auto-Recharge, please contact us at %s"
+msgid "You don't have active auto-recharge"
 msgstr ""
 
 # wpml-name: 2965f06b1f0425f6c3d9b43bb9bcbd86
@@ -5004,6 +5837,47 @@ msgid "Card payment has failed, please use another payment option"
 msgstr "Kaardimakse ebaõnnestus. Palun kasutage mõnda muud makseviisi"
 
 msgid "Payment has failed, please use another payment option"
+msgstr ""
+
+# wpml-name: 74d571c4b3e32d055bfa43a70298c6fa
+msgid "Auto-Recharge disabled"
+msgstr "Automaatlaadimine on keelatud"
+
+#, php-format
+msgid "Can't disable Auto-Recharge, please contact us at %s"
+msgstr ""
+
+# wpml-name: 740779f8092aa683db1d2ae20f32d9cc
+msgid "Booking form"
+msgstr "Broneerimisvorm"
+
+# wpml-name: 3467fd297795c009edd4006450e31a24
+msgid "A custom block for displaying booking form"
+msgstr "Kohandatud plokk broneerimisvormi kuvamiseks"
+
+# wpml-name: a88f05b6c963e145a45b58c47cd42a41
+msgid "hide"
+msgstr "varjata"
+
+# wpml-name: 694e8d1f2ee056f98ee488bdc4982d73
+msgid "Quantity"
+msgstr "Kogus"
+
+# wpml-name: fc44040a63559bee1157010d4c602422
+msgid "Select location"
+msgstr "Asukoha saatmine"
+
+msgid "Empty"
+msgstr ""
+
+msgid "WARNING"
+msgstr ""
+
+msgid "Using <script> tag can be dangerous."
+msgstr ""
+
+msgid ""
+"Unless you understand exactly what you are doing, click Cancel and stay safe."
 msgstr ""
 
 #, php-format
@@ -5047,6 +5921,12 @@ msgstr "Klient"
 msgid "Administrators"
 msgstr "Administraatorid"
 
+msgid "You can enter multiple email addresses (one per line)"
+msgstr ""
+
+msgid "You can enter multiple phone numbers (one per line)"
+msgstr ""
+
 # wpml-name: e3718c77456ee4f9e62c9d7d0cb35f15
 msgid "Choose who will receive this notification."
 msgstr "Valige, kellele see teatis saadetakse."
@@ -5074,10 +5954,6 @@ msgstr ""
 # wpml-name: dce0fdda7b20f123f7eb650171824261
 msgid "Save notification"
 msgstr "Salvesta teatis"
-
-# wpml-name: 8b4ecc7d463a0084d62e8b4565b8d0b8
-msgid "Codes"
-msgstr "Koodid"
 
 # wpml-name: 17b7e83acf09448b3d0eb61c0c75d623
 msgid "Appointment status"
@@ -5107,6 +5983,9 @@ msgstr "enne"
 msgid "after"
 msgstr "pärast"
 
+msgid "year"
+msgstr ""
+
 # wpml-name: f61bf053464cd3c19fcb8282bdec3528
 msgid "on the same day"
 msgstr "samal päeval"
@@ -5134,9 +6013,8 @@ msgstr "Loo teatis"
 msgid "New notification"
 msgstr ""
 
-# wpml-name: dc93451131512afe858ef3afca4d17f1
-msgid "Select from WP users"
-msgstr "Valige WP kasutajate hulgast"
+msgid "Select from WordPress users"
+msgstr ""
 
 # wpml-name: 6aa90203983dfa4d99874137d39cb203
 msgid ""
@@ -5167,7 +6045,11 @@ msgstr ""
 # wpml-name: c57241a5a0d525ed645b2ab30a3040af
 #, php-format
 msgid "This text can be inserted into notifications with %s code."
-msgstr "Selle teksti saab märguannetesse lisada koodiga% s."
+msgstr "Selle teksti saab märguannetesse lisada koodiga %s."
+
+# wpml-name: cb5feb1b7314637725a2e73bdc9f7295
+msgid "Color"
+msgstr "Värv"
 
 # wpml-name: e727b00944f81e1d0a95c12886ac4641
 msgid "Archive"
@@ -5212,17 +6094,41 @@ msgstr "Viga pausi intervalli lisamisel"
 msgid "Adjust the order of staff members in your booking form"
 msgstr "Korrigeerige töötajate broneerimisvormis töötajate järjekorda"
 
-# wpml-name: f9e62c9eac64a4586b5096873b5db681
-msgid "Complete payment"
-msgstr "Täielik makse"
-
 # wpml-name: b302bb5c0dfe7aaa2dd5a5be3f0375e5
 msgid "Bind payment"
 msgstr "Makse sidumine"
 
+# wpml-name: f9e62c9eac64a4586b5096873b5db681
+msgid "Complete payment"
+msgstr "Täielik makse"
+
+# wpml-name: 9ee777c31e9dcb084f0be834dc7f0ffd
+msgid "Manual adjustment"
+msgstr "Käsitsi reguleerimine"
+
 # wpml-name: efb81bc821045baad11a9158f5f8deee
 msgid "Payment is not found."
 msgstr "Makset ei leitud."
+
+# wpml-name: fffcb4d1e12c96b2f571f77ad25878b8
+msgid "Reason"
+msgstr "Põhjus"
+
+msgid "Tips"
+msgstr ""
+
+msgid "order ID"
+msgstr ""
+
+msgid "Refund"
+msgstr ""
+
+msgid "Are you sure you want to approve refund? This action cannot be undone."
+msgstr ""
+
+# wpml-name: 5498b236f06acbee2db3c26f85c4b2b1
+msgid "Edit appointment"
+msgstr "Muutke kohtumist"
 
 # wpml-name: f525b133d7195bd70bdc64e135928e64
 msgid "-- Select a service --"
@@ -5231,30 +6137,6 @@ msgstr "-- Vali teenust --"
 # wpml-name: 1901606ea069a83dc7beea17881ef95a
 msgid "Period"
 msgstr "Periood"
-
-# wpml-name: 60dfbe5206b0ea2eb6a1b0edbb3db242
-msgid "Selected period doesn't match service duration"
-msgstr "Valitud periood ei vasta teenuse kestusele"
-
-# wpml-name: 5f63824e86f1559df5f4a965d2c59fb1
-msgid "Selected period doesn't match provider's schedule"
-msgstr "Valitud periood ei vasta pakkuja ajakavale"
-
-# wpml-name: db4473b4ca4732319d6df4f4673c4117
-msgid "Selected period doesn't match service schedule"
-msgstr "Valitud periood ei vasta teeninduse ajakavale"
-
-# wpml-name: 530f127d844c45905eef1c592ea93152
-msgid "The selected period is occupied by another appointment"
-msgstr "Valitud perioodi hõivab teine kohtumine"
-
-# wpml-name: 5aa5f50591e7ccec53eaca23575055b8
-msgid "Booking exceeds the working hours limit for staff member"
-msgstr "Broneerimine ületab töötaja tööaja limiiti"
-
-# wpml-name: 20f886a8eeb66a1fc665ba8762cb1eb6
-msgid "Booking exceeds your working hours limit"
-msgstr "Broneerimine ületab teie tööaja limiidi"
 
 # wpml-name: 88fff567a480274b2313527ae44b7971
 msgid "Selected / maximum"
@@ -5268,14 +6150,6 @@ msgstr "Minimaalne mahutavus"
 msgid "Edit booking details"
 msgstr "Muutke broneeringu üksikasju"
 
-# wpml-name: 994431867e76cd8417ea23750d89abc8
-msgid "Package schedule"
-msgstr "Paketi ajakava"
-
-# wpml-name: ca647e9f2145e2b66c192c8a676192ce
-msgid "View series"
-msgstr "Vaatamis seeriad"
-
 # wpml-name: fbd7856f8d20e7bca45d25f9773c9758
 msgid "Remove customer"
 msgstr "Eemalda kliendi"
@@ -5283,14 +6157,6 @@ msgstr "Eemalda kliendi"
 # wpml-name: 2e077627f57c06fdb8d965436575d608
 msgid "-- Search customers --"
 msgstr "-- Otsi kliendit--"
-
-# wpml-name: beb09966ca883efc8d20a7e31650e591
-msgid "Send if new or status changed"
-msgstr "Saada, kui uus või olek muutunud"
-
-# wpml-name: d185e35c0ab45a5130d32733b4c14b6b
-msgid "Send as for new"
-msgstr "Saada nagu uus"
 
 msgid ""
 "If you have added a new customer to this appointment or changed the "
@@ -5301,9 +6167,34 @@ msgid ""
 "selecting \"Send as for new\"."
 msgstr ""
 
-# wpml-name: 5498b236f06acbee2db3c26f85c4b2b1
-msgid "Edit appointment"
-msgstr "Muutke kohtumist"
+# wpml-name: beb09966ca883efc8d20a7e31650e591
+msgid "Send if new or status changed"
+msgstr "Saada, kui uus või olek muutunud"
+
+# wpml-name: d185e35c0ab45a5130d32733b4c14b6b
+msgid "Send as for new"
+msgstr "Saada nagu uus"
+
+msgid "View"
+msgstr ""
+
+msgid "Please select a provider"
+msgstr ""
+
+# wpml-name: 530f127d844c45905eef1c592ea93152
+msgid "The selected period is occupied by another appointment"
+msgstr "Valitud perioodi hõivab teine kohtumine"
+
+# wpml-name: 60dfbe5206b0ea2eb6a1b0edbb3db242
+msgid "Selected period doesn't match service duration"
+msgstr "Valitud periood ei vasta teenuse kestusele"
+
+# wpml-name: 5f63824e86f1559df5f4a965d2c59fb1
+msgid "Selected period doesn't match provider's schedule"
+msgstr "Valitud periood ei vasta pakkuja ajakavale"
+
+msgid "No timeslots available"
+msgstr ""
 
 # wpml-name: bb81c43ba040ff9fbc8c754850fc658a
 msgid "Start time must not be empty"
@@ -5317,11 +6208,6 @@ msgstr "Lõpuaeg ei tohi olla tühi"
 msgid "End time must not be equal to start time"
 msgstr "Lõpuaeg ei tohi olla võrdne algusajaga"
 
-# wpml-name: a3675c54bea45144c9315cafd6e5f9b4
-#, php-format
-msgid "The number of customers should not be more than %d"
-msgstr "Klientide arv ei tohiks olla suurem kui% d"
-
 # wpml-name: 2ab1d69c1059a4b25ded74b17da61dc8
 msgid "Could not save appointment in database."
 msgstr "Kohtumist ei õnnestunud andmebaasis salvestada."
@@ -5329,17 +6215,16 @@ msgstr "Kohtumist ei õnnestunud andmebaasis salvestada."
 # wpml-name: fe56bc6a96b0a70295b00bba3c1d29a0
 #, php-format
 msgid "%s has reached the limit of bookings for this service"
-msgstr "% s on selle teenuse broneerimise limiidi jõudnud"
+msgstr "%s on selle teenuse broneerimise limiidi jõudnud"
+
+msgid "Appointment notes"
+msgstr ""
 
 # wpml-name: 21d3c1910240fcdb45051ad002f3ec9e
 msgid ""
 "You are going to delete appointment(s). Notifications will be sent in "
 "accordance with your settings."
 msgstr "Kustutate kohtumised. Teated saadetakse vastavalt teie seadetele."
-
-# wpml-name: c28639657b4e3352241f83d8b6021e4e
-msgid "New Customer"
-msgstr "Uus Klient"
 
 # wpml-name: 0b1de3917526d10d833e31b901d7d667
 msgid "Delete customers"
@@ -5368,6 +6253,86 @@ msgstr "Kustutage klientide WordPressi kontod, kui neid on"
 msgid "Deleted Customer"
 msgstr "Kustutatud klient"
 
+msgid "ago"
+msgstr ""
+
+msgid "Add recipients"
+msgstr ""
+
+msgid "Automatic selection"
+msgstr ""
+
+msgid "Manual selection"
+msgstr ""
+
+msgid ""
+"Add phone numbers using international phone format, one number per line."
+msgstr ""
+
+msgid "E.g"
+msgstr ""
+
+#, php-format
+msgid "You can add no more than %s contacts"
+msgstr ""
+
+msgid ""
+"Please note that only customers who meet all of the conditions will be added "
+"to the list. You can find more information in our documentation"
+msgstr ""
+
+msgid "Total sum of payments, greater or equal than"
+msgstr ""
+
+msgid "Total number of appointments, greater or equal than"
+msgstr ""
+
+# wpml-name: ebb4c7315a13fbb6d59f702992052318
+msgid "Providers"
+msgstr "Pakkujad"
+
+msgid "New mailing list"
+msgstr ""
+
+msgid "New list"
+msgstr ""
+
+msgid "New campaign"
+msgstr ""
+
+msgid "Edit campaign"
+msgstr ""
+
+msgid "Start campaign"
+msgstr ""
+
+msgid "Immediately"
+msgstr ""
+
+msgid "Start sending messages at"
+msgstr ""
+
+msgid "Set the time when the mailing will start"
+msgstr ""
+
+msgid "Start time"
+msgstr ""
+
+msgid "Start"
+msgstr ""
+
+msgid "Sms text"
+msgstr ""
+
+msgid "Campaign"
+msgstr ""
+
+msgid "Cancel campaign"
+msgstr ""
+
+msgid "Select mailing list"
+msgstr ""
+
 # wpml-name: fdabc952881a8efbdaa80f7492328cb6
 msgid ""
 "You are going to delete item which is involved in upcoming appointments. All "
@@ -5392,14 +6357,6 @@ msgstr "Ära salvesta"
 
 msgid "Create service"
 msgstr ""
-
-# wpml-name: cb5feb1b7314637725a2e73bdc9f7295
-msgid "Color"
-msgstr "Värv"
-
-# wpml-name: ebb4c7315a13fbb6d59f702992052318
-msgid "Providers"
-msgstr "Pakkujad"
 
 # wpml-name: fcade49e373fdb980aa174a1ab03530e
 msgid "Start and end times of the appointment"
@@ -5437,6 +6394,9 @@ msgstr "Lisa kategooria"
 msgid "Adjust the order of categories in your booking form"
 msgstr "Korrigeerige oma broneeringuvormis kategooriate järjekorda"
 
+msgid "This text can be inserted into notifications with {category_info} code"
+msgstr ""
+
 msgid "Table settings"
 msgstr ""
 
@@ -5447,6 +6407,9 @@ msgstr ""
 msgid "Attach ICS file"
 msgstr "Lisa ICS faili"
 
+msgid "Visual"
+msgstr ""
+
 # wpml-name: de1fbfc65b46e0774faa66b60cd510ae
 msgid "New email notification"
 msgstr "Uus e-posti teatis"
@@ -5455,43 +6418,22 @@ msgstr "Uus e-posti teatis"
 msgid "Edit email notification"
 msgstr "E-posti teatise muutmine"
 
-msgid "Loop over appointments list"
+msgid "Renew"
 msgstr ""
 
-msgid "Loop over appointments list with delimiter"
+msgid "Dismiss"
 msgstr ""
 
-msgid "Service name of appointment"
+#, php-format
+msgid "Your Auto-Recharge will end in %d day."
+msgid_plural "Your Auto-Recharge will end in %d days."
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Please renew the connection to keep using Bookly Cloud services."
 msgstr ""
 
-msgid "Service category name of appointment"
-msgstr ""
-
-msgid "Service duration of appointment"
-msgstr ""
-
-msgid "Service price of appointment"
-msgstr ""
-
-msgid "Staff member full name in appointment"
-msgstr ""
-
-msgid "Total quantity of appointments in cart"
-msgstr ""
-
-msgid "Login form"
-msgstr ""
-
-msgid "Info of staff member"
-msgstr ""
-
-msgid "Full name of staff member"
-msgstr ""
-
-msgid "Photo of staff member"
-msgstr ""
-
-msgid "Total price of booking"
+msgid "Your Auto-Recharge will end today."
 msgstr ""
 
 msgid ""
@@ -5528,6 +6470,13 @@ msgstr ""
 msgid "You just made the <b>10000th Sale</b> using Bookly Plugin!"
 msgstr ""
 
+#, php-format
+msgid ""
+"To allow scheduled actions, please activate <a href=\"%s\" target=\"_blank\">"
+"Bookly Cloud Cron</a> or follow <a href=\"%s\" target=\"_blank\">the "
+"instructions</a> about cron setup"
+msgstr ""
+
 # wpml-name: e5b5eaacf4c0fe46c9db88f90c3ad43f
 msgid ""
 "To help us improve Bookly, the plugin anonymously collects usage information."
@@ -5549,6 +6498,33 @@ msgstr "Nõus"
 msgid "Disagree"
 msgstr "Mitte nõustuma"
 
+#, php-format
+msgid ""
+"If you use WPML and notice that some translations don't appear on front end, "
+"you will need to restore them. Go to WPML, select strings within %s domain, "
+"choose any translation, and click the \"Save\" button."
+msgstr ""
+
+# wpml-name: 6f6ef0bff7abefff7cadaa6bea5fda48
+msgid "This function is not available in the Bookly."
+msgstr "See funktsioon pole raamatukogus saadaval."
+
+msgid ""
+"You are using the free version of Bookly, so you can't add more than 5 "
+"services. To remove this limitation, get access to all Bookly features, "
+"lifetime free updates and 24/7 support, please upgrade to the Pro version of "
+"Bookly."
+msgstr ""
+
+msgid "For more information visit"
+msgstr ""
+
+msgid ""
+"You are using the free version of Bookly, so you can't add more than 1 staff."
+" To remove this limitation, get access to all Bookly features, lifetime free "
+"updates and 24/7 support, please upgrade to the Pro version of Bookly."
+msgstr ""
+
 # wpml-name: 74e8490d57a5a149571704df53a943ff
 #, php-format
 msgid ""
@@ -5563,6 +6539,36 @@ msgstr ""
 "optimeerida mõlema pistikprogrammi versiooni ja lisada uutele funktsioone "
 "tasuta Bookly. Suurema Bookly värskenduse kohta lisateabe saamiseks lugege "
 "meie <a href=\"%s\" target=\"_blank\"> ajaveebi postitust </a>."
+
+# wpml-name: 2fa0090d20317565e47bf72b207c2b3c
+msgid ""
+"How likely is it that you would recommend Bookly to a friend or colleague?"
+msgstr "Kui tõenäoline on, et soovitaksite Booklyt sõbrale või kolleegile?"
+
+# wpml-name: 7923134eaf54071b9bf3c660570557d4
+msgid "What do you think should be improved?"
+msgstr "Mida tuleks teie arvates parandada?"
+
+# wpml-name: e865b5e1a040976fc0f561f4a20d33ef
+msgid "Please enter your email (optional)"
+msgstr "Sisestage oma e-posti aadress (valikuline)"
+
+# wpml-name: 9deaef161eef015feeda3594fba122a9
+msgid "Subscribe to monthly emails about Bookly improvements and new releases."
+msgstr ""
+"Tellige igakuiseid e-kirju Bookly paranduste ja uute väljaannete kohta."
+
+# wpml-name: 90cca0f5eef2223e9becb09fb2d586c1
+msgid "Please, check your email to confirm the subscription. Thank you!"
+msgstr "Tellimuse kinnitamiseks kontrollige oma e-posti aadressi. Aitäh!"
+
+# wpml-name: bb7f885dc3ba683b7268e00d648fef44
+msgid "Given email address is already subscribed, thank you!"
+msgstr "Antud e-posti aadress on juba tellitud, aitäh!"
+
+# wpml-name: e6692870545aac8f33ab6f95e4fca7a3
+msgid "This email address is not valid."
+msgstr "Selline e-posti aadress pole enam kehtiv."
 
 #, php-format
 msgid "Recharge your account balance and get up to %s extra."
@@ -5580,26 +6586,11 @@ msgstr ""
 msgid "Let Bookly Cloud products continuously work without interruptions."
 msgstr ""
 
+msgid "Enable"
+msgstr ""
+
 msgid "Remind me later"
 msgstr ""
-
-# wpml-name: 6f6ef0bff7abefff7cadaa6bea5fda48
-msgid "This function is not available in the Bookly."
-msgstr "See funktsioon pole raamatukogus saadaval."
-
-# wpml-name: 35964968ad72fa33eb9e01badbcb8c2e
-msgid ""
-"To get access to all Bookly features, lifetime free updates and 24/7 support,"
-" please upgrade to the Pro version of Bookly.<br>For more information visit"
-msgstr ""
-"Kõigile Bookly funktsioonidele, eluaegsetele tasuta värskendustele ja "
-"ööpäevaringsele toele juurdepääsu saamiseks minge üle Bookly Pro versioonile."
-" <br> Lisateabe saamiseks külastage"
-
-# wpml-name: 9deaef161eef015feeda3594fba122a9
-msgid "Subscribe to monthly emails about Bookly improvements and new releases."
-msgstr ""
-"Tellige igakuiseid e-kirju Bookly paranduste ja uute väljaannete kohta."
 
 msgid ""
 "Allow the plugin to set a Powered by Bookly notice on the booking widget to "
@@ -5609,31 +6600,6 @@ msgstr ""
 "Luba seadistada broneeringu vidinas Powered by Bookly teatis, et levitada "
 "programmi kohta teavet. See võimaldab meeskonnal toodet parendada ja selle "
 "funktsionaalsust täiustada"
-
-# wpml-name: 2fa0090d20317565e47bf72b207c2b3c
-msgid ""
-"How likely is it that you would recommend Bookly to a friend or colleague?"
-msgstr "Kui tõenäoline on, et soovitaksite Booklyt sõbrale või kolleegile?"
-
-# wpml-name: 7923134eaf54071b9bf3c660570557d4
-msgid "What do you think should be improved?"
-msgstr "Mida tuleks teie arvates parandada?"
-
-# wpml-name: e865b5e1a040976fc0f561f4a20d33ef
-msgid "Please enter your email (optional)"
-msgstr "Sisestage oma e-posti aadress (valikuline)"
-
-# wpml-name: 90cca0f5eef2223e9becb09fb2d586c1
-msgid "Please, check your email to confirm the subscription. Thank you!"
-msgstr "Tellimuse kinnitamiseks kontrollige oma e-posti aadressi. Aitäh!"
-
-# wpml-name: bb7f885dc3ba683b7268e00d648fef44
-msgid "Given email address is already subscribed, thank you!"
-msgstr "Antud e-posti aadress on juba tellitud, aitäh!"
-
-# wpml-name: e6692870545aac8f33ab6f95e4fca7a3
-msgid "This email address is not valid."
-msgstr "Selline e-posti aadress pole enam kehtiv."
 
 msgid "Revenue"
 msgstr ""
@@ -5651,14 +6617,6 @@ msgstr "Kõik tärniga (*) tähistatud väljad on kohustuslikud."
 # wpml-name: 42e79d4dcbacacf10373ac69c4eb8e5e
 msgid "Error sending support request."
 msgstr "Viga tugitaotluse saatmisel."
-
-# wpml-name: 5d6685b766c40145886c2f0117187e76
-msgid "Show all notifications"
-msgstr "Näita kõik teated"
-
-# wpml-name: 0e4a10d92126295a0ded375bffc507bd
-msgid "Mark all notifications as read"
-msgstr "Märkige kõik teatised loetuks"
 
 # wpml-name: 75bc0e017ad7eac22fec3e3d470f0a05
 msgid "View this page at Bookly Pro Demo"
@@ -5777,18 +6735,6 @@ msgstr ""
 "Me hoolime teie kogemusest Bookly kasutamisel! <br/> Jäta ülevaade ja ütle "
 "teistele, mida arvate."
 
-# wpml-name: 740779f8092aa683db1d2ae20f32d9cc
-msgid "Booking form"
-msgstr "Broneerimisvorm"
-
-# wpml-name: 3467fd297795c009edd4006450e31a24
-msgid "A custom block for displaying booking form"
-msgstr "Kohandatud plokk broneerimisvormi kuvamiseks"
-
-# wpml-name: fc44040a63559bee1157010d4c602422
-msgid "Select location"
-msgstr "Asukoha saatmine"
-
 # wpml-name: f0c865a1025e2d17fa0cc5d79a30ba45
 msgid "Form fields"
 msgstr "Vormiväljad"
@@ -5808,14 +6754,6 @@ msgstr "Teenuse vaikeväärtus"
 # wpml-name: 35036d2c1156b9d7fd50d99a72019616
 msgid "Default value for employee"
 msgstr "Töötaja vaikeväärtus"
-
-# wpml-name: 694e8d1f2ee056f98ee488bdc4982d73
-msgid "Quantity"
-msgstr "Kogus"
-
-# wpml-name: a88f05b6c963e145a45b58c47cd42a41
-msgid "hide"
-msgstr "varjata"
 
 msgid "Username"
 msgstr ""
@@ -5844,15 +6782,8 @@ msgstr "Andmed on juba kasutuses"
 msgid "Update"
 msgstr ""
 
-# wpml-name: 0728ba52bf48b33d6f0f97b08ea24465
-msgid "Page Redirection"
-msgstr "Lehe ümbersuunamine"
-
-# wpml-name: c1a925d5fa9dfce4ca382b9d34bcfb5f
-#, php-format
-msgid ""
-"If you are not redirected automatically, follow the <a href=\"%s\">link</a>."
-msgstr "Kui teid ei suunata automaatselt ümber, järgige linki <a href=\"%s\">."
+msgid "Verify"
+msgstr ""
 
 # wpml-name: 146ffe2fd9fa5bec3b63b52543793ec7
 msgid "Show more"
@@ -5995,6 +6926,10 @@ msgid ""
 "Client email: {client_email}"
 msgstr ""
 
+# wpml-name: 3476bf9c3af766198bfbd4f065a51e69
+msgid "Unassigned"
+msgstr "Määramata"
+
 # wpml-name: d6d7c22561ba60af596d023f87e1aee3
 msgid "Notification about new package creation"
 msgstr "Teade uue paketi loomise kohta"
@@ -6014,10 +6949,6 @@ msgstr "Paketid"
 msgid "New package"
 msgstr "Uus pakett"
 
-# wpml-name: 3476bf9c3af766198bfbd4f065a51e69
-msgid "Unassigned"
-msgstr "Määramata"
-
 # wpml-name: 9fc601dbde7cc973822438d258e306f0
 msgid "Edit package"
 msgstr "Muuda paketti"
@@ -6025,6 +6956,10 @@ msgstr "Muuda paketti"
 # wpml-name: e6b0dcde13608a7c0baffef720ad2632
 msgid "No packages for selected period and criteria."
 msgstr "Valitud perioodi ja kriteeriumide jaoks pole ühtegi paketti."
+
+# wpml-name: 994431867e76cd8417ea23750d89abc8
+msgid "Package schedule"
+msgstr "Paketi ajakava"
 
 msgid "Name of package"
 msgstr ""
@@ -6062,6 +6997,17 @@ msgstr ""
 msgid "-- Select a package --"
 msgstr "-- Vali paketti--"
 
+msgid "-- Search customer --"
+msgstr ""
+
+# wpml-name: 87d50d968b15a039232f07485e274b96
+msgid "Save & schedule"
+msgstr "Salvesta & ajakava"
+
+# wpml-name: a6390f735eb3eb84343df3f648b603b3
+msgid "Attach payment"
+msgstr "Lisa maksekorraldus"
+
 # wpml-name: 9bbedb84da52a148b912871670fecc92
 msgid "Please select a package"
 msgstr "Valige paketti"
@@ -6073,10 +7019,6 @@ msgstr "Vale asukoht ja paketi kombinatsioon"
 # wpml-name: fdcbded4d377da0c99f5f54ae22595a5
 msgid "Please select a customer"
 msgstr "Valige kliendi"
-
-# wpml-name: 87d50d968b15a039232f07485e274b96
-msgid "Save & schedule"
-msgstr "Salvesta & ajakava"
 
 # wpml-name: 6e615cac1d99eda012c49fca60ad7c30
 msgid "Could not save package in database."
@@ -6111,6 +7053,9 @@ msgid ""
 "You are trying to schedule an appointment in the past. Please select another "
 "time slot."
 msgstr "Proovite varem kohtumist ajastada. Valige mõni teine ajavahet."
+
+msgid "The limit of bookings for this service reached"
+msgstr ""
 
 # wpml-name: 73ede2db9b301c64384b7b52042f97f5
 msgid "Select appointment date"
@@ -6148,6 +7093,9 @@ msgstr "Pakendite loetelu"
 msgid "A custom block for displaying packages list"
 msgstr "Kohandatud plokk pakettide loendi kuvamiseks"
 
+msgid "Your package has been created."
+msgstr ""
+
 # wpml-name: 52fc7a0ab6328f8aaabb6ef411816b9e
 msgid "Creation Date"
 msgstr "Loomise Kuupäev"
@@ -6171,6 +7119,12 @@ msgid ""
 "password: {new_password}\n"
 "\n"
 "Thanks."
+msgstr ""
+
+msgid "New staff member's WordPress user login details"
+msgstr ""
+
+msgid "New staff member"
 msgstr ""
 
 # wpml-name: e977b3b6c8d0c3d6db7db52297aac302
@@ -6219,6 +7173,10 @@ msgid ""
 "{next_day_agenda}"
 msgstr ""
 
+# wpml-name: c698f5c0551a093ca75c6d812b045d1f
+msgid "New booking combined notification"
+msgstr "Uue broneeringu kombineeritud teatis"
+
 msgid ""
 "Dear {client_name}.\n"
 "\n"
@@ -6253,6 +7211,9 @@ msgid ""
 "{company_website}"
 msgstr ""
 
+msgid "Applied"
+msgstr ""
+
 # #-#-#-#-#  catalog.po (WPML_EXPORT_bookly)  #-#-#-#-#
 # wpml-name: bookly_l10n_label_pay_paypal
 # #-#-#-#-#  catalog.po (WPML_EXPORT_bookly)  #-#-#-#-#
@@ -6267,6 +7228,11 @@ msgid ""
 msgstr ""
 "Broneeritud teenuste eest maksma ei pea. Broneerimisprotsessi "
 "lõpuleviimiseks klõpsake nuppu Edasi."
+
+msgid ""
+"No payment methods available for one or more staff. Please contact service "
+"provider."
+msgstr ""
 
 # #-#-#-#-#  catalog.po (WPML_EXPORT_bookly)  #-#-#-#-#
 # wpml-name: bookly_l10n_label_street_number
@@ -6294,6 +7260,10 @@ msgstr "Krediit Kaardi Number"
 # wpml-name: 7b0eae0ccc6c8fd0e13d11e7da85a6bb
 msgid "Appointment"
 msgstr "Kohtumine"
+
+# wpml-name: 92988ae91de1b3f6f2fd373465f07db8
+msgid "New customer's WordPress user login details"
+msgstr "Uute klientide WordPressi kasutaja sisselogimisandmed"
 
 # wpml-name: b3dc0fcc341df5762a5422d5cdf3328b
 msgid "Customer's birthday"
@@ -6326,12 +7296,10 @@ msgstr "Sellist lisandi on uus versioon saadaval."
 # wpml-name: 6b423fa72d4195f17a26c01ccf9238f8
 #, php-format
 msgid "Unknown update checker status \"%s\""
-msgstr "Tundmatu värskenduse kontrollija olek \"% s\""
+msgstr "Tundmatu värskenduse kontrollija olek \"%s\""
 
-# wpml-name: df197e5caafb2a21cacb4b018ab7af07
-#, php-format
-msgid "To update - enter the <a href=\"%s\">Purchase Code</a>"
-msgstr "Värskendamiseks sisestage <a href=\"%s\"> ostukood </a>"
+msgid "Email required"
+msgstr ""
 
 # wpml-name: 8abe12c0e1a684117729c9d7447c8cdd
 msgid "Please verify your Bookly Pro license"
@@ -6353,7 +7321,16 @@ msgstr ""
 "Palun kontrollige halduspaneelil Bookly Pro litsentsi. Kui te ei kinnita "
 "litsentsi {päeva} jooksul, keelatakse juurdepääs teie broneeringutele."
 
+msgid "Customer address"
+msgstr ""
+
+msgid "Customer birthday"
+msgstr ""
+
 msgid "Online meetings"
+msgstr ""
+
+msgid "New staff's WordPress user login details"
 msgstr ""
 
 # wpml-name: 48ab13e6284d860d98672c6934a772bc
@@ -6421,6 +7398,9 @@ msgid "Please verify Bookly add-ons license; {days} remaining."
 msgstr ""
 "Palun kontrollige Bookly lisandmoodulite litsentsi; (päevad)järelejäänud."
 
+msgid "no limit"
+msgstr ""
+
 # wpml-name: 07c0924a099c202394aef23050311070
 #, php-format
 msgid ""
@@ -6429,15 +7409,15 @@ msgid ""
 "<br/>If you do not have access to the admin area, please contact our "
 "technical support at support@bookly.info to transfer the license manually."
 msgstr ""
-"% s kasutatakse teises domeenis% s. <br/> Selle domeeni ostukoodi "
-"kasutamiseks eraldage see teise domeeni administraatori paneelil. <br/> Kui "
-"teil pole administraatori juurdepääsu piirkonnas, võtke litsentsi käsitsi "
-"edastamiseks ühendust meie tehnilise toega aadressil support@bookly.info."
+"%s kasutatakse teises domeeni %s. <br/> Selle domeeni ostukoodi kasutamiseks "
+"eraldage see teise domeeni administraatori paneelil. <br/> Kui teil pole "
+"administraatori juurdepääsu piirkonnas, võtke litsentsi käsitsi edastamiseks "
+"ühendust meie tehnilise toega aadressil support@bookly.info."
 
 # wpml-name: 50969e83fa2219478929be714924a148
 #, php-format
 msgid "%s is not a valid purchase code for %s."
-msgstr "% s ei ole% s kehtiv ostukood."
+msgstr "%s ei ole %s kehtiv ostukood."
 
 # wpml-name: 1dc1c49ffbaee0a3bf5fc0d8b7b603e7
 msgid ""
@@ -6448,6 +7428,9 @@ msgstr ""
 
 #, php-format
 msgid "Your support period has expired on %s."
+msgstr ""
+
+msgid "Failed to create an online meeting"
 msgstr ""
 
 # wpml-name: 13dba24862cf9128167a59100e154c8d
@@ -6545,6 +7528,29 @@ msgstr ""
 "sisseehitatud makseviisid enam. Kõik teie kliendid suunatakse tavalise "
 "maksmisetapi asemel WooCommerce'i ostukorvi."
 
+msgid "Create a WooCommerce order from backend"
+msgstr ""
+
+msgid ""
+"If enabled, a WooCommerce order will be created for appointment when a "
+"payment is attached in backend"
+msgstr ""
+
+msgid "Default status of WooCommerce order"
+msgstr ""
+
+msgid "Status of WooCommerce order created from backend"
+msgstr ""
+
+msgid "Create a WooCommerce order if the cost of the service is zero"
+msgstr ""
+
+msgid ""
+"If enabled, a WooCommerce order will be created for services with 0 (zero) "
+"price. Please note that if the order contains at least one service with a "
+"price other than 0, the WooCommerce order will still be created"
+msgstr ""
+
 # wpml-name: c86a6a68520094bb7ce5239fa41f6012
 msgid "Booking product"
 msgstr "Broneerimine toode"
@@ -6557,13 +7563,10 @@ msgstr "Ostukorvi andmed"
 msgid "Make address mandatory"
 msgstr "Muutke aadress kohustuslikuks"
 
-# wpml-name: bddb0a7c9bfdd3df2e29ae8614b4320b
 msgid ""
-"Customers are required to enter address to proceed with a booking. To "
-"disable, deactivate Invoices add-on first."
+"If enabled, a customer will be required to enter address to proceed with a "
+"booking."
 msgstr ""
-"Kliendid peavad broneeringu tegemiseks sisestama aadressi. Keelamiseks "
-"lülitage esmalt välja Arvete lisandmoodul."
 
 # wpml-name: 9de42da664b53adf6690126795b7add6
 msgid "Customer's address fields"
@@ -6621,59 +7624,46 @@ msgstr ""
 msgid "To find your client ID and client secret, do the following:"
 msgstr "Oma kliendi ID ja kliendi saladuse leidmiseks toimige järgmiselt:"
 
-# wpml-name: 3761c6a4d327fbe83f4596959e8af61b
 msgid ""
 "Go to the <a href=\"https://console.developers.google.com/\" "
-"target=\"_blank\">Google Developers Console</a>."
+"target=\"_blank\">Google Cloud Platform</a>."
 msgstr ""
-"Minge <a href=\"https://console.developers.google.com/\" target=\"_blank\"> "
-"Google'i arendajakonsooli </a>."
 
-# wpml-name: 113b59576545b91a5fc3723f1d6614c7
-msgid "Select a project, or create a new one."
-msgstr "Valige projekt või looge uus."
-
-# wpml-name: cef2d5c27f4bf1c293c7950240a13f42
-msgid ""
-"Click in the upper left part to see a sliding sidebar. Next, click <b>API "
-"Manager</b>. In the list of APIs look for <b>Calendar API</b> and make sure "
-"it is enabled."
+msgid "Select a project or create a new one."
 msgstr ""
-"Libiseva külgriba nägemiseks klõpsake vasakus ülanurgas. Järgmisena klõpsake "
-"nuppu <b> API haldur </b>. Otsige API-de loendist üles <b> Kalendri API </b> "
-"ja veenduge, et see oleks lubatud."
 
-# wpml-name: b6232f3d3a4998e38aab901b3e654d8a
-msgid "In the sidebar on the left, select <b>Credentials</b>."
-msgstr "Valige vasakul külgribal <b> Volikirjad </b>."
-
-# wpml-name: 7a1952fb6fc784e6ffcd5f2c1a407b62
+#, php-format
 msgid ""
-"Go to <b>OAuth consent screen</b> tab and give a name to the product, then "
-"click <b>Save</b>."
+"In the sidebar on the left, select <b>Library</b>. In the list of APIs look "
+"for <b>Calendar API</b> or click <a href=\"%s\" target=\"_blank\">this "
+"link</a> to go directly to Calendar API and make sure it is enabled."
 msgstr ""
-"Minge vahekaardile <b> OAuthi nõusolekuekraan </b> ja andke tootele nimi, "
-"seejärel klõpsake nuppu <b> Salvesta </b>."
 
-# wpml-name: 4630adf3184e0925263ad7d9ed815dd6
 msgid ""
-"Go to <b>Credentials</b> tab and in <b>New credentials</b> drop-down menu "
-"select <b>OAuth client ID</b>."
+"Click <b>OAuth consent screen</b> tab, select user type and provide the "
+"necessary information (App name, User support email and Developer contact "
+"information). Then click <b>Save and continue</b>. You can leave the "
+"following settings unchanged."
 msgstr ""
-"Minge vahekaardile <b> Volikirjad </b> ja valige rippmenüüst <b> Uued "
-"volikirjad </b> <b> OAuthi kliendi ID </b>."
 
-# wpml-name: 059b025713cdd2816682d3b0d798a21e
 msgid ""
-"Select <b>Web application</b> and create your project's OAuth 2.0 "
-"credentials by providing the necessary information. For <b>Authorized "
+"We recommend to change the publishing status of your app to <b>In "
+"production</b> by clicking <b>Publish app</b> button."
+msgstr ""
+
+#, php-format
+msgid ""
+"In the sidebar on the left, select <a href=\"%s\" target=\"_blank\">"
+"Credentials</a>, and in <b>Create credentials</b> drop-down menu select <b>"
+"OAuth client ID</b>."
+msgstr ""
+
+msgid ""
+"Select <b>Web application</b> and create your project's <b>OAuth 2.0 "
+"credentials</b> by providing the necessary information. For <b>Authorized "
 "redirect URIs</b> enter the <b>Redirect URI</b> found below on this page. "
 "Click <b>Create</b>."
 msgstr ""
-"Valige <b> veebirakendus </b> ja looge oma projekti OAuth 2.0 mandaadid, "
-"esitades vajaliku teabe. <b> Lubatud ümbersuunamise URI-de </b> jaoks "
-"sisestage selle lehe allpool olev <b> Ümbersuunamise URI </b>. Klõpsake "
-"nuppu <b> Loo </b>."
 
 # wpml-name: 09081a8490c767a8d55b7d283457ef4c
 msgid ""
@@ -6683,36 +7673,23 @@ msgstr ""
 "Otsige hüpikaknas väljad <b> Kliendi ID </b> ja <b> Kliendi saladus </b>. "
 "Kasutage neid sellel lehel oleval kujul."
 
-# wpml-name: 3ded5a767a9239780a49ff19b174b74b
-#, php-format
 msgid ""
-"Important: for two-way sync, your website must use HTTPS. Google Calendar "
-"API will be able to send notifications to HTTPS address only if there is a "
-"valid SSL certificate installed on your web server. Follow the steps in this "
-"<a href=\"%s\" target=\"_blank\">document</a> to <b>verify and register your "
-"domain</b>."
+"Go to <b>Staff Members</b>, select a staff member and enable the connection "
+"with Google Calendar on the <b>Advanced</b> tab."
 msgstr ""
-"Tähtis: kahesuunalise sünkroonimise jaoks peab teie veebisait kasutama HTTPS-"
-"i. Google'i kalendri API saab HTTPS-aadressile teatisi saata ainult siis, "
-"kui teie veebiserverisse on installitud kehtiv SSL-sertifikaat. <b> Oma "
-"domeeni kinnitamiseks ja registreerimiseks </b> järgige selles <a "
-"href=\"%s\" target=\"_blank\"> dokumendis </a> toodud samme."
 
-# wpml-name: e411f4440bad771c9e807935082a6cfc
-msgid "The client ID obtained from the Developers Console"
-msgstr "Arendajakonsoolilt saadud kliendi ID"
+msgid "The client ID obtained from the Google Cloud Platform"
+msgstr ""
 
 # wpml-name: 1b4739e491387ef5d8a546854308e5fe
 msgid "Client secret"
 msgstr "Kliendisaladus"
 
-# wpml-name: a6612a99da3f52b45bf3a12bef33df60
-msgid "The client secret obtained from the Developers Console"
-msgstr "Arendajakonsoolilt saadud kliendisaladus"
+msgid "The client secret obtained from the Google Cloud Platform"
+msgstr ""
 
-# wpml-name: 67dc3a53c64132c260d33fef55643f7a
-msgid "Enter this URL as a redirect URI in the Developers Console"
-msgstr "Sisestage see URL ümbersuunamise URI-na arendajate konsooli"
+msgid "Enter this URL as a redirect URI in the Google Cloud Platform"
+msgstr ""
 
 # wpml-name: 2dad454453bd03b5c1a527fe509e97a6
 msgid ""
@@ -6739,14 +7716,11 @@ msgstr ""
 "puudumist, kui Bookly üritab kõiki sündmusi tuua. Siin saate piirata "
 "tõmmatud sündmuste arvu."
 
-# wpml-name: 1e63867b8aefdce10fcc406113de9ec2
 msgid ""
 "Configure what information should be placed in the title of Google Calendar "
-"event. Available codes are {service_name}, {staff_name} and {client_names}."
+"event. Available codes are {service_name}, {category_name}, {staff_name} and "
+"{client_names}."
 msgstr ""
-"Seadistage, milline teave tuleks Google'i kalendri sündmuse pealkirja "
-"paigutada. Saadaolevad koodid on {teenus_nimi}, {personaal_nimi} ja "
-"{klient_nimi}."
 
 # wpml-name: 700d756b4b5fc2c755422ccc8d135e0b
 msgid "To set up Facebook integration, do the following:"
@@ -6794,6 +7768,12 @@ msgstr ""
 msgid "App ID"
 msgstr "Äppi ID"
 
+msgid "Select who can manage Bookly appointments"
+msgstr ""
+
+msgid "Select who can administrate Bookly"
+msgstr ""
+
 # wpml-name: ef55424827f198c85fe7705b45e218fc
 msgid ""
 "Upon providing the purchase code you will have access to free updates of "
@@ -6817,11 +7797,66 @@ msgstr ""
 "Kui te {päeva} jooksul kehtivat ostukoodi ei esita, keelatakse juurdepääs "
 "teie broneeringutele."
 
-msgid "Customer address"
+msgid "First value for newly created appointments via backend"
 msgstr ""
 
 msgid ""
-"Configure how the customer's address will be displayed in notifications."
+"Select what value should be selected first when creating a new appointment "
+"via backend."
+msgstr ""
+
+msgid "Displayed time slots"
+msgstr ""
+
+msgid ""
+"Select what time slots will be shown when creating a new appointment via "
+"backend."
+msgstr ""
+
+msgid "Only appropriate slots"
+msgstr ""
+
+msgid "Time delimiter"
+msgstr ""
+
+msgid ""
+"This setting allows you to set a delimiter during a day for appointments "
+"created via backend."
+msgstr ""
+
+# wpml-name: eac54e9b64b1bb8c61f7ed62e00fef0b
+msgid "Cancel appointment action"
+msgstr "Tühista kohtumise toiming"
+
+# wpml-name: 26c4b4ecda4b6840ac1c6daebf5a4afd
+msgid ""
+"Select what happens when customer clicks cancel appointment link. With "
+"\"Delete\" the appointment will be deleted from the calendar. With "
+"\"Cancel\" only appointment status will be changed to \"Cancelled\"."
+msgstr ""
+"Valige, mis juhtub, kui klient klõpsab kohtumise lingil. \"Kustuta\" korral "
+"kustutatakse kohtumine kalendrist. \"Tühista\" korral muudetakse ainult "
+"kohtumise olek olekuks \"Tühistatud\"."
+
+msgid "Automatically change status of appointment"
+msgstr ""
+
+msgid ""
+"If enabled, initial status of the appointment will be changed to the status "
+"set in the \"Status to be set\" field after the appointment has been "
+"completed."
+msgstr ""
+
+msgid "Initial status"
+msgstr ""
+
+msgid "Status to be set"
+msgstr ""
+
+msgid "Authentication"
+msgstr ""
+
+msgid "Instructions for creating an JWT App"
 msgstr ""
 
 msgid "To find your API Key and Secret, do the following:"
@@ -6869,6 +7904,113 @@ msgstr "API Secret"
 msgid "The API Secret obtained from your JWT app"
 msgstr ""
 
+msgid "Instructions for creating an OAuth App"
+msgstr ""
+
+msgid "To find your Client ID and Client Secret, do the following:"
+msgstr ""
+
+msgid ""
+"A page with various app types will be displayed. Select <b>OAuth</b> as the "
+"app type and click on <b>Create</b>"
+msgstr ""
+
+msgid ""
+"Enter the name of your App. In <b>Choose app type</b> select <b>Account-"
+"level app</b> and click <b>Create</b>"
+msgstr ""
+
+msgid ""
+"Go to <b>App Credentials</b> tab and look for the <b>Client ID</b> and <b>"
+"Client Secret</b>. Use them in the form below on this page"
+msgstr ""
+
+msgid ""
+"For <b>Redirect URL for OAuth</b> enter the <b>Redirect URL for OAuth</b> "
+"found below on this page"
+msgstr ""
+
+msgid ""
+"For <b>Whitelist URL</b> add a new record with the value of <b>Redirect URL "
+"for OAuth</b> found below on this page. If you use both HTTP and HTTPS, make "
+"sure to add both records for <b>Whitelist URL</b>"
+msgstr ""
+
+msgid ""
+"Add the scopes required for your app. At the very least, you should select "
+"meeting:write:admin"
+msgstr ""
+
+msgid "Once the app is created, <b>Save</b> the changes on this page"
+msgstr ""
+
+msgid ""
+"Click the <b>Connect OAuth</b> button below and complete the connection "
+"between Bookly and Zoom"
+msgstr ""
+
+msgid "The Client ID obtained from your OAuth app"
+msgstr ""
+
+msgid "Client Secret"
+msgstr ""
+
+msgid "The Client Secret obtained from your OAuth app"
+msgstr ""
+
+msgid "Redirect URL for OAuth"
+msgstr ""
+
+msgid ""
+"Destination URL where Zoom will send the access token after the user "
+"completes the OAuth authentication"
+msgstr ""
+
+msgid "Disconnect"
+msgstr ""
+
+# wpml-name: 49ab28040dfa07f53544970c6d147e1e
+msgid "Connect"
+msgstr "Ühenda"
+
+msgid ""
+"To find your URL and Secret, connect to the server (e.g. via SSH) with "
+"hosted BBB and execute the following command in console"
+msgstr ""
+
+msgid "The URL obtained from command return"
+msgstr ""
+
+msgid "Shared secret"
+msgstr ""
+
+msgid "The Secret obtained from command return"
+msgstr ""
+
+msgid "Online meeting password"
+msgstr ""
+
+msgid "Online meeting start URL"
+msgstr ""
+
+msgid "Online meeting URL"
+msgstr ""
+
+msgid "Loop over clients list"
+msgstr ""
+
+msgid "Loop over clients list with delimiter"
+msgstr ""
+
+msgid "Amount paid"
+msgstr "Makstud summa"
+
+msgid "Amount due"
+msgstr ""
+
+msgid "Total price of booking (sum of all cart items after applying coupon)"
+msgstr ""
+
 # wpml-name: a85eba4c6c699122b2bb1387ea4813ad
 msgid "Cart"
 msgstr "Ostukorv"
@@ -6876,6 +8018,18 @@ msgstr "Ostukorv"
 # wpml-name: 94f4a55d52037aee6f01a214739d0fec
 msgid "Select product"
 msgstr "Valige toode"
+
+# wpml-name: 79e3fb68d2509ac9f7872c2d4ad77d20
+#, php-format
+msgid ""
+"WooCommerce cart is not set up. Follow the <a href=\"%s\">link</a> to "
+"correct this problem."
+msgstr ""
+"WooCommerce ostukorvi pole üles seatud. Selle probleemi lahendamiseks "
+"järgige <a href=\"%s\">linki</a>."
+
+msgid "All staff members will use these settings when connecting to Zoom"
+msgstr ""
 
 msgid ""
 "Do not count appointments in 'Limit appointments per customer' with the "
@@ -6904,20 +8058,6 @@ msgstr ""
 "kasutajakontod. Kui kasutaja on sisse logitud, seotakse uus klient "
 "olemasoleva kasutajakontoga."
 
-# wpml-name: eac54e9b64b1bb8c61f7ed62e00fef0b
-msgid "Cancel appointment action"
-msgstr "Tühista kohtumise toiming"
-
-# wpml-name: 26c4b4ecda4b6840ac1c6daebf5a4afd
-msgid ""
-"Select what happens when customer clicks cancel appointment link. With "
-"\"Delete\" the appointment will be deleted from the calendar. With "
-"\"Cancel\" only appointment status will be changed to \"Cancelled\"."
-msgstr ""
-"Valige, mis juhtub, kui klient klõpsab kohtumise lingil. \"Kustuta\" korral "
-"kustutatakse kohtumine kalendrist. \"Tühista\" korral muudetakse ainult "
-"kohtumise olek olekuks \"Tühistatud\"."
-
 # wpml-name: 126f1ba112cb725201aeb7bd41f0db7c
 msgid "New user account role"
 msgstr "Uus kasutajakonto roll"
@@ -6930,7 +8070,21 @@ msgstr ""
 "Valige, milline roll uute klientide jaoks loodud WordPressi "
 "kasutajakontodele omistatakse."
 
+msgid "New staff account role"
+msgstr ""
+
+msgid ""
+"Select what role will be assigned to newly created WordPress user accounts "
+"for staff"
+msgstr ""
+
 msgid "Online Meetings"
+msgstr ""
+
+msgid "User Permissions"
+msgstr ""
+
+msgid "Show tips"
 msgstr ""
 
 # wpml-name: 294c22756b5f08a5e9cf3c65e21ce8f6
@@ -6945,16 +8099,12 @@ msgstr "Vormivaade mitme broneeringu korral"
 msgid "Form in case of 100% discount"
 msgstr ""
 
+msgid "Form view if there are no common payment methods for client and staff"
+msgstr ""
+
 # wpml-name: d2d36230bb125f51964b1cb2d4352bbe
 msgid "Show birthday field"
 msgstr "Näita sünnipäeva väli"
-
-msgid ""
-"Address information is needed for Invoices add-on. To disable, deactivate "
-"Invoices add-on first."
-msgstr ""
-"Aadressiteavet on vaja lisandmooduli Arved jaoks. Keelamiseks lülitage "
-"esmalt välja Arvete lisandmoodul."
 
 # wpml-name: 306cce9fbc7c8c6f67eb5819ab599e55
 msgid "Show address fields"
@@ -6976,6 +8126,15 @@ msgstr ""
 # wpml-name: b5f9b8b4722b202c53c76a3e52d5396e
 msgid "Show time zone switcher"
 msgstr "Näita ajavööndi vahetaja"
+
+msgid "Online meeting join URL"
+msgstr ""
+
+msgid "Please note that QR code will be shown only for single appointments"
+msgstr ""
+
+msgid "Show QR code"
+msgstr ""
 
 # wpml-name: 72d6d7a1885885bb55a565fd1070581a
 msgid "Import"
@@ -7011,10 +8170,45 @@ msgid ""
 "will see the entire amount paid as revenue."
 msgstr ""
 
-msgid "Online meeting join URL"
+msgid "Email logs"
+msgstr ""
+
+msgid ""
+"If this setting is enabled then all sent email notifications will be "
+"recorded in a log table. You can find these logs in Email Notifications > "
+"Email logs table."
+msgstr ""
+
+msgid "Email details"
+msgstr ""
+
+msgid "Recipient"
+msgstr ""
+
+# wpml-name: 4c2a8fe7eaf24721cc7a9f0175115bd4
+msgid "Message"
+msgstr "Sõnum"
+
+msgid "Headers"
+msgstr ""
+
+msgid "Client birthday full date"
 msgstr ""
 
 msgid "Time zone of staff"
+msgstr ""
+
+msgid "Show cancellation reason"
+msgstr ""
+
+# wpml-name: 5fcd6daa8ef2d2b0bc74eed3ebafcebc
+msgid "Add appointment cancellation confirmation"
+msgstr "Lisa kohtumise tühistamise kinnitus"
+
+#, php-format
+msgid ""
+"Check status of this option in Settings > Calendar > <a href=\"%s\" "
+"target=\"_blank\"/>Display front-end calendar</a>"
 msgstr ""
 
 # wpml-name: 8612579044efe457f11398b5a2377226
@@ -7025,9 +8219,14 @@ msgstr "Pealkirjad"
 msgid "Add Bookly appointments list"
 msgstr "Lisage kohtumiste loend Bookly"
 
-# wpml-name: 5fcd6daa8ef2d2b0bc74eed3ebafcebc
-msgid "Add appointment cancellation confirmation"
-msgstr "Lisa kohtumise tühistamise kinnitus"
+msgid "Add Bookly calendar"
+msgstr ""
+
+msgid "Add Bookly search form"
+msgstr ""
+
+msgid "Add Bookly services form"
+msgstr ""
 
 # wpml-name: 4da862c0445691d7273cd218a00e490a
 #, php-format
@@ -7046,9 +8245,20 @@ msgid ""
 "This will also remove the entered purchase code from this site."
 msgstr ""
 
+msgid "Display front-end calendar"
+msgstr ""
+
+msgid ""
+"If this option is enabled then customers will be able to view the "
+"availability of the selected staff in a front-end calendar"
+msgstr ""
+
 # wpml-name: 3850b9b0b7c95fed83317d45ca68dff4
 msgid "Error dissociating purchase code."
 msgstr "Viga ostukoodi lahutamisel."
+
+msgid "This calendar is already connected to another staff member"
+msgstr ""
 
 # wpml-name: da6e7462a84ca3c5790ebf899c4fa3c8
 msgid "Google Calendar integration"
@@ -7063,7 +8273,11 @@ msgstr "Seadistage esmalt Google'i kalendri <a href=\"%s\"> seaded </a>"
 msgid "Synchronize staff member appointments with Google Calendar."
 msgstr "Sünkroonige töötajate kohtumised Google'i kalendriga."
 
-msgid "Personal"
+msgid "integration"
+msgstr ""
+
+#, php-format
+msgid "Please configure Zoom <a href=\"%s\">settings</a> first"
 msgstr ""
 
 msgid "This setting allows to set up personal Zoom account for staff member"
@@ -7085,6 +8299,29 @@ msgstr ""
 "Selline See säte võimaldab piirata töötaja broneeringute koguaega päevas. "
 "Polsterdamise aeg ei sisaldu."
 
+msgid "ICalendar feed"
+msgstr ""
+
+msgid ""
+"If enabled, you'll get the ICalendar feed URL which can be used in other "
+"calendars for displaying staff member appointments."
+msgstr ""
+
+msgid "ICalendar feed URL"
+msgstr ""
+
+msgid ""
+"Specify how many days of past and future calendar data you wish to display. "
+"If you enter 0 in either field, past or future appointments will not be "
+"displayed."
+msgstr ""
+
+msgid ""
+"The staff member's schedule will be considered to be in the selected time "
+"zone. This time zone will also be used for the dates and times in "
+"notifications sent to the staff member"
+msgstr ""
+
 # wpml-name: ece059e2a1d74920c5ea5be07097bb54
 msgid "Archiving Staff"
 msgstr "Arhiivinduse töötajad"
@@ -7101,58 +8338,85 @@ msgstr ""
 msgid "Ok, continue editing"
 msgstr "Ok, jätka redigeerimist"
 
-msgid ""
-"The staff member's schedule will be considered to be in the selected time "
-"zone. This time zone will also be used for the dates and times in "
-"notifications sent to the staff member"
+msgid "Available payment methods"
 msgstr ""
 
-# wpml-name: fffcb4d1e12c96b2f571f77ad25878b8
-msgid "Reason"
-msgstr "Põhjus"
+msgid "All methods"
+msgstr ""
 
-# wpml-name: 9ee777c31e9dcb084f0be834dc7f0ffd
-msgid "Manual adjustment"
-msgstr "Käsitsi reguleerimine"
+msgid "No methods selected"
+msgstr ""
 
-# wpml-name: a6390f735eb3eb84343df3f648b603b3
-msgid "Attach payment"
-msgstr "Lisa maksekorraldus"
+msgid ""
+"Please setup and enable New staff member's WordPress user login details "
+"notification"
+msgstr ""
+
+msgid "Create WordPress user"
+msgstr ""
 
 # wpml-name: d1c21de8005cba719f49a4b5ad363b66
 msgid "Create payment"
 msgstr "Loo makse"
 
-# wpml-name: 0eede552438475bdfe820c13f24c9399
-msgid "Total price"
-msgstr "Koguhind"
-
 # wpml-name: 015762a0ffcfd7d3ad995dffb5c67e42
 msgid "Search payment"
 msgstr "Otsi makse"
+
+# wpml-name: 0eede552438475bdfe820c13f24c9399
+msgid "Total price"
+msgstr "Koguhind"
 
 # wpml-name: 1e63d1811556fc2dad106dcbd4217a69
 msgid "Payment ID"
 msgstr "Makse ID"
 
-msgid ""
-"This link can be inserted into notifications with {online_meeting_url} code"
+msgid "Payment for"
 msgstr ""
 
-msgid "Save appointment to create a meeting"
+msgid "Payment for whole series"
+msgstr ""
+
+msgid "Payment only for current appointment"
 msgstr ""
 
 # wpml-name: 00531e19d4a6eaf6d3e5f9707be2b058
 msgid "Custom service name"
 msgstr "Kohandatud teenuse nimi"
 
+# wpml-name: a286282b5fcfc5d5b7eec84fa37f9196
+msgid "Custom service price"
+msgstr "Kohandatud teenuse hind"
+
+msgid ""
+"This link can be inserted into notifications with {online_meeting_start_url} "
+"code"
+msgstr ""
+
+msgid "Save appointment to create a meeting"
+msgstr ""
+
 # wpml-name: 91f68cab5c115ac15636d98d97b7ec7f
 msgid "Please enter a service name"
 msgstr "Sisestage teenuse nimi"
 
-# wpml-name: a286282b5fcfc5d5b7eec84fa37f9196
-msgid "Custom service price"
-msgstr "Kohandatud teenuse hind"
+# wpml-name: a3675c54bea45144c9315cafd6e5f9b4
+#, php-format
+msgid "The number of customers should not be more than %d"
+msgstr "Klientide arv ei tohiks olla suurem kui% d"
+
+# wpml-name: 5aa5f50591e7ccec53eaca23575055b8
+msgid "Booking exceeds the working hours limit for staff member"
+msgstr "Broneerimine ületab töötaja tööaja limiiti"
+
+# wpml-name: 20f886a8eeb66a1fc665ba8762cb1eb6
+msgid "Booking exceeds your working hours limit"
+msgstr "Broneerimine ületab teie tööaja limiidi"
+
+msgid ""
+"Please setup and enable New customer's WordPress user login details "
+"notification"
+msgstr ""
 
 # wpml-name: b7fa2398e65398f44dc7cbb87e442a17
 msgid "Limit appointments per customer"
@@ -7267,6 +8531,14 @@ msgid ""
 "appointments with the selected online meeting provider. Make sure that the "
 "provider is configured properly in Settings > <a href=\"%s\">Online "
 "Meetings</a>"
+msgstr ""
+
+msgid ""
+"If you choose Google Meet then meetings will be created for those staff "
+"members who have Google Calendar configured."
+msgstr ""
+
+msgid "You must select at least one repeat option for recurring services."
 msgstr ""
 
 # wpml-name: 5d4f07a7f9b2651ac7113ddba2113083
@@ -7478,6 +8750,21 @@ msgstr "Tühistamise kinnitus"
 msgid "A custom block for displaying cancellation confirmation"
 msgstr "Kohandatud plokk tühistamise kinnituse kuvamiseks"
 
+msgid "Services form"
+msgstr ""
+
+msgid "A custom block for displaying services form"
+msgstr ""
+
+msgid "Search form"
+msgstr ""
+
+msgid "A custom block for displaying search form"
+msgstr ""
+
+msgid "A custom block for displaying frontend calendar"
+msgstr ""
+
 # wpml-name: e4d37ac6c4fbddeb1f87dc9c95b9ac81
 msgid "Appointments list"
 msgstr "Kohtumiste loend"
@@ -7485,10 +8772,6 @@ msgstr "Kohtumiste loend"
 # wpml-name: 373d4d4ad9c4465fc1a89b7851ff301d
 msgid "A custom block for displaying appointments list"
 msgstr "Kohandatud plokk kohtumiste loendi kuvamiseks"
-
-# wpml-name: 7b9324fd1b6cc33da6065e0338fd1828
-msgid "Custom fields"
-msgstr "Kohandatud väljad"
 
 msgid "Confirm cancellation"
 msgstr ""
@@ -7500,6 +8783,27 @@ msgstr ""
 msgid "Thank you for being with us"
 msgstr "Täname, et olete meiega"
 
+msgid "Book now"
+msgstr ""
+
+msgid "Book more"
+msgstr ""
+
+msgid "No time slots available"
+msgstr ""
+
+msgid "No results found"
+msgstr ""
+
+msgid "Thank you!"
+msgstr ""
+
+msgid "Your booking is complete"
+msgstr ""
+
+msgid "Slot already booked"
+msgstr ""
+
 # wpml-name: 51722ca96c03f9a1212c7a73ff397f62
 msgid "Invalid token provided"
 msgstr "Pakutud on kehtetu luba"
@@ -7509,12 +8813,21 @@ msgid ""
 "Sorry, the time slot %date_time% for %service% has been already occupied."
 msgstr "Kahjuks on teenuse% ajapilu% date_time% juba hõivatud."
 
+msgid ""
+"The selected slot for service {service_name} at {appointment_time} is not "
+"available anymore. Please select another time slot or contact the service "
+"provider"
+msgstr ""
+
 msgid "This service is no longer provided."
 msgstr ""
 
 # wpml-name: e6e2307f5b708999ab91dc836d226d04
 msgid "Service was not found"
 msgstr "Teenus ei leitud"
+
+msgid "Join"
+msgstr ""
 
 # wpml-name: e1a6141074634b45203195729c33ca7e
 msgid "No appointments found."
@@ -7523,6 +8836,9 @@ msgstr "Kohtumisi ei ole leitud."
 # wpml-name: 27dfc1190637081e48c1191dcd6bb437
 msgid "Show past appointments"
 msgstr "Näita varasemad kohtumised"
+
+msgid "Invalid online meeting url"
+msgstr ""
 
 # wpml-name: d597fd065ee275f34fb251c8c2054e62
 msgid "Would you like to pay deposit or total price"
@@ -7558,24 +8874,18 @@ msgstr ""
 "sissemakse summa. Kui lubate funktsiooni „Deposiit või täishind”, palutakse "
 "klientidel tasuda tagatisraha või kogu summa."
 
-msgid "Amount due"
-msgstr ""
-
 msgid "Amount to pay"
 msgstr "Maksmisele kuuluv summa"
 
 msgid "Total deposit amount to be paid"
 msgstr ""
 
-msgid "Amount paid"
-msgstr "Makstud summa"
+msgid "Deposit value"
+msgstr ""
 
 # wpml-name: 27f8c42e516a2f4f7176b6fec14251ed
 msgid "Disable deposit update"
 msgstr "Keela hoiuse värskendus"
-
-msgid "Deposit value"
-msgstr ""
 
 # wpml-name: 8bd4837a76cf443ab523a51895e23c36
 msgid "Pay now"
@@ -7637,9 +8947,8 @@ msgid ""
 "Client email: {client_email}"
 msgstr ""
 
-# wpml-name: 72ef2b9b6965d078e3c7f95487a82d1c
-msgid "Skip"
-msgstr "Jäta vahele"
+msgid "Show Time step"
+msgstr ""
 
 # wpml-name: 9882fa71ca8a07444441021a6839ca47
 msgid "Skip time selection"
@@ -7662,6 +8971,10 @@ msgstr ""
 "Selline säte võimaldab kuvada kohtumisaja valimise sammu, selle peita ja "
 "luua ülesande ilma tähtajata või kuvada ajasammu, kuid võimaldab kliendil "
 "selle vahele jätta."
+
+# wpml-name: db4473b4ca4732319d6df4f4673c4117
+msgid "Selected period doesn't match service schedule"
+msgstr "Valitud periood ei vasta teeninduse ajakavale"
 
 # wpml-name: bd57cb1082b72c8582417ab887cfb9ac
 msgid "Incorrect payment data"
@@ -7899,6 +9212,9 @@ msgstr ""
 msgid "Description"
 msgstr "Kirjeldus"
 
+msgid "Payment methods"
+msgstr ""
+
 # wpml-name: 03937134cedab9078be39a77ee3a48a0
 msgid "Group"
 msgstr "Rühm"
@@ -7906,6 +9222,10 @@ msgstr "Rühm"
 # wpml-name: 2230223f77c24a72b50f03120db32b1a
 msgid "Customer Groups"
 msgstr "Kliendi Rühmad"
+
+# wpml-name: de62775a71fc2bf7a13d7530ae24a7ed
+msgid "General settings"
+msgstr "Üldised seaded"
 
 # wpml-name: 6124d758cdbddbfb7966fa23c8922e5c
 msgid "New group"
@@ -7927,13 +9247,20 @@ msgstr "Muuta Rühma"
 msgid "No customer groups yet."
 msgstr "Kliendirühmi veel pole."
 
-# wpml-name: 08b02383dce834815c99539f02f0fd89
-msgid "Customer Group"
-msgstr "Kliendi Rühm"
+msgid "Form view in case of payment has been skipped"
+msgstr ""
+
+msgid ""
+"Note that only common payment methods for customer and staff will be "
+"available on Payment step"
+msgstr ""
 
 # wpml-name: b722e5ee9efd275ab8848dcd2f6e1371
 msgid "No group"
 msgstr "Gruppi pole"
+
+msgid "Skip payment step"
+msgstr ""
 
 # wpml-name: 8163093bb806a1526d8bd6020f65c37c
 msgid "Total discount"
@@ -7947,6 +9274,9 @@ msgid ""
 msgstr ""
 "Sisestage kindel allahindluse summa (nt 10 maha). Protsendimäära (nt 10% "
 "soodsamalt) määramiseks lisage arvväärtusele sümbol '%'."
+
+msgid "Settings for customers without group"
+msgstr ""
 
 # wpml-name: 3bd11b19e48893c0e79521359ee42211
 msgid "Edit group"
@@ -8053,6 +9383,22 @@ msgid ""
 "{appointment_waiting_list}"
 msgstr ""
 
+msgid "Notification to customer to set appointment from waiting list"
+msgstr ""
+
+msgid "The time slot from the waiting list is now available"
+msgstr ""
+
+msgid ""
+"Dear {client_name},\n"
+"\n"
+"The time slot on {appointment_date} at {appointment_time} for {service_name} "
+"is now available for booking. Please use the link below to approve this "
+"appointment: {appointment_booking_url}. Please note that the availability of "
+"the requested timeslot is not guaranteed, because this message is sent out "
+"to all customers in the appointment waitlist."
+msgstr ""
+
 # wpml-name: 7cd273a1c9892da52429bf9ef3d6797d
 msgid ""
 "To join the waiting list for a busy time slot, please select a slot marked "
@@ -8060,6 +9406,9 @@ msgid ""
 msgstr ""
 "Hõivatud ajapilude ootenimekirjaga liitumiseks valige pesa, mis on "
 "tähistatud tähega (N), kus N on ootenimekirjas olevate klientide arv."
+
+msgid "The time slot from the waiting list is now available."
+msgstr ""
 
 # wpml-name: 8e3d067707f138586b29ad8d1f4aebde
 msgid "Notification for staff member to set up appointment from waiting list"
@@ -8069,7 +9418,36 @@ msgstr "Teatamine töötajale kohtumise määramiseks ootenimekirjast"
 msgid "Set appointment"
 msgstr "Määrake kohtumine"
 
+msgid "Add customers to the waiting list despite the capacity value"
+msgstr ""
+
+msgid ""
+"If enabled and someone is already on the waiting list, all other customers "
+"will be placed on the waiting list. If disabled, free places will be "
+"available for booking on the front-end if the number of persons matches the "
+"remaining places in appointment."
+msgstr ""
+
 msgid "Number of persons on waiting list"
+msgstr ""
+
+msgid "Set appointment from waiting list (success)"
+msgstr ""
+
+msgid ""
+"Set the URL of a page that is shown to clients after they successfully set "
+"the appointment from waiting list."
+msgstr ""
+
+msgid "Set appointment from waiting list (denied)"
+msgstr ""
+
+msgid ""
+"Set the URL of a page that is shown to clients when the setting of "
+"appointment from waiting list is not available anymore."
+msgstr ""
+
+msgid "Waiting List"
 msgstr ""
 
 # wpml-name: c02283d54cac89e8f643ba596e0d8696
@@ -8079,6 +9457,9 @@ msgstr "Kuva ootejärjekorra pesad"
 msgid "Waiting list of appointment"
 msgstr ""
 
+msgid "URL of booking the appointment from the waiting list"
+msgstr ""
+
 # wpml-name: 9a44f2d202d49c7d534a8d4f322864da
 msgid "Show chain appointments"
 msgstr "Kuva ahelkohtumised"
@@ -8086,6 +9467,9 @@ msgstr "Kuva ahelkohtumised"
 # wpml-name: 1b9abf135ccb7ed2f2cd9c155137c351
 msgid "Browse"
 msgstr "Sirvige"
+
+msgid "File's extension is not allowed"
+msgstr ""
 
 # wpml-name: 58672e49c16db89774224f2922647bea
 msgid "Upload directory"
@@ -8098,6 +9482,16 @@ msgid ""
 msgstr ""
 "Sisestage võrgukausta tee, kuhu failid salvestatakse. Vajadusel veenduge, et "
 "kausta materjalidele pole veebis vaba juurdepääsu."
+
+msgid "The specified folder is not writable"
+msgstr ""
+
+msgid "Allowed file extensions"
+msgstr ""
+
+msgid ""
+"Enter file extensions that can be uploaded. For example: \"png,jpg,bmp\"."
+msgstr ""
 
 # wpml-name: 91f3a2c0e4424c87689525da44c4db11
 msgid "Files"
@@ -8120,10 +9514,6 @@ msgstr "Näita failid"
 
 msgid "Number of uploaded files"
 msgstr ""
-
-# wpml-name: fd456406745d816a45cae554c788e754
-msgid "download"
-msgstr "lae alla"
 
 # wpml-name: 9a59c86c540032bee4cf4975d50dc834
 msgid ""
@@ -8214,14 +9604,6 @@ msgstr "Näita lisa sammu"
 msgid "Show extras"
 msgstr "Näita Ekstrad"
 
-# wpml-name: 099fa6a5a336d23ac0f78e7b88697da2
-msgid "Max quantity"
-msgstr "Maksimaalne kogus"
-
-# wpml-name: 0534f4f9b4506ce58165489e030886fb
-msgid "New Item"
-msgstr "Uus toode"
-
 msgid "Loop over extras"
 msgstr ""
 
@@ -8238,7 +9620,65 @@ msgstr ""
 msgid "Extras price"
 msgstr "Lisad hind"
 
+msgid "Min quantity"
+msgstr ""
+
+# wpml-name: 099fa6a5a336d23ac0f78e7b88697da2
+msgid "Max quantity"
+msgstr "Maksimaalne kogus"
+
+# wpml-name: 0534f4f9b4506ce58165489e030886fb
+msgid "New Item"
+msgstr "Uus toode"
+
+msgid "Min quantity should not be greater than max quantity"
+msgstr ""
+
 msgid "Extras tax"
+msgstr ""
+
+#, php-format
+msgid ""
+"Go to the <a href=\"%s\" target=\"_blank\">Square Developer dashboard</a>."
+msgstr ""
+
+msgid "Select an app or create a new one."
+msgstr ""
+
+msgid ""
+"Depending on the mode (Sandbox or Production), look for the <b>Application "
+"ID</b> and <b>Access token</b>."
+msgstr ""
+
+msgid "Use them in the form below on this page."
+msgstr ""
+
+msgid "In the sidebar on the left, go to the <b>Webhooks > Subscriptions</b>."
+msgstr ""
+
+#, php-format
+msgid ""
+"Depending on the mode (Sandbox or Production), press <b>Add subscription</b> "
+"button, enter the following URL as the destination for events %s and select "
+"%s in <b>Events</b>."
+msgstr ""
+
+msgid "Click <b>Save</b>."
+msgstr ""
+
+msgid "In the sidebar on the left, select <b>Locations</b>."
+msgstr ""
+
+msgid "Look for the necessary location and copy <b>Location ID</b>."
+msgstr ""
+
+msgid "Use it in the form below on this page."
+msgstr ""
+
+msgid "Access token"
+msgstr ""
+
+msgid "Location ID"
 msgstr ""
 
 # wpml-name: ba912f8df10bbf0af38c9a6f98a00082
@@ -8251,6 +9691,9 @@ msgid ""
 msgstr ""
 "Allpool leiate broneerimiseks valitud teenuste loendi.\n"
 "Kui soovite lisada rohkem teenuseid, klõpsake nuppu BRONEERI VEEL."
+
+msgid "Show \"Book more\" near \"Next\" button"
+msgstr ""
 
 # wpml-name: bfee0dd0266e8272f36317f4aeafbd55
 msgid "Show Cart step"
@@ -8320,6 +9763,9 @@ msgstr ""
 "Teie PayPali ID või teie PayPali kontoga seotud e-posti aadress.E-posti "
 "aadress peab olema kinnitatud."
 
+msgid "Highlight special hours"
+msgstr ""
+
 # wpml-name: a2991f96e473a4cd727147e781e5555e
 msgid "Disable special hours update"
 msgstr "Keela eritundide värskendus"
@@ -8342,6 +9788,10 @@ msgstr ""
 # wpml-name: eebd338ddbd547e41e4a1296de82963a
 msgid "Locations"
 msgstr "Asukohad"
+
+# wpml-name: 28f7b5b127cc7f71607ca301fbcbe313
+msgid "W/o location"
+msgstr "W/o asukoht"
 
 # wpml-name: 6ec04e9b4f9228914f4d7a254e109810
 msgid "Custom settings for location"
@@ -8377,11 +9827,10 @@ msgstr "Lisa Asukoht"
 msgid "No locations found."
 msgstr "Ei leitud ühtegi asukohta."
 
-# wpml-name: 28f7b5b127cc7f71607ca301fbcbe313
-msgid "W/o location"
-msgstr "W/o asukoht"
-
 msgid "Custom settings for location enabled"
+msgstr ""
+
+msgid "Show location required"
 msgstr ""
 
 # wpml-name: dd8143c91636edaa8e23b8d46932ec2e
@@ -8433,6 +9882,16 @@ msgstr "Tehing lükati tagasi"
 # wpml-name: e59458c2ad3850466357a1cd342adc51
 msgid "Pending payment"
 msgstr "Makse ootel"
+
+msgid "Edit custom JavaScript"
+msgstr ""
+
+msgid "Your custom JavaScript was saved"
+msgstr ""
+
+msgid ""
+"Enter a JavaScript code that will be executed when the button is clicked"
+msgstr ""
 
 # wpml-name: dda9c06f33071c9b6fc237ee164109d8
 msgid "Rating"
@@ -8513,7 +9972,7 @@ msgstr "Te ei saa seda teenust enne kohtumist hinnata."
 # wpml-name: 355d8bbbe59f0b3bf9fd281889356e0e
 #, php-format
 msgid "Rate the quality of the %s provided to you on %s at %s by %s"
-msgstr "Hinnake teile pakutud% s kvaliteeti saidil% s% s% s"
+msgstr "Hinnake teile pakutud %s kvaliteeti saidil %s %s %s"
 
 # wpml-name: ba3f8c9fbcc595f55b778118b65fc8ea
 msgid "Leave your comment"
@@ -8577,6 +10036,9 @@ msgid ""
 "2. In the Dashboard's <a href=\"%s\" target=\"_blank\">Webhooks settings</a> "
 "section, click <b>Add endpoint</b> to reveal a form to add a new endpoint "
 "for receiving events."
+msgstr ""
+
+msgid "Session has expired. Please reload the page and try again"
 msgstr ""
 
 msgid "Condition"

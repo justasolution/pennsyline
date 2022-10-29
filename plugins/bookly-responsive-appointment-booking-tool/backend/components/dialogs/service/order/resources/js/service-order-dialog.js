@@ -1,36 +1,36 @@
-jQuery(function ($) {
+jQuery(function($) {
     'use strict';
 
     $(document.body)
         .on('service.submitForm', {},
             // Bind submit handler for service saving.
-            function (event, $panel, data) {
-                let id = data.find(function (value) { return value.name === 'id'; }).value,
-                    title = $.fn.dataTable.render.text().display(data.find(function (value) { return value.name === 'title'; }).value);
+            function(event, $panel, data) {
+                let id = data.find(function(value) { return value.name === 'id'; }).value,
+                    title = $.fn.dataTable.render.text().display(data.find(function(value) { return value.name === 'title'; }).value);
 
                 BooklyServiceOrderDialogL10n.services
                     .find(function(service) { return service.id == id; }).title = title;
             })
         .on('service.deleted', {},
-            function (event, services) {
-                BooklyServiceOrderDialogL10n.services = BooklyServiceOrderDialogL10n.services.filter(function (el) {
+            function(event, services) {
+                BooklyServiceOrderDialogL10n.services = BooklyServiceOrderDialogL10n.services.filter(function(el) {
                     return !services.includes(String(el.id));
                 })
             });
 
-    var $dialog   = $('#bookly-service-order-modal'),
-        $list     = $('#bookly-list', $dialog),
+    var $dialog = $('#bookly-service-order-modal'),
+        $list = $('#bookly-list', $dialog),
         $template = $('#bookly-service-template'),
-        $save     = $('#bookly-save', $dialog)
+        $save = $('#bookly-save', $dialog)
     ;
 
     // Save categories
-    $save.on('click', function (e) {
+    $save.on('click', function(e) {
         e.preventDefault();
-        var ladda    = Ladda.create(this),
+        var ladda = Ladda.create(this),
             services = [];
         ladda.start();
-        $list.find('li').each(function (position, category) {
+        $list.find('li').each(function(position, category) {
             services.push($(category).find('[name="id"]').val());
         });
         $.post(ajaxurl, {
@@ -38,7 +38,7 @@ jQuery(function ($) {
                 services: services,
                 csrf_token: BooklyL10nGlobal.csrf_token
             },
-            function (response) {
+            function(response) {
                 if (response.success) {
                     BooklyServiceOrderDialogL10n.services = response.data;
                     $dialog.booklyModal('hide');
@@ -47,9 +47,9 @@ jQuery(function ($) {
             });
     });
 
-    $dialog.off().on('show.bs.modal', function () {
+    $dialog.off().on('show.bs.modal', function() {
         $list.html('');
-        BooklyServiceOrderDialogL10n.services.forEach(function (service) {
+        BooklyServiceOrderDialogL10n.services.forEach(function(service) {
             $list.append(
                 $template.clone().show().html()
                     .replace(/{{id}}/g, service.id)
@@ -61,4 +61,5 @@ jQuery(function ($) {
     Sortable.create($list[0], {
         handle: '.bookly-js-draghandle',
     });
+    $('[data-target="#bookly-service-order-modal"]').prop('disabled', false);
 });

@@ -45,7 +45,7 @@ abstract class Theme_Document extends Library_Document {
 		$class_name = static::get_class_full_name();
 
 		$reflection = new \ReflectionClass( $class_name );
-		$method = $reflection->getMethod( 'get_site_editor_type' );
+		//$method = $reflection->getMethod( 'get_site_editor_type' );
 
 		// It's own method, use it.
 		if ( $class_name === $method->class ) {
