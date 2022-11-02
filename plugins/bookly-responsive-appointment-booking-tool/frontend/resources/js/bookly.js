@@ -3611,12 +3611,12 @@ var bookly = (function ($) {
 
             $('input.bookly-js-first-name').change(function() {
                 console.log($first_name_field.val());
-                $email_field.val($first_name_field.val() + '.' + $last_name_field.val() + '@pennsyline.com');
+                $email_field.val($first_name_field.val().replace(/\s/g, '').trim() + '.' + $last_name_field.val().replace(/\s/g, '').trim() + '@pennsyline.com');
             });
 
             $('input.bookly-js-last-name').change(function() {
                 console.log($last_name_field.val());
-                $email_field.val($first_name_field.val() + '.' + $last_name_field.val() + '@pennsyline.com');
+                $email_field.val($first_name_field.val().replace(/\s/g, '').trim() + '.' + $last_name_field.val().replace(/\s/g, '').trim() + '@pennsyline.com');
             });
 
 	        $__default['default']('.bookly-custom-field-row').on('change', 'input, input[type="checkbox"], input[type="radio"]', function () {

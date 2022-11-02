@@ -20,7 +20,7 @@ echo Common::stripScripts( $progress_tracker );
     <?php Proxy\Pro::renderFacebookButton() ?>
 </div>
 <?php endif ?>
-<div class="bookly-box bookly-table" style="border-bottom: 2px solid black;padding-bottom: 20px;">
+<div class="bookly-box bookly-table" style="border-bottom: 2px solid black;padding-bottom: 20px; display: none;">
     <div class="bookly-form-group">
         <label><?php esc_html_e( 'Existing Customer LookUp' ) ?></label>
         <?php
