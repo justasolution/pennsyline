@@ -584,7 +584,7 @@ class Ajax extends Lib\Base\Ajax
                                 }
                             }
                         }
-                        if ( $customer['payment_action'] == 'create' && $customer['payment_for'] == 'series' ) { // Mady To Look
+                        if ( $customer['payment_action'] == 'create' && $customer['payment_for'] == 'series' ) {
                             Proxy\RecurringAppointments::createBackendPayment( $series, $customer );
                         }
                     }

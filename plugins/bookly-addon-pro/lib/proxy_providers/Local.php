@@ -366,8 +366,14 @@ class Local extends BooklyLib\Proxy\Pro
      */
     public static function createBackendPayment( array $data, CustomerAppointment $ca )
     {
-        if ( true || isset( $data['payment_action'], $data['payment_for'] ) && $data['payment_action'] === 'create' && $data['payment_for'] === 'current' ) { // Mady To Look can we remove true
+        if ( true || isset( $data['payment_action'], $data['payment_for'] ) && $data['payment_action'] === 'create' && $data['payment_for'] === 'current' ) { // Mady To Look can we remove true make sure a duplicate payment is not created
             $appointment = Appointment::find( $ca->getAppointmentId() );
+            //echo "<pre>".print_r($appointment,true)."</pre>";
+             //echo "<pre>".print_r($ca ->getPaymentId(),true)."</pre>"; // paymet Id
+
+            if($ca ->getPaymentId()) {
+                return;
+            }
             $payment = new Payment();
             $service = null;
             if ( $appointment->getCustomServiceName() === null ) {
